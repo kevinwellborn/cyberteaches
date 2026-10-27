@@ -1,8 +1,11 @@
 # CyberTeaches Academy
 
 A self-paced, block-based coding course for middle school students (grades 6 to 8).
-Students guide a rover through 18 puzzles in 5 units: sequences, loops, decisions,
-demolition (blast walls, collect charges, find keys, grab bonus coins), and challenge missions.
+Students guide a rover through lessons that each unlock one new block:
+
+- Lesson 1: Repeat and collect (6 puzzles)
+- Lesson 2: Repeat until (5 puzzles)
+- Coming soon: If, If / else, Destroy walls
 
 ## Run it
 

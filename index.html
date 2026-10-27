@@ -113,6 +113,16 @@ h1,h2,h3{font-family:var(--f-display);text-wrap:balance;margin:0;line-height:1.1
 .chip.off{opacity:.5}
 .chip.bump{animation:chipbump .35s}
 @keyframes chipbump{50%{transform:scale(1.15)}}
+.unit.locked{background:transparent;border-style:dashed}
+.unit.locked .unit-num{background:var(--line);color:var(--muted)}
+.unit.locked h2{color:var(--muted)}
+.newtag{margin-left:auto;background:#fff;color:#1C292C;font-size:11px;letter-spacing:.06em;text-transform:uppercase;border-radius:99px;padding:1px 7px}
+.intro-list{text-align:left;display:flex;flex-direction:column;gap:10px;margin:14px 0 18px;padding:0;list-style:none;color:var(--ink)}
+.intro-list li{display:flex;gap:10px}
+.intro-list li::before{content:"";flex:none;width:8px;height:8px;border-radius:50%;background:var(--accent);margin-top:8px}
+.intro-blocks{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+.intro-blocks .block .row{min-height:36px}
+.dialog.wide{max-width:520px}
 .stop .cdot{position:absolute;top:-3px;right:-3px;width:16px;height:16px;border-radius:50%;background:var(--coin);border:2px solid var(--panel)}
 .flag svg{width:64%;height:64%}
 .rover.crash .rover-in{animation:shake .4s}
@@ -229,104 +239,83 @@ const BLOCKS = {
   ifelse:{cls:'b-logic', label:'if path', container:true}
 };
 
+// Each lesson introduces new blocks (newBlocks). Puzzles in a lesson only offer that lesson's toolbox.
 const UNITS = [
-  {n:1, title:'Giving directions', color:'var(--b-move)',
-   concept:'Computers follow instructions in order, one at a time. Put blocks in a sequence to steer your rover across the terrain.'},
-  {n:2, title:'Loops', color:'var(--b-loop)',
-   concept:'When you catch yourself repeating the same blocks, a loop can do the repeating for you. Shorter programs are easier to read and fix.'},
-  {n:3, title:'Making decisions', color:'var(--b-logic)',
-   concept:'An if block lets the rover look around and choose what to do. Combine it with a loop and one small program can solve a whole maze.'},
-  {n:4, title:'Demolition', color:'var(--flag)',
-   concept:'Cracked walls can be blasted, but every blast uses one charge. Grab charges on the way, find the key that opens the locked gate, and scoop up bonus coins if you can.'},
-  {n:5, title:'Challenge missions', color:'var(--b-act)',
-   concept:'Put everything together. These missions mix loops and decisions, and the best solutions are surprisingly short. Expect to try a few ideas.'}
+  {n:1, title:'Repeat and collect', color:'var(--b-loop)', newBlocks:['collect','repeat'],
+   concept:'Collect every crystal on the map. When the same steps happen again and again, put them inside a repeat block instead of dragging them in over and over.',
+   intro:['Your rover is on a crystal survey. Drive onto a crystal and use <b>collect crystal</b> to pick it up.',
+          'Lots of crystals in a row? A <b>repeat</b> block runs the blocks inside it as many times as you choose.',
+          'Try to match the block goal for 3 stars. Shorter programs are easier to read and fix.']},
+  {n:2, title:'Repeat until', color:'var(--b-logic)', newBlocks:['until'],
+   concept:'Sometimes you do not know how many times to repeat. "Repeat until at flag" keeps going until the rover arrives, however far away the flag is.',
+   intro:['A plain repeat needs you to count. <b>Repeat until at flag</b> keeps repeating by itself and stops the moment the rover reaches the flag.',
+          'Watch out: if the blocks inside never get the rover to the flag, it repeats forever and the rover gets stuck.',
+          'You can still use repeat and collect crystal from Lesson 1.']}
+];
+const UPCOMING = [
+  {title:'If', blurb:'Let the rover check the path ahead and decide what to do.'},
+  {title:'If / else', blurb:'Pick between two plans, depending on what the rover sees.'},
+  {title:'Destroy walls', blurb:'Blast cracked walls, collect charges, and find keys to locked gates.'}
 ];
 
-// map legend: # rock, . sand, S start, G flag, * crystal. dir: 0 up, 1 right, 2 down, 3 left
+// map legend: # rock, . sand, S start, G flag (optional), * crystal, % cracked wall, b charge, k key, D gate, $ coin
+// dir: 0 up, 1 right, 2 down, 3 left. A map with no G is won by collecting every crystal.
+const L1 = ['forward','left','right','collect','repeat'];
+const L2 = ['forward','left','right','collect','repeat','until'];
 const LEVELS = [
-  {unit:1, title:'First steps', dir:1, ideal:3, blocks:['forward','left','right'],
-   goal:'Drive the rover to the flag.',
-   hint:'Count the squares between the rover and the flag. Use one "move forward" for each square.',
-   map:['######','#S..G#','######']},
-  {unit:1, title:'Around the bend', dir:1, ideal:6, blocks:['forward','left','right'],
-   goal:'The path turns. Steer the rover around the corner to the flag.',
-   hint:'"Turn right" spins the rover in place without moving it. Turn first, then move forward.',
-   map:['######','#S.###','##.###','##.G##','######']},
-  {unit:1, title:'The staircase', dir:1, ideal:11, blocks:['forward','left','right'],
-   goal:'Climb down the rocky staircase to reach the flag.',
-   hint:'The pattern is forward, turn right, forward, turn left. Keep going until you land on the flag.',
-   map:['#######','#S.####','##..###','###..##','####G##','#######']},
-  {unit:1, title:'Crystal survey', dir:1, ideal:6, blocks:['forward','left','right','collect'], needGems:true,
-   goal:'Pick up every crystal, then reach the flag.',
-   hint:'Stop on top of a crystal and use "collect crystal" before moving on.',
-   map:['#######','#S*.*G#','#######']},
+  {unit:1, title:'Pick it up', dir:1, ideal:3, blocks:L1,
+   goal:'Drive onto the crystal and collect it.',
+   hint:'Move forward twice so the rover is on top of the crystal, then use "collect crystal".',
+   map:['#####','#S.*#','#####']},
+  {unit:1, title:'Crystal row', dir:1, ideal:3, blocks:L1,
+   goal:'Collect all 4 crystals using only 3 blocks.',
+   hint:'Each crystal needs the same two steps: move forward, collect. Put those inside a repeat and set it to 4.',
+   map:['#######','#S****#','#######']},
+  {unit:1, title:'Every other square', dir:1, ideal:4, blocks:L1,
+   goal:'The crystals are spaced out. Collect all 3 with 4 blocks.',
+   hint:'Now the steps for each crystal are: forward, forward, collect.',
+   map:['#########','#S.*.*.*#','#########']},
+  {unit:1, title:'Around the corner', dir:2, ideal:7, blocks:L1,
+   goal:'Collect the crystals down the side and along the bottom.',
+   hint:'Use one repeat for the column, turn left, then another repeat for the row.',
+   map:['######','#S####','#*####','#*####','#****#','######']},
+  {unit:1, title:'Crystal stairs', dir:1, ideal:7, blocks:L1,
+   goal:'Collect every crystal on the staircase with 7 blocks.',
+   hint:'One step of the stairs is: forward, collect, turn right, forward, collect, turn left. Repeat it 3 times.',
+   map:['#######','#S*####','##**###','###**##','####*##','#######']},
+  {unit:1, title:'Loop inside a loop', dir:1, ideal:5, blocks:L1,
+   goal:'Collect all 9 crystals around the rocks. Try putting a repeat inside another repeat.',
+   hint:'Each side is "forward, collect" 3 times, then "turn right". Repeat that whole side 3 times.',
+   map:['######','#S***#','####*#','####*#','#****#','######']},
 
-  {unit:2, title:'The long road', dir:1, ideal:2, blocks:['forward','left','right','repeat'],
-   goal:'Reach the flag using only 2 blocks.',
-   hint:'Put one "move forward" inside a "repeat" block and choose how many times it should run.',
-   map:['##########','#S......G#','##########']},
-  {unit:2, title:'Staircase, the sequel', dir:1, ideal:5, blocks:['forward','left','right','repeat'],
-   goal:'A longer staircase. Can you solve it with 5 blocks?',
-   hint:'Find the 4 blocks that repeat: forward, turn right, forward, turn left. Put them inside a repeat.',
-   map:['########','#S.#####','##..####','###..###','####..##','#####G##','########']},
-  {unit:2, title:'Crystal row', dir:1, ideal:4, blocks:['forward','left','right','collect','repeat'], needGems:true,
-   goal:'Collect all three crystals and reach the flag with 4 blocks.',
-   hint:'Each crystal is the same distance apart. Try: repeat 3 times [forward, collect, forward].',
-   map:['#########','#S*.*.*G#','#########']},
-  {unit:2, title:'Loop inside a loop', dir:1, ideal:4, blocks:['forward','left','right','repeat'],
-   goal:'Drive around the rocks to the flag. Try putting a loop inside another loop.',
-   hint:'Each side is "move forward" 3 times, then "turn right". Repeat that whole thing 3 times.',
-   map:['######','#S...#','####.#','####.#','#G...#','######']},
-
-  {unit:3, title:'Keep going until...', dir:1, ideal:2, blocks:['forward','left','right','until'],
-   goal:'You do not need to count this time. Keep moving until the rover reaches the flag.',
-   hint:'Put "move forward" inside "repeat until at flag".',
+  {unit:2, title:'Keep going', dir:1, ideal:2, blocks:L2,
+   goal:'No counting needed. Keep moving until the rover reaches the flag.',
+   hint:'Put one "move forward" inside "repeat until at flag".',
    map:['############','#S........G#','############']},
-  {unit:3, title:'Look before you leap', dir:1, ideal:4, blocks:['forward','left','right','until','ifelse'],
-   goal:'Teach the rover to turn when the path ahead is blocked.',
-   hint:'Inside "repeat until at flag", add "if path ahead": move forward, else turn right.',
-   map:['#######','#S....#','#####.#','#G....#','#######']},
-  {unit:3, title:'The switchback', dir:1, ideal:6, blocks:['forward','left','right','until','ifelse'],
-   goal:'This path turns both ways. Build a program that picks the right turn by itself.',
-   hint:'If path ahead, move forward. Else, check again: if path to the right, turn right, else turn left.',
-   map:['#########','#S......#','#######.#','#.......#','#.#######','#......G#','#########']},
-
-  {unit:4, title:'Blast through', dir:1, ideal:5, charges:1, blocks:['forward','left','right','blast'],
-   goal:'A cracked wall blocks the road. You have 1 charge. Blast it and reach the flag.',
-   hint:'Drive up until the cracked wall is right in front of you, then use "blast wall ahead". Coins are picked up just by driving over them.',
-   map:['#######','#S.%$G#','#######']},
-  {unit:4, title:'Supply run', dir:1, ideal:6, idealBonus:10, charges:0, blocks:['forward','left','right','repeat','blast'],
-   goal:'You start with no charges. Pick one up, then blast your way to the flag. Bonus: grab the coin too.',
-   hint:'Drive over the orange canister to pick up a charge. For the coin, go to the end of the row, turn around with two turns, and come back.',
-   map:['#######','#S.b.$#','###%###','###.###','###G###','#######']},
-  {unit:4, title:'Key to the vault', dir:1, ideal:11, charges:1, blocks:['forward','left','right','repeat','blast'],
-   goal:'The flag is behind a locked gate. Blast your way to the key, then drive through the gate.',
-   hint:'The gate opens by itself when the rover has the key. Use repeat blocks for the long straight parts.',
-   map:['#########','#S..%..k#','#######.#','#G.D.$..#','#########']},
-  {unit:4, title:'Chain reaction', dir:1, ideal:6, charges:0, blocks:['forward','left','right','repeat','blast'],
-   goal:'Charge, wall, charge, wall. Spot the pattern and blast through in 6 blocks.',
-   hint:'Each round is: move forward (grab a charge), blast, move forward. Repeat that 3 times, then finish the drive.',
-   map:['###########','#Sb%b%b%.G#','###########']},
-  {unit:4, title:'Smart demolition', dir:1, ideal:6, charges:4, blocks:['forward','left','right','until','ifelse','blast'],
-   goal:'Build one program that blasts any cracked wall in its way and turns at dead ends.',
-   hint:'Repeat until at flag: if cracked wall ahead, blast. Else, if path ahead, move forward, else turn right.',
-   map:['#########','#S.%..%.#','#######%#','#G.%....#','#########']},
-  {unit:5, title:'Crystal patrol', dir:1, ideal:6, blocks:['forward','left','right','collect','until','ifelse'], needGems:true,
-   goal:'Crystals are scattered along a winding path. Write one program that collects them all and reaches the flag.',
-   hint:'Inside "repeat until at flag", use two if blocks: first "if crystal here" to collect, then "if path ahead" to move forward or turn right.',
-   map:['########','#S.*..*#','######.#','#G*..*.#','########']},
-  {unit:5, title:'The labyrinth', dir:2, ideal:7, blocks:['forward','left','right','until','ifelse'],
-   goal:'A real maze. Explorers solve mazes by keeping one hand on the wall. Teach your rover that trick.',
-   hint:'Right-hand rule: if there is a path to the right, turn right and move forward. Else, if the path ahead is open, move forward. Else, turn left.',
-   map:['#########','#S#...#G#','#.#.#.#.#','#...#...#','#########']}
+  {unit:2, title:'Collect on the way', dir:1, ideal:3, blocks:L2,
+   goal:'Collect every crystal on the way to the flag, using 3 blocks.',
+   hint:'Inside "repeat until at flag", put "move forward" and then "collect crystal".',
+   map:['########','#S****G#','########']},
+  {unit:2, title:'Count, then don\'t', dir:1, ideal:5, blocks:L2,
+   goal:'Drive along the top, turn, and then keep going until the flag.',
+   hint:'Use "repeat 4 times" for the top row, then "turn right", then "repeat until at flag" with "move forward" inside.',
+   map:['#######','#S....#','#####.#','#####.#','#####G#','#######']},
+  {unit:2, title:'Endless stairs', dir:1, ideal:5, blocks:L2,
+   goal:'Climb down the staircase to the flag. You do not need to count the steps.',
+   hint:'One step is: forward, turn right, forward, turn left. Put it inside "repeat until at flag".',
+   map:['########','#S.#####','##..####','###..###','####..##','#####G##','########']},
+  {unit:2, title:'Crystal staircase', dir:1, ideal:7, blocks:L2,
+   goal:'Collect every crystal on the stairs, then reach the flag.',
+   hint:'One step is: forward, collect, turn right, forward, collect, turn left. Repeat until at flag.',
+   map:['########','#S*#####','##**####','###**###','####*G##','########']}
 ];
-LEVELS.forEach((l,i)=>l.n=i+1);
+LEVELS.forEach((l,i)=>{ l.n=i+1; l.k=LEVELS.slice(0,i).filter(o=>o.unit===l.unit).length+1 });  // k: puzzle number inside its lesson
 
 // ---------- storage (per browser) ----------
 const store = {
-  get(k,d){ try{ const v=localStorage.getItem('rover-academy:'+k); return v?JSON.parse(v):d }catch(e){ return d } },
-  set(k,v){ try{ localStorage.setItem('rover-academy:'+k, JSON.stringify(v)) }catch(e){} },
-  clear(){ try{ Object.keys(localStorage).filter(k=>k.startsWith('rover-academy:')).forEach(k=>localStorage.removeItem(k)) }catch(e){} }
+  get(k,d){ try{ const v=localStorage.getItem('cyberteaches:'+k); return v?JSON.parse(v):d }catch(e){ return d } },
+  set(k,v){ try{ localStorage.setItem('cyberteaches:'+k, JSON.stringify(v)) }catch(e){} },
+  clear(){ try{ Object.keys(localStorage).filter(k=>k.startsWith('cyberteaches:')).forEach(k=>localStorage.removeItem(k)) }catch(e){} }
 };
 let progress = store.get('progress', {});   // { levelNumber: stars }
 let programs = store.get('programs', {});   // { levelNumber: program }
@@ -370,7 +359,7 @@ function buildBoard(level){
   board.appendChild(grid);
   const place=(el,x,y)=>{ el.style.left=(x/m.W*100)+'%'; el.style.top=(y/m.H*100)+'%'; el.style.width=(100/m.W)+'%'; el.style.height=(100/m.H)+'%' };
   const at=k=>k.split(',').map(Number);
-  const flag=h('div','sprite flag',FLAG_SVG); place(flag,m.goal.x,m.goal.y); board.appendChild(flag);
+  if(m.goal){ const flag=h('div','sprite flag',FLAG_SVG); place(flag,m.goal.x,m.goal.y); board.appendChild(flag) }
   const gemEls={}, itemEls={};
   m.gems.forEach(k=>{ const g=h('div','sprite gem',GEM_SVG); place(g,...at(k)); board.appendChild(g); gemEls[k]=g });
   Object.entries(m.items).forEach(([k,t])=>{ const e=h('div','sprite item '+t,ITEM_SVG[t]); place(e,...at(k)); board.appendChild(e); itemEls[k]=e });
@@ -432,32 +421,38 @@ function showHome(){
   const done=doneCount(), total=LEVELS.length;
   const hero=h('section','hero');
   hero.innerHTML=`<div>
-      <span class="label">Self-paced course · ${total} puzzles · grades 6 to 8</span>
+      <span class="label">Self-paced course · ${UNITS.length} lessons · ${total} puzzles · grades 6 to 8</span>
       <h1 style="margin-top:10px">Teach a rover to explore. <em>Learn to code.</em></h1>
-      <p>Snap together instruction blocks to guide a planetary rover through rocks, crystals, and switchbacks. Each puzzle introduces one new idea, from simple sequences to loops and decisions.</p>
+      <p>Snap together instruction blocks to guide a planetary rover through rocks and crystals. Each lesson unlocks one new block and builds on the last, from repeat loops to decisions and demolition.</p>
       <div class="hero-actions">
         <button class="btn primary" id="go">${done? (done===total?'Replay the course':'Continue with puzzle '+nextLevel()) : 'Start puzzle 1'}</button>
         <div class="meter"><span class="label">${done} of ${total} puzzles solved</span><div class="meter-bar"><i style="width:${done/total*100}%"></i></div></div>
       </div></div><div class="hero-art"></div>`;
   app.appendChild(hero);
-  const preview=buildBoard(LEVELS[7]); $('.hero-art',hero).appendChild(preview.board);
+  const preview=buildBoard(LEVELS[5]); $('.hero-art',hero).appendChild(preview.board);
   $('#go',hero).onclick=()=>{ location.hash='puzzle-'+(done===total?1:nextLevel()) };
 
   const units=h('section','units');
   UNITS.forEach(u=>{
     const card=h('article','unit');
     const lv=LEVELS.filter(l=>l.unit===u.n);
-    card.innerHTML=`<div class="unit-num" style="background:${u.color}">U${u.n}</div>
-      <div><span class="label">Unit ${u.n} · ${lv.filter(l=>progress[l.n]).length}/${lv.length} solved</span>
+    card.innerHTML=`<div class="unit-num" style="background:${u.color}">L${u.n}</div>
+      <div><span class="label">Lesson ${u.n} · ${lv.filter(l=>progress[l.n]).length}/${lv.length} solved</span>
       <h2 style="margin-top:4px">${u.title}</h2><p class="concept">${u.concept}</p><div class="stops"></div></div>`;
     const stops=$('.stops',card), nx=nextLevel();
     lv.forEach(l=>{
       const s=progress[l.n];
-      const b=h('button','stop'+(s?' done':'')+(!s&&l.n===nx?' next':''), l.n + (s?`<span class="st">${'★'.repeat(s)}</span>`:'') + (bonus[l.n]?'<span class="cdot" title="All bonus coins"></span>':''));
-      b.title=l.title; b.setAttribute('aria-label','Puzzle '+l.n+': '+l.title+(s?' (solved)':''));
+      const b=h('button','stop'+(s?' done':'')+(!s&&l.n===nx?' next':''), l.k + (s?`<span class="st">${'★'.repeat(s)}</span>`:'') + (bonus[l.n]?'<span class="cdot" title="All bonus coins"></span>':''));
+      b.title=l.title; b.setAttribute('aria-label','Puzzle '+l.k+': '+l.title+(s?' (solved)':''));
       b.onclick=()=>{ location.hash='puzzle-'+l.n };
       stops.appendChild(b);
     });
+    units.appendChild(card);
+  });
+  UPCOMING.forEach((u,i)=>{
+    const card=h('article','unit locked');
+    card.innerHTML=`<div class="unit-num">L${UNITS.length+i+1}</div>
+      <div><span class="label">Lesson ${UNITS.length+i+1} · Coming soon</span><h2 style="margin-top:4px">${u.title}</h2><p class="concept" style="margin-bottom:0">${u.blurb}</p></div>`;
     units.appendChild(card);
   });
   app.appendChild(units);
@@ -483,18 +478,18 @@ function showPuzzle(n){
 
   const app=$('#app'); app.innerHTML='';
   const head=h('div');
-  head.innerHTML=`<span class="label" style="color:${unit.color}">Unit ${unit.n}: ${unit.title}</span>
-    <div class="ptitle"><h1>Puzzle ${L.n}. ${L.title}</h1></div><div class="dots"></div>`;
+  head.innerHTML=`<span class="label" style="color:${unit.color}">Lesson ${unit.n}: ${unit.title}</span>
+    <div class="ptitle"><h1>Puzzle ${L.k}. ${L.title}</h1></div><div class="dots"></div>`;
   LEVELS.filter(l=>l.unit===L.unit).forEach(l=>{
-    const d=h('button','dot'+(progress[l.n]?' done':'')+(l.n===L.n?' cur':''), l.n);
-    d.setAttribute('aria-label','Puzzle '+l.n); d.onclick=()=>{ location.hash='puzzle-'+l.n }; $('.dots',head).appendChild(d);
+    const d=h('button','dot'+(progress[l.n]?' done':'')+(l.n===L.n?' cur':''), l.k); d.dataset.n=l.n;
+    d.setAttribute('aria-label','Puzzle '+l.k); d.onclick=()=>{ location.hash='puzzle-'+l.n }; $('.dots',head).appendChild(d);
   });
   app.appendChild(head);
 
   const bench=h('div','bench');
   // board pane
   const bp=h('section','pane');
-  bp.innerHTML=`<div class="goal">${FLAG_SVG}<p><b>Goal:</b> ${L.goal}</p></div>`;
+  bp.innerHTML=`<div class="goal">${parseMap(L).goal?FLAG_SVG:GEM_SVG}<p><b>Goal:</b> ${L.goal}</p></div>`;
   world=buildBoard(L); if(world.hud) bp.appendChild(world.hud); bp.appendChild(world.board);
   const ctr=h('div','controls');
   ctr.innerHTML=`<button class="btn primary" id="runBtn">▶ Run</button><button class="btn" id="resetBtn">↺ Reset</button><div class="spacer"></div>
@@ -511,7 +506,8 @@ function showPuzzle(n){
   L.blocks.forEach(t=>{
     const B=BLOCKS[t];
     const lbl = t==='repeat'?'repeat 3 times': t==='ifelse'?'if … else': B.label;
-    const b=h('button','block pal '+B.cls, `<div class="row">${ICON[t]}<span>${lbl}</span></div>`);
+    const isNew=UNITS[L.unit-1].newBlocks.includes(t);
+    const b=h('button','block pal '+B.cls, `<div class="row">${ICON[t]}<span>${lbl}</span>${isNew?'<span class="newtag">New</span>':''}</div>`);
     b.draggable=true;
     b.onclick=()=>{ if(running) return; const nn=newNode(t); getList(selKey).push(nn); if(BLOCKS[t].container) selKey=nn.id+':body'; changed() };
     b.addEventListener('dragstart',e=>{ dragNew=t; dragId=null; e.dataTransfer.setData('text/plain',t); e.dataTransfer.effectAllowed='copy' });
@@ -533,6 +529,22 @@ function showPuzzle(n){
   $('#clearBtn').onclick=()=>{ if(running) return; program=[]; selKey='root'; changed() };
   $('#codeBtn').onclick=e=>{ const c=$('#code'); c.hidden=!c.hidden; e.currentTarget.setAttribute('aria-pressed',String(!c.hidden)); e.currentTarget.textContent=c.hidden?'Show as code':'Hide code'; renderCode() };
   renderProgram();
+  const ib=h('button','linkbtn','About this lesson'); ib.onclick=()=>showIntro(unit); $('.ptitle').appendChild(ib);
+  const seen=store.get('introSeen',{}); if(!seen[unit.n]) showIntro(unit);
+}
+function showIntro(unit){
+  const seen=store.get('introSeen',{}); seen[unit.n]=true; store.set('introSeen',seen);
+  const m=$('#modal');
+  const blocks=unit.newBlocks.map(t=>`<div class="block ${BLOCKS[t].cls}"><div class="row">${ICON[t]}<span>${t==='repeat'?'repeat 3 times':BLOCKS[t].label}</span></div></div>`).join('');
+  m.innerHTML=`<div class="scrim"><div class="dialog wide" role="dialog" aria-modal="true" aria-labelledby="it">
+    <span class="label" style="color:${unit.color}">Lesson ${unit.n}</span>
+    <h2 id="it" style="margin-top:6px">${unit.title}</h2>
+    <p style="margin:10px 0 12px">New ${unit.newBlocks.length>1?'blocks':'block'} in this lesson:</p>
+    <div class="intro-blocks">${blocks}</div>
+    <ul class="intro-list">${unit.intro.map(t=>`<li><span>${t}</span></li>`).join('')}</ul>
+    <div class="acts"><button class="btn primary" id="introGo">Let's go</button></div></div></div>`;
+  $('#introGo').onclick=()=>{ m.innerHTML='' };
+  $('#introGo').focus();
 }
 
 function setFb(kind,msg){ const f=$('#fb'); if(!f) return; f.className='feedback '+kind; f.textContent=msg }
@@ -612,7 +624,8 @@ function renderCode(){
 const DX=[0,1,0,-1], DY=[-1,0,1,0];
 function pathOpen(rel){ const d=(world.dir+rel+4)%4; return !world.blocked(world.x+DX[d], world.y+DY[d]) }
 function crackedAhead(){ const k=(world.x+DX[world.dir])+','+(world.y+DY[world.dir]); return world.m.cracks.has(k) && !world.blasted.has(k) }
-const atFlag=()=>world.x===world.m.goal.x && world.y===world.m.goal.y;
+const atFlag=()=>!!world.m.goal && world.x===world.m.goal.x && world.y===world.m.goal.y;
+const won=()=>world.gems.size===0 && (!world.m.goal || atFlag());
 function* exec(list, ctx){
   for(const n of list){
     if(n.type==='repeat'){ for(let i=0;i<n.n;i++){ guard(ctx); yield {id:n.id, act:'mark'}; yield* exec(n.body,ctx) } }
@@ -648,7 +661,7 @@ function run(){
           : world.m.cracks.has(k) ? 'Bump! That cracked wall is still standing. Blast it before driving through.'
           : 'Bump! The rover ran into a rock. Look at where it stopped and fix that step.') }
       world.x=nx; world.y=ny; world.place(world.rover,nx,ny); world.enter();
-      if(atFlag() && world.gems.size===0){ runTimer=setTimeout(()=>finish(true), delay); return }
+      if(won()){ runTimer=setTimeout(()=>finish(true), delay); return }
     } else if(st.act==='left'){ world.dir=(world.dir+3)%4; world.turns--; world.inner.style.transform='rotate('+(world.turns*90)+'deg)' }
     else if(st.act==='right'){ world.dir=(world.dir+1)%4; world.turns++; world.inner.style.transform='rotate('+(world.turns*90)+'deg)' }
     else if(st.act==='blast'){
@@ -661,13 +674,14 @@ function run(){
       const k=world.x+','+world.y;
       if(!world.gems.has(k)) return finish(false,'There is no crystal under the rover here. Move onto a crystal before collecting.');
       world.gems.delete(k); world.gemEls[k].classList.add('got');
-      if(atFlag() && world.gems.size===0){ runTimer=setTimeout(()=>finish(true), delay); return }
+      if(won()){ runTimer=setTimeout(()=>finish(true), delay); return }
     }
     runTimer=setTimeout(tick, delay);
   };
   const endCheck=()=>{
-    if(atFlag() && world.gems.size===0) return finish(true);
-    if(world.gems.size && L.needGems) return finish(false, atFlag() ? `You reached the flag, but ${world.gems.size} crystal${world.gems.size>1?'s are':' is'} still out there.` : 'The program finished before the rover collected every crystal and reached the flag.');
+    if(won()) return finish(true);
+    if(!world.m.goal) return finish(false, `The program finished, but ${world.gems.size} crystal${world.gems.size>1?'s are':' is'} still left. Add more steps.`);
+    if(world.gems.size) return finish(false, atFlag() ? `You reached the flag, but ${world.gems.size} crystal${world.gems.size>1?'s are':' is'} still out there.` : 'The program finished before the rover collected every crystal and reached the flag.');
     finish(false,'The program finished, but the rover is not on the flag yet. Add more steps.');
   };
   runTimer=setTimeout(tick, 150);
@@ -688,7 +702,7 @@ function finish(ok,msg){
   progress[L.n]=Math.max(progress[L.n]||0, stars); store.set('progress',progress);
   if(allCoins){ bonus[L.n]=true; store.set('bonus',bonus) }
   setFb('info','Solved! Press Run again to watch it, or move on to the next puzzle.');
-  document.querySelectorAll('.dot').forEach(d=>{ if(+d.textContent===L.n) d.classList.add('done') });
+  document.querySelectorAll('.dot').forEach(d=>{ if(+d.dataset.n===L.n) d.classList.add('done') });
   showWin(stars, used, target);
 }
 function showWin(stars, used, target){
@@ -697,10 +711,10 @@ function showWin(stars, used, target){
             : `You solved it with ${used} blocks. Can you do it in ${target}? Try again for 3 stars.`;
   const mc=world.m.coins;
   if(mc) msg += world.coins===mc ? (mc>1?` Bonus: you grabbed all ${mc} coins!`:' Bonus: you grabbed the coin!') : ` Bonus coins: ${world.coins} of ${mc}. Go back for the rest if you like a challenge.`;
-  const extra = last ? ' You finished the whole course!' : unitEnd ? ` Unit ${L.unit} complete. Next up: ${UNITS[L.unit].title}.` : '';
+  const extra = last ? ` Lesson ${L.unit} complete! More lessons are coming soon: ${UPCOMING.map(u=>u.title).join(', ')}.` : unitEnd ? ` Lesson ${L.unit} complete. Next up: Lesson ${L.unit+1}, ${UNITS[L.unit].title}.` : '';
   const m=$('#modal');
   m.innerHTML=`<div class="scrim"><div class="dialog" role="dialog" aria-modal="true" aria-labelledby="wt">
-    <h2 id="wt">${last?'Course complete!':'Puzzle solved!'}</h2>
+    <h2 id="wt">${last||unitEnd?'Lesson complete!':'Puzzle solved!'}</h2>
     <div class="stars" aria-label="${stars} of 3 stars">${'★'.repeat(stars)}<span class="off">${'★'.repeat(3-stars)}</span></div>
     <p>${msg}${extra}</p>
     <div class="acts"><button class="btn" id="again">Try again</button><button class="btn primary" id="nextBtn">${last?'Back to course map':'Next puzzle'}</button></div></div></div>`;
