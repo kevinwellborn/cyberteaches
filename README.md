@@ -1,4 +1,4 @@
-# Rover Academy
+# CyberTeaches Academy
 
 A self-paced, block-based coding course for middle school students (grades 6 to 8).
 Students guide a rover through 18 puzzles in 5 units: sequences, loops, decisions,
