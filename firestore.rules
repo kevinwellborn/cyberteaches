@@ -1,0 +1,33 @@
+rules_version = '2';
+// Paste into Firebase console > Firestore Database > Rules, then Publish.
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() { return request.auth != null; }
+    function teacherOf(code) {
+      return get(/databases/$(database)/documents/classes/$(code)).data.teacherUid == request.auth.uid;
+    }
+
+    // A student's own progress. Only that student can read or change it.
+    match /users/{uid} {
+      allow read, write: if signedIn() && request.auth.uid == uid;
+    }
+
+    // Classes are created by teachers. Any signed-in student can look one up by its code to join.
+    match /classes/{code} {
+      allow read: if signedIn();
+      allow create: if signedIn()
+        && request.resource.data.teacherUid == request.auth.uid
+        && code.matches('^[A-Z0-9]{6}$');
+      allow update, delete: if signedIn() && resource.data.teacherUid == request.auth.uid;
+
+      // Roster copy of each student's stars. The student writes it; the class's teacher reads it.
+      match /students/{uid} {
+        allow read: if signedIn() && (request.auth.uid == uid || teacherOf(code));
+        allow create, update: if signedIn() && request.auth.uid == uid
+          && exists(/databases/$(database)/documents/classes/$(code));
+        allow delete: if signedIn() && (request.auth.uid == uid || teacherOf(code));
+      }
+    }
+  }
+}
