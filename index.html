@@ -77,7 +77,7 @@ a.course:hover{border-color:var(--c)}
 .band.channel{background:var(--term);color:var(--term-ink)}
 .band.channel .muted{color:var(--term-ink);opacity:.75}
 .band h2{font-size:28px;margin:6px 0 8px}
-.cover{width:150px;aspect-ratio:2/3;border-radius:8px;background:var(--accent);color:var(--accent-ink);display:grid;place-items:center;text-align:center;padding:12px;font-family:var(--f-display);font-weight:800;font-size:17px;line-height:1.2;box-shadow:0 8px 22px rgba(0,0,0,.2)}
+.cover{width:150px;height:auto;border-radius:8px;background:var(--accent);color:var(--accent-ink);display:grid;place-items:center;text-align:center;padding:12px;font-family:var(--f-display);font-weight:800;font-size:17px;line-height:1.2;box-shadow:0 8px 22px rgba(0,0,0,.2)}
 .cover small{display:block;font-family:var(--f-body);font-weight:400;font-size:12px;margin-top:8px;opacity:.85}
 .play{width:110px;height:110px;border-radius:50%;background:var(--yt);display:grid;place-items:center}
 .play svg{width:44px;height:44px;margin-left:6px}
@@ -94,6 +94,7 @@ a.ad:hover{border-color:var(--accent)}
 .ad-strip .ad-text{flex:1}
 .ad-card{flex-direction:column;align-items:flex-start;padding:22px;gap:10px}
 .ad-card .ad-art{width:84px;height:112px;font-size:12px;padding:8px}
+img.cover,img.ad-art{padding:0;background:none;object-fit:cover}
 @media (max-width:560px){ .ad-strip{flex-wrap:wrap} }
 .foot{margin-top:40px;color:var(--muted);font-size:14px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;border-top:1px solid var(--line);padding-top:16px}
 @media (max-width:820px){ .hero{grid-template-columns:1fr} }
@@ -176,11 +177,11 @@ a.ad:hover{border-color:var(--accent)}
   <div data-ad="strip"></div>
 
   <section class="band book" id="book">
-    <div class="cover" aria-hidden="true">AP® Cybersecurity Essentials<small>Kevin Wellborn</small></div>
+    <img class="cover" src="book-cover.jpg" alt="Cover of Kevin Wellborn&#39;s AP® Cybersecurity Course Text & Study Guide">
     <div>
       <span class="label">The book</span>
-      <h2>Kevin Wellborn's AP® Cybersecurity Essentials</h2>
-      <p class="muted" style="margin:0 0 16px;max-width:60ch">Study guide and exam prep that follows every unit of the course. Use it alongside the free lessons for extra examples and practice.</p>
+      <h2>Kevin Wellborn's AP® Cybersecurity Course Text & Study Guide</h2>
+      <p class="muted" style="margin:0 0 16px;max-width:60ch">Course text and study guide that follows all 5 units and 24 lessons of the course. Use it alongside the free lessons for extra examples and practice.</p>
       <div class="row"><a class="btn primary" href="https://www.amazon.com/dp/B0HMFKHXQ3" target="_blank" rel="noopener">Get it on Amazon</a><a class="btn" href="apcybersecurity/">See the free course</a></div>
     </div>
   </section>
@@ -203,7 +204,7 @@ a.ad:hover{border-color:var(--accent)}
 // Ad spots. Each spot shows one ad from this list, picking a different one per visit.
 // Add an ad by adding an entry; "art" is short cover text (or set img to an image path).
 window.CT_ADS = [
-  { title: "AP® Cybersecurity Essentials", text: "Study guide and exam prep by Kevin Wellborn.", cta: "Get it on Amazon", url: "https://www.amazon.com/dp/B0HMFKHXQ3", art: "AP® Cyber Essentials" },
+  { title: "AP® Cybersecurity Course Text & Study Guide", text: "By Kevin Wellborn. Covers all 5 units.", cta: "Get it on Amazon", url: "https://www.amazon.com/dp/B0HMFKHXQ3", img: "book-cover.jpg" },
   { title: "Free video lessons", text: "Subscribe to CyberTeaches on YouTube.", cta: "Subscribe", url: "https://www.youtube.com/@cyberteaches?sub_confirmation=1", art: "▶" }
 ];
 (function(){
