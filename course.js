@@ -1,12 +1,13 @@
 // Course content shared by the student site and the teacher dashboard.
+// video: a YouTube link for the lesson (shown in the lesson intro when set).
 // Each lesson introduces new blocks (newBlocks). Puzzles in a lesson only offer that lesson's toolbox.
 const UNITS = [
-  {n:1, title:'Repeat and collect', color:'var(--b-loop)', newBlocks:['collect','repeat'],
+  {n:1, title:'Repeat and collect', color:'var(--b-loop)', newBlocks:['collect','repeat'], video:'',
    concept:'Collect every crystal on the map. When the same steps happen again and again, put them inside a repeat block instead of dragging them in over and over.',
    intro:['Your rover is on a crystal survey. Drive onto a crystal and use <b>collect crystal</b> to pick it up.',
           'Lots of crystals in a row? A <b>repeat</b> block runs the blocks inside it as many times as you choose.',
           'Try to match the block goal for 3 stars. Shorter programs are easier to read and fix.']},
-  {n:2, title:'Repeat until', color:'var(--b-logic)', newBlocks:['until'],
+  {n:2, title:'Repeat until', color:'var(--b-logic)', newBlocks:['until'], video:'',
    concept:'Sometimes you do not know how many times to repeat. "Repeat until at flag" keeps going until the rover arrives, however far away the flag is.',
    intro:['A plain repeat needs you to count. <b>Repeat until at flag</b> keeps repeating by itself and stops the moment the rover reaches the flag.',
           'Watch out: if the blocks inside never get the rover to the flag, it repeats forever and the rover gets stuck.',

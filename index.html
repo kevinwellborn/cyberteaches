@@ -135,7 +135,9 @@ h1,h2,h3{font-family:var(--f-display);text-wrap:balance;margin:0;line-height:1.1
 .intro-list li::before{content:"";flex:none;width:8px;height:8px;border-radius:50%;background:var(--accent);margin-top:8px}
 .intro-blocks{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
 .intro-blocks .block .row{min-height:36px}
-.dialog.wide{max-width:520px}
+.dialog.wide{max-width:640px}
+.video{position:relative;aspect-ratio:16/9;max-width:100%;border-radius:12px;overflow:hidden;background:#000;margin:4px 0 6px}
+.video iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
 .stop .cdot{position:absolute;top:-3px;right:-3px;width:16px;height:16px;border-radius:50%;background:var(--coin);border:2px solid var(--panel)}
 .flag svg{width:64%;height:64%}
 .rover.crash .rover-in{animation:shake .4s}
@@ -475,9 +477,12 @@ function showPuzzle(n){
   $('#clearBtn').onclick=()=>{ if(running) return; program=[]; selKey='root'; changed() };
   $('#codeBtn').onclick=e=>{ const c=$('#code'); c.hidden=!c.hidden; e.currentTarget.setAttribute('aria-pressed',String(!c.hidden)); e.currentTarget.textContent=c.hidden?'Show as code':'Hide code'; renderCode() };
   renderProgram();
-  const ib=h('button','linkbtn','About this lesson'); ib.onclick=()=>showIntro(unit); $('.ptitle').appendChild(ib);
+  const ib=h('button','linkbtn',unit.video?'Lesson video':'About this lesson'); ib.onclick=()=>showIntro(unit); $('.ptitle').appendChild(ib);
   const seen=store.get('introSeen',{}); if(!seen[unit.n]) showIntro(unit);
 }
+// Accepts youtube.com/watch?v=, youtu.be/ and /shorts/ links; returns '' for anything else.
+function youtubeId(url){ const m=String(url||'').match(/(?:youtu\.be\/|[?&]v=|\/shorts\/|\/embed\/)([\w-]{11})/); return m?m[1]:'' }
+function videoEmbed(url){ const id=youtubeId(url); return id?`<div class="video"><iframe src="https://www.youtube-nocookie.com/embed/${id}" title="Lesson video" allow="accelerometer; encrypted-media; picture-in-picture" allowfullscreen loading="lazy"></iframe></div>`:'' }
 function showIntro(unit){
   const seen=store.get('introSeen',{}); seen[unit.n]=true; store.set('introSeen',seen);
   const m=$('#modal');
@@ -487,6 +492,7 @@ function showIntro(unit){
     <h2 id="it" style="margin-top:6px">${unit.title}</h2>
     <p style="margin:10px 0 12px">New ${unit.newBlocks.length>1?'blocks':'block'} in this lesson:</p>
     <div class="intro-blocks">${blocks}</div>
+    ${videoEmbed(unit.video)}
     <ul class="intro-list">${unit.intro.map(t=>`<li><span>${t}</span></li>`).join('')}</ul>
     <div class="acts"><button class="btn primary" id="introGo">Let's go</button></div></div></div>`;
   $('#introGo').onclick=()=>{ m.innerHTML='' };
