@@ -106,6 +106,9 @@ h1,h2,h3{font-family:var(--f-display);text-wrap:balance;margin:0;line-height:1.1
 .choice.right{border-color:var(--good);background:var(--good-soft)}
 .choice.wrong{border-color:var(--bad);background:var(--bad-soft)}
 .why{margin-top:8px;font-size:15px}
+.stim{font-family:var(--f-mono);font-size:13.5px;line-height:1.55;background:var(--panel-2);border:1px solid var(--line);border-left:4px solid var(--u, var(--accent));border-radius:10px;padding:12px 14px;margin:0 0 12px;white-space:pre-wrap;word-break:break-word;overflow-x:auto}
+.skill{display:inline-block;font-size:12px;font-weight:700;letter-spacing:.04em;color:var(--muted);margin-bottom:6px}
+.choice .letter{font-family:var(--f-mono);font-size:14px;margin-right:4px}
 .pager{display:flex;justify-content:space-between;gap:12px;margin-top:26px;flex-wrap:wrap}
 .pill{display:inline-block;font-size:13px;font-weight:700;padding:2px 10px;border-radius:99px;background:var(--accent-soft);color:var(--ink)}
 
@@ -175,6 +178,7 @@ input[type=range]{width:100%;accent-color:var(--accent)}
 </div>
 <script src="content.js"></script>
 <script src="missions.js"></script>
+<script src="questions.js"></script>
 <script>
 (function(){
   const app = document.getElementById('app');
@@ -274,6 +278,10 @@ input[type=range]{width:100%;accent-color:var(--accent)}
     const i = ALL.findIndex(t => t.id === id), t = ALL[i], u = t.unit;
     const prev = ALL[i - 1], next = ALL[i + 1];
     const answers = {};
+    // Shuffle answer choices on each visit (except ordered lists like "Finding A-D"), labeled (A)-(D) like the AP exam.
+    const order = t.quiz.map(q => { const o = q.a.map((_, k) => k); if (!q.fixed) for (let k = o.length - 1; k > 0; k--) { const j = Math.floor(Math.random() * (k + 1)); [o[k], o[j]] = [o[j], o[k]]; } return o; });
+    const need = t.quiz.length >= 4 ? t.quiz.length - 1 : t.quiz.length;
+    const SK = window.AP_SKILLS || {};
     app.innerHTML = `
       <div class="crumbs"><a href="#/">Units</a> / Unit ${u.num}: ${esc(u.title)}</div>
       <div class="lesson u-scope" style="--u:var(--u${u.num})">
@@ -287,10 +295,12 @@ input[type=range]{width:100%;accent-color:var(--accent)}
             <ul class="terms">${t.terms.map(([k, v]) => `<li><b>${esc(k)}:</b> ${esc(v)}</li>`).join('')}</ul>
           </section>
           <section class="card quiz" id="quiz">
-            <div><h2 style="font-size:22px">Check for understanding</h2><p class="muted" style="margin:4px 0 0">Get every question right to complete this topic. You can retry.</p></div>
+            <div><h2 style="font-size:22px">Check for understanding</h2><p class="muted" style="margin:4px 0 0">AP-style practice. Get at least ${need} of ${t.quiz.length} right to complete this topic. You can retry.</p></div>
             ${t.quiz.map((q, qi) => `<div class="q" data-q="${qi}">
+              ${q.s && SK[q.s] ? `<span class="skill">Skill: ${esc(SK[q.s])}</span>` : ''}
+              ${q.st ? `<pre class="stim">${esc(q.st)}</pre>` : ''}
               <h3>${qi + 1}. ${esc(q.q)}</h3>
-              <div class="choices">${q.a.map((a, ai) => `<button class="choice" data-a="${ai}">${esc(a)}</button>`).join('')}</div>
+              <div class="choices">${order[qi].map((ai, pos) => `<button class="choice" data-a="${ai}"><b class="letter">(${'ABCD'[pos]})</b> ${esc(q.a[ai])}</button>`).join('')}</div>
               <div class="why" aria-live="polite"></div>
             </div>`).join('')}
             <div id="quizResult" aria-live="polite"></div>
@@ -320,10 +330,10 @@ input[type=range]{width:100%;accent-color:var(--accent)}
       }));
     });
     function finish(){
-      const score = Object.values(answers).filter(Boolean).length, all = score === t.quiz.length;
+      const score = Object.values(answers).filter(Boolean).length, all = score >= need;
       if (all) { progress[t.id] = { passed: true, at: Date.now() }; save(); }
       const r = document.getElementById('quizResult');
-      r.innerHTML = `<div class="result ${all ? 'ok' : 'no'}">${all ? `Topic ${t.id} complete. ` : `${score} of ${t.quiz.length} correct. `}<button class="btn small" id="retry">${all ? 'Take it again' : 'Try again'}</button></div>`;
+      r.innerHTML = `<div class="result ${all ? 'ok' : 'no'}">${all ? `${score} of ${t.quiz.length} correct. Topic ${t.id} complete. ` : `${score} of ${t.quiz.length} correct. You need ${need} to complete the topic. `}<button class="btn small" id="retry">${all ? 'Take it again' : 'Try again'}</button></div>`;
       r.querySelector('#retry').addEventListener('click', () => renderTopic(t.id));
     }
   }
