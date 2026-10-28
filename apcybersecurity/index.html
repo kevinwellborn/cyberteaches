@@ -142,6 +142,8 @@ input[type=range]{width:100%;accent-color:var(--accent)}
 .book .cover{background:var(--accent);color:var(--accent-ink);display:grid;place-items:center;text-align:center;padding:10px;font-family:var(--f-display);font-weight:800;font-size:15px;line-height:1.2}
 .book h2{font-size:26px}
 .book.big img,.book.big .cover{width:200px}
+.deeper{display:flex;gap:14px;align-items:flex-start}
+.deeper img{width:72px;height:auto;border-radius:6px;box-shadow:0 4px 12px rgba(0,0,0,.18);display:block}
 .video{position:relative;aspect-ratio:16/9;border-radius:14px;overflow:hidden;background:var(--term);margin:20px 0 0}
 .video iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
 .term-box{background:var(--term);color:var(--term-ink);border-radius:14px;font-family:var(--f-mono);font-size:14px;line-height:1.55;display:flex;flex-direction:column;min-width:0;height:520px;cursor:text}
@@ -315,7 +317,7 @@ input[type=range]{width:100%;accent-color:var(--accent)}
           <div class="card unitbox"><span class="label">Unit ${u.num}</span><h3 style="margin:6px 0 10px">${esc(u.title)}</h3>
             <div style="display:grid;gap:6px">${u.topics.map(x => `<a href="#/topic/${x.id}" style="text-decoration:none;color:var(--ink);${x.id === t.id ? 'font-weight:700' : ''}">${isDone(x.id) ? '✓' : '○'} ${x.id} ${esc(x.title)}</a>`).join('')}</div>
           </div>
-          ${hasBook ? `<div class="card" style="background:var(--accent-soft);border-color:transparent"><span class="label">Go deeper in the book</span><h3 style="margin:6px 0 4px">${esc(BOOK.title)}</h3><p class="muted" style="margin:0 0 10px">${BOOK.chapters && BOOK.chapters[t.id] ? `This topic is covered in ${esc(BOOK.chapters[t.id])}.` : 'More examples and practice for this topic.'}</p>${BOOK.buyUrl ? `<a href="${esc(BOOK.buyUrl)}" target="_blank" rel="noopener"><b>Get the book</b></a>` : '<a href="#/book"><b>About the book</b></a>'}</div>` : ''}
+          ${hasBook ? `<div class="card deeper" style="background:var(--accent-soft);border-color:transparent">${BOOK.cover ? `<a href="${esc(BOOK.buyUrl || '#/book')}"${BOOK.buyUrl ? ' target="_blank" rel="noopener"' : ''}><img src="${esc(BOOK.cover)}" alt="Cover of ${esc(BOOK.title)}"></a>` : ''}<div><span class="label">Go deeper in the book</span><h3 style="margin:6px 0 4px">${esc(BOOK.title)}</h3><p class="muted" style="margin:0 0 10px">${BOOK.chapters && BOOK.chapters[t.id] ? `This topic is covered in ${esc(BOOK.chapters[t.id])}.` : 'More examples and practice for this topic.'}</p>${BOOK.buyUrl ? `<a href="${esc(BOOK.buyUrl)}" target="_blank" rel="noopener"><b>Get the book</b></a>` : '<a href="#/book"><b>About the book</b></a>'}</div></div>` : ''}
           ${labsOf(t).map(k => `<a class="card lab-card" href="#/lab/${k}"><span class="label">${LABS[k].mission ? 'Terminal mission' : 'Hands-on lab'}</span><h3>${esc(LABS[k].title)}</h3><span class="muted">${esc(LABS[k].blurb)}</span></a>`).join('')}
         </aside>
       </div>`;
