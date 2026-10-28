@@ -1,6 +1,6 @@
 # CyberTeaches
 
-Free lessons from Mr. Bal, served at https://cyberteaches.com (GitHub Pages, custom domain in `CNAME`).
+Free lessons from Kevin Wellborn, served at https://cyberteaches.com (GitHub Pages, custom domain in `CNAME`).
 The home page (`index.html`) is a hub with a card per course, the AP Cybersecurity book, the YouTube channel,
 and small ad spots (edit `CT_ADS` in `index.html`).
 
