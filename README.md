@@ -7,6 +7,13 @@ Students guide a rover through lessons that each unlock one new block:
 - Lesson 2: Repeat until (5 puzzles)
 - Coming soon: If, If / else, Destroy walls
 
+## AP Cybersecurity (high school)
+
+`ap-cyber/` is a separate course for AP Cybersecurity students, live at https://kevinwellborn.github.io/cyberteaches/ap-cyber/.
+It covers all five units and 24 topics of the College Board course framework. Each topic has a short reading, key terms,
+and a check for understanding, and there are six hands-on labs (phishing spotter, real or fake URL, firewall rules,
+log detective, password strength, Caesar cipher). Lesson text and questions live in `ap-cyber/content.js`.
+
 ## Run it
 
 Open `index.html` in any modern browser. No build step or server is needed.
