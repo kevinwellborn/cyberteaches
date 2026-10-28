@@ -1,0 +1,617 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>AP Cybersecurity</title>
+<meta name="description" content="CyberTeaches AP Cybersecurity: lessons, checks for understanding, and hands-on labs for all five units.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Atkinson+Hyperlegible:wght@400;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+:root{
+  --bg:#EEF1EC; --panel:#FFFFFF; --panel-2:#F6F8F4; --ink:#1C292C; --muted:#5C6B6B; --line:#D5DCD4;
+  --accent:#0F7B78; --accent-ink:#FFFFFF; --accent-soft:#D6EEEA;
+  --good:#2E9363; --good-soft:#DDF1E6; --bad:#C8402F; --bad-soft:#F8E0DB; --term:#13201F; --term-ink:#B9F5DA;
+  --u1:#2F6FDE; --u2:#2E9363; --u3:#D97E16; --u4:#C2417A; --u5:#7A4FD0;
+  --f-display:"Bricolage Grotesque", "Trebuchet MS", system-ui, sans-serif;
+  --f-body:"Atkinson Hyperlegible", "Segoe UI", system-ui, sans-serif;
+  --f-mono:"JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#141B1C; --panel:#1C2526; --panel-2:#222D2E; --ink:#E6EEEC; --muted:#9AABA9; --line:#33403F;
+  --accent:#3FC1B8; --accent-ink:#0B1A1A; --accent-soft:#1D3A38;
+  --good:#4CC28A; --good-soft:#1B3328; --bad:#EF6B57; --bad-soft:#3A221E; --term:#0C1213; --term-ink:#9FEBC8; --u1:#5B8FF0; --u2:#45B57E; --u3:#E9A04A; --u4:#E06A9E; --u5:#A083EA; color-scheme:dark }
+}
+:root[data-theme="dark"]{
+  --bg:#141B1C; --panel:#1C2526; --panel-2:#222D2E; --ink:#E6EEEC; --muted:#9AABA9; --line:#33403F;
+  --accent:#3FC1B8; --accent-ink:#0B1A1A; --accent-soft:#1D3A38;
+  --good:#4CC28A; --good-soft:#1B3328; --bad:#EF6B57; --bad-soft:#3A221E; --term:#0C1213; --term-ink:#9FEBC8; --u1:#5B8FF0; --u2:#45B57E; --u3:#E9A04A; --u4:#E06A9E; --u5:#A083EA; color-scheme:dark
+}
+*{box-sizing:border-box}
+html,body{background:var(--bg)}
+body{margin:0;color:var(--ink);font-family:var(--f-body);font-size:17px;line-height:1.55;
+  padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px));padding-bottom:48px}
+button,input,select{font:inherit;color:inherit}
+button{cursor:pointer}
+a{color:var(--accent)}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+h1,h2,h3{font-family:var(--f-display);text-wrap:balance;margin:0;line-height:1.15}
+.wrap{max-width:1080px;margin:0 auto}
+.topbar{display:flex;align-items:center;gap:14px;padding-block:16px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:10px;font-family:var(--f-display);font-weight:800;font-size:20px;text-decoration:none;color:var(--ink)}
+.brand svg{width:32px;height:32px}
+.spacer{flex:1}
+.nav a{font-weight:700;text-decoration:none;padding:6px 10px;border-radius:8px;color:var(--ink)}
+.nav a:hover,.nav a.on{background:var(--accent-soft)}
+.btn{border:2px solid var(--line);background:var(--panel);border-radius:10px;padding:8px 14px;font-weight:700;display:inline-flex;align-items:center;gap:8px;text-decoration:none;color:var(--ink)}
+.btn:hover{border-color:var(--accent)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn.small{padding:4px 10px;font-size:14px}
+.label{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:700}
+.muted{color:var(--muted)}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:22px}
+
+.hero{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:28px;align-items:center;padding-block:20px 32px}
+.hero h1{font-size:clamp(32px,5vw,54px);font-weight:800;letter-spacing:-.02em}
+.hero h1 em{font-style:normal;color:var(--accent)}
+.hero p{font-size:18px;color:var(--muted);max-width:54ch;margin:14px 0 20px}
+.terminal{background:var(--term);color:var(--term-ink);border-radius:14px;padding:18px 20px;font-family:var(--f-mono);font-size:14px;line-height:1.7;overflow:hidden;min-width:0}
+.terminal .dim{opacity:.6}
+.meter{display:flex;flex-direction:column;gap:6px;max-width:360px}
+.meter-bar{height:10px;border-radius:99px;background:var(--line);overflow:hidden}
+.meter-bar i{display:block;height:100%;background:var(--accent);border-radius:99px;transition:width .4s}
+
+.units{display:grid;gap:18px}
+.unit{display:grid;grid-template-columns:auto minmax(0,1fr);gap:18px}
+.unit-num{font-family:var(--f-display);font-weight:800;width:54px;height:54px;border-radius:14px;display:grid;place-items:center;color:#fff;font-size:20px}
+.unit h2{font-size:24px}
+.unit .blurb{color:var(--muted);margin:4px 0 14px;max-width:72ch}
+.topics{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px}
+.topic-link{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:var(--panel-2);text-decoration:none;color:var(--ink);font-size:15px;line-height:1.35}
+.topic-link:hover{border-color:var(--accent)}
+.topic-link b{font-family:var(--f-mono);font-size:13px;color:var(--muted);flex:none;padding-top:1px}
+.topic-link .chk{margin-left:auto;flex:none;width:20px;height:20px;border-radius:50%;border:2px solid var(--line);display:grid;place-items:center;font-size:12px}
+.topic-link.done .chk{background:var(--u, var(--good));border-color:var(--u, var(--good));color:#fff}
+/* Unit color coding: each unit section sets --u and its cards, lessons and quiz pick it up */
+.unit{border-top:6px solid var(--u)}
+.unit .pill{background:color-mix(in srgb, var(--u) 16%, transparent)}
+.unit .topic-link{background:color-mix(in srgb, var(--u) 7%, var(--panel))}
+.unit .topic-link:hover{border-color:var(--u)}
+.unit .topic-link b{color:var(--u)}
+.u-scope .label.u{color:var(--u)}
+.u-scope h1{border-bottom:4px solid var(--u);padding-bottom:10px;display:inline-block}
+.u-scope .quiz,.u-scope .side .card.unitbox{border-top:6px solid var(--u)}
+.u-scope .choice:hover:not(:disabled){border-color:var(--u)}
+.u-band{display:inline-flex;align-items:center;gap:8px;font-weight:700;font-size:14px;padding:3px 12px 3px 4px;border-radius:99px;background:color-mix(in srgb, var(--u) 16%, transparent)}
+.u-band i{font-style:normal;width:22px;height:22px;border-radius:50%;background:var(--u);color:#fff;display:grid;place-items:center;font-size:12px}
+.section-head{display:flex;align-items:end;justify-content:space-between;gap:12px;margin:34px 0 14px;flex-wrap:wrap}
+.section-head h2{font-size:28px}
+.labs{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px}
+.lab-card{text-decoration:none;color:var(--ink);display:flex;flex-direction:column;gap:6px}
+.lab-card:hover{border-color:var(--accent)}
+.lab-card h3{font-size:19px}
+
+.crumbs{font-size:14px;color:var(--muted);margin:6px 0 14px}
+.crumbs a{text-decoration:none}
+.lesson{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:22px;align-items:start}
+.lesson h1{font-size:clamp(28px,4vw,40px);margin-bottom:14px}
+.lesson .summary{font-size:19px;max-width:68ch}
+.terms{display:grid;gap:10px;margin:0;padding:0;list-style:none}
+.terms li{border-left:4px solid var(--u, var(--accent));padding:4px 0 4px 12px}
+.terms dt,.terms b{font-weight:700}
+.side{display:grid;gap:14px;position:sticky;top:12px}
+.quiz{margin-top:22px;display:grid;gap:18px}
+.q h3{font-family:var(--f-body);font-size:18px;font-weight:700;margin-bottom:10px;line-height:1.4}
+.choices{display:grid;gap:8px}
+.choice{text-align:left;border:2px solid var(--line);background:var(--panel-2);border-radius:10px;padding:10px 14px}
+.choice:hover:not(:disabled){border-color:var(--accent)}
+.choice:disabled{cursor:default}
+.choice.right{border-color:var(--good);background:var(--good-soft)}
+.choice.wrong{border-color:var(--bad);background:var(--bad-soft)}
+.why{margin-top:8px;font-size:15px}
+.stim{font-family:var(--f-mono);font-size:13.5px;line-height:1.55;background:var(--panel-2);border:1px solid var(--line);border-left:4px solid var(--u, var(--accent));border-radius:10px;padding:12px 14px;margin:0 0 12px;white-space:pre-wrap;word-break:break-word;overflow-x:auto}
+.skill{display:inline-block;font-size:12px;font-weight:700;letter-spacing:.04em;color:var(--muted);margin-bottom:6px}
+.choice .letter{font-family:var(--f-mono);font-size:14px;margin-right:4px}
+.pager{display:flex;justify-content:space-between;gap:12px;margin-top:26px;flex-wrap:wrap}
+.pill{display:inline-block;font-size:13px;font-weight:700;padding:2px 10px;border-radius:99px;background:var(--accent-soft);color:var(--ink)}
+
+/* labs */
+.lab h1{font-size:clamp(28px,4vw,40px)}
+.lab .intro{color:var(--muted);max-width:68ch;margin:8px 0 18px}
+.msg{border:1px solid var(--line);border-radius:12px;background:var(--panel-2);padding:14px 16px;font-size:15px}
+.msg .from{font-family:var(--f-mono);font-size:13px;color:var(--muted)}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.result{margin-top:10px;padding:10px 14px;border-radius:10px;font-size:15px}
+.result.ok{background:var(--good-soft)}
+.result.no{background:var(--bad-soft)}
+.mono{font-family:var(--f-mono)}
+.url{font-family:var(--f-mono);font-size:16px;word-break:break-all;padding:10px 14px;border-radius:10px;background:var(--term);color:var(--term-ink)}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th,td{text-align:left;padding:6px 10px;border-bottom:1px solid var(--line)}
+th{font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+.scroll{overflow-x:auto}
+.rule{display:grid;grid-template-columns:28px minmax(0,1fr) auto;gap:10px;align-items:center;padding:8px 10px;border:1px solid var(--line);border-radius:10px;background:var(--panel-2);font-family:var(--f-mono);font-size:14px}
+.tag{font-weight:700;padding:1px 8px;border-radius:6px;font-family:var(--f-body);font-size:13px}
+.tag.allow{background:var(--good-soft);color:var(--good)}
+.tag.deny{background:var(--bad-soft);color:var(--bad)}
+input[type=text],input[type=password]{width:100%;padding:10px 12px;border:2px solid var(--line);border-radius:10px;background:var(--panel)}
+input[type=range]{width:100%;accent-color:var(--accent)}
+.strength{height:12px;border-radius:99px;background:var(--line);overflow:hidden}
+.strength i{display:block;height:100%;transition:width .3s,background .3s}
+.brute{font-family:var(--f-mono);font-size:14px;display:grid;gap:2px;max-height:320px;overflow:auto;background:var(--term);color:var(--term-ink);padding:12px;border-radius:12px}
+.book{display:grid;grid-template-columns:auto minmax(0,1fr);gap:22px;align-items:center;margin-top:28px;background:var(--accent-soft);border-color:transparent}
+.book img,.book .cover{width:120px;aspect-ratio:2/3;border-radius:8px;object-fit:cover;box-shadow:0 6px 18px rgba(0,0,0,.18)}
+.book .cover{background:var(--accent);color:var(--accent-ink);display:grid;place-items:center;text-align:center;padding:10px;font-family:var(--f-display);font-weight:800;font-size:15px;line-height:1.2}
+.book h2{font-size:26px}
+.book.big img,.book.big .cover{width:200px}
+.video{position:relative;aspect-ratio:16/9;border-radius:14px;overflow:hidden;background:var(--term);margin:20px 0 0}
+.video iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.term-box{background:var(--term);color:var(--term-ink);border-radius:14px;font-family:var(--f-mono);font-size:14px;line-height:1.55;display:flex;flex-direction:column;min-width:0;height:520px;cursor:text}
+.term-out{flex:1;overflow:auto;padding:16px 16px 4px;white-space:pre-wrap;word-break:break-word}
+.term-out .cmd{opacity:.65;margin-top:8px}
+.term-out .win{color:#FFE08A}
+.term-in{display:flex;gap:8px;align-items:center;padding:10px 16px 14px;border-top:1px solid rgba(255,255,255,.08)}
+.term-in label{flex:none;opacity:.8}
+.term-in input{flex:1;min-width:0;background:transparent;border:0;color:inherit;font-size:14px;outline:none;padding:4px 0}
+.term-box:focus-within{box-shadow:0 0 0 3px var(--accent)}
+.steps{margin:0;padding:0;list-style:none;display:grid;gap:6px;font-size:15px}
+.steps li.ok{color:var(--good);font-weight:700}
+@media (max-width:820px){ .term-box{height:440px} .term-in label{display:none} }
+.foot{margin-top:40px;color:var(--muted);font-size:14px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+@media (max-width:820px){ .hero,.lesson{grid-template-columns:1fr} .side{position:static} .unit{grid-template-columns:1fr} }
+</style>
+</head><body>
+<div class="wrap">
+  <header class="topbar">
+    <a class="brand" href="#/">
+      <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 2 4 7v8c0 7.2 5 13.2 12 15 7-1.8 12-7.8 12-15V7z" fill="var(--accent)"/><path d="M11 16.5l3.5 3.5L21.5 13" fill="none" stroke="var(--accent-ink)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      AP Cybersecurity
+    </a>
+    <span class="spacer"></span>
+    <nav class="nav" aria-label="Main">
+      <a href="#/" data-nav="home">Units</a>
+      <a href="#/labs" data-nav="labs">Labs</a>
+      <a href="#/book" data-nav="book" id="bookNav" hidden>The Book</a>
+      <a href="#" id="videoNav" target="_blank" rel="noopener" hidden>Videos</a>
+      <a href="../">All courses</a>
+    </nav>
+  </header>
+  <main id="app"></main>
+  <div class="foot"><span>Progress is saved in this browser.</span><span>Units and topics follow the College Board AP Cybersecurity course framework.</span></div>
+</div>
+<script src="content.js"></script>
+<script src="missions.js"></script>
+<script src="questions.js"></script>
+<script>
+(function(){
+  const app = document.getElementById('app');
+  const UNITS = window.AP_UNITS, LABS = window.AP_LABS, BOOK = window.AP_BOOK || {};
+  const hasBook = !!BOOK.title;
+  if (hasBook) document.getElementById('bookNav').hidden = false;
+  const VIDEOS = window.AP_VIDEOS || {};
+  if (VIDEOS.channelUrl) { const v = document.getElementById('videoNav'); v.href = VIDEOS.channelUrl; v.hidden = false; }
+  // Accepts a bare id or any common YouTube link form (watch?v=, youtu.be/, embed/, shorts/).
+  const ytId = s => { const m = String(s || '').match(/(?:v=|youtu\.be\/|embed\/|shorts\/)([\w-]{11})/); return m ? m[1] : /^[\w-]{11}$/.test(s) ? s : ''; };
+  const ALL = UNITS.flatMap(u => u.topics.map(t => Object.assign({ unit: u }, t)));
+  const labsOf = t => t.labs || (t.lab ? [t.lab] : []);
+  const MISSIONS = window.AP_MISSIONS || [];
+  const KEY = 'ctap-progress-v1';
+  let progress = {};
+  try { progress = JSON.parse(localStorage.getItem(KEY)) || {}; } catch (e) {}
+  const save = () => { try { localStorage.setItem(KEY, JSON.stringify(progress)); } catch (e) {} };
+  const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
+  const isDone = id => progress[id] && progress[id].passed;
+  const doneCount = () => ALL.filter(t => isDone(t.id)).length;
+
+  function route(){
+    const parts = (location.hash.replace(/^#\/?/, '') || '').split('/');
+    document.querySelectorAll('[data-nav]').forEach(a => a.classList.toggle('on', a.dataset.nav === (parts[0] === 'labs' || parts[0] === 'lab' ? 'labs' : parts[0] === 'book' ? 'book' : parts[0] ? '' : 'home')));
+    if (parts[0] === 'book' && hasBook) renderBook(); else
+    if (parts[0] === 'topic' && ALL.find(t => t.id === parts[1])) renderTopic(parts[1]);
+    else if (parts[0] === 'labs') renderLabs();
+    else if (parts[0] === 'lab' && LABS[parts[1]]) renderLab(parts[1]);
+    else renderHome();
+    window.scrollTo(0, 0);
+  }
+  window.addEventListener('hashchange', route);
+
+  function topicLinks(u){
+    return u.topics.map(t => `<a class="topic-link${isDone(t.id) ? ' done' : ''}" href="#/topic/${t.id}"><b>${t.id}</b><span>${esc(t.title)}</span><span class="chk" aria-label="${isDone(t.id) ? 'Completed' : 'Not completed'}">${isDone(t.id) ? '✓' : ''}</span></a>`).join('');
+  }
+
+  function cover(){
+    return BOOK.cover ? `<img src="${esc(BOOK.cover)}" alt="Cover of ${esc(BOOK.title)}">` : `<div class="cover" aria-hidden="true">${esc(BOOK.title)}</div>`;
+  }
+  function buyBtn(){
+    return BOOK.buyUrl ? `<a class="btn primary" href="${esc(BOOK.buyUrl)}" target="_blank" rel="noopener">Get the book</a>` : '';
+  }
+  function bookCard(big){
+    if (!hasBook) return '';
+    return `<section class="card book${big ? ' big' : ''}">${cover()}<div>
+      <span class="label">The companion book</span>
+      <h2 style="margin:6px 0 4px">${esc(BOOK.title)}</h2>
+      ${BOOK.author ? `<div class="muted" style="margin-bottom:8px">by ${esc(BOOK.author)}</div>` : ''}
+      ${BOOK.tagline ? `<p style="margin:0 0 14px;max-width:62ch">${esc(BOOK.tagline)}</p>` : ''}
+      <div class="row">${buyBtn()}${big ? '' : '<a class="btn" href="#/book">About the book</a>'}</div>
+    </div></section>`;
+  }
+  function renderBook(){
+    const ch = UNITS.flatMap(u => u.topics.filter(t => BOOK.chapters && BOOK.chapters[t.id]).map(t => `<li><a href="#/topic/${t.id}">${t.id} ${esc(t.title)}</a>: ${esc(BOOK.chapters[t.id])}</li>`));
+    app.innerHTML = bookCard(true) + (BOOK.description ? `<section class="card" style="margin-top:18px"><h2 style="font-size:22px;margin-bottom:8px">About the book</h2><p style="margin:0;max-width:70ch;white-space:pre-line">${esc(BOOK.description)}</p></section>` : '')
+      + (ch.length ? `<section class="card" style="margin-top:18px"><h2 style="font-size:22px;margin-bottom:8px">Where each topic is in the book</h2><ul style="margin:0">${ch.join('')}</ul></section>` : '');
+  }
+
+  function renderHome(){
+    const d = doneCount(), next = ALL.find(t => !isDone(t.id)) || ALL[0];
+    app.innerHTML = `
+      <section class="hero">
+        <div>
+          <span class="label">CyberTeaches · AP Cybersecurity</span>
+          <h1 style="margin-top:8px">Learn to <em>think like a defender.</em></h1>
+          <p>Five units, ${ALL.length} topics, and hands-on labs. Read each topic, then pass its quick check to mark it complete.</p>
+          <div class="row" style="margin-bottom:18px">
+            <a class="btn primary" href="#/topic/${next.id}">${d ? 'Continue' : 'Start'} with ${next.id} ${esc(next.title)}</a>
+            <a class="btn" href="#/labs">Try a lab</a>
+          </div>
+          <div class="meter"><span class="label">${d} of ${ALL.length} topics complete</span><div class="meter-bar"><i style="width:${Math.round(d / ALL.length * 100)}%"></i></div></div>
+        </div>
+        <div class="terminal" aria-hidden="true">
+          <div><span class="dim">$</span> whoami</div><div>future-security-analyst</div>
+          <div><span class="dim">$</span> cat goals.txt</div>
+          <div>confidentiality ✓</div><div>integrity ✓</div><div>availability ✓</div>
+          <div><span class="dim">$</span> ./start_course --units 5</div><div class="dim">loading unit 1: introduction to security…</div>
+        </div>
+      </section>
+      <div class="units">
+        ${UNITS.map(u => {
+          const ud = u.topics.filter(t => isDone(t.id)).length;
+          return `<section class="card unit" style="--u:var(--u${u.num})">
+            <div class="unit-num" style="background:var(--u)">${u.num}</div>
+            <div>
+              <div class="row" style="justify-content:space-between"><h2>${esc(u.title)}</h2><span class="pill">${ud}/${u.topics.length} done · ~${u.periods} class periods</span></div>
+              <p class="blurb">${esc(u.blurb)}</p>
+              <div class="topics">${topicLinks(u)}</div>
+            </div>
+          </section>`; }).join('')}
+      </div>
+      ${bookCard(false)}`;
+  }
+
+  function renderTopic(id){
+    const i = ALL.findIndex(t => t.id === id), t = ALL[i], u = t.unit;
+    const prev = ALL[i - 1], next = ALL[i + 1];
+    const answers = {};
+    // Shuffle answer choices on each visit (except ordered lists like "Finding A-D"), labeled (A)-(D) like the AP exam.
+    const order = t.quiz.map(q => { const o = q.a.map((_, k) => k); if (!q.fixed) for (let k = o.length - 1; k > 0; k--) { const j = Math.floor(Math.random() * (k + 1)); [o[k], o[j]] = [o[j], o[k]]; } return o; });
+    const need = t.quiz.length >= 4 ? t.quiz.length - 1 : t.quiz.length;
+    const SK = window.AP_SKILLS || {};
+    app.innerHTML = `
+      <div class="crumbs"><a href="#/">Units</a> / Unit ${u.num}: ${esc(u.title)}</div>
+      <div class="lesson u-scope" style="--u:var(--u${u.num})">
+        <article>
+          <span class="u-band"><i>${u.num}</i>Unit ${u.num}: ${esc(u.title)}</span><br><span class="label u" style="display:inline-block;margin-top:12px">Topic ${t.id}</span><br>
+          <h1>${esc(t.title)}</h1>
+          <p class="summary">${esc(t.summary)}</p>
+          ${ytId(VIDEOS.topics && VIDEOS.topics[t.id]) ? `<div class="video"><iframe src="https://www.youtube-nocookie.com/embed/${ytId(VIDEOS.topics[t.id])}" title="CyberTeaches video: ${esc(t.title)}" allow="encrypted-media; picture-in-picture; fullscreen" allowfullscreen loading="lazy"></iframe></div><p style="margin:8px 0 0;font-size:15px"><a href="https://www.youtube.com/watch?v=${ytId(VIDEOS.topics[t.id])}" target="_blank" rel="noopener">Watch on YouTube</a>${VIDEOS.channelUrl ? ` · <a href="${esc(VIDEOS.channelUrl)}" target="_blank" rel="noopener">More CyberTeaches videos</a>` : ''}</p>` : ''}
+          <section class="card" style="margin-top:20px">
+            <h2 style="font-size:22px;margin-bottom:12px">Key terms</h2>
+            <ul class="terms">${t.terms.map(([k, v]) => `<li><b>${esc(k)}:</b> ${esc(v)}</li>`).join('')}</ul>
+          </section>
+          <section class="card quiz" id="quiz">
+            <div><h2 style="font-size:22px">Check for understanding</h2><p class="muted" style="margin:4px 0 0">AP-style practice. Get at least ${need} of ${t.quiz.length} right to complete this topic. You can retry.</p></div>
+            ${t.quiz.map((q, qi) => `<div class="q" data-q="${qi}">
+              ${q.s && SK[q.s] ? `<span class="skill">Skill: ${esc(SK[q.s])}</span>` : ''}
+              ${q.st ? `<pre class="stim">${esc(q.st)}</pre>` : ''}
+              <h3>${qi + 1}. ${esc(q.q)}</h3>
+              <div class="choices">${order[qi].map((ai, pos) => `<button class="choice" data-a="${ai}"><b class="letter">(${'ABCD'[pos]})</b> ${esc(q.a[ai])}</button>`).join('')}</div>
+              <div class="why" aria-live="polite"></div>
+            </div>`).join('')}
+            <div id="quizResult" aria-live="polite"></div>
+          </section>
+          <nav class="pager">
+            ${prev ? `<a class="btn" href="#/topic/${prev.id}">← ${prev.id} ${esc(prev.title)}</a>` : '<span></span>'}
+            ${next ? `<a class="btn" href="#/topic/${next.id}">${next.id} ${esc(next.title)} →</a>` : '<a class="btn" href="#/">Back to units</a>'}
+          </nav>
+        </article>
+        <aside class="side">
+          <div class="card unitbox"><span class="label">Unit ${u.num}</span><h3 style="margin:6px 0 10px">${esc(u.title)}</h3>
+            <div style="display:grid;gap:6px">${u.topics.map(x => `<a href="#/topic/${x.id}" style="text-decoration:none;color:var(--ink);${x.id === t.id ? 'font-weight:700' : ''}">${isDone(x.id) ? '✓' : '○'} ${x.id} ${esc(x.title)}</a>`).join('')}</div>
+          </div>
+          ${hasBook ? `<div class="card" style="background:var(--accent-soft);border-color:transparent"><span class="label">Go deeper in the book</span><h3 style="margin:6px 0 4px">${esc(BOOK.title)}</h3><p class="muted" style="margin:0 0 10px">${BOOK.chapters && BOOK.chapters[t.id] ? `This topic is covered in ${esc(BOOK.chapters[t.id])}.` : 'More examples and practice for this topic.'}</p>${BOOK.buyUrl ? `<a href="${esc(BOOK.buyUrl)}" target="_blank" rel="noopener"><b>Get the book</b></a>` : '<a href="#/book"><b>About the book</b></a>'}</div>` : ''}
+          ${labsOf(t).map(k => `<a class="card lab-card" href="#/lab/${k}"><span class="label">${LABS[k].mission ? 'Terminal mission' : 'Hands-on lab'}</span><h3>${esc(LABS[k].title)}</h3><span class="muted">${esc(LABS[k].blurb)}</span></a>`).join('')}
+        </aside>
+      </div>`;
+    app.querySelectorAll('.q').forEach(qe => {
+      const qi = +qe.dataset.q, q = t.quiz[qi];
+      qe.querySelectorAll('.choice').forEach(b => b.addEventListener('click', () => {
+        const ai = +b.dataset.a, right = ai === q.c;
+        answers[qi] = right;
+        qe.querySelectorAll('.choice').forEach(x => { x.disabled = true; x.classList.toggle('right', +x.dataset.a === q.c); });
+        if (!right) b.classList.add('wrong');
+        qe.querySelector('.why').innerHTML = `<b style="color:var(${right ? '--good' : '--bad'})">${right ? 'Correct.' : 'Not quite.'}</b> ${esc(q.why)}`;
+        if (Object.keys(answers).length === t.quiz.length) finish();
+      }));
+    });
+    function finish(){
+      const score = Object.values(answers).filter(Boolean).length, all = score >= need;
+      if (all) { progress[t.id] = { passed: true, at: Date.now() }; save(); }
+      const r = document.getElementById('quizResult');
+      r.innerHTML = `<div class="result ${all ? 'ok' : 'no'}">${all ? `${score} of ${t.quiz.length} correct. Topic ${t.id} complete. ` : `${score} of ${t.quiz.length} correct. You need ${need} to complete the topic. `}<button class="btn small" id="retry">${all ? 'Take it again' : 'Try again'}</button></div>`;
+      r.querySelector('#retry').addEventListener('click', () => renderTopic(t.id));
+    }
+  }
+
+  function renderLabs(){
+    app.innerHTML = `<div class="section-head"><div><span class="label">Practice</span><h2>Hands-on labs</h2></div></div>
+      <p class="muted" style="max-width:68ch;margin-top:-6px">Short interactive activities that go with the lessons. Everything runs in your browser and nothing you type is sent anywhere.</p>
+      <h3 style="font-size:22px;margin:22px 0 4px">Terminal missions</h3>
+      <p class="muted" style="max-width:68ch;margin:0 0 12px">One investigation per unit on a pretend command line. Type real commands, follow the clues, and capture the flag.</p>
+      <div class="labs">${MISSIONS.map(m => `<a class="card lab-card" href="#/lab/${m.key}" style="border-top:6px solid var(--u${m.unit})"><span class="label">Unit ${m.unit} · Topic ${m.topic}</span><h3>${esc(m.title)}</h3><span class="muted">${esc(m.blurb)}</span></a>`).join('')}</div>
+      <h3 style="font-size:22px;margin:28px 0 12px">Quick labs</h3>
+      <div class="labs">${Object.entries(LABS).filter(([, l]) => !l.mission).map(([k, l]) => {
+        const used = ALL.filter(t => labsOf(t).includes(k)).map(t => t.id).join(', ');
+        return `<a class="card lab-card" href="#/lab/${k}"><span class="label">Topic ${used}</span><h3>${esc(l.title)}</h3><span class="muted">${esc(l.blurb)}</span></a>`; }).join('')}</div>`;
+  }
+
+  function labShell(k, intro){
+    const l = LABS[k];
+    app.innerHTML = `<div class="crumbs"><a href="#/labs">Labs</a> / ${esc(l.title)}</div>
+      <section class="lab"><h1>${esc(l.title)}</h1><p class="intro">${intro}</p><div id="lab"></div></section>`;
+    return document.getElementById('lab');
+  }
+
+  // A one-at-a-time "pick an answer" drill used by the phishing and URL labs.
+  function drill(el, items, render, options){
+    let i = 0, score = 0;
+    function show(){
+      if (i >= items.length) {
+        el.innerHTML = `<div class="card"><h2 style="font-size:24px">You scored ${score} of ${items.length}.</h2><p class="muted">${score === items.length ? 'Sharp eyes. Attackers would have a hard time with you.' : 'Review the ones you missed, then try again.'}</p><button class="btn primary" id="again">Play again</button></div>`;
+        el.querySelector('#again').addEventListener('click', () => { i = 0; score = 0; show(); });
+        return;
+      }
+      const it = items[i];
+      el.innerHTML = `<div class="card" style="display:grid;gap:14px"><span class="label">${i + 1} of ${items.length}</span>${render(it)}
+        <div class="row">${options.map((o, oi) => `<button class="btn" data-o="${oi}">${o}</button>`).join('')}</div><div id="fb" aria-live="polite"></div></div>`;
+      el.querySelectorAll('[data-o]').forEach(b => b.addEventListener('click', () => {
+        const right = +b.dataset.o === it.ans; if (right) score++;
+        el.querySelectorAll('[data-o]').forEach(x => x.disabled = true);
+        el.querySelector('#fb').innerHTML = `<div class="result ${right ? 'ok' : 'no'}"><b>${right ? 'Correct.' : 'Not quite.'}</b> ${esc(it.why)}</div><button class="btn primary" style="margin-top:10px" id="nx">Next</button>`;
+        el.querySelector('#nx').addEventListener('click', () => { i++; show(); });
+      }));
+    }
+    show();
+  }
+
+  const labs = {
+    phish(){
+      const el = labShell('phish', 'Read each message and decide if it is phishing or safe. Look at the sender, the request, and the pressure it puts on you.');
+      drill(el, [
+        { from: 'IT Help Desk <helpdesk@schoo1-district.org>', subj: 'Password expires today', body: 'Your password expires in 2 hours. Click here to keep your account active.', ans: 0, why: 'The domain uses a "1" instead of an "l", and the message creates urgency to get you to click.' },
+        { from: 'Ms. Rivera <rivera@yourschool.org>', subj: 'Lab 3 rubric', body: 'Hi class, the rubric for Lab 3 is posted in Google Classroom under Classwork.', ans: 1, why: 'Expected sender, no link to log in through, and it points you to a place you already use.' },
+        { from: 'Amazon <order-update@amaz0n-support.com>', subj: 'Order #88213 on hold', body: 'We could not charge your card. Confirm payment details within 24 hours or your order is cancelled.', ans: 0, why: 'Look-alike domain (amaz0n), a deadline, and a request for payment details.' },
+        { from: 'Principal Johnson <principal.johnson.school@gmail.com>', subj: 'Quick favor', body: 'Are you at school? I need you to buy 5 gift cards for a staff surprise. Keep this between us.', ans: 0, why: 'Personal Gmail, unusual request, secrecy, and gift cards are classic pretexting signs.' },
+        { from: 'Google <no-reply@accounts.google.com>', subj: 'New sign-in on Chromebook', body: 'We noticed a new sign-in to your account. If this was you, you do not need to do anything.', ans: 1, why: 'Real Google domain and it asks you to do nothing. Still, check alerts by going to your account directly, not through the email.' },
+        { from: 'Scholarship Office <awards@college-grants-now.info>', subj: 'You won $2,500!', body: 'You were selected for a scholarship you did not apply for. Send your SSN and a $25 processing fee to claim it.', ans: 0, why: 'Too good to be true, asks for a Social Security number and money. Real scholarships never charge to claim.' }
+      ], m => `<div class="msg"><div class="from">From: ${esc(m.from)}</div><div><b>${esc(m.subj)}</b></div><div style="margin-top:6px">${esc(m.body)}</div></div>`, ['Phishing', 'Safe']);
+    },
+    url(){
+      const el = labShell('url', 'Each link claims to go to a real company. Find the true domain: read the hostname from right to left, stopping at the first single slash.');
+      drill(el, [
+        { u: 'https://accounts.google.com/signin', ans: 0, why: 'The domain is google.com. "accounts" is just a subdomain Google owns.' },
+        { u: 'https://google.com.secure-login.net/signin', ans: 1, why: 'The real domain is secure-login.net. "google.com" is only a subdomain the attacker made.' },
+        { u: 'https://www.rnicrosoft.com/account', ans: 1, why: 'r + n looks like m. This is rnicrosoft.com, not microsoft.com.' },
+        { u: 'https://classroom.google.com/c/MTIz', ans: 0, why: 'Domain is google.com. This is Google Classroom.' },
+        { u: 'https://paypal.com@203.0.113.45/login', ans: 1, why: 'Everything before "@" is ignored. The browser actually goes to the IP address 203.0.113.45.' },
+        { u: 'https://www.instagram.com.help-center.co/verify', ans: 1, why: 'The domain is help-center.co. The "instagram.com" part is a decoy.' },
+        { u: 'https://login.microsoftonline.com/', ans: 0, why: 'microsoftonline.com is Microsoft\'s real sign-in domain. When unsure, go to the site directly instead of following a link.' }
+      ], it => `<div class="url">${esc(it.u)}</div>`, ['Real', 'Fake']);
+    },
+    firewall(){
+      const el = labShell('firewall', 'Rules are checked from top to bottom and the first match wins. Reorder the rules and switch their actions so every packet gets the expected result.');
+      let rules = [
+        { d: 'Any traffic', m: () => true, act: 'deny' },
+        { d: 'Port 443 (HTTPS) from any', m: p => p.port === 443, act: 'allow' },
+        { d: 'Port 22 (SSH) from 10.0.0.5', m: p => p.port === 22 && p.src === '10.0.0.5', act: 'deny' },
+        { d: 'Port 80 (HTTP) from any', m: p => p.port === 80, act: 'allow' }
+      ];
+      const packets = [
+        { src: '198.51.100.7', port: 443, want: 'allow', note: 'Visitor loading the school site' },
+        { src: '198.51.100.7', port: 80, want: 'allow', note: 'Visitor on plain HTTP (redirected to HTTPS)' },
+        { src: '10.0.0.5', port: 22, want: 'allow', note: 'Admin workstation connecting with SSH' },
+        { src: '203.0.113.9', port: 22, want: 'deny', note: 'Stranger trying SSH' },
+        { src: '203.0.113.9', port: 3389, want: 'deny', note: 'Stranger trying remote desktop' }
+      ];
+      function draw(){
+        const results = packets.map(p => { const r = rules.find(r => r.m(p)); return r ? r.act : 'deny'; });
+        const good = results.filter((r, i) => r === packets[i].want).length;
+        el.innerHTML = `<div class="lesson" style="grid-template-columns:minmax(0,1fr) minmax(0,1fr)">
+          <div class="card" style="display:grid;gap:8px"><h2 style="font-size:20px">Rules</h2>
+            ${rules.map((r, i) => `<div class="rule"><span>${i + 1}</span><span>${esc(r.d)} → <button class="tag ${r.act}" data-t="${i}" style="border:0">${r.act.toUpperCase()}</button></span>
+              <span class="row" style="gap:4px"><button class="btn small" data-up="${i}" aria-label="Move rule ${i + 1} up" ${i ? '' : 'disabled'}>↑</button><button class="btn small" data-dn="${i}" aria-label="Move rule ${i + 1} down" ${i < rules.length - 1 ? '' : 'disabled'}>↓</button></span></div>`).join('')}
+            <p class="muted" style="font-size:14px;margin:4px 0 0">Click ALLOW or DENY to switch it.</p>
+          </div>
+          <div class="card"><h2 style="font-size:20px;margin-bottom:8px">Test packets</h2><div class="scroll"><table>
+            <tr><th>Source</th><th>Port</th><th>Should</th><th>Result</th></tr>
+            ${packets.map((p, i) => `<tr title="${esc(p.note)}"><td class="mono">${p.src}</td><td class="mono">${p.port}</td><td>${p.want}</td><td><span class="tag ${results[i]}">${results[i] === p.want ? '✓' : '✗'} ${results[i]}</span></td></tr>`).join('')}
+          </table></div>
+          <div class="result ${good === packets.length ? 'ok' : 'no'}">${good === packets.length ? 'All packets handled correctly. Notice that "deny any" must be last: that is implicit deny.' : `${good} of ${packets.length} packets handled correctly.`}</div></div></div>`;
+        el.querySelectorAll('[data-t]').forEach(b => b.addEventListener('click', () => { const r = rules[+b.dataset.t]; r.act = r.act === 'allow' ? 'deny' : 'allow'; draw(); }));
+        el.querySelectorAll('[data-up]').forEach(b => b.addEventListener('click', () => { const i = +b.dataset.up; [rules[i - 1], rules[i]] = [rules[i], rules[i - 1]]; draw(); }));
+        el.querySelectorAll('[data-dn]').forEach(b => b.addEventListener('click', () => { const i = +b.dataset.dn; [rules[i + 1], rules[i]] = [rules[i], rules[i + 1]]; draw(); }));
+      }
+      draw();
+    },
+    logs(){
+      const el = labShell('logs', 'You are the analyst on duty. Read this login log from the school portal and answer the questions.');
+      const rows = [
+        ['07:58:12', 'mlopez', '10.20.4.17', 'SUCCESS'], ['08:01:40', 'jchen', '10.20.4.22', 'SUCCESS'],
+        ['02:14:03', 'admin', '185.220.101.4', 'FAIL'], ['02:14:04', 'admin', '185.220.101.4', 'FAIL'], ['02:14:05', 'admin', '185.220.101.4', 'FAIL'],
+        ['02:14:06', 'admin', '185.220.101.4', 'FAIL'], ['02:14:07', 'admin', '185.220.101.4', 'FAIL'], ['02:14:09', 'admin', '185.220.101.4', 'SUCCESS'],
+        ['08:05:51', 'tgarcia', '10.20.4.31', 'FAIL'], ['08:06:10', 'tgarcia', '10.20.4.31', 'SUCCESS'], ['02:16:30', 'admin', '185.220.101.4', 'EXPORT 41,200 records']
+      ].sort((a, b) => a[0].localeCompare(b[0]));
+      const qs = [
+        { q: 'Which source IP address is attacking?', a: ['10.20.4.17', '10.20.4.31', '185.220.101.4', '10.20.4.22'], c: 2, why: 'It made many failed attempts one second apart at 2 a.m., from outside the school network (not 10.x).' },
+        { q: 'What kind of attack do the failures show?', a: ['Phishing', 'Brute force / password guessing', 'DDoS', 'Tailgating'], c: 1, why: 'Rapid repeated login attempts against one account are a brute-force pattern.' },
+        { q: 'tgarcia failed once and then succeeded. Is that suspicious?', a: ['Yes, lock the account', 'Probably not: one typo, from inside the school, during school hours', 'Yes, it is a DDoS', 'Yes, call the police'], c: 1, why: 'Analysts compare to a baseline. One miss followed by success is normal.' },
+        { q: 'What should happen first?', a: ['Ignore it', 'Disable the admin account, block the IP, and reset the password', 'Delete the log', 'Email the attacker'], c: 1, why: 'Contain the incident. Then investigate what the 41,200-record export took (possible exfiltration).' }
+      ];
+      el.innerHTML = `<div class="card scroll"><table><tr><th>Time</th><th>User</th><th>Source IP</th><th>Event</th></tr>
+        ${rows.map(r => `<tr><td class="mono">${r[0]}</td><td class="mono">${r[1]}</td><td class="mono">${r[2]}</td><td class="mono" style="color:var(${r[3] === 'SUCCESS' ? '--good' : '--bad'})">${r[3]}</td></tr>`).join('')}
+      </table></div><div class="card quiz">${qs.map((q, qi) => `<div class="q" data-q="${qi}"><h3>${qi + 1}. ${esc(q.q)}</h3><div class="choices">${q.a.map((a, ai) => `<button class="choice" data-a="${ai}">${esc(a)}</button>`).join('')}</div><div class="why"></div></div>`).join('')}</div>`;
+      el.querySelectorAll('.q').forEach(qe => { const q = qs[+qe.dataset.q];
+        qe.querySelectorAll('.choice').forEach(b => b.addEventListener('click', () => {
+          const right = +b.dataset.a === q.c;
+          qe.querySelectorAll('.choice').forEach(x => { x.disabled = true; x.classList.toggle('right', +x.dataset.a === q.c); });
+          if (!right) b.classList.add('wrong');
+          qe.querySelector('.why').innerHTML = `<b style="color:var(${right ? '--good' : '--bad'})">${right ? 'Correct.' : 'Not quite.'}</b> ${esc(q.why)}`;
+        })); });
+    },
+    password(){
+      const el = labShell('password', 'Type a practice password (not a real one) to estimate how long a brute-force attack would take. This assumes an attacker making 10 billion guesses per second against a stolen hash.');
+      const common = ['password', 'qwerty', '123456', 'letmein', 'welcome', 'admin', 'iloveyou', 'monkey', 'dragon', 'football', 'baseball', 'abc123', 'school'];
+      el.innerHTML = `<div class="card" style="display:grid;gap:14px;max-width:640px">
+        <label for="pw"><b>Practice password</b></label><input id="pw" type="text" autocomplete="off" spellcheck="false" placeholder="try: Tiger2009, then purple-otter-ladder-sunrise">
+        <div class="strength"><i id="bar" style="width:0"></i></div>
+        <div id="out" aria-live="polite" class="muted">Start typing.</div></div>`;
+      const fmt = s => { const u = [['years', 31557600], ['days', 86400], ['hours', 3600], ['minutes', 60], ['seconds', 1]];
+        if (s < 1) return 'less than a second';
+        if (s > 31557600 * 1e9) return 'more than a billion years';
+        for (const [n, v] of u) if (s >= v) return `${Math.round(s / v).toLocaleString()} ${n}`; };
+      el.querySelector('#pw').addEventListener('input', e => {
+        const p = e.target.value; let pool = 0;
+        if (/[a-z]/.test(p)) pool += 26; if (/[A-Z]/.test(p)) pool += 26; if (/[0-9]/.test(p)) pool += 10; if (/[^a-zA-Z0-9]/.test(p)) pool += 33;
+        const lower = p.toLowerCase().replace(/[@4]/g, 'a').replace(/0/g, 'o').replace(/[1!]/g, 'i').replace(/3/g, 'e').replace(/\$/g, 's');
+        const weak = common.some(w => lower.includes(w));
+        let secs = p ? Math.pow(pool, p.length) / 2 / 1e10 : 0;
+        if (weak) secs = Math.min(secs, 0.5);
+        const bits = p ? Math.log2(Math.pow(pool, p.length)) : 0, pct = weak ? 8 : Math.min(100, bits / 90 * 100);
+        const bar = el.querySelector('#bar'); bar.style.width = pct + '%';
+        bar.style.background = pct < 35 ? 'var(--bad)' : pct < 65 ? '#D97E16' : 'var(--good)';
+        el.querySelector('#out').innerHTML = !p ? 'Start typing.' :
+          `<b style="color:var(--ink)">Estimated crack time: ${fmt(secs)}</b><br>Length ${p.length}, character pool ${pool}${weak ? '<br>Contains a common word or pattern, so a dictionary attack would find it almost instantly. Symbol swaps like @ for a do not help much.' : ''}<br>Tip: length beats complexity. Four random words make a strong, memorable passphrase. Use a password manager and MFA.`;
+      });
+    },
+    caesar(){
+      const el = labShell('caesar', 'The Caesar cipher shifts every letter by the same amount (the key). Try encrypting a message, then crack the secret one below by trying every key.');
+      const shift = (s, k) => s.replace(/[a-z]/gi, ch => { const b = ch <= 'Z' ? 65 : 97; return String.fromCharCode((ch.charCodeAt(0) - b + k + 26) % 26 + b); });
+      const secret = shift('DEFENSE IN DEPTH BEATS ANY SINGLE LOCK', 11);
+      el.innerHTML = `<div class="lesson" style="grid-template-columns:minmax(0,1fr) minmax(0,1fr)">
+        <div class="card" style="display:grid;gap:12px"><h2 style="font-size:20px">Encrypt and decrypt</h2>
+          <label for="msg"><b>Plaintext</b></label><input id="msg" type="text" value="Meet at the library at noon">
+          <label for="key"><b>Key: <span id="kv">3</span></b></label><input id="key" type="range" min="1" max="25" value="3">
+          <span class="label">Ciphertext</span><div class="url" id="ct"></div>
+        </div>
+        <div class="card" style="display:grid;gap:12px"><h2 style="font-size:20px">Crack the secret</h2>
+          <div class="url">${secret}</div>
+          <p class="muted" style="margin:0">Brute force: here is the message decrypted with every possible key. Which one is English?</p>
+          <div class="brute">${Array.from({ length: 25 }, (_, i) => `<div><span style="opacity:.6">key ${String(i + 1).padStart(2, ' ')}:</span> ${shift(secret, -(i + 1))}</div>`).join('')}</div>
+          <p class="muted" style="margin:0;font-size:15px">Only 25 keys means a computer cracks it instantly. AES-256 has about 10<sup>77</sup> possible keys.</p>
+        </div></div>`;
+      const upd = () => { const k = +el.querySelector('#key').value; el.querySelector('#kv').textContent = k; el.querySelector('#ct').textContent = shift(el.querySelector('#msg').value, k); };
+      el.querySelector('#msg').addEventListener('input', upd); el.querySelector('#key').addEventListener('input', upd); upd();
+    }
+  };
+  // Pretend terminal shared by every mission in missions.js.
+  function runMission(m){
+    const el = labShell(m.key, `${m.intro} Type <b class="mono">help</b> to see the commands. Nothing here is real, so you cannot break anything.`);
+    const FILES = m.files, home = m.home, prompt = `${m.user}@lincoln`;
+    const DIRS = {};
+    Object.keys(FILES).forEach(f => {
+      const parts = f.split('/').filter(Boolean);
+      for (let i = 0; i < parts.length; i++) {
+        const dir = '/' + parts.slice(0, i).join('/');
+        DIRS[dir] = DIRS[dir] || [];
+        if (!DIRS[dir].includes(parts[i])) DIRS[dir].push(parts[i]);
+      }
+    });
+    const done = new Set();
+    let cwd = home, hist = [], hi = 0;
+    el.innerHTML = `<div class="lesson" style="grid-template-columns:minmax(0,1fr) 300px;--u:var(--u${m.unit})">
+      <div class="term-box"><div class="term-out" id="out" aria-live="polite"></div>
+        <form class="term-in" id="form"><label for="cmd" class="mono">${prompt}:<span id="cwd">~</span>$</label><input id="cmd" class="mono" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Command"></form></div>
+      <aside class="card" style="display:grid;gap:10px;border-top:6px solid var(--u)"><span class="label">Mission · Unit ${m.unit}</span><h3 style="font-size:19px">${esc(m.title)}</h3><ol id="steps" class="steps"></ol>
+        <button class="btn small" id="hint" type="button">Show a hint</button><div id="hintText" class="muted" style="font-size:15px"></div>
+        <div id="flag" class="result ok" hidden></div></aside></div>`;
+    const out = el.querySelector('#out'), input = el.querySelector('#cmd');
+    const print = (s, cls) => { const d = document.createElement('div'); if (cls) d.className = cls; d.textContent = s; out.appendChild(d); out.scrollTop = out.scrollHeight; };
+    const drawSteps = () => { el.querySelector('#steps').innerHTML = m.steps.map(s => `<li class="${done.has(s.k) ? 'ok' : ''}">${done.has(s.k) ? '✓' : '○'} ${esc(s.t)}</li>`).join(''); };
+    const mark = k => { if (!done.has(k)) { done.add(k); drawSteps(); } };
+    const resolve = p => {
+      if (!p || p === '~') return home;
+      if (p.startsWith('~/')) p = home + '/' + p.slice(2);
+      const parts = p.startsWith('/') ? [] : cwd.split('/').filter(Boolean);
+      p.split('/').filter(Boolean).forEach(x => { if (x === '..') parts.pop(); else if (x !== '.') parts.push(x); });
+      return '/' + parts.join('/');
+    };
+    const readFile = p => { const f = resolve(p); if (FILES[f] == null) return null; if (m.reads && m.reads[f]) mark(m.reads[f]); return FILES[f]; };
+    const api = { mark, resolve, readFile };
+    const base = {
+      help: () => ['Commands:', '  ls [folder]        list files', '  cd <folder>        change folder', '  cat <file>         show a file', '  grep <word> <file> find lines containing a word (a folder searches every file in it)', '  pwd                show current folder', ...(m.help || []).map(h => '  ' + h), '  report <answer>    submit your answer', '  hint               get a hint', '  clear              clear the screen', 'You can also pipe into grep:  cat <file> | grep <word>'].join('\n'),
+      whoami: () => m.user,
+      pwd: () => cwd,
+      ls: a => { const d = resolve(a[0]); if (m.onLs) m.onLs(d, api); return DIRS[d] ? DIRS[d].join('  ') : FILES[d] != null ? d.split('/').pop() : `ls: ${a[0]}: No such file or folder`; },
+      cd: a => { const d = resolve(a[0]); if (!DIRS[d]) return `cd: ${a[0]}: No such folder`; cwd = d; el.querySelector('#cwd').textContent = d.startsWith(home) ? '~' + d.slice(home.length) : d; return ''; },
+      cat: a => { if (!a[0]) return 'cat: which file? Example: cat mission.txt'; const f = readFile(a[0]); return f == null ? (DIRS[resolve(a[0])] ? `cat: ${a[0]} is a folder. Try: ls ${a[0]}` : `cat: ${a[0]}: No such file`) : f; },
+      grep: (a, piped) => {
+        const w = a[0]; if (!w) return 'grep: which word? Example: grep FAILED /var/log/auth.log';
+        const target = piped != null ? '' : resolve(a[1] || '');
+        if (m.onGrep) m.onGrep(w, target, api);
+        const match = t => t.split('\n').filter(l => l.toLowerCase().includes(w.toLowerCase()));
+        if (piped != null) return match(piped).join('\n') || '(no matching lines)';
+        if (DIRS[target]) {
+          const lines = Object.keys(FILES).filter(f => f.startsWith(target + '/')).flatMap(f => { const r = FILES[f]; return match(r).map(l => `${f.slice(target.length + 1)}: ${l}`); });
+          return lines.join('\n') || '(no matching lines)';
+        }
+        const text = readFile(a[1] || '');
+        if (text == null) return `grep: ${a[1] || '(no file)'}: No such file`;
+        return match(text).join('\n') || '(no matching lines)';
+      },
+      hint: () => { const s = m.steps.find(s => !done.has(s.k)); return s ? 'Hint: ' + s.hint : 'You finished the mission!'; },
+      clear: () => { out.innerHTML = ''; return ''; },
+      report: a => {
+        if (!a[0]) return 'report: what is your answer? ' + (m.steps.find(s => s.k === 'report') || {}).hint;
+        const r = m.report(a.join(' '), api);
+        if (r.ok) {
+          mark('report');
+          const f = r.text.match(/CTF\{[^}]+\}/);
+          if (f) { const box = el.querySelector('#flag'); box.hidden = false; box.innerHTML = `<b>Mission complete.</b><br>Flag: <span class="mono">${esc(f[0])}</span>`; }
+        }
+        return r.text;
+      }
+    };
+    const extra = m.commands ? m.commands(api) : {};
+    const cmds = Object.assign({}, base);
+    Object.entries(extra).forEach(([k, f]) => { if (f) cmds[k] = f; });
+    function run(line){
+      print(`${prompt}:${el.querySelector('#cwd').textContent}$ ${line}`, 'cmd');
+      const segs = line.split('|').map(s => s.trim()).filter(Boolean);
+      let result = null, win = false;
+      for (let i = 0; i < segs.length; i++) {
+        const [c, ...args] = segs[i].split(/\s+/);
+        const f = cmds[c.toLowerCase()];
+        if (!f) { result = `${c}: command not found. Type help to see commands.`; break; }
+        if (i > 0 && c !== 'grep') { result = 'Only grep can be used after |'; break; }
+        const before = done.has('report');
+        result = f(args, i > 0 ? result : null);
+        win = !before && done.has('report');
+      }
+      if (result) print(result, win ? 'win' : '');
+    }
+    el.querySelector('#form').addEventListener('submit', e => {
+      e.preventDefault(); const v = input.value.trim(); input.value = '';
+      if (!v) return; hist.push(v); hi = hist.length; run(v);
+    });
+    input.addEventListener('keydown', e => {
+      if (e.key === 'ArrowUp' && hi > 0) { input.value = hist[--hi]; e.preventDefault(); }
+      if (e.key === 'ArrowDown') { hi = Math.min(hist.length, hi + 1); input.value = hist[hi] || ''; e.preventDefault(); }
+    });
+    el.querySelector('#hint').addEventListener('click', () => { el.querySelector('#hintText').textContent = cmds.hint(); });
+    el.querySelector('.term-box').addEventListener('click', () => input.focus());
+    print('Lincoln High School console. Type help to begin, or cat mission.txt to read your mission.');
+    drawSteps();
+  }
+
+  MISSIONS.forEach(m => { labs[m.key] = () => runMission(m); });
+  function renderLab(k){ labs[k](); }
+
+  route();
+})();
+</script>
+</body></html>

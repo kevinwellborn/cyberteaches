@@ -1,21 +1,221 @@
 <!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>CyberTeaches</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="Free computer science and cybersecurity courses from Mr. Bal: AP Cybersecurity, AP CSP, Security+, CS Discoveries, and a block-coding course for middle school.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Atkinson+Hyperlegible:wght@400;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: brand hero with teacher intro, a grid of course cards (live vs coming soon), then book and channel bands */
+:root{
+  --bg:#EEF1EC; --panel:#FFFFFF; --panel-2:#F6F8F4; --ink:#1C292C; --muted:#5C6B6B; --line:#D5DCD4;
+  --accent:#0F7B78; --accent-ink:#FFFFFF; --accent-soft:#D6EEEA; --term:#13201F; --term-ink:#B9F5DA; --yt:#D93025;
+  --c-cyber:#0F7B78; --c-csp:#2F6FDE; --c-sec:#C2417A; --c-csd:#D97E16; --c-acad:#7A4FD0;
+  --f-display:"Bricolage Grotesque", "Trebuchet MS", system-ui, sans-serif;
+  --f-body:"Atkinson Hyperlegible", "Segoe UI", system-ui, sans-serif;
+  --f-mono:"JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#141B1C; --panel:#1C2526; --panel-2:#222D2E; --ink:#E6EEEC; --muted:#9AABA9; --line:#33403F;
+  --accent:#3FC1B8; --accent-ink:#0B1A1A; --accent-soft:#1D3A38; --term:#0C1213; --term-ink:#9FEBC8; --yt:#F2665B;
+  --c-cyber:#2FA8A1; --c-csp:#4B86EC; --c-sec:#D85A92; --c-csd:#E39232; --c-acad:#9473E0; color-scheme:dark }
+}
+:root[data-theme="dark"]{
+  --bg:#141B1C; --panel:#1C2526; --panel-2:#222D2E; --ink:#E6EEEC; --muted:#9AABA9; --line:#33403F;
+  --accent:#3FC1B8; --accent-ink:#0B1A1A; --accent-soft:#1D3A38; --term:#0C1213; --term-ink:#9FEBC8; --yt:#F2665B;
+  --c-cyber:#2FA8A1; --c-csp:#4B86EC; --c-sec:#D85A92; --c-csd:#E39232; --c-acad:#9473E0; color-scheme:dark
+}
+*{box-sizing:border-box}
+html,body{background:var(--bg)}
+body{margin:0;color:var(--ink);font-family:var(--f-body);font-size:17px;line-height:1.55;
+  padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px));padding-block:0 40px}
+a{color:var(--accent)}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+h1,h2,h3{font-family:var(--f-display);text-wrap:balance;margin:0;line-height:1.12}
+.wrap{max-width:1100px;margin:0 auto}
+.topbar{display:flex;align-items:center;gap:14px;padding-block:16px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:10px;font-family:var(--f-display);font-weight:800;font-size:22px;text-decoration:none;color:var(--ink)}
+.brand svg{width:34px;height:34px}
+.spacer{flex:1}
+.nav{display:flex;gap:4px;flex-wrap:wrap}
+.nav a{font-weight:700;text-decoration:none;padding:6px 10px;border-radius:8px;color:var(--ink)}
+.nav a:hover{background:var(--accent-soft)}
+.btn{border:2px solid var(--line);background:var(--panel);border-radius:10px;padding:9px 16px;font-weight:700;display:inline-flex;align-items:center;gap:8px;text-decoration:none;color:var(--ink)}
+.btn:hover{border-color:var(--accent)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn.yt{background:var(--yt);border-color:var(--yt);color:#fff}
+.label{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:700}
+.muted{color:var(--muted)}
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+
+.hero{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:32px;align-items:center;padding-block:24px 40px}
+.hero h1{font-size:clamp(34px,5.4vw,58px);font-weight:800;letter-spacing:-.02em}
+.hero h1 em{font-style:normal;color:var(--accent)}
+.hero p{font-size:19px;color:var(--muted);max-width:52ch;margin:16px 0 22px}
+.terminal{background:var(--term);color:var(--term-ink);border-radius:16px;padding:20px 22px;font-family:var(--f-mono);font-size:14px;line-height:1.75;min-width:0;overflow:hidden}
+.terminal .dim{opacity:.6}
+
+.section-head{display:flex;justify-content:space-between;align-items:end;gap:12px;flex-wrap:wrap;margin:8px 0 16px}
+.section-head h2{font-size:30px}
+.courses{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px}
+.course{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:22px;display:flex;flex-direction:column;gap:10px;text-decoration:none;color:var(--ink);position:relative;overflow:hidden}
+.course::before{content:"";position:absolute;inset:0 0 auto 0;height:6px;background:var(--c)}
+a.course:hover{border-color:var(--c)}
+.course .top{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.course .code{font-family:var(--f-mono);font-weight:600;font-size:13px;color:var(--c)}
+.status{font-size:12px;font-weight:700;padding:2px 10px;border-radius:99px;background:var(--accent-soft);color:var(--ink)}
+.status.soon{background:var(--panel-2);color:var(--muted);border:1px solid var(--line)}
+.course h3{font-size:23px}
+.course p{margin:0;color:var(--muted);font-size:16px}
+.course .meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:auto;padding-top:6px}
+.chip{font-size:13px;padding:2px 9px;border-radius:7px;background:var(--panel-2);border:1px solid var(--line)}
+.course .go{font-weight:700;color:var(--c)}
+.course.soon{opacity:.85}
+
+.band{display:grid;grid-template-columns:auto minmax(0,1fr);gap:26px;align-items:center;border-radius:18px;padding:26px;margin-top:34px}
+.band.book{background:var(--accent-soft)}
+.band.channel{background:var(--term);color:var(--term-ink)}
+.band.channel .muted{color:var(--term-ink);opacity:.75}
+.band h2{font-size:28px;margin:6px 0 8px}
+.cover{width:150px;aspect-ratio:2/3;border-radius:8px;background:var(--accent);color:var(--accent-ink);display:grid;place-items:center;text-align:center;padding:12px;font-family:var(--f-display);font-weight:800;font-size:17px;line-height:1.2;box-shadow:0 8px 22px rgba(0,0,0,.2)}
+.cover small{display:block;font-family:var(--f-body);font-weight:400;font-size:12px;margin-top:8px;opacity:.85}
+.play{width:110px;height:110px;border-radius:50%;background:var(--yt);display:grid;place-items:center}
+.play svg{width:44px;height:44px;margin-left:6px}
+/* Ad spots: quiet, labeled, same card language as the page. Content comes from CT_ADS below. */
+.ad{position:relative;border:1px dashed var(--line);border-radius:14px;background:var(--panel);color:var(--ink);text-decoration:none;display:flex;align-items:center;gap:16px}
+a.ad:hover{border-color:var(--accent)}
+.ad .ad-tag{position:absolute;top:8px;right:12px;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.ad .ad-art{flex:none;border-radius:8px;background:var(--accent);color:var(--accent-ink);display:grid;place-items:center;font-family:var(--f-display);font-weight:800;text-align:center;line-height:1.15}
+.ad .ad-text{min-width:0}
+.ad b{font-family:var(--f-display);font-size:18px;display:block}
+.ad .ad-cta{font-weight:700;color:var(--accent);white-space:nowrap}
+.ad-strip{padding:14px 18px;margin:28px 0 0}
+.ad-strip .ad-art{width:48px;height:64px;font-size:10px;padding:4px}
+.ad-strip .ad-text{flex:1}
+.ad-card{flex-direction:column;align-items:flex-start;padding:22px;gap:10px}
+.ad-card .ad-art{width:84px;height:112px;font-size:12px;padding:8px}
+@media (max-width:560px){ .ad-strip{flex-wrap:wrap} }
+.foot{margin-top:40px;color:var(--muted);font-size:14px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;border-top:1px solid var(--line);padding-top:16px}
+@media (max-width:820px){ .hero{grid-template-columns:1fr} }
+@media (max-width:560px){ .band{grid-template-columns:1fr} .cover{width:120px} .play{width:80px;height:80px} }
+</style>
+</head><body>
+<div class="wrap">
+  <header class="topbar">
+    <a class="brand" href="./">
+      <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 2 4 7v8c0 7.2 5 13.2 12 15 7-1.8 12-7.8 12-15V7z" fill="var(--accent)"/><path d="M11 16.5l3.5 3.5L21.5 13" fill="none" stroke="var(--accent-ink)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      CyberTeaches
+    </a>
+    <span class="spacer"></span>
+    <nav class="nav" aria-label="Main">
+      <a href="#courses">Courses</a>
+      <a href="#book">Book</a>
+      <a href="https://www.youtube.com/@cyberteaches" target="_blank" rel="noopener">YouTube</a>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <div>
+      <span class="label">Free lessons from Mr. Bal</span>
+      <h1 style="margin-top:8px">Computer science and cybersecurity, <em>taught clearly.</em></h1>
+      <p>Video lessons, practice quizzes, and hands-on labs from a computer science teacher. Pick a course to start.</p>
+      <div class="row">
+        <a class="btn primary" href="#courses">Browse courses</a>
+        <a class="btn yt" href="https://www.youtube.com/@cyberteaches" target="_blank" rel="noopener">▶ Watch on YouTube</a>
+      </div>
+    </div>
+    <div class="terminal" aria-hidden="true">
+      <div><span class="dim">$</span> ls courses/</div>
+      <div>apcybersecurity/ &nbsp;apcsp/ &nbsp;securityplus/</div>
+      <div>csdiscoveries/ &nbsp;&nbsp;academy/</div>
+      <div><span class="dim">$</span> cd apcybersecurity &amp;&amp; ./start</div>
+      <div>5 units · 24 topics · 11 labs</div>
+      <div class="dim">loading 1.1 understanding social engineering…</div>
+    </div>
+  </section>
+
+  <section id="courses">
+    <div class="section-head"><div><span class="label">Courses</span><h2>Choose your course</h2></div></div>
+    <div class="courses">
+      <a class="course" style="--c:var(--c-cyber)" href="apcybersecurity/">
+        <div class="top"><span class="code">/apcybersecurity</span><span class="status">Open now</span></div>
+        <h3>AP Cybersecurity</h3>
+        <p>All 5 College Board units: social engineering, physical security, networks, devices, and cryptography.</p>
+        <div class="meta"><span class="chip">24 lessons</span><span class="chip">11 labs</span><span class="chip">Videos</span><span class="chip">Companion book</span></div>
+        <span class="go">Start the course →</span>
+      </a>
+      <div class="course soon" style="--c:var(--c-csp)">
+        <div class="top"><span class="code">/apcsp</span><span class="status soon">Coming soon</span></div>
+        <h3>AP Computer Science Principles</h3>
+        <p>Programming, data, the internet, and the impact of computing, unit by unit.</p>
+        <div class="meta"><span class="chip">Videos on YouTube</span></div>
+      </div>
+      <div class="course soon" style="--c:var(--c-sec)">
+        <div class="top"><span class="code">/securityplus</span><span class="status soon">Coming soon</span></div>
+        <h3>CompTIA Security+ (SY0-701)</h3>
+        <p>Exam prep for the industry certification, domain by domain.</p>
+        <div class="meta"><span class="chip">Videos on YouTube</span></div>
+      </div>
+      <div class="course soon" style="--c:var(--c-csd)">
+        <div class="top"><span class="code">/csdiscoveries</span><span class="status soon">Coming soon</span></div>
+        <h3>CS Discoveries</h3>
+        <p>An introduction to computer science for middle and early high school.</p>
+        <div class="meta"><span class="chip">Videos on YouTube</span></div>
+      </div>
+      <a class="course" style="--c:var(--c-acad)" href="academy/">
+        <div class="top"><span class="code">/academy</span><span class="status">Open now</span></div>
+        <h3>CyberTeaches Academy</h3>
+        <p>Block-coding puzzles for middle school. Guide a rover with loops and conditions.</p>
+        <div class="meta"><span class="chip">Grades 6 to 8</span><span class="chip">Class sign-in</span><span class="chip">Teacher dashboard</span></div>
+        <span class="go">Start coding →</span>
+      </a>
+      <div data-ad="card"></div>
+    </div>
+  </section>
+
+  <div data-ad="strip"></div>
+
+  <section class="band book" id="book">
+    <div class="cover" aria-hidden="true">AP® Cybersecurity Essentials<small>Kevin Wellborn</small></div>
+    <div>
+      <span class="label">The book</span>
+      <h2>Kevin Wellborn's AP® Cybersecurity Essentials</h2>
+      <p class="muted" style="margin:0 0 16px;max-width:60ch">Study guide and exam prep that follows every unit of the course. Use it alongside the free lessons for extra examples and practice.</p>
+      <div class="row"><a class="btn primary" href="https://www.amazon.com/dp/B0HPBT5HGJ" target="_blank" rel="noopener">Get it on Amazon</a><a class="btn" href="apcybersecurity/">See the free course</a></div>
+    </div>
+  </section>
+
+  <section class="band channel">
+    <div class="play" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6 4l14 8-14 8z" fill="#fff"/></svg></div>
+    <div>
+      <span class="label" style="color:var(--term-ink);opacity:.75">YouTube</span>
+      <h2>Watch every lesson on the CyberTeaches channel</h2>
+      <p class="muted" style="margin:0 0 16px;max-width:60ch">Short, clear videos for AP Cybersecurity, AP CSP, Security+, and CS Discoveries. Subscribe to get new lessons as they come out.</p>
+      <a class="btn yt" href="https://www.youtube.com/@cyberteaches?sub_confirmation=1" target="_blank" rel="noopener">Subscribe</a>
+    </div>
+  </section>
+
+  <footer class="foot"><span>© CyberTeaches · Mr. Bal</span><span>AP® is a trademark of the College Board, which does not endorse this site.</span></footer>
+</div>
 <script>
-  // Class join links (?class=CODE) go to the rover course; everything else opens AP Cybersecurity.
-  (function () {
-    var q = location.search, h = location.hash;
-    if (/[?&]class=/.test(q) || /^#puzzle-|^#home$/.test(h)) location.replace('rover.html' + q + h);
-    else location.replace('ap-cyber/' + h);
-  })();
+// The coding course used to live here. Send its old links (?class=CODE join links, #puzzle-3, #home) to academy/.
+(function(){ if (/[?&]class=/.test(location.search) || /^#(puzzle-\d+|home)$/.test(location.hash)) location.replace('academy/' + location.search + location.hash); })();
+// Ad spots. Each spot shows one ad from this list, picking a different one per visit.
+// Add an ad by adding an entry; "art" is short cover text (or set img to an image path).
+window.CT_ADS = [
+  { title: "AP® Cybersecurity Essentials", text: "Study guide and exam prep by Kevin Wellborn.", cta: "Get it on Amazon", url: "https://www.amazon.com/dp/B0HPBT5HGJ", art: "AP® Cyber Essentials" },
+  { title: "Free video lessons", text: "Subscribe to CyberTeaches on YouTube.", cta: "Subscribe", url: "https://www.youtube.com/@cyberteaches?sub_confirmation=1", art: "▶" }
+];
+(function(){
+  const ads = window.CT_ADS || [];
+  if (!ads.length) return;
+  const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
+  let i = Math.floor(Math.random() * ads.length);
+  document.querySelectorAll('[data-ad]').forEach(slot => {
+    const a = ads[i++ % ads.length];
+    const art = a.img ? `<img class="ad-art" src="${esc(a.img)}" alt="">` : `<span class="ad-art" aria-hidden="true">${esc(a.art || '')}</span>`;
+    slot.outerHTML = `<a class="ad ad-${slot.dataset.ad}" href="${esc(a.url)}" target="_blank" rel="noopener sponsored"><span class="ad-tag">Ad</span>${art}<span class="ad-text"><b>${esc(a.title)}</b><span class="muted">${esc(a.text)}</span></span><span class="ad-cta">${esc(a.cta)} →</span></a>`;
+  });
+})();
 </script>
-<meta http-equiv="refresh" content="0; url=ap-cyber/">
-<link rel="canonical" href="https://cyberteaches.com/ap-cyber/">
-</head>
-<body style="font-family:system-ui,sans-serif;padding:24px">
-<p>Opening <a href="ap-cyber/">AP Cybersecurity</a>… Looking for the rover course? <a href="rover.html">Rover Coding (Grades 6–8)</a>.</p>
-</body>
-</html>
+</body></html>
