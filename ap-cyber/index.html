@@ -9,6 +9,7 @@
   --bg:#EEF1EC; --panel:#FFFFFF; --panel-2:#F6F8F4; --ink:#1C292C; --muted:#5C6B6B; --line:#D5DCD4;
   --accent:#0F7B78; --accent-ink:#FFFFFF; --accent-soft:#D6EEEA;
   --good:#2E9363; --good-soft:#DDF1E6; --bad:#C8402F; --bad-soft:#F8E0DB; --term:#13201F; --term-ink:#B9F5DA;
+  --u1:#2F6FDE; --u2:#2E9363; --u3:#D97E16; --u4:#C2417A; --u5:#7A4FD0;
   --f-display:"Bricolage Grotesque", "Trebuchet MS", system-ui, sans-serif;
   --f-body:"Atkinson Hyperlegible", "Segoe UI", system-ui, sans-serif;
   --f-mono:"JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
@@ -16,12 +17,12 @@
 @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
   --bg:#141B1C; --panel:#1C2526; --panel-2:#222D2E; --ink:#E6EEEC; --muted:#9AABA9; --line:#33403F;
   --accent:#3FC1B8; --accent-ink:#0B1A1A; --accent-soft:#1D3A38;
-  --good:#4CC28A; --good-soft:#1B3328; --bad:#EF6B57; --bad-soft:#3A221E; --term:#0C1213; --term-ink:#9FEBC8; color-scheme:dark }
+  --good:#4CC28A; --good-soft:#1B3328; --bad:#EF6B57; --bad-soft:#3A221E; --term:#0C1213; --term-ink:#9FEBC8; --u1:#5B8FF0; --u2:#45B57E; --u3:#E9A04A; --u4:#E06A9E; --u5:#A083EA; color-scheme:dark }
 }
 :root[data-theme="dark"]{
   --bg:#141B1C; --panel:#1C2526; --panel-2:#222D2E; --ink:#E6EEEC; --muted:#9AABA9; --line:#33403F;
   --accent:#3FC1B8; --accent-ink:#0B1A1A; --accent-soft:#1D3A38;
-  --good:#4CC28A; --good-soft:#1B3328; --bad:#EF6B57; --bad-soft:#3A221E; --term:#0C1213; --term-ink:#9FEBC8; color-scheme:dark
+  --good:#4CC28A; --good-soft:#1B3328; --bad:#EF6B57; --bad-soft:#3A221E; --term:#0C1213; --term-ink:#9FEBC8; --u1:#5B8FF0; --u2:#45B57E; --u3:#E9A04A; --u4:#E06A9E; --u5:#A083EA; color-scheme:dark
 }
 *{box-sizing:border-box}
 html,body{background:var(--bg)}
@@ -67,7 +68,19 @@ h1,h2,h3{font-family:var(--f-display);text-wrap:balance;margin:0;line-height:1.1
 .topic-link:hover{border-color:var(--accent)}
 .topic-link b{font-family:var(--f-mono);font-size:13px;color:var(--muted);flex:none;padding-top:1px}
 .topic-link .chk{margin-left:auto;flex:none;width:20px;height:20px;border-radius:50%;border:2px solid var(--line);display:grid;place-items:center;font-size:12px}
-.topic-link.done .chk{background:var(--good);border-color:var(--good);color:#fff}
+.topic-link.done .chk{background:var(--u, var(--good));border-color:var(--u, var(--good));color:#fff}
+/* Unit color coding: each unit section sets --u and its cards, lessons and quiz pick it up */
+.unit{border-top:6px solid var(--u)}
+.unit .pill{background:color-mix(in srgb, var(--u) 16%, transparent)}
+.unit .topic-link{background:color-mix(in srgb, var(--u) 7%, var(--panel))}
+.unit .topic-link:hover{border-color:var(--u)}
+.unit .topic-link b{color:var(--u)}
+.u-scope .label.u{color:var(--u)}
+.u-scope h1{border-bottom:4px solid var(--u);padding-bottom:10px;display:inline-block}
+.u-scope .quiz,.u-scope .side .card.unitbox{border-top:6px solid var(--u)}
+.u-scope .choice:hover:not(:disabled){border-color:var(--u)}
+.u-band{display:inline-flex;align-items:center;gap:8px;font-weight:700;font-size:14px;padding:3px 12px 3px 4px;border-radius:99px;background:color-mix(in srgb, var(--u) 16%, transparent)}
+.u-band i{font-style:normal;width:22px;height:22px;border-radius:50%;background:var(--u);color:#fff;display:grid;place-items:center;font-size:12px}
 .section-head{display:flex;align-items:end;justify-content:space-between;gap:12px;margin:34px 0 14px;flex-wrap:wrap}
 .section-head h2{font-size:28px}
 .labs{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px}
@@ -81,7 +94,7 @@ h1,h2,h3{font-family:var(--f-display);text-wrap:balance;margin:0;line-height:1.1
 .lesson h1{font-size:clamp(28px,4vw,40px);margin-bottom:14px}
 .lesson .summary{font-size:19px;max-width:68ch}
 .terms{display:grid;gap:10px;margin:0;padding:0;list-style:none}
-.terms li{border-left:4px solid var(--accent);padding:4px 0 4px 12px}
+.terms li{border-left:4px solid var(--u, var(--accent));padding:4px 0 4px 12px}
 .terms dt,.terms b{font-weight:700}
 .side{display:grid;gap:14px;position:sticky;top:12px}
 .quiz{margin-top:22px;display:grid;gap:18px}
@@ -231,8 +244,8 @@ input[type=range]{width:100%;accent-color:var(--accent)}
       <div class="units">
         ${UNITS.map(u => {
           const ud = u.topics.filter(t => isDone(t.id)).length;
-          return `<section class="card unit">
-            <div class="unit-num" style="background:${u.color}">${u.num}</div>
+          return `<section class="card unit" style="--u:var(--u${u.num})">
+            <div class="unit-num" style="background:var(--u)">${u.num}</div>
             <div>
               <div class="row" style="justify-content:space-between"><h2>${esc(u.title)}</h2><span class="pill">${ud}/${u.topics.length} done · ~${u.periods} class periods</span></div>
               <p class="blurb">${esc(u.blurb)}</p>
@@ -249,9 +262,9 @@ input[type=range]{width:100%;accent-color:var(--accent)}
     const answers = {};
     app.innerHTML = `
       <div class="crumbs"><a href="#/">Units</a> / Unit ${u.num}: ${esc(u.title)}</div>
-      <div class="lesson">
+      <div class="lesson u-scope" style="--u:var(--u${u.num})">
         <article>
-          <span class="label">Topic ${t.id}</span>
+          <span class="u-band"><i>${u.num}</i>Unit ${u.num}: ${esc(u.title)}</span><br><span class="label u" style="display:inline-block;margin-top:12px">Topic ${t.id}</span><br>
           <h1>${esc(t.title)}</h1>
           <p class="summary">${esc(t.summary)}</p>
           ${ytId(VIDEOS.topics && VIDEOS.topics[t.id]) ? `<div class="video"><iframe src="https://www.youtube-nocookie.com/embed/${ytId(VIDEOS.topics[t.id])}" title="CyberTeaches video: ${esc(t.title)}" allow="encrypted-media; picture-in-picture; fullscreen" allowfullscreen loading="lazy"></iframe></div><p style="margin:8px 0 0;font-size:15px"><a href="https://www.youtube.com/watch?v=${ytId(VIDEOS.topics[t.id])}" target="_blank" rel="noopener">Watch on YouTube</a>${VIDEOS.channelUrl ? ` · <a href="${esc(VIDEOS.channelUrl)}" target="_blank" rel="noopener">More CyberTeaches videos</a>` : ''}</p>` : ''}
@@ -274,7 +287,7 @@ input[type=range]{width:100%;accent-color:var(--accent)}
           </nav>
         </article>
         <aside class="side">
-          <div class="card"><span class="label">Unit ${u.num}</span><h3 style="margin:6px 0 10px">${esc(u.title)}</h3>
+          <div class="card unitbox"><span class="label">Unit ${u.num}</span><h3 style="margin:6px 0 10px">${esc(u.title)}</h3>
             <div style="display:grid;gap:6px">${u.topics.map(x => `<a href="#/topic/${x.id}" style="text-decoration:none;color:var(--ink);${x.id === t.id ? 'font-weight:700' : ''}">${isDone(x.id) ? '✓' : '○'} ${x.id} ${esc(x.title)}</a>`).join('')}</div>
           </div>
           ${hasBook ? `<div class="card" style="background:var(--accent-soft);border-color:transparent"><span class="label">Go deeper in the book</span><h3 style="margin:6px 0 4px">${esc(BOOK.title)}</h3><p class="muted" style="margin:0 0 10px">${BOOK.chapters && BOOK.chapters[t.id] ? `This topic is covered in ${esc(BOOK.chapters[t.id])}.` : 'More examples and practice for this topic.'}</p>${BOOK.buyUrl ? `<a href="${esc(BOOK.buyUrl)}" target="_blank" rel="noopener"><b>Get the book</b></a>` : '<a href="#/book"><b>About the book</b></a>'}</div>` : ''}
