@@ -230,3 +230,11 @@ window.AP_BOOK = {
   cover: '',
   chapters: {}
 };
+
+// CyberTeaches YouTube videos. channelUrl adds a "Videos" link to the menu.
+// topics: map from topic id to a YouTube link or video id, for example { '1.1': 'https://youtu.be/abc123XYZ' }.
+// Each one shows as a video at the top of that topic's page.
+window.AP_VIDEOS = {
+  channelUrl: '',
+  topics: {}
+};
