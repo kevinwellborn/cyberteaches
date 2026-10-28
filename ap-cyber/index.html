@@ -120,6 +120,11 @@ input[type=range]{width:100%;accent-color:var(--accent)}
 .strength{height:12px;border-radius:99px;background:var(--line);overflow:hidden}
 .strength i{display:block;height:100%;transition:width .3s,background .3s}
 .brute{font-family:var(--f-mono);font-size:14px;display:grid;gap:2px;max-height:320px;overflow:auto;background:var(--term);color:var(--term-ink);padding:12px;border-radius:12px}
+.book{display:grid;grid-template-columns:auto minmax(0,1fr);gap:22px;align-items:center;margin-top:28px;background:var(--accent-soft);border-color:transparent}
+.book img,.book .cover{width:120px;aspect-ratio:2/3;border-radius:8px;object-fit:cover;box-shadow:0 6px 18px rgba(0,0,0,.18)}
+.book .cover{background:var(--accent);color:var(--accent-ink);display:grid;place-items:center;text-align:center;padding:10px;font-family:var(--f-display);font-weight:800;font-size:15px;line-height:1.2}
+.book h2{font-size:26px}
+.book.big img,.book.big .cover{width:200px}
 .foot{margin-top:40px;color:var(--muted);font-size:14px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
 @media (max-width:820px){ .hero,.lesson{grid-template-columns:1fr} .side{position:static} .unit{grid-template-columns:1fr} }
 </style>
@@ -134,6 +139,7 @@ input[type=range]{width:100%;accent-color:var(--accent)}
     <nav class="nav" aria-label="Main">
       <a href="#/" data-nav="home">Units</a>
       <a href="#/labs" data-nav="labs">Labs</a>
+      <a href="#/book" data-nav="book" id="bookNav" hidden>The Book</a>
       <a href="../">CyberTeaches Academy</a>
     </nav>
   </header>
@@ -144,7 +150,9 @@ input[type=range]{width:100%;accent-color:var(--accent)}
 <script>
 (function(){
   const app = document.getElementById('app');
-  const UNITS = window.AP_UNITS, LABS = window.AP_LABS;
+  const UNITS = window.AP_UNITS, LABS = window.AP_LABS, BOOK = window.AP_BOOK || {};
+  const hasBook = !!BOOK.title;
+  if (hasBook) document.getElementById('bookNav').hidden = false;
   const ALL = UNITS.flatMap(u => u.topics.map(t => Object.assign({ unit: u }, t)));
   const KEY = 'ctap-progress-v1';
   let progress = {};
@@ -156,7 +164,8 @@ input[type=range]{width:100%;accent-color:var(--accent)}
 
   function route(){
     const parts = (location.hash.replace(/^#\/?/, '') || '').split('/');
-    document.querySelectorAll('[data-nav]').forEach(a => a.classList.toggle('on', a.dataset.nav === (parts[0] === 'labs' || parts[0] === 'lab' ? 'labs' : parts[0] ? '' : 'home')));
+    document.querySelectorAll('[data-nav]').forEach(a => a.classList.toggle('on', a.dataset.nav === (parts[0] === 'labs' || parts[0] === 'lab' ? 'labs' : parts[0] === 'book' ? 'book' : parts[0] ? '' : 'home')));
+    if (parts[0] === 'book' && hasBook) renderBook(); else
     if (parts[0] === 'topic' && ALL.find(t => t.id === parts[1])) renderTopic(parts[1]);
     else if (parts[0] === 'labs') renderLabs();
     else if (parts[0] === 'lab' && LABS[parts[1]]) renderLab(parts[1]);
@@ -167,6 +176,28 @@ input[type=range]{width:100%;accent-color:var(--accent)}
 
   function topicLinks(u){
     return u.topics.map(t => `<a class="topic-link${isDone(t.id) ? ' done' : ''}" href="#/topic/${t.id}"><b>${t.id}</b><span>${esc(t.title)}</span><span class="chk" aria-label="${isDone(t.id) ? 'Completed' : 'Not completed'}">${isDone(t.id) ? '✓' : ''}</span></a>`).join('');
+  }
+
+  function cover(){
+    return BOOK.cover ? `<img src="${esc(BOOK.cover)}" alt="Cover of ${esc(BOOK.title)}">` : `<div class="cover" aria-hidden="true">${esc(BOOK.title)}</div>`;
+  }
+  function buyBtn(){
+    return BOOK.buyUrl ? `<a class="btn primary" href="${esc(BOOK.buyUrl)}" target="_blank" rel="noopener">Get the book</a>` : '';
+  }
+  function bookCard(big){
+    if (!hasBook) return '';
+    return `<section class="card book${big ? ' big' : ''}">${cover()}<div>
+      <span class="label">The companion book</span>
+      <h2 style="margin:6px 0 4px">${esc(BOOK.title)}</h2>
+      ${BOOK.author ? `<div class="muted" style="margin-bottom:8px">by ${esc(BOOK.author)}</div>` : ''}
+      ${BOOK.tagline ? `<p style="margin:0 0 14px;max-width:62ch">${esc(BOOK.tagline)}</p>` : ''}
+      <div class="row">${buyBtn()}${big ? '' : '<a class="btn" href="#/book">About the book</a>'}</div>
+    </div></section>`;
+  }
+  function renderBook(){
+    const ch = UNITS.flatMap(u => u.topics.filter(t => BOOK.chapters && BOOK.chapters[t.id]).map(t => `<li><a href="#/topic/${t.id}">${t.id} ${esc(t.title)}</a>: ${esc(BOOK.chapters[t.id])}</li>`));
+    app.innerHTML = bookCard(true) + (BOOK.description ? `<section class="card" style="margin-top:18px"><h2 style="font-size:22px;margin-bottom:8px">About the book</h2><p style="margin:0;max-width:70ch;white-space:pre-line">${esc(BOOK.description)}</p></section>` : '')
+      + (ch.length ? `<section class="card" style="margin-top:18px"><h2 style="font-size:22px;margin-bottom:8px">Where each topic is in the book</h2><ul style="margin:0">${ch.join('')}</ul></section>` : '');
   }
 
   function renderHome(){
@@ -201,7 +232,8 @@ input[type=range]{width:100%;accent-color:var(--accent)}
               <div class="topics">${topicLinks(u)}</div>
             </div>
           </section>`; }).join('')}
-      </div>`;
+      </div>
+      ${bookCard(false)}`;
   }
 
   function renderTopic(id){
@@ -237,6 +269,7 @@ input[type=range]{width:100%;accent-color:var(--accent)}
           <div class="card"><span class="label">Unit ${u.num}</span><h3 style="margin:6px 0 10px">${esc(u.title)}</h3>
             <div style="display:grid;gap:6px">${u.topics.map(x => `<a href="#/topic/${x.id}" style="text-decoration:none;color:var(--ink);${x.id === t.id ? 'font-weight:700' : ''}">${isDone(x.id) ? '✓' : '○'} ${x.id} ${esc(x.title)}</a>`).join('')}</div>
           </div>
+          ${hasBook ? `<div class="card" style="background:var(--accent-soft);border-color:transparent"><span class="label">Go deeper in the book</span><h3 style="margin:6px 0 4px">${esc(BOOK.title)}</h3><p class="muted" style="margin:0 0 10px">${BOOK.chapters && BOOK.chapters[t.id] ? `This topic is covered in ${esc(BOOK.chapters[t.id])}.` : 'More examples and practice for this topic.'}</p>${BOOK.buyUrl ? `<a href="${esc(BOOK.buyUrl)}" target="_blank" rel="noopener"><b>Get the book</b></a>` : '<a href="#/book"><b>About the book</b></a>'}</div>` : ''}
           ${t.lab ? `<a class="card lab-card" href="#/lab/${t.lab}"><span class="label">Hands-on lab</span><h3>${esc(LABS[t.lab].title)}</h3><span class="muted">${esc(LABS[t.lab].blurb)}</span></a>` : ''}
         </aside>
       </div>`;

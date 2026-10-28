@@ -217,3 +217,16 @@ window.AP_LABS = {
   password: { title: 'Password Strength Lab', blurb: 'See how long a password would take to crack.' },
   caesar: { title: 'Caesar Cipher Lab', blurb: 'Encrypt, decrypt, and brute-force a secret message.' }
 };
+
+// The companion book shown across the site. Leave title empty to hide every book section.
+// cover: an image path (for example 'book-cover.jpg' in this folder) or empty.
+// chapters: optional map from topic id to the matching chapter, for example { '1.1': 'Chapter 1' }.
+window.AP_BOOK = {
+  title: '',
+  author: '',
+  tagline: '',
+  description: '',
+  buyUrl: '',
+  cover: '',
+  chapters: {}
+};
