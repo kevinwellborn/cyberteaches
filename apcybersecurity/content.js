@@ -222,12 +222,12 @@ window.AP_LABS = {
 // cover: an image path (for example 'book-cover.jpg' in this folder) or empty.
 // chapters: optional map from topic id to the matching chapter, for example { '1.1': 'Chapter 1' }.
 window.AP_BOOK = {
-  title: "Kevin Wellborn's AP® Cybersecurity Essentials: Study Guide & Exam Prep",
+  title: "Kevin Wellborn's AP® Cybersecurity Course Text & Study Guide",
   author: 'Kevin Wellborn',
   tagline: '',
   description: '',
   buyUrl: 'https://www.amazon.com/dp/B0HMFKHXQ3',
-  cover: '',
+  cover: '../book-cover.jpg',
   chapters: {}
 };
 
