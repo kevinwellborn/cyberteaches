@@ -85,7 +85,6 @@ window.AP_UNITS = [
     topics: [
       { id: '3.1', title: 'Network Vulnerabilities and Attacks',
         summary: 'Networks carry data in packets between devices identified by IP and MAC addresses. Attacks include denial of service (flooding a target), on-path attacks (intercepting traffic), ARP and DNS spoofing (sending traffic to the wrong place), and scanning for open ports to find weak services.',
-        lab: 'terminal',
         terms: [['DoS / DDoS', 'Overwhelming a system with traffic, from one source or many.'], ['On-path attack', 'An attacker secretly relays and possibly changes traffic between two parties.'], ['DNS spoofing', 'Giving out false DNS answers so a name leads to the attacker\'s server.'], ['Port scan', 'Probing a device to see which network services are listening.']],
         quiz: [
           { q: 'Thousands of hacked devices flood a school website until it crashes. This is a:', a: ['Phishing attack', 'DDoS attack', 'SQL injection', 'Brute-force attack'], c: 1, why: 'Many sources overwhelming one target is distributed denial of service. It attacks availability.' },
@@ -211,7 +210,6 @@ window.AP_UNITS = [
 ];
 
 window.AP_LABS = {
-  terminal: { title: 'Network Terminal: Find the Intruder', blurb: 'Use a pretend command line to scan a school network and catch an attacker.' },
   phish: { title: 'Phishing Spotter', blurb: 'Decide which messages are phishing and which are safe.' },
   url: { title: 'Real or Fake URL?', blurb: 'Find the true domain in tricky web addresses.' },
   firewall: { title: 'Firewall Rule Builder', blurb: 'Order rules so the right packets get through.' },
