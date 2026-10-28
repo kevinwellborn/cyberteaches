@@ -15,7 +15,7 @@ and `#puzzle-N` links to `academy/`.
 ## AP Cybersecurity (high school)
 
 `apcybersecurity/` covers all five units and 24 topics of the College Board course framework. Each topic has a short
-reading, key terms, a video, and AP-style practice questions (`questions.js`). There are six quick labs and a
+paragraph, vocabulary, a video, and AP-style practice questions (`questions.js`). There are six quick labs and a
 pretend-terminal mission for each unit (`missions.js`). Lesson text lives in `apcybersecurity/content.js`.
 
 ## CyberTeaches Academy (grades 6 to 8)
