@@ -222,11 +222,11 @@ window.AP_LABS = {
 // cover: an image path (for example 'book-cover.jpg' in this folder) or empty.
 // chapters: optional map from topic id to the matching chapter, for example { '1.1': 'Chapter 1' }.
 window.AP_BOOK = {
-  title: '',
-  author: '',
+  title: "Kevin Wellborn's AP® Cybersecurity Essentials: Study Guide & Exam Prep",
+  author: 'Kevin Wellborn',
   tagline: '',
   description: '',
-  buyUrl: '',
+  buyUrl: 'https://www.amazon.com/dp/B0HPBT5HGJ',
   cover: '',
   chapters: {}
 };
@@ -235,6 +235,8 @@ window.AP_BOOK = {
 // topics: map from topic id to a YouTube link or video id, for example { '1.1': 'https://youtu.be/abc123XYZ' }.
 // Each one shows as a video at the top of that topic's page.
 window.AP_VIDEOS = {
-  channelUrl: '',
-  topics: {}
+  channelUrl: 'https://www.youtube.com/@cyberteaches',
+  topics: {
+    '3.1': 'https://www.youtube.com/watch?v=uFBa-2CK_Gw'
+  }
 };
