@@ -294,7 +294,7 @@ input[type=range]{width:100%;accent-color:var(--accent)}
           <p class="summary">${esc(t.summary)}</p>
           ${ytId(VIDEOS.topics && VIDEOS.topics[t.id]) ? `<div class="video"><iframe src="https://www.youtube-nocookie.com/embed/${ytId(VIDEOS.topics[t.id])}" title="CyberTeaches video: ${esc(t.title)}" allow="encrypted-media; picture-in-picture; fullscreen" allowfullscreen loading="lazy"></iframe></div><p style="margin:8px 0 0;font-size:15px"><a href="https://www.youtube.com/watch?v=${ytId(VIDEOS.topics[t.id])}" target="_blank" rel="noopener">Watch on YouTube</a>${VIDEOS.channelUrl ? ` · <a href="${esc(VIDEOS.channelUrl)}" target="_blank" rel="noopener">More CyberTeaches videos</a>` : ''}</p>` : ''}
           <section class="card" style="margin-top:20px">
-            <h2 style="font-size:22px;margin-bottom:12px">Key terms</h2>
+            <h2 style="font-size:22px;margin-bottom:12px">Vocabulary</h2>
             <ul class="terms">${t.terms.map(([k, v]) => `<li><b>${esc(k)}:</b> ${esc(v)}</li>`).join('')}</ul>
           </section>
           <section class="card quiz" id="quiz">
