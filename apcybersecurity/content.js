@@ -226,7 +226,7 @@ window.AP_BOOK = {
   author: 'Kevin Wellborn',
   tagline: '',
   description: '',
-  buyUrl: 'https://www.amazon.com/dp/B0HPBT5HGJ',
+  buyUrl: 'https://www.amazon.com/dp/B0HMFKHXQ3',
   cover: '',
   chapters: {}
 };
