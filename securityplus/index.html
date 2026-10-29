@@ -186,7 +186,7 @@ input[type=range]{width:100%;accent-color:var(--accent)}
 <script>
 // Reuse the AP Cybersecurity terminal missions, linked to the matching Security+ lessons.
 (function(){
-  const MAP = { term1: [2, '2.2'], term2: [1, '1.3'], term3: [4, '4.4'], term4: [2, '2.5'], term5: [2, '2.7'] };
+  const MAP = { term1: [2, '2.3'], term2: [2, '2.5'], term3: [4, '4.4'], term4: [2, '2.5'], term5: [2, '2.5'] };
   AP_UNITS.forEach(u => u.topics.forEach(t => { if (t.labs) t.labs = t.labs.filter(k => !MAP[k]); }));
   (window.AP_MISSIONS || []).forEach(m => {
     if (!MAP[m.key]) return;
@@ -263,7 +263,7 @@ input[type=range]{width:100%;accent-color:var(--accent)}
         <div>
           <span class="label">CyberTeaches · CompTIA Security+ SY0-801</span>
           <h1 style="margin-top:8px">Pass Security+ <em>with confidence.</em></h1>
-          <p>Five exam domains and ${ALL.length} lessons for the new SY0-801 exam. Read each lesson and its vocabulary, then pass its exam-style practice to mark it complete.</p>
+          <p>Five exam domains and ${ALL.length} lessons, one for each SY0-801 exam objective. Read each lesson and its vocabulary, then pass its exam-style practice to mark it complete.</p>
           <div class="row" style="margin-bottom:18px">
             <a class="btn primary" href="#/topic/${next.id}">${d ? 'Continue' : 'Start'} with ${next.id} ${esc(next.title)}</a>
             <a class="btn" href="#/labs">Try a lab</a>
@@ -333,7 +333,7 @@ input[type=range]{width:100%;accent-color:var(--accent)}
           <div class="card unitbox"><span class="label">Domain ${u.num}.0</span><h3 style="margin:6px 0 10px">${esc(u.title)}</h3>
             <div style="display:grid;gap:6px">${u.topics.map(x => `<a href="#/topic/${x.id}" style="text-decoration:none;color:var(--ink);${x.id === t.id ? 'font-weight:700' : ''}">${isDone(x.id) ? '✓' : '○'} ${x.id} ${esc(x.title)}</a>`).join('')}</div>
           </div>
-          ${hasBook ? `<div class="card deeper" style="background:var(--accent-soft);border-color:transparent">${BOOK.cover ? `<a href="${esc(BOOK.buyUrl || '#/book')}"${BOOK.buyUrl ? ' target="_blank" rel="noopener"' : ''}><img src="${esc(BOOK.cover)}" alt="Cover of ${esc(BOOK.title)}"></a>` : ''}<div><span class="label">Go deeper in the book</span><h3 style="margin:6px 0 4px">${esc(BOOK.title)}</h3><p class="muted" style="margin:0 0 10px">${BOOK.chapters && BOOK.chapters[t.id] ? `This topic is covered in ${esc(BOOK.chapters[t.id])}.` : 'More examples and practice for this topic.'}</p>${BOOK.buyUrl ? `<a href="${esc(BOOK.buyUrl)}" target="_blank" rel="noopener"><b>Get the book</b></a>` : '<a href="#/book"><b>About the book</b></a>'}</div></div>` : ''}
+          ${hasBook ? `<div class="card deeper" style="background:var(--accent-soft);border-color:transparent">${BOOK.cover ? `<a href="${esc(BOOK.buyUrl || '#/book')}"${BOOK.buyUrl ? ' target="_blank" rel="noopener"' : ''}><img src="${esc(BOOK.cover)}" alt="Cover of ${esc(BOOK.title)}"></a>` : ''}<div><span class="label">Go deeper in the book</span><h3 style="margin:6px 0 4px">${esc(BOOK.title)}</h3><p class="muted" style="margin:0 0 10px">${BOOK.chapters && BOOK.chapters[t.id] ? `This lesson is covered in ${esc(BOOK.chapters[t.id])}.` : 'More examples and practice for this lesson.'}</p>${BOOK.buyUrl ? `<a href="${esc(BOOK.buyUrl)}" target="_blank" rel="noopener"><b>Get the book</b></a>` : '<a href="#/book"><b>About the book</b></a>'}</div></div>` : ''}
           ${labsOf(t).map(k => `<a class="card lab-card" href="#/lab/${k}"><span class="label">${LABS[k].mission ? 'Terminal mission' : 'Hands-on lab'}</span><h3>${esc(LABS[k].title)}</h3><span class="muted">${esc(LABS[k].blurb)}</span></a>`).join('')}
         </aside>
       </div>`;
