@@ -171,6 +171,7 @@ input[type=range]{width:100%;accent-color:var(--accent)}
     <span class="spacer"></span>
     <nav class="nav" aria-label="Main">
       <a href="#/" data-nav="home">Big Ideas</a>
+      <a href="#/labs" data-nav="labs">Labs</a>
       <a href="#/book" data-nav="book" id="bookNav" hidden>The Book</a>
       <a href="#" id="videoNav" target="_blank" rel="noopener" hidden>Videos</a>
       <a href="../">All courses</a>
@@ -181,6 +182,8 @@ input[type=range]{width:100%;accent-color:var(--accent)}
 </div>
 <script src="content.js"></script>
 <script src="questions.js"></script>
+<script src="labs.js"></script>
+<script src="figures.js"></script>
 <script src="images.js"></script>
 <script>
 (function(){
@@ -251,6 +254,7 @@ input[type=range]{width:100%;accent-color:var(--accent)}
           <p>Five Big Ideas and ${ALL.length} topics. Read each topic and its vocabulary, then pass its AP-style practice to mark it complete.</p>
           <div class="row" style="margin-bottom:18px">
             <a class="btn primary" href="#/topic/${next.id}">${d ? 'Continue' : 'Start'} with ${next.id} ${esc(next.title)}</a>
+            <a class="btn" href="#/labs">Try a lab</a>
           </div>
           <div class="meter"><span class="label">${d} of ${ALL.length} topics complete</span><div class="meter-bar"><i style="width:${Math.round(d / ALL.length * 100)}%"></i></div></div>
         </div>
@@ -292,6 +296,7 @@ input[type=range]{width:100%;accent-color:var(--accent)}
           <h1>${esc(t.title)}</h1>
           ${window.AP_IMAGE ? AP_IMAGE(t.id, t.title) : ''}
           <p class="summary">${esc(t.summary)}</p>
+          ${window.AP_FIGURE ? AP_FIGURE(t.id) : ''}
           ${ytId(VIDEOS.topics && VIDEOS.topics[t.id]) ? `<div class="video"><iframe src="https://www.youtube-nocookie.com/embed/${ytId(VIDEOS.topics[t.id])}" title="CyberTeaches video: ${esc(t.title)}" allow="encrypted-media; picture-in-picture; fullscreen" allowfullscreen loading="lazy"></iframe></div><p style="margin:8px 0 0;font-size:15px"><a href="https://www.youtube.com/watch?v=${ytId(VIDEOS.topics[t.id])}" target="_blank" rel="noopener">Watch on YouTube</a>${VIDEOS.channelUrl ? ` · <a href="${esc(VIDEOS.channelUrl)}" target="_blank" rel="noopener">More CyberTeaches videos</a>` : ''}</p>` : ''}
           <section class="card" style="margin-top:20px">
             <h2 style="font-size:22px;margin-bottom:12px">Vocabulary</h2>
@@ -344,13 +349,14 @@ input[type=range]{width:100%;accent-color:var(--accent)}
   function renderLabs(){
     app.innerHTML = `<div class="section-head"><div><span class="label">Practice</span><h2>Hands-on labs</h2></div></div>
       <p class="muted" style="max-width:68ch;margin-top:-6px">Short interactive activities that go with the lessons. Everything runs in your browser and nothing you type is sent anywhere.</p>
-      <h3 style="font-size:22px;margin:22px 0 4px">Terminal missions</h3>
+      ${MISSIONS.length ? `<h3 style="font-size:22px;margin:22px 0 4px">Terminal missions</h3>
       <p class="muted" style="max-width:68ch;margin:0 0 12px">One investigation per unit on a pretend command line. Type real commands, follow the clues, and capture the flag.</p>
       <div class="labs">${MISSIONS.map(m => `<a class="card lab-card" href="#/lab/${m.key}" style="border-top:6px solid var(--u${m.unit})"><span class="label">Unit ${m.unit} · Topic ${m.topic}</span><h3>${esc(m.title)}</h3><span class="muted">${esc(m.blurb)}</span></a>`).join('')}</div>
-      <h3 style="font-size:22px;margin:28px 0 12px">Quick labs</h3>
+      <h3 style="font-size:22px;margin:28px 0 12px">Quick labs</h3>` : ''}
       <div class="labs">${Object.entries(LABS).filter(([, l]) => !l.mission).map(([k, l]) => {
         const used = ALL.filter(t => labsOf(t).includes(k)).map(t => t.id).join(', ');
-        return `<a class="card lab-card" href="#/lab/${k}"><span class="label">Topic ${used}</span><h3>${esc(l.title)}</h3><span class="muted">${esc(l.blurb)}</span></a>`; }).join('')}</div>`;
+        const bi = (used.match(/^\d/) || ['1'])[0];
+        return `<a class="card lab-card" href="#/lab/${k}" style="border-top:6px solid var(--u${bi})"><span class="label">Topic ${used}</span><h3>${esc(l.title)}</h3><span class="muted">${esc(l.blurb)}</span></a>`; }).join('')}</div>`;
   }
 
   function labShell(k, intro){
@@ -612,7 +618,10 @@ input[type=range]{width:100%;accent-color:var(--accent)}
   }
 
   MISSIONS.forEach(m => { labs[m.key] = () => runMission(m); });
-  function renderLab(k){ labs[k](); }
+  function renderLab(k){
+    const run = window.AP_LAB_RUN && window.AP_LAB_RUN[k];
+    if (run) run(labShell(k, LABS[k].intro), esc); else labs[k]();
+  }
 
   route();
 })();
