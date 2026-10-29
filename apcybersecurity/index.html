@@ -189,8 +189,11 @@ input[type=range]{width:100%;accent-color:var(--accent)}
     </nav>
   </header>
   <main id="app"></main>
-  <div class="foot"><span>Progress is saved in this browser.</span><span>Units and topics follow the College Board AP Cybersecurity course framework.</span></div>
+  <div class="foot"><span>Progress is saved in this browser, and to your account when you sign in.</span><span>Units and topics follow the College Board AP Cybersecurity course framework.</span></div>
 </div>
+<script src="../academy/firebase-config.js"></script>
+<script src="../academy/cloud.js"></script>
+<script src="../account.js"></script>
 <script src="content.js"></script>
 <script src="missions.js"></script>
 <script src="questions.js"></script>
@@ -211,7 +214,9 @@ input[type=range]{width:100%;accent-color:var(--accent)}
   const KEY = 'ctap-progress-v1';
   let progress = {};
   try { progress = JSON.parse(localStorage.getItem(KEY)) || {}; } catch (e) {}
-  const save = () => { try { localStorage.setItem(KEY, JSON.stringify(progress)); } catch (e) {} };
+  const save = () => { try { localStorage.setItem(KEY, JSON.stringify(progress)); } catch (e) {} if (window.Account) Account.push(); };
+  // Signed-in students: combine this browser's progress with their saved progress, then redraw.
+  if (window.Account) Account.attach(KEY, () => progress, merged => { progress = merged; try { localStorage.setItem(KEY, JSON.stringify(progress)); } catch (e) {} route(); });
   const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
   const isDone = id => progress[id] && progress[id].passed;
   const doneCount = () => ALL.filter(t => isDone(t.id)).length;
