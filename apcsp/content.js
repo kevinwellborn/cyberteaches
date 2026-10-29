@@ -142,7 +142,15 @@ window.AP_UNITS = [
 window.AP_LABS = {};
 
 // Leave title empty to hide every book section.
-window.AP_BOOK = { title: '', author: 'Kevin Wellborn', tagline: '', description: '', buyUrl: '', cover: '', chapters: {} };
+window.AP_BOOK = {
+  title: "Kevin Wellborn's AP® Computer Science Principles Study Guide",
+  author: 'Kevin Wellborn',
+  tagline: 'A study guide for all 5 Big Ideas, written to go with these free lessons.',
+  description: 'Clear explanations of every Big Idea, worked examples in AP pseudocode, vocabulary review, and AP-style practice questions. Watch the matching video lessons on the CyberTeaches YouTube channel.',
+  buyUrl: 'https://www.amazon.com/dp/B0HN67PZWG',
+  cover: 'book-cover.jpg',
+  chapters: {}
+};
 
 // CyberTeaches YouTube videos: map from topic id to a YouTube link or video id.
 window.AP_VIDEOS = { channelUrl: 'https://www.youtube.com/@cyberteaches', topics: {} };
