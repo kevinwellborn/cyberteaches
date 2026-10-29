@@ -172,13 +172,138 @@ window.AP_BOOK = {
 };
 
 // CyberTeaches YouTube videos: map from topic id to a YouTube link or video id.
-// From the Watch boxes in Kevin's book. The videos were recorded for SY0-701.
+// CyberTeaches Security+ videos, from the Security+ Full Course playlist on YouTube.
+// Each lesson lists [video id, title, length]; the first one plays in the lesson.
 window.AP_VIDEOS = {
-  channelUrl: 'https://www.youtube.com/@cyberteaches',
+  channelUrl: 'https://www.youtube.com/playlist?list=PLQGjMvGO2D8uOGT3RuDNPXPuziXNm3Zh9',
+  note: 'These videos were recorded for SY0-701. Where they differ from SY0-801, the lesson and the book are correct.',
   topics: {
-    '1.1': 'yWyOercgA4g',
-    '1.2': 'NgK-X95aD-E',
-    '1.3': 'A9Om3-949t4',
-    '2.2': 'Hygr8N8bKF4'
+    '1.1': [
+      ["yWyOercgA4g", "CIA Triad and AAA", "7:59"],
+      ["gX0kG0Vl7TI", "Security Controls", "3:16"],
+      ["6LKw5ejcjQE", "Gap Analysis and Zero Trust", "3:26"],
+      ["iOJC9gQFFZ4", "Deception and Disruption Technology", "2:35"]
+    ],
+    '1.2': [
+      ["NgK-X95aD-E", "Change Management: Business Processes", "3:48"],
+      ["97sjVsKWaT4", "Change Management: Technical Implications", "3:32"],
+      ["NDyu5LEhHIo", "Change Management: Documentation and Version Control", "3:43"]
+    ],
+    '1.3': [
+      ["7aQ7ERnO7_U", "Encryption", "3:07"],
+      ["mSoIsAkXTWw", "Public Key Infrastructure (PKI)", "2:24"],
+      ["A9Om3-949t4", "Digital Certificates", "4:34"],
+      ["LR-V_Mf9cPE", "Hashing, Digital Signatures, and Blockchain", "4:01"],
+      ["vR686JLhLpo", "Obfuscation and Steganography", "3:02"],
+      ["PxkSHAF-bRs", "Cryptographic Tools", "2:43"]
+    ],
+    '2.1': [
+      ["lTyuVPyVCiA", "Identifying Vulnerabilities", "3:49"]
+    ],
+    '2.2': [
+      ["Hygr8N8bKF4", "Threat Actors", "3:27"]
+    ],
+    '2.3': [
+      ["ZVmJat4ldUU", "Common Attack Surfaces", "5:38"],
+      ["kfeXZ8OJ704", "Principles of Social Engineering", "3:37"],
+      ["mBRYLSNipns", "Phishing and Spam", "3:40"],
+      ["nIKGaZdCWqQ", "Misinformation and Impersonation", "2:49"],
+      ["qiBjJIDsx9U", "Watering Hole Attacks and Typosquatting", "3:18"],
+      ["6R-tO8arNpg", "Wireless Devices", "3:40"]
+    ],
+    '2.4': [
+      ["VqKPlZcVOIo", "Application Vulnerabilities", "3:05"],
+      ["HYft3sHrENs", "OS and Web-Based Vulnerabilities", "4:44"],
+      ["jXqLwalnS7U", "Hardware and Virtualization Vulnerabilities", "3:30"],
+      ["aiboO2ywGMk", "Supply Chain, Zero-Day, and Cryptographic Vulnerabilities", "4:40"],
+      ["Bosj4GCISBs", "Mobile Solutions", "3:08"]
+    ],
+    '2.5': [
+      ["224FtzbpOv4", "Indicators of Malicious Activity", "3:37"],
+      ["0ODbcHnHOf8", "Malware", "4:10"],
+      ["eZzvmyv9NVo", "Ransomware", "3:26"],
+      ["xTA2mIAw67M", "Trojans, Backdoors, and RATs", "3:19"],
+      ["SKtvuoAiGz0", "Viruses, Worms, Spyware & Adware", "3:32"],
+      ["m3mJgSlxek8", "Keyloggers", "3:04"],
+      ["ifeTvbB4tQQ", "Logic Bombs & Rootkits", "3:12"],
+      ["s5i8u075Y8Y", "Physical Attacks", "3:11"],
+      ["VkSV6gF3VzE", "DoS and DDoS Attacks", "3:23"],
+      ["GFHEsOA5mFE", "DNS Attacks", "3:48"],
+      ["O9UVOB5vnZ8", "Wireless, On-Path, and Replay Attacks", "3:05"],
+      ["CG0eJ7hr2g4", "Password Attacks", "2:33"],
+      ["DVOpjbOiRjY", "Cryptographic Attacks", "2:30"],
+      ["BA9_AK_LNiY", "WannaCry Ransomware Attack Explained", "5:01"]
+    ],
+    '3.1': [
+      ["gR2rHvk6nVA", "Architecture Considerations", "3:15"],
+      ["DX_9-nEZR_s", "Architecture and Infrastructure Concepts", "4:17"]
+    ],
+    '3.2': [
+      ["fyZIUe16qW0", "Infrastructure Considerations", "4:31"],
+      ["ilp2tdo7lFU", "Firewalls, IDS/IPS & Web Filters", "4:14"],
+      ["2q7XiEIen8I", "Network Appliances", "3:16"],
+      ["S64TwhDJJ2g", "Secure Communication, Access & Effective Controls", "3:19"]
+    ],
+    '3.3': [
+      ["35COFv1PKj0", "Data Classification and Types", "3:53"],
+      ["Cucv4F_2ES0", "Data Sovereignty and Protection", "3:50"]
+    ],
+    '3.4': [
+      ["IU35IYNslOc", "Resilience and Recovery (Part 1)", "4:31"],
+      ["rrJK798ylL0", "Resilience and Recovery (Part 2)", "4:04"]
+    ],
+    '4.1': [
+      ["hRlnxfC3ff8", "Mitigation Techniques", "3:22"],
+      ["yVebvae2f50", "Hardening Techniques", "2:39"],
+      ["q1xmSydXavY", "Hardening Targets and Secure Baselines", "8:42"],
+      ["mCVcXxu5MIM", "Endpoint Security: OS & Monitoring", "3:14"],
+      ["oyQJdP_Jzjg", "Endpoint Security: Protocol & Email Security", "3:50"],
+      ["QHbYVm4yDaM", "Application Security", "3:22"]
+    ],
+    '4.2': [
+      ["WLayI4WNVcc", "Data Asset Management", "7:00"]
+    ],
+    '4.3': [
+      ["n5mQaGQq1XQ", "Vulnerability Management", "5:55"],
+      ["lTyuVPyVCiA", "Identifying Vulnerabilities", "3:49"]
+    ],
+    '4.4': [
+      ["-ux051X3H1g", "Monitoring Resources", "3:36"],
+      ["tDx9LvoEQXo", "Monitoring Tools", "2:35"]
+    ],
+    '4.5': [
+      ["cf6aqYKBN8M", "Access Management", "4:36"],
+      ["PQTRo16aeKc", "Multifactor Authentication (MFA)", "4:02"],
+      ["sTF5B-Du1o0", "Passwords", "2:47"]
+    ],
+    '4.6': [
+      ["rFaEw8vySLA", "Scripting and Automation", "3:46"]
+    ],
+    '4.7': [
+      ["1lsoe2nVTmo", "Incident Response", "5:03"]
+    ],
+    '4.8': [
+      ["BgcPBqs8hpo", "Security Logs", "4:38"]
+    ],
+    '5.1': [
+      ["itMvg2V4puU", "Security Governance", "5:27"]
+    ],
+    '5.2': [
+      ["K9b_O-sjSkk", "Risk Management", "5:27"]
+    ],
+    '5.3': [
+      ["e1SYHjjndTs", "Third-Party Vendor Risk", "3:46"]
+    ],
+    '5.4': [
+      ["HukYFSgOjdI", "Security Compliance", "4:41"]
+    ],
+    '5.5': [
+      ["PGmsn4sI_lw", "Audits and Attestation", "3:54"],
+      ["rryQtocirCU", "Penetration Testing (Pentesting)", "3:22"]
+    ],
+    '5.6': [
+      ["safQq6DYdT0", "Security Awareness", "3:34"],
+      ["91aDKN1HcvA", "Phishing Awareness", "3:14"]
+    ]
   }
 };

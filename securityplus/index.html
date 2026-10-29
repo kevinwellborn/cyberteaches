@@ -158,6 +158,10 @@ input[type=range]{width:100%;accent-color:var(--accent)}
 .steps{margin:0;padding:0;list-style:none;display:grid;gap:6px;font-size:15px}
 .steps li.ok{color:var(--good);font-weight:700}
 @media (max-width:820px){ .term-box{height:440px} .term-in label{display:none} }
+.vlist{display:grid;gap:6px;margin-top:12px}
+.vbtn{text-align:left;border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:10px;padding:8px 12px;font:inherit;font-size:15px;cursor:pointer}
+.vbtn:hover{background:var(--panel-2)}
+.vbtn.on{border-color:var(--u, var(--accent));background:color-mix(in srgb, var(--u, var(--accent)) 12%, transparent)}
 .foot{margin-top:40px;color:var(--muted);font-size:14px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
 @media (max-width:820px){ .hero,.lesson{grid-template-columns:1fr} .side{position:static} .unit{grid-template-columns:1fr} }
 </style>
@@ -207,6 +211,21 @@ input[type=range]{width:100%;accent-color:var(--accent)}
   if (VIDEOS.channelUrl) { const v = document.getElementById('videoNav'); v.href = VIDEOS.channelUrl; v.hidden = false; }
   // Accepts a bare id or any common YouTube link form (watch?v=, youtu.be/, embed/, shorts/).
   const ytId = s => { const m = String(s || '').match(/(?:v=|youtu\.be\/|embed\/|shorts\/)([\w-]{11})/); return m ? m[1] : /^[\w-]{11}$/.test(s) ? s : ''; };
+  // A lesson's videos: a single link or id, or a list of [id, title, length]. The first one plays in the page.
+  const videosOf = t => { const v = VIDEOS.topics && VIDEOS.topics[t.id]; return !v ? [] : Array.isArray(v) ? v.map(x => Array.isArray(x) ? x : [x, '', '']) : [[v, '', '']]; };
+  function videoBlock(t){
+    const vs = videosOf(t).filter(v => ytId(v[0]));
+    if (!vs.length) return '';
+    const first = ytId(vs[0][0]);
+    const list = vs.length > 1 ? `<div class="vlist"><span class="label">Videos for this lesson</span>${vs.map((v, i) => `<button class="vbtn${i ? '' : ' on'}" data-yt="${ytId(v[0])}"><b>${i + 1}.</b> ${esc(v[1] || 'Video ' + (i + 1))}${v[2] ? ` <span class="muted">${esc(v[2])}</span>` : ''}</button>`).join('')}</div>` : '';
+    return `<div class="video"><iframe id="ytFrame" src="https://www.youtube-nocookie.com/embed/${first}" title="CyberTeaches video: ${esc(t.title)}" allow="encrypted-media; picture-in-picture; fullscreen" allowfullscreen loading="lazy"></iframe></div><p style="margin:8px 0 0;font-size:15px"><a id="ytLink" href="https://www.youtube.com/watch?v=${first}" target="_blank" rel="noopener">Watch on YouTube</a>${VIDEOS.channelUrl ? ` · <a href="${esc(VIDEOS.channelUrl)}" target="_blank" rel="noopener">Full Security+ playlist</a>` : ''}</p>${VIDEOS.note ? `<p class="muted" style="margin:4px 0 0;font-size:14px">${esc(VIDEOS.note)}</p>` : ''}${list}`;
+  }
+  document.addEventListener('click', e => {
+    const b = e.target.closest('.vbtn'); if (!b) return;
+    document.getElementById('ytFrame').src = 'https://www.youtube-nocookie.com/embed/' + b.dataset.yt + '?autoplay=1';
+    document.getElementById('ytLink').href = 'https://www.youtube.com/watch?v=' + b.dataset.yt;
+    document.querySelectorAll('.vbtn').forEach(x => x.classList.toggle('on', x === b));
+  });
   const ALL = UNITS.flatMap(u => u.topics.map(t => Object.assign({ unit: u }, t)));
   const labsOf = t => t.labs || (t.lab ? [t.lab] : []);
   const MISSIONS = window.AP_MISSIONS || [];
@@ -308,7 +327,7 @@ input[type=range]{width:100%;accent-color:var(--accent)}
           ${window.AP_IMAGE ? AP_IMAGE(t.id, t.title) : ''}
           <p class="summary">${esc(t.summary)}</p>
           ${window.AP_FIGURE ? AP_FIGURE(t.id) : ''}
-          ${ytId(VIDEOS.topics && VIDEOS.topics[t.id]) ? `<div class="video"><iframe src="https://www.youtube-nocookie.com/embed/${ytId(VIDEOS.topics[t.id])}" title="CyberTeaches video: ${esc(t.title)}" allow="encrypted-media; picture-in-picture; fullscreen" allowfullscreen loading="lazy"></iframe></div><p style="margin:8px 0 0;font-size:15px"><a href="https://www.youtube.com/watch?v=${ytId(VIDEOS.topics[t.id])}" target="_blank" rel="noopener">Watch on YouTube</a>${VIDEOS.channelUrl ? ` · <a href="${esc(VIDEOS.channelUrl)}" target="_blank" rel="noopener">More CyberTeaches videos</a>` : ''}</p>` : ''}
+          ${videoBlock(t)}
           <section class="card" style="margin-top:20px">
             <h2 style="font-size:22px;margin-bottom:12px">Vocabulary</h2>
             <ul class="terms">${t.terms.map(([k, v]) => `<li><b>${esc(k)}:</b> ${esc(v)}</li>`).join('')}</ul>
