@@ -7,6 +7,7 @@ and small ad spots (edit `CT_ADS` in `index.html`).
 | Folder | Course |
 | --- | --- |
 | `apcybersecurity/` | AP Cybersecurity (high school) |
+| `apcsp/` | AP Computer Science Principles (high school) |
 | `academy/` | CyberTeaches Academy block coding (grades 6 to 8) |
 
 Old links keep working: `ap-cyber/` and `teacher.html` redirect, and the hub forwards `?class=CODE` join links
