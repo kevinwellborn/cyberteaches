@@ -48,3 +48,14 @@ Until `academy/firebase-config.js` has a config, the site works without sign-in 
 4. Project settings → Your apps → add a Web app, then copy its `firebaseConfig` into `academy/firebase-config.js`.
 
 Teachers open `academy/teacher.html`, create a class, and share the class code or join link (for example in Google Classroom).
+
+### Student logins (no email or Google account)
+
+Teachers can also make a username and password for each student on `academy/teacher.html` (Student logins: type one name per line,
+then print login cards). Students choose Sign in, then Student login, and type the class code, username and password.
+
+1. Firebase console → Authentication → Sign-in method → Add new provider → Email/Password → Enable (leave "Email link" off).
+2. Publish the updated `firestore.rules` (it adds the teacher-only `logins` list).
+
+Each login is a Firebase email/password account with a made-up address (`username.classcode@students.cyberteaches.com`) that never
+receives mail, so a forgotten password is reset by the teacher with "New password".
