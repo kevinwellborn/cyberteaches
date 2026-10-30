@@ -28,6 +28,11 @@ service cloud.firestore {
           && exists(/databases/$(database)/documents/classes/$(code));
         allow delete: if signedIn() && (request.auth.uid == uid || teacherOf(code));
       }
+
+      // Student logins the teacher made (name, username, password). Only the class's teacher can see or change them.
+      match /logins/{uid} {
+        allow read, write: if signedIn() && teacherOf(code);
+      }
     }
   }
 }

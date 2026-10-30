@@ -89,6 +89,14 @@ td.name small{color:var(--muted)}
 .toolbar h2{font-size:22px}
 .note{margin-top:18px;font-size:14px}
 .err{color:var(--bad);font-weight:700}
+.logins{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.6fr);gap:16px;align-items:start}
+.logins textarea{display:block;width:100%;min-height:150px;margin:6px 0 10px;border:2px solid var(--line);border-radius:10px;padding:10px 12px;background:var(--panel-2);color:var(--ink);font:inherit;resize:vertical}
+.logins textarea:focus{border-color:var(--accent);outline:none}
+.logins td,.logins th{text-align:left}
+.logins td.pw,.logins td.un{font-family:var(--f-mono);font-size:14px}
+.logins td.acts{text-align:right}
+.btn.sm{padding:4px 10px;font-size:13px;border-radius:8px}
+@media (max-width:760px){ .logins{grid-template-columns:minmax(0,1fr)} }
 @media (max-width:820px){ .top2{grid-template-columns:minmax(0,1fr)} }
 </style>
 </head><body>
@@ -116,7 +124,7 @@ const pick={ get(){ try{ return localStorage.getItem('cyberteaches:teacherClass'
 function signInView(){
   app.innerHTML=`<section class="hero"><span class="label">For teachers</span>
     <h1 style="margin-top:8px">See how your class is doing, puzzle by puzzle.</h1>
-    <p>Sign in with Google, create a class, and share its code or link with students (for example in Google Classroom). As students solve puzzles, their stars show up here.</p>
+    <p>Sign in with Google and create a class. Share its code or link with students (for example in Google Classroom), or make each student a username and password if they don't use Google. As students solve puzzles, their stars show up here.</p>
     <button class="btn primary" id="si">Sign in with Google</button> <p class="err" id="sierr" role="alert"></p></section>`;
   $('#si').onclick=()=>Cloud.signIn().catch(e=>{ $('#sierr').textContent = e.code==='auth/unauthorized-domain' ? 'This web address is not in Firebase Authorized domains yet.' : 'Sign-in did not work. Try again.' });
 }
@@ -135,7 +143,7 @@ function dashboard(){
   app.innerHTML=`<div class="toolbar" style="margin-top:6px"><h2>Your classes</h2></div>
     <div class="classes" id="classes"></div>
     <form class="newclass" id="newclass"><label class="label" for="cname" style="align-self:center">New class</label><input id="cname" placeholder="e.g. Period 3 Coding" maxlength="60" required><button class="btn primary" id="cbtn">Create class</button><span class="err" id="cerr" role="alert"></span></form>
-    <div id="classview"></div>`;
+    <div id="classview"></div><section id="loginsview"></section>`;
   $('#newclass').addEventListener('submit',async e=>{
     e.preventDefault(); const name=$('#cname').value.trim(); if(!name) return;
     $('#cbtn').disabled=true; $('#cerr').textContent='';
@@ -161,6 +169,94 @@ function selectClass(code){
   if(stopRoster) stopRoster();
   roster=[]; renderClass();
   stopRoster=Cloud.watchRoster(code,(list,err)=>{ roster=list.sort((a,b)=>(a.name||'').localeCompare(b.name||'')); renderClass(err) });
+  renderLogins();
+}
+
+// ---------- student logins: a username and password for each student, made by the teacher ----------
+let logins=[], stopLogins=null;
+const WORDS=['rover','comet','orbit','pixel','robot','rocket','planet','moon','laser','cactus','tiger','panda','maple','river','cloud','ocean','sunny','zebra','lemon','mango','piano','falcon','galaxy','nova','lunar','crater','otter','koala','bison','canyon','meadow','summit','harbor','island','jungle','glacier'];
+const rnd=n=>{ const a=new Uint32Array(1); crypto.getRandomValues(a); return a[0]%n };
+const newPassword=()=>WORDS[rnd(WORDS.length)]+(10+rnd(90));
+function makeUsername(name, taken){
+  const parts=name.toLowerCase().normalize('NFD').replace(/[^a-z\s]/g,'').split(/\s+/).filter(Boolean);
+  let base=parts.length?(parts[0]+(parts.length>1?parts[parts.length-1][0]:'')).slice(0,16):'student';
+  let u=base, i=2; while(taken.has(u)) u=base+(i++);
+  taken.add(u); return u;
+}
+function renderLogins(){
+  const view=$('#loginsview'); if(!view) return;
+  const code=current;
+  view.innerHTML=`<div class="toolbar"><h2>Student logins</h2><div class="spacer"></div><button class="btn" id="printCards" disabled>Print login cards</button></div>
+    <div class="logins">
+      <form class="panel" id="addLogins"><label class="label" for="names">Add students</label>
+        <p class="muted" style="margin:6px 0 0">Type one student name per line. Each student gets a username and password, so they can sign in without an email or Google account.</p>
+        <textarea id="names" placeholder="Maya Johnson&#10;Leo Park&#10;Ana Silva"></textarea>
+        <button class="btn primary" id="addBtn">Create logins</button> <span id="addMsg" role="status" class="muted"></span></form>
+      <div class="tablewrap" id="loginList"><div class="empty">Loading…</div></div>
+    </div>`;
+  $('#addLogins').addEventListener('submit',e=>{ e.preventDefault(); addLogins(code) });
+  $('#printCards').onclick=()=>printCards(code);
+  if(stopLogins) stopLogins();
+  logins=[];
+  stopLogins=Cloud.watchLogins(code,(list,err)=>{ if(code!==current) return; logins=list.sort((a,b)=>(a.name||'').localeCompare(b.name||'')); renderLoginList(err) });
+}
+function renderLoginList(err){
+  const box=$('#loginList'); if(!box) return;
+  $('#printCards').disabled=!logins.length;
+  if(err){ box.innerHTML='<div class="empty err">Could not load student logins. Check that the latest Firestore rules are published.</div>'; return }
+  if(!logins.length){ box.innerHTML='<div class="empty">No student logins yet. Add names on the left.</div>'; return }
+  box.innerHTML=`<table><thead><tr><th>Student</th><th>Username</th><th>Password</th><th></th></tr></thead><tbody>${logins.map(l=>`<tr data-uid="${esc(l.uid)}"><td><b>${esc(l.name)}</b></td><td class="un">${esc(l.username)}</td><td class="pw">${esc(l.password)}</td>
+    <td class="acts"><button class="btn sm" data-act="reset">New password</button> <button class="btn sm" data-act="remove">Remove</button></td></tr>`).join('')}</tbody></table>`;
+  box.querySelectorAll('button[data-act]').forEach(b=>b.onclick=async()=>{
+    const l=logins.find(x=>x.uid===b.closest('tr').dataset.uid); if(!l) return;
+    const code=current;
+    if(b.dataset.act==='remove' && !confirm('Remove '+l.name+'? Their login and saved progress will be deleted.')) return;
+    b.disabled=true; b.textContent='Working…';
+    try{ if(b.dataset.act==='reset') await Cloud.resetStudentPassword(code,l,newPassword()); else await Cloud.removeStudentLogin(code,l) }
+    catch(e){ console.error(e); alert('That did not work. Check your internet connection and try again.'); renderLoginList() }
+  });
+}
+async function addLogins(code){
+  const cls=classes.find(c=>c.code===code)||{code,name:code};
+  const names=[...new Set($('#names').value.split('\n').map(n=>n.trim().replace(/\s+/g,' ')).filter(Boolean))].map(n=>n.slice(0,60));
+  const msg=$('#addMsg'), btn=$('#addBtn');
+  if(!names.length){ msg.textContent='Type at least one name.'; return }
+  btn.disabled=true;
+  const taken=new Set(logins.map(l=>l.username)); const failed=[];
+  for(let i=0;i<names.length;i++){
+    msg.textContent=`Creating ${i+1} of ${names.length}…`;
+    try{
+      // A username can be left over from a login that was only half made; if so, move on to the next free one.
+      for(let tries=0;;tries++){
+        try{ await Cloud.createStudentLogin(cls,{name:names[i], username:makeUsername(names[i],taken), password:newPassword()}); break }
+        catch(e){ if(e.code!=='auth/email-already-in-use'||tries>=3) throw e }
+      }
+    }
+    catch(e){ console.error(e); failed.push(names[i]);
+      if(e.code==='auth/operation-not-allowed'){ failed.push(...names.slice(i+1)); break } }
+  }
+  btn.disabled=false;
+  if(code!==current) return;
+  $('#names').value=failed.join('\n');
+  const off=failed.length && failed.length===names.length && !logins.length;
+  msg.innerHTML=off?'<span class="err">Student logins are not switched on yet. In Firebase, turn on Email/Password under Authentication, Sign-in method.</span>'
+    : failed.length?`<span class="err">${failed.length} could not be created and ${failed.length>1?'are':'is'} still in the box. Try again in a minute.</span>`:'Done.';
+}
+function printCards(code){
+  const cls=classes.find(c=>c.code===code)||{code,name:code};
+  const url=new URL('./', location.href).href;
+  const w=window.open('','_blank'); if(!w){ alert('Allow pop-ups for this site to print login cards.'); return }
+  w.document.write(`<!doctype html><html><head><meta charset="utf-8"><title>${esc(cls.name)} login cards</title><style>
+    body{font-family:system-ui,sans-serif;margin:16px;color:#111}
+    .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+    .card{border:2px dashed #999;border-radius:10px;padding:14px;break-inside:avoid}
+    .card h2{margin:0 0 4px;font-size:18px}.card p{margin:4px 0;font-size:14px}
+    .card b{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:17px}
+    @media print{ .noprint{display:none} }</style></head><body>
+    <p class="noprint"><button onclick="print()">Print</button> Cut along the dashed lines and give each student their card.</p>
+    <div class="grid">${logins.map(l=>`<div class="card"><h2>${esc(l.name)}</h2><p>Go to ${esc(url)}</p><p>Click <b style="font-family:inherit;font-size:14px">Sign in</b>, then Student login.</p>
+      <p>Class code: <b>${esc(cls.code)}</b></p><p>Username: <b>${esc(l.username)}</b></p><p>Password: <b>${esc(l.password)}</b></p></div>`).join('')}</div></body></html>`);
+  w.document.close();
 }
 const joinLink=code=>new URL('./?class='+code, location.href).href;
 function ago(ts){
@@ -177,8 +273,9 @@ function renderClass(err){
   const lessonDone=UNITS.map(u=>{ const lv=LEVELS.filter(l=>l.unit===u.n); return {u, done:roster.filter(s=>lv.every(l=>(s.progress||{})[l.n])).length} });
   view.innerHTML=`<div class="top2">
     <section class="panel"><span class="label">${esc(c.name)} · class code</span><div class="code">${esc(c.code)}</div>
-      <p class="muted" style="margin:0 0 8px">Students sign in on the course site and enter this code. Or share this link, which fills in the code for them:</p>
-      <div class="linkrow"><code id="jl">${esc(joinLink(c.code))}</code><button class="btn" id="copy">Copy link</button></div></section>
+      <p class="muted" style="margin:0 0 8px">Students sign in with Google and enter this code. Or share this link, which fills in the code for them:</p>
+      <div class="linkrow"><code id="jl">${esc(joinLink(c.code))}</code><button class="btn" id="copy">Copy link</button></div>
+      <p class="muted" style="margin:10px 0 0">No Google accounts for students? <a href="#loginsview">Make student logins</a> with a username and password instead.</p></section>
     <section class="panel"><span class="label">Class summary</span>
       <div class="stats"><div class="stat"><b>${n}</b><span class="muted">students joined</span></div>
       <div class="stat"><b>${avg.toFixed(1)}</b><span class="muted">puzzles solved on average, of ${LEVELS.length}</span></div>
@@ -194,14 +291,14 @@ function table(){
   const head2=LEVELS.map(l=>`<th title="${esc(l.title)}">${l.unit}.${l.k}</th>`).join('');
   const rows=roster.map(s=>{
     const p=s.progress||{}, done=LEVELS.filter(l=>p[l.n]).length;
-    return `<tr><td class="name"><b>${esc(s.name)}</b><small>${esc(s.email)}</small></td>${LEVELS.map(l=>{ const st=p[l.n]||0; return `<td><span class="cell s${st}" title="${esc(l.title)}: ${st?st+' star'+(st>1?'s':''):'not solved'}">${st?'★'.repeat(st):'·'}</span></td>` }).join('')}<td><b>${done}</b>/${LEVELS.length}</td><td class="muted">${ago(s.updatedAt)}</td></tr>`;
+    return `<tr><td class="name"><b>${esc(s.name)}</b><small>${esc(s.email||(s.username?'Username: '+s.username:''))}</small></td>${LEVELS.map(l=>{ const st=p[l.n]||0; return `<td><span class="cell s${st}" title="${esc(l.title)}: ${st?st+' star'+(st>1?'s':''):'not solved'}">${st?'★'.repeat(st):'·'}</span></td>` }).join('')}<td><b>${done}</b>/${LEVELS.length}</td><td class="muted">${ago(s.updatedAt)}</td></tr>`;
   }).join('');
   return `<table><thead><tr><th class="name" rowspan="2">Student</th>${head1}<th rowspan="2">Solved</th><th rowspan="2">Last active</th></tr><tr>${head2}</tr></thead><tbody>${rows}</tbody></table>`;
 }
 function downloadCsv(c){
   const q=v=>'"'+String(v==null?'':v).replace(/"/g,'""')+'"';
-  const lines=[['Student','Email',...LEVELS.map(l=>'L'+l.unit+'.'+l.k+' '+l.title),'Solved','Last active'].map(q).join(',')];
-  roster.forEach(s=>{ const p=s.progress||{}; lines.push([s.name,s.email,...LEVELS.map(l=>p[l.n]||0),LEVELS.filter(l=>p[l.n]).length,s.updatedAt&&s.updatedAt.toDate?s.updatedAt.toDate().toISOString():''].map(q).join(',')) });
+  const lines=[['Student','Email or username',...LEVELS.map(l=>'L'+l.unit+'.'+l.k+' '+l.title),'Solved','Last active'].map(q).join(',')];
+  roster.forEach(s=>{ const p=s.progress||{}; lines.push([s.name,s.email||s.username,...LEVELS.map(l=>p[l.n]||0),LEVELS.filter(l=>p[l.n]).length,s.updatedAt&&s.updatedAt.toDate?s.updatedAt.toDate().toISOString():''].map(q).join(',')) });
   const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([lines.join('\n')],{type:'text/csv'})); a.download=(c.name||c.code).replace(/[^a-z0-9]+/gi,'-')+'-progress.csv'; document.body.appendChild(a); a.click(); a.remove();
 }
 
@@ -213,7 +310,7 @@ else Cloud.onChange(c=>{
   const u=c.user?c.user.uid:null;
   if(u===uid && app.dataset.ready) return;
   uid=u; app.dataset.ready='1';
-  if(stopRoster){ stopRoster(); stopRoster=null } if(stopClasses){ stopClasses(); stopClasses=null }
+  if(stopRoster){ stopRoster(); stopRoster=null } if(stopClasses){ stopClasses(); stopClasses=null } if(stopLogins){ stopLogins(); stopLogins=null }
   current=null;
   if(!u) signInView(); else dashboard();
 });

@@ -88,6 +88,12 @@ h1,h2,h3{font-family:var(--f-display);text-wrap:balance;margin:0;line-height:1.1
 .msgbody p{margin:0 0 10px;color:var(--muted)}
 .codein{display:block;width:100%;margin-top:6px;font-family:var(--f-mono);font-size:28px;letter-spacing:.3em;text-align:center;text-transform:uppercase;padding:10px;border:2px solid var(--line);border-radius:10px;background:var(--panel-2);color:var(--ink)}
 .codein:focus{border-color:var(--accent);outline:none}
+.textin{display:block;width:100%;margin:4px 0 10px;font-size:18px;padding:8px 12px;border:2px solid var(--line);border-radius:10px;background:var(--panel-2);color:var(--ink)}
+.textin:focus{border-color:var(--accent);outline:none}
+#siCode{font-family:var(--f-mono);letter-spacing:.2em;text-transform:uppercase}
+.or{display:flex;align-items:center;gap:10px;margin:6px 0 12px;color:var(--muted);font-size:14px}
+.or::before,.or::after{content:"";flex:1;border-top:1px solid var(--line)}
+.gbtn{width:100%;justify-content:center}
 .joinerr{color:var(--bad)!important;font-weight:700;min-height:1.5em;margin-top:8px!important}
 .foot a{color:var(--accent);font-weight:700}
 .linkbtn{background:none;border:0;color:var(--muted);text-decoration:underline;padding:4px}
@@ -405,7 +411,7 @@ function showHome(){
     units.appendChild(card);
   });
   app.appendChild(units);
-  const foot=h('div','foot', Cloud ? '<span>Sign in with your school Google account to save progress to your class. <a href="teacher.html">Teacher dashboard</a></span>' : '<span>Progress is saved in this browser.</span>');
+  const foot=h('div','foot', Cloud ? '<span>Sign in with your school Google account or the student login from your teacher to save progress to your class. <a href="teacher.html">Teacher dashboard</a></span>' : '<span>Progress is saved in this browser.</span>');
   const reset=h('button','linkbtn','Reset my progress'); let armed=false;
   reset.onclick=()=>{ if(!armed){ armed=true; reset.textContent='Click again to erase all progress'; return }
     store.clear(); progress={}; programs={}; bonus={}; showHome() };
@@ -695,6 +701,32 @@ function showMsg(title, html, actions){
   (actions||[['OK',true]]).forEach(([label,primary,fn])=>{ const b=h('button','btn'+(primary?' primary':''),label); b.onclick=()=>{ if(!fn||fn()!==false) m.innerHTML='' }; acts.appendChild(b) });
   const first=$('input',m)||acts.lastElementChild; first.focus();
 }
+function studentInput(id,label,attrs){ return `<label class="label" for="${id}">${label}</label><input id="${id}" class="textin" autocomplete="off" spellcheck="false" ${attrs||''}>` }
+function openSignIn(prefill){
+  showMsg('Sign in', `<p>Got a username and password from your teacher? Use Student login.</p>
+    ${studentInput('siCode','Class code','maxlength="6" autocapitalize="characters" value="'+esc(prefill||'')+'"')}
+    ${studentInput('siUser','Username','maxlength="24" autocapitalize="none"')}
+    ${studentInput('siPass','Password','type="password" maxlength="40" autocomplete="current-password"')}
+    <p class="joinerr" id="siErr" role="alert"></p>
+    <div class="or"><span>or</span></div>
+    <button type="button" class="btn gbtn" id="siGoogle">${G_ICON}Sign in with Google</button>`,
+    [['Cancel'],['Student login',true,()=>{ doStudentSignIn(); return false }]]);
+  const code=$('#siCode'); code.addEventListener('input',()=>{ code.value=code.value.toUpperCase().replace(/[^A-Z0-9]/g,'') });
+  ['siCode','siUser','siPass'].forEach(id=>$('#'+id).addEventListener('keydown',e=>{ if(e.key==='Enter') doStudentSignIn() }));
+  $('#siGoogle').onclick=()=>{ $('#modal').innerHTML=''; Cloud.signIn().catch(signInError) };
+  if(prefill) $('#siUser').focus();
+}
+async function doStudentSignIn(){
+  const code=$('#siCode').value.trim(), user=$('#siUser').value.trim().toLowerCase(), pass=$('#siPass').value, err=$('#siErr');
+  if(code.length!==6){ err.textContent='Class codes have 6 letters and numbers.'; return }
+  if(!user||!pass){ err.textContent='Type your username and password.'; return }
+  err.textContent='Signing in…';
+  try{ await Cloud.signInStudent(code,user,pass); $('#modal').innerHTML='' }
+  catch(e){ console.error(e);
+    err.textContent = e.code==='auth/too-many-requests' ? 'Too many tries. Wait a few minutes, then try again.'
+      : e.code==='auth/network-request-failed' ? 'Check your internet connection and try again.'
+      : 'That did not match. Check your class code, username and password, or ask your teacher.' }
+}
 function signInError(e){
   const msg = e && e.code==='auth/unauthorized-domain' ? 'This website address is not allowed yet. Your teacher needs to add it in Firebase under Authentication, Settings, Authorized domains.'
     : e && (e.code==='auth/admin-restricted-operation'||/blocked|access/i.test(e.message||'')) ? 'Your school account may not be allowed to sign in to outside apps. Ask your teacher or school IT to allow this site.'
@@ -702,7 +734,7 @@ function signInError(e){
   showMsg('Could not sign in', `<p>${msg}</p>`);
 }
 function openJoin(prefill){
-  if(!Cloud.user) return showMsg('Join a class','<p>Sign in with your school Google account first, then enter your class code.</p>',[['Cancel'],['Sign in with Google',true,()=>{ Cloud.signIn().catch(signInError) }]]);
+  if(!Cloud.user) return openSignIn(prefill);
   showMsg('Join a class', `<p>Type the 6-letter code your teacher gave you.</p>
     <label class="label" for="joinCode">Class code</label><input id="joinCode" class="codein" maxlength="6" autocomplete="off" spellcheck="false" value="${esc(prefill||'')}"><p class="joinerr" id="joinErr" role="alert"></p>`,
     [['Cancel'],['Join class',true,()=>{ doJoin(); return false }]]);
@@ -723,8 +755,8 @@ async function doJoin(){
 function renderAccount(){
   const a=$('#account'); if(!a) return; a.innerHTML='';
   if(!Cloud||!Cloud.ready) return;
-  if(!Cloud.user){ const b=h('button','btn',G_ICON+'Sign in'); b.onclick=()=>Cloud.signIn().catch(signInError); a.appendChild(b); return }
-  const name=Cloud.user.displayName||Cloud.user.email||'Student', p=Cloud.profile||{};
+  if(!Cloud.user){ const b=h('button','btn','Sign in'); b.onclick=()=>openSignIn(joinParam); a.appendChild(b); return }
+  const name=Cloud.user.displayName||(Cloud.isStudentLogin(Cloud.user)?'Student':Cloud.user.email)||'Student', p=Cloud.profile||{};
   const ini=name.split(/\s+/).map(w=>w[0]).join('').slice(0,2).toUpperCase();
   a.appendChild(h('div','who',`<span class="avatar" aria-hidden="true">${esc(ini)}</span><span class="who-text"><b>${esc(name)}</b><small>${p.classCode?'Class: '+esc(p.className||p.classCode):'Not in a class yet'}</small></span>`));
   if(!p.classCode){ const j=h('button','btn primary','Join class'); j.onclick=()=>openJoin(joinParam); a.appendChild(j) }
@@ -743,7 +775,7 @@ if(Cloud) Cloud.onChange(c=>{
     try{ Object.entries(JSON.parse(p.programs||'{}')).forEach(([n,prog])=>{ if(!programs[n]||!programs[n].length) programs[n]=prog }) }catch(e){}
     store.set('owner',u.uid); store.set('progress',progress); store.set('bonus',bonus); store.set('programs',programs);
     if(!location.hash.startsWith('#puzzle-')) showHome();
-    if(joinParam && p.classCode!==joinParam) openJoin(joinParam);
+    if(joinParam && p.classCode!==joinParam && !Cloud.isStudentLogin(u)) openJoin(joinParam);
   }
   if(!u && lastUid){ lastUid=null; store.clear(); progress={}; bonus={}; programs={}; route() }
   if(c.ready && !u && joinParam && !lastUid && !$('#modal').innerHTML) openJoin(joinParam);
