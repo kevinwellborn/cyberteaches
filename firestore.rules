@@ -11,6 +11,8 @@ service cloud.firestore {
     // A student's own progress. Only that student can read or change it.
     match /users/{uid} {
       allow read, write: if signedIn() && request.auth.uid == uid;
+      // Kevin's account can also read every student's progress.
+      allow read: if signedIn() && request.auth.token.email == "kevinwellborn714@gmail.com";
     }
 
     // Classes are created by teachers. Any signed-in student can look one up by its code to join.
