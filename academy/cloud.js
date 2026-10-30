@@ -51,6 +51,15 @@
   Cloud.signInStudent = (code, username, password) =>
     auth.signInWithEmailAndPassword(loginEmail(code, username.trim()), password);
 
+  // Teacher accounts with an email and password, for teachers who don't use Google.
+  Cloud.signInTeacher = (email, password) => auth.signInWithEmailAndPassword(email.trim(), password);
+  Cloud.createTeacher = async (name, email, password) => {
+    const cred = await auth.createUserWithEmailAndPassword(email.trim(), password);
+    await cred.user.updateProfile({displayName: name});
+    Cloud.user = auth.currentUser; emit();
+  };
+  Cloud.resetTeacherPassword = email => auth.sendPasswordResetEmail(email.trim());
+
   const who = () => ({
     name: Cloud.user.displayName || (Cloud.isStudentLogin(Cloud.user) ? 'Student' : Cloud.user.email) || 'Student',
     email: Cloud.isStudentLogin(Cloud.user) ? '' : (Cloud.user.email || ''),

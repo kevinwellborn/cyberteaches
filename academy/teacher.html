@@ -89,6 +89,14 @@ td.name small{color:var(--muted)}
 .toolbar h2{font-size:22px}
 .note{margin-top:18px;font-size:14px}
 .err{color:var(--bad);font-weight:700}
+.auth{max-width:420px;margin-top:20px}
+.auth .field{display:block;width:100%;margin:4px 0 12px;font-size:17px;padding:8px 12px;border:2px solid var(--line);border-radius:10px;background:var(--panel-2);color:var(--ink)}
+.auth .field:focus{border-color:var(--accent);outline:none}
+.auth .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.linkbtn{background:none;border:0;padding:0;color:var(--accent);font-weight:700;text-decoration:underline}
+.or{display:flex;align-items:center;gap:10px;margin:16px 0;color:var(--muted);font-size:14px}
+.or::before,.or::after{content:"";flex:1;border-top:1px solid var(--line)}
+.okmsg{color:var(--good);font-weight:700}
 .logins{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.6fr);gap:16px;align-items:start}
 .logins textarea{display:block;width:100%;min-height:150px;margin:6px 0 10px;border:2px solid var(--line);border-radius:10px;padding:10px 12px;background:var(--panel-2);color:var(--ink);font:inherit;resize:vertical}
 .logins textarea:focus{border-color:var(--accent);outline:none}
@@ -121,12 +129,56 @@ const app=$('#app'), acct=$('#acct');
 let classes=[], current=null, roster=[], stopRoster=null, stopClasses=null, uid=null;
 const pick={ get(){ try{ return localStorage.getItem('cyberteaches:teacherClass') }catch(e){ return null } }, set(v){ try{ localStorage.setItem('cyberteaches:teacherClass',v) }catch(e){} } };
 
-function signInView(){
+function signInView(mode){
+  mode=mode||'in';
+  const titles={in:'Sign in', up:'Create a teacher account', reset:'Reset your password'};
   app.innerHTML=`<section class="hero"><span class="label">For teachers</span>
     <h1 style="margin-top:8px">See how your class is doing, puzzle by puzzle.</h1>
-    <p>Sign in with Google and create a class. Share its code or link with students (for example in Google Classroom), or make each student a username and password if they don't use Google. As students solve puzzles, their stars show up here.</p>
-    <button class="btn primary" id="si">Sign in with Google</button> <p class="err" id="sierr" role="alert"></p></section>`;
-  $('#si').onclick=()=>Cloud.signIn().catch(e=>{ $('#sierr').textContent = e.code==='auth/unauthorized-domain' ? 'This web address is not in Firebase Authorized domains yet.' : 'Sign-in did not work. Try again.' });
+    <p>Create a class, then share its code or link with students, or make each student a username and password. As students solve puzzles, their stars show up here.</p>
+    <form class="panel auth" id="authForm" novalidate><h2 style="font-size:22px;margin-bottom:12px">${titles[mode]}</h2>
+      ${mode==='up'?'<label class="label" for="tName">Your name</label><input class="field" id="tName" autocomplete="name" maxlength="60" placeholder="e.g. Ms. Rivera">':''}
+      <label class="label" for="tEmail">Email</label><input class="field" id="tEmail" type="email" autocomplete="email">
+      ${mode!=='reset'?`<label class="label" for="tPass">Password</label><input class="field" id="tPass" type="password" autocomplete="${mode==='up'?'new-password':'current-password'}" minlength="8">`:''}
+      <div class="row"><button class="btn primary" id="authGo">${mode==='in'?'Sign in':mode==='up'?'Create account':'Email me a reset link'}</button>
+        ${mode==='in'?'<button type="button" class="linkbtn" data-mode="reset">Forgot password?</button>':''}</div>
+      <p id="authMsg" role="alert" style="margin:10px 0 0"></p>
+      <p class="muted" style="margin:8px 0 0;font-size:15px">${mode==='in'?'New here? <button type="button" class="linkbtn" data-mode="up">Create a teacher account</button>':'<button type="button" class="linkbtn" data-mode="in">Back to sign in</button>'}</p>
+      ${mode!=='reset'?`<div class="or"><span>or</span></div><button type="button" class="btn" id="si" style="width:100%;justify-content:center">${G_ICON}Sign in with Google</button>`:''}
+    </form></section>`;
+  app.querySelectorAll('[data-mode]').forEach(b=>b.onclick=()=>signInView(b.dataset.mode));
+  const msg=$('#authMsg'), err=t=>{ msg.className='err'; msg.textContent=t };
+  if($('#si')) $('#si').onclick=()=>Cloud.signIn().catch(e=>err(e.code==='auth/unauthorized-domain' ? 'This web address is not in Firebase Authorized domains yet.' : 'Sign-in did not work. Try again.'));
+  $('#authForm').addEventListener('submit',async e=>{
+    e.preventDefault();
+    const email=$('#tEmail').value.trim(), pass=$('#tPass')?$('#tPass').value:'', name=$('#tName')?$('#tName').value.trim():'';
+    if(mode==='up'&&!name) return err('Type your name. Students and other teachers see it.');
+    if(!/^\S+@\S+\.\S+$/.test(email)) return err('Type your email address.');
+    if(/@students\.cyberteaches\.com$/i.test(email)) return err('That is a student login. Students sign in on the course page.');
+    if(mode==='up'&&pass.length<8) return err('Use a password with at least 8 characters.');
+    if(mode==='in'&&!pass) return err('Type your password.');
+    $('#authGo').disabled=true; msg.className='muted'; msg.textContent=mode==='reset'?'Sending…':'Signing in…';
+    try{
+      if(mode==='in') await Cloud.signInTeacher(email,pass);
+      else if(mode==='up') await Cloud.createTeacher(name,email,pass);
+      else { await Cloud.resetTeacherPassword(email).catch(e=>{ if(e.code!=='auth/user-not-found') throw e });
+        msg.className='okmsg'; msg.textContent='If there is an account for '+email+', a reset link is on its way. Check your inbox and spam folder.' }
+    }catch(e){ console.error(e);
+      err(e.code==='auth/email-already-in-use' ? 'There is already an account with that email. Sign in instead, or use Forgot password.'
+        : e.code==='auth/weak-password' ? 'Use a password with at least 8 characters.'
+        : e.code==='auth/too-many-requests' ? 'Too many tries. Wait a few minutes, then try again.'
+        : e.code==='auth/network-request-failed' ? 'Check your internet connection and try again.'
+        : e.code==='auth/invalid-email' ? 'That email address does not look right.'
+        : mode==='in' ? 'That email and password did not match. Try again, or use Forgot password.'
+        : 'That did not work. Try again in a moment.') }
+    if($('#authGo')) $('#authGo').disabled=false;
+  });
+}
+const G_ICON='<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="#4285F4" d="M23 12.3c0-.8-.1-1.6-.2-2.3H12v4.4h6.2a5.3 5.3 0 0 1-2.3 3.5v2.9h3.7c2.2-2 3.4-5 3.4-8.5z"/><path fill="#34A853" d="M12 23.5c3.1 0 5.7-1 7.6-2.8l-3.7-2.9c-1 .7-2.4 1.1-3.9 1.1-3 0-5.5-2-6.4-4.7H1.8v3A11.5 11.5 0 0 0 12 23.5z"/><path fill="#FBBC05" d="M5.6 14.2a6.9 6.9 0 0 1 0-4.4v-3H1.8a11.5 11.5 0 0 0 0 10.4z"/><path fill="#EA4335" d="M12 5.1c1.7 0 3.2.6 4.4 1.7l3.3-3.3A11.5 11.5 0 0 0 1.8 6.8l3.8 3C6.5 7.1 9 5.1 12 5.1z"/></svg>';
+function studentAccount(){
+  app.innerHTML=`<section class="hero"><span class="label">For teachers</span><h1 style="margin-top:8px">This is a student login.</h1>
+    <p>The teacher dashboard needs a teacher account. Sign out, then sign in with your teacher email or Google account.</p>
+    <button class="btn primary" id="so">Sign out</button></section>`;
+  $('#so').onclick=()=>Cloud.signOut();
 }
 function notConfigured(){
   app.innerHTML=`<section class="hero"><span class="label">Setup needed</span><h1 style="margin-top:8px">Sign-in is not switched on yet.</h1>
@@ -312,7 +364,7 @@ else Cloud.onChange(c=>{
   uid=u; app.dataset.ready='1';
   if(stopRoster){ stopRoster(); stopRoster=null } if(stopClasses){ stopClasses(); stopClasses=null } if(stopLogins){ stopLogins(); stopLogins=null }
   current=null;
-  if(!u) signInView(); else dashboard();
+  if(!u) signInView(); else if(Cloud.isStudentLogin(c.user)) studentAccount(); else dashboard();
 });
 </script>
 </body></html>

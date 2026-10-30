@@ -49,6 +49,11 @@ Until `academy/firebase-config.js` has a config, the site works without sign-in 
 
 Teachers open `academy/teacher.html`, create a class, and share the class code or join link (for example in Google Classroom).
 
+### Teacher accounts
+
+Teachers sign in on `academy/teacher.html` with Google, or create an account with their email and a password
+(uses the same Email/Password provider as student logins). "Forgot password?" emails them a reset link from Firebase.
+
 ### Student logins (no email or Google account)
 
 Teachers can also make a username and password for each student on `academy/teacher.html` (Student logins: type one name per line,
