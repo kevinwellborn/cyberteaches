@@ -25,7 +25,11 @@ A self-paced, block-based coding course. Students guide a rover through lessons 
 
 - Lesson 1: Repeat and collect (6 puzzles)
 - Lesson 2: Repeat until (5 puzzles)
-- Coming soon: If, If / else, Destroy walls
+- Lesson 3: Tank battle (6 puzzles). Puzzle 1 is drive mode: students steer with the arrow keys or on-screen buttons and press
+  Space to fire, and each move is recorded as a block. Puzzles 2 to 6 add `fire cannon`, `if tank ahead` and
+  `repeat until no tanks left`, ending with a patrol program that clears every tank by itself. Enemy tanks (`^ > v <` in a
+  map) fire if the rover stays in front of their cannon for a second move, and shells are limited.
+- Coming soon: If / else, Destroy walls
 
 ## Run it
 
