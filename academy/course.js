@@ -146,7 +146,25 @@ const LEVELS = [
   {unit:1, title:'Lawn mower', dir:1, ideal:15, blocks:L1,
    goal:'Mow the whole field like a lawn mower: across, down, back, down. Collect all 15 crystals.',
    hint:'Inside a repeat 2 times: repeat 3 (forward, collect), turn right, forward, collect, turn right, repeat 3 (forward, collect), turn left, forward, collect, turn left.',
-   map:['######','#S***#','#****#','#****#','#****#','######']}
+   map:['######','#S***#','#****#','#****#','#****#','######']},
+
+  // Lesson 2 extra puzzles (added at the end so saved progress keeps its place)
+  {unit:2, title:'Every other one', dir:1, ideal:4, blocks:L2,
+   goal:'A crystal sits on every other square. Collect them all on the way to the flag with 4 blocks.',
+   hint:'Repeat until at flag: move forward, collect crystal, move forward.',
+   map:['###########','#S*.*.*.*G#','###########']},
+  {unit:2, title:'Around the block', dir:1, ideal:4, blocks:L2,
+   goal:'Drive around the rocks to the flag. Each side is the same length.',
+   hint:'Repeat until at flag: repeat 3 times (move forward), then turn right.',
+   map:['######','#S...#','#.##.#','#.##.#','#G...#','######']},
+  {unit:2, title:'Crystals first', dir:1, ideal:6, blocks:L2,
+   goal:'Collect the 3 crystals, then race down the long hallway to the flag. Use a repeat and a repeat until.',
+   hint:'Repeat 3 times (move forward, collect), turn right, then repeat until at flag (move forward).',
+   map:['######','#S***#','####.#','####.#','####.#','####G#','######']},
+  {unit:2, title:'Back and forth', dir:1, ideal:11, blocks:L2,
+   goal:'Sweep the field row by row like a lawn mower until you reach the flag in the corner.',
+   hint:'Repeat until at flag: repeat 3 (forward), turn right, forward, turn right, repeat 3 (forward), turn left, forward, turn left.',
+   map:['######','#S...#','#....#','#....#','#....#','#G####','######']}
 ];
 // New puzzles always go at the END of LEVELS, even when they belong to an earlier lesson: n is the puzzle's saved id
 // (progress, programs and the answer key are stored by n), so it must never change. ORDER is the play order, by lesson.
