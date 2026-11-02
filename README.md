@@ -31,6 +31,13 @@ A self-paced, block-based coding course. Students guide a rover through lessons 
   map) fire if the rover stays in front of their cannon for a second move, and shells are limited.
 - Coming soon: If / else, Destroy walls
 
+## Lesson pages for search engines
+
+The courses route topics with `#/topic/1.1`, which Google treats as one page. `tools/build-lesson-pages.js` writes a
+plain page for every topic (notes, vocabulary, practice questions with answers) to `<course>/lessons/<topic>/`, a
+lessons index per course, and `sitemap.xml`. These files are generated: after editing any `content.js` or
+`questions.js`, run `node tools/build-lesson-pages.js` and commit the result.
+
 ## Run it
 
 Open `index.html` in any modern browser. No build step or server is needed.

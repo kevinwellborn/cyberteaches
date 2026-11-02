@@ -1,0 +1,271 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>AP Cybersecurity 4.4 Detecting Attacks on Devices: Notes, Vocabulary and Practice | CyberTeaches</title>
+<meta name="description" content="AP Cybersecurity 4.4 Detecting Attacks on Devices. Signs of compromise include unexpected pop-ups, slow performance, unknown programs, disabled security…">
+<link rel="canonical" href="https://cyberteaches.com/apcybersecurity/lessons/4-4-detecting-attacks-on-devices/">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="CyberTeaches">
+<meta property="og:title" content="AP Cybersecurity 4.4 Detecting Attacks on Devices: Notes, Vocabulary and Practice | CyberTeaches">
+<meta property="og:description" content="AP Cybersecurity 4.4 Detecting Attacks on Devices. Signs of compromise include unexpected pop-ups, slow performance, unknown programs, disabled security…">
+<meta property="og:url" content="https://cyberteaches.com/apcybersecurity/lessons/4-4-detecting-attacks-on-devices/">
+<meta property="og:image" content="https://cyberteaches.com/yt-banner.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"LearningResource","name":"AP Cybersecurity 4.4 Detecting Attacks on Devices","description":"Signs of compromise include unexpected pop-ups, slow performance, unknown programs, disabled security tools, odd network connections, and unfamiliar login alerts. Endpoint detection and response (EDR) tools and system logs help analysts confirm an infection and contain it, for example by disconnecting the device.","url":"https://cyberteaches.com/apcybersecurity/lessons/4-4-detecting-attacks-on-devices/","inLanguage":"en","isAccessibleForFree":true,"learningResourceType":"Lesson","teaches":"Detecting Attacks on Devices","keywords":"Indicator of compromise (IoC), EDR, Containment, Event log","isPartOf":{"@type":"Course","name":"AP Cybersecurity","url":"https://cyberteaches.com/apcybersecurity/"},"provider":{"@type":"Organization","name":"CyberTeaches","url":"https://cyberteaches.com/"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"CyberTeaches","item":"https://cyberteaches.com/"},{"@type":"ListItem","position":2,"name":"AP Cybersecurity","item":"https://cyberteaches.com/apcybersecurity/"},{"@type":"ListItem","position":3,"name":"Lessons","item":"https://cyberteaches.com/apcybersecurity/lessons/"},{"@type":"ListItem","position":4,"name":"4.4 Detecting Attacks on Devices","item":"https://cyberteaches.com/apcybersecurity/lessons/4-4-detecting-attacks-on-devices/"}]}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Atkinson+Hyperlegible:wght@400;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+:root{
+  --bg:#EEF1EC; --panel:#FFFFFF; --panel-2:#F6F8F4; --ink:#1C292C; --muted:#5C6B6B; --line:#D5DCD4;
+  --accent:#0F7B78; --accent-ink:#FFFFFF; --accent-soft:#D6EEEA;
+  --good:#2E9363; --good-soft:#DDF1E6; --bad:#C8402F; --bad-soft:#F8E0DB; --term:#13201F; --term-ink:#B9F5DA;
+  --u1:#2F6FDE; --u2:#2E9363; --u3:#D97E16; --u4:#C2417A; --u5:#7A4FD0;
+  --f-display:"Bricolage Grotesque", "Trebuchet MS", system-ui, sans-serif;
+  --f-body:"Atkinson Hyperlegible", "Segoe UI", system-ui, sans-serif;
+  --f-mono:"JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#141B1C; --panel:#1C2526; --panel-2:#222D2E; --ink:#E6EEEC; --muted:#9AABA9; --line:#33403F;
+  --accent:#3FC1B8; --accent-ink:#0B1A1A; --accent-soft:#1D3A38;
+  --good:#4CC28A; --good-soft:#1B3328; --bad:#EF6B57; --bad-soft:#3A221E; --term:#0C1213; --term-ink:#9FEBC8; --u1:#5B8FF0; --u2:#45B57E; --u3:#E9A04A; --u4:#E06A9E; --u5:#A083EA; color-scheme:dark }
+}
+:root[data-theme="dark"]{
+  --bg:#141B1C; --panel:#1C2526; --panel-2:#222D2E; --ink:#E6EEEC; --muted:#9AABA9; --line:#33403F;
+  --accent:#3FC1B8; --accent-ink:#0B1A1A; --accent-soft:#1D3A38;
+  --good:#4CC28A; --good-soft:#1B3328; --bad:#EF6B57; --bad-soft:#3A221E; --term:#0C1213; --term-ink:#9FEBC8; --u1:#5B8FF0; --u2:#45B57E; --u3:#E9A04A; --u4:#E06A9E; --u5:#A083EA; color-scheme:dark
+}
+*{box-sizing:border-box}
+html,body{background:var(--bg)}
+body{margin:0;color:var(--ink);font-family:var(--f-body);font-size:17px;line-height:1.55;
+  padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px));padding-bottom:48px}
+button,input,select{font:inherit;color:inherit}
+button{cursor:pointer}
+a{color:var(--accent)}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+h1,h2,h3{font-family:var(--f-display);text-wrap:balance;margin:0;line-height:1.15}
+.wrap{max-width:1080px;margin:0 auto}
+.topbar{display:flex;align-items:center;gap:14px;padding-block:16px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:10px;font-family:var(--f-display);font-weight:800;font-size:20px;text-decoration:none;color:var(--ink)}
+.brand svg{width:32px;height:32px}
+.spacer{flex:1}
+.nav a{font-weight:700;text-decoration:none;padding:6px 10px;border-radius:8px;color:var(--ink)}
+.nav a:hover,.nav a.on{background:var(--accent-soft)}
+.btn{border:2px solid var(--line);background:var(--panel);border-radius:10px;padding:8px 14px;font-weight:700;display:inline-flex;align-items:center;gap:8px;text-decoration:none;color:var(--ink)}
+.btn:hover{border-color:var(--accent)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn.small{padding:4px 10px;font-size:14px}
+.label{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:700}
+.muted{color:var(--muted)}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:22px}
+
+.hero{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:28px;align-items:center;padding-block:20px 32px}
+.hero h1{font-size:clamp(32px,5vw,54px);font-weight:800;letter-spacing:-.02em}
+.hero h1 em{font-style:normal;color:var(--accent)}
+.hero p{font-size:18px;color:var(--muted);max-width:54ch;margin:14px 0 20px}
+.terminal{background:var(--term);color:var(--term-ink);border-radius:14px;padding:18px 20px;font-family:var(--f-mono);font-size:14px;line-height:1.7;overflow:hidden;min-width:0}
+.terminal .dim{opacity:.6}
+.meter{display:flex;flex-direction:column;gap:6px;max-width:360px}
+.meter-bar{height:10px;border-radius:99px;background:var(--line);overflow:hidden}
+.meter-bar i{display:block;height:100%;background:var(--accent);border-radius:99px;transition:width .4s}
+
+.units{display:grid;gap:18px}
+.unit{display:grid;grid-template-columns:auto minmax(0,1fr);gap:18px}
+.unit-num{font-family:var(--f-display);font-weight:800;width:54px;height:54px;border-radius:14px;display:grid;place-items:center;color:#fff;font-size:20px}
+.unit h2{font-size:24px}
+.unit .blurb{color:var(--muted);margin:4px 0 14px;max-width:72ch}
+.topics{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px}
+.topic-link{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:var(--panel-2);text-decoration:none;color:var(--ink);font-size:15px;line-height:1.35}
+.topic-link:hover{border-color:var(--accent)}
+.topic-link b{font-family:var(--f-mono);font-size:13px;color:var(--muted);flex:none;padding-top:1px}
+.topic-link .chk{margin-left:auto;flex:none;width:20px;height:20px;border-radius:50%;border:2px solid var(--line);display:grid;place-items:center;font-size:12px}
+.topic-link.done .chk{background:var(--u, var(--good));border-color:var(--u, var(--good));color:#fff}
+/* Unit color coding: each unit section sets --u and its cards, lessons and quiz pick it up */
+.unit{border-top:6px solid var(--u)}
+.unit .pill{background:color-mix(in srgb, var(--u) 16%, transparent)}
+.unit .topic-link{background:color-mix(in srgb, var(--u) 7%, var(--panel))}
+.unit .topic-link:hover{border-color:var(--u)}
+.unit .topic-link b{color:var(--u)}
+.u-scope .label.u{color:var(--u)}
+.u-scope h1{border-bottom:4px solid var(--u);padding-bottom:10px;display:inline-block}
+.u-scope .quiz,.u-scope .side .card.unitbox{border-top:6px solid var(--u)}
+.u-scope .choice:hover:not(:disabled){border-color:var(--u)}
+.u-band{display:inline-flex;align-items:center;gap:8px;font-weight:700;font-size:14px;padding:3px 12px 3px 4px;border-radius:99px;background:color-mix(in srgb, var(--u) 16%, transparent)}
+.u-band i{font-style:normal;width:22px;height:22px;border-radius:50%;background:var(--u);color:#fff;display:grid;place-items:center;font-size:12px}
+.section-head{display:flex;align-items:end;justify-content:space-between;gap:12px;margin:34px 0 14px;flex-wrap:wrap}
+.section-head h2{font-size:28px}
+.labs{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px}
+.lab-card{text-decoration:none;color:var(--ink);display:flex;flex-direction:column;gap:6px}
+.lab-card:hover{border-color:var(--accent)}
+.lab-card h3{font-size:19px}
+
+.crumbs{font-size:14px;color:var(--muted);margin:6px 0 14px}
+.crumbs a{text-decoration:none}
+.lesson{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:22px;align-items:start}
+.lesson h1{font-size:clamp(28px,4vw,40px);margin-bottom:14px}
+.lesson .summary{font-size:19px;max-width:68ch}
+.topic-art{display:block;width:100%;max-width:680px;height:auto;margin:14px 0 6px}
+.terms{display:grid;gap:10px;margin:0;padding:0;list-style:none}
+.terms li{border-left:4px solid var(--u, var(--accent));padding:4px 0 4px 12px}
+.terms dt,.terms b{font-weight:700}
+.side{display:grid;gap:14px;position:sticky;top:12px}
+.quiz{margin-top:22px;display:grid;gap:18px}
+.q h3{font-family:var(--f-body);font-size:18px;font-weight:700;margin-bottom:10px;line-height:1.4}
+.choices{display:grid;gap:8px}
+.choice{text-align:left;border:2px solid var(--line);background:var(--panel-2);border-radius:10px;padding:10px 14px}
+.choice:hover:not(:disabled){border-color:var(--accent)}
+.choice:disabled{cursor:default}
+.choice.right{border-color:var(--good);background:var(--good-soft)}
+.choice.wrong{border-color:var(--bad);background:var(--bad-soft)}
+.why{margin-top:8px;font-size:15px}
+.stim{font-family:var(--f-mono);font-size:13.5px;line-height:1.55;background:var(--panel-2);border:1px solid var(--line);border-left:4px solid var(--u, var(--accent));border-radius:10px;padding:12px 14px;margin:0 0 12px;white-space:pre-wrap;word-break:break-word;overflow-x:auto}
+.skill{display:inline-block;font-size:12px;font-weight:700;letter-spacing:.04em;color:var(--muted);margin-bottom:6px}
+.choice .letter{font-family:var(--f-mono);font-size:14px;margin-right:4px}
+.pager{display:flex;justify-content:space-between;gap:12px;margin-top:26px;flex-wrap:wrap}
+.pill{display:inline-block;font-size:13px;font-weight:700;padding:2px 10px;border-radius:99px;background:var(--accent-soft);color:var(--ink)}
+
+/* labs */
+.lab h1{font-size:clamp(28px,4vw,40px)}
+.lab .intro{color:var(--muted);max-width:68ch;margin:8px 0 18px}
+.msg{border:1px solid var(--line);border-radius:12px;background:var(--panel-2);padding:14px 16px;font-size:15px}
+.msg .from{font-family:var(--f-mono);font-size:13px;color:var(--muted)}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.result{margin-top:10px;padding:10px 14px;border-radius:10px;font-size:15px}
+.result.ok{background:var(--good-soft)}
+.result.no{background:var(--bad-soft)}
+.mono{font-family:var(--f-mono)}
+.url{font-family:var(--f-mono);font-size:16px;word-break:break-all;padding:10px 14px;border-radius:10px;background:var(--term);color:var(--term-ink)}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th,td{text-align:left;padding:6px 10px;border-bottom:1px solid var(--line)}
+th{font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+.scroll{overflow-x:auto}
+.rule{display:grid;grid-template-columns:28px minmax(0,1fr) auto;gap:10px;align-items:center;padding:8px 10px;border:1px solid var(--line);border-radius:10px;background:var(--panel-2);font-family:var(--f-mono);font-size:14px}
+.tag{font-weight:700;padding:1px 8px;border-radius:6px;font-family:var(--f-body);font-size:13px}
+.tag.allow{background:var(--good-soft);color:var(--good)}
+.tag.deny{background:var(--bad-soft);color:var(--bad)}
+input[type=text],input[type=password]{width:100%;padding:10px 12px;border:2px solid var(--line);border-radius:10px;background:var(--panel)}
+input[type=range]{width:100%;accent-color:var(--accent)}
+.strength{height:12px;border-radius:99px;background:var(--line);overflow:hidden}
+.strength i{display:block;height:100%;transition:width .3s,background .3s}
+.brute{font-family:var(--f-mono);font-size:14px;display:grid;gap:2px;max-height:320px;overflow:auto;background:var(--term);color:var(--term-ink);padding:12px;border-radius:12px}
+.book{display:grid;grid-template-columns:auto minmax(0,1fr);gap:22px;align-items:center;margin-top:28px;background:var(--accent-soft);border-color:transparent}
+.book img{width:120px;height:auto;border-radius:8px;box-shadow:0 6px 18px rgba(0,0,0,.18)}
+.book .cover{width:120px;aspect-ratio:2/3;border-radius:8px;object-fit:cover;box-shadow:0 6px 18px rgba(0,0,0,.18)}
+.book .cover{background:var(--accent);color:var(--accent-ink);display:grid;place-items:center;text-align:center;padding:10px;font-family:var(--f-display);font-weight:800;font-size:15px;line-height:1.2}
+.book h2{font-size:26px}
+.book.big img,.book.big .cover{width:200px}
+.deeper{display:flex;gap:14px;align-items:flex-start}
+.deeper img{width:72px;height:auto;border-radius:6px;box-shadow:0 4px 12px rgba(0,0,0,.18);display:block}
+.video{position:relative;aspect-ratio:16/9;border-radius:14px;overflow:hidden;background:var(--term);margin:20px 0 0}
+.video iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.term-box{background:var(--term);color:var(--term-ink);border-radius:14px;font-family:var(--f-mono);font-size:14px;line-height:1.55;display:flex;flex-direction:column;min-width:0;height:520px;cursor:text}
+.term-out{flex:1;overflow:auto;padding:16px 16px 4px;white-space:pre-wrap;word-break:break-word}
+.term-out .cmd{opacity:.65;margin-top:8px}
+.term-out .win{color:#FFE08A}
+.term-in{display:flex;gap:8px;align-items:center;padding:10px 16px 14px;border-top:1px solid rgba(255,255,255,.08)}
+.term-in label{flex:none;opacity:.8}
+.term-in input{flex:1;min-width:0;background:transparent;border:0;color:inherit;font-size:14px;outline:none;padding:4px 0}
+.term-box:focus-within{box-shadow:0 0 0 3px var(--accent)}
+.steps{margin:0;padding:0;list-style:none;display:grid;gap:6px;font-size:15px}
+.steps li.ok{color:var(--good);font-weight:700}
+@media (max-width:820px){ .term-box{height:440px} .term-in label{display:none} }
+.foot{margin-top:40px;color:var(--muted);font-size:14px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+@media (max-width:820px){ .hero,.lesson{grid-template-columns:1fr} .side{position:static} .unit{grid-template-columns:1fr} }
+.lesson>*{min-width:0}
+.lesson h1{overflow-wrap:break-word}
+.yt-banner{position:relative;display:block;text-decoration:none;margin:12px 0 4px;border-radius:14px;overflow:hidden;box-shadow:0 4px 14px rgba(0,0,0,.12)}
+.yt-banner img{display:block;width:100%;height:auto}
+.yt-banner .yt-cta{position:absolute;right:12px;bottom:10px;display:inline-flex;align-items:center;gap:6px;background:#E02F2F;color:#fff;font-weight:700;font-size:14px;padding:6px 12px;border-radius:99px;text-decoration:none;box-shadow:0 2px 8px rgba(0,0,0,.25)}
+.yt-banner:hover .yt-cta,.yt-banner:focus-visible .yt-cta{background:#C21F1F}
+@media (max-width:560px){ .yt-banner .yt-cta{position:static;display:flex;justify-content:center;border-radius:0;box-shadow:none;font-size:13px;padding:7px} }
+
+.static-q{border-top:1px solid var(--line);padding-top:16px}
+.static-q ol{margin:10px 0;padding-left:0;list-style:none;display:grid;gap:6px}
+.static-q h3{font-family:var(--f-body);font-size:18px;font-weight:700;margin-bottom:10px;line-height:1.4}
+.static-q li{white-space:pre-line;background:var(--panel-2);border:1px solid var(--line);border-radius:10px;padding:8px 12px}
+.static-q details{margin-top:8px}
+.static-q summary{cursor:pointer;font-weight:700;color:var(--accent)}
+.lesson-list{display:grid;gap:4px;margin:8px 0 0;padding-left:0;list-style:none}
+
+</style>
+</head><body>
+<div class="wrap">
+  <header class="topbar">
+    <a class="brand" href="../../">
+      <svg viewBox="0 0 32 32" aria-hidden="true"><rect x="2" y="4" width="28" height="24" rx="6" fill="var(--accent)"/><path d="M11 11l-5 5 5 5M21 11l5 5-5 5M18 9l-4 14" fill="none" stroke="var(--accent-ink)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      AP Cybersecurity
+    </a>
+    <span class="spacer"></span>
+    <nav class="nav" aria-label="Main">
+      <a href="../../">Interactive course</a>
+      <a href="../">All lessons</a>
+      <a href="../../../">All courses</a>
+    </nav>
+  </header>
+  <main>
+
+    <div class="crumbs"><a href="../../">AP Cybersecurity</a> / <a href="../">All lessons</a> / Unit 4: Securing Devices</div>
+    <div class="lesson u-scope" style="--u:var(--u4)">
+      <article>
+        <span class="u-band"><i>4</i>Unit 4: Securing Devices</span><br><span class="label u" style="display:inline-block;margin-top:12px">AP Cybersecurity topic 4.4</span><br>
+        <h1>Detecting Attacks on Devices</h1>
+        <svg class="topic-art" viewBox="0 0 600 200" role="img" aria-label="Illustration for Detecting Attacks on Devices">
+      <rect width="600" height="200" rx="18" fill="var(--u, var(--accent))" opacity=".12"/>
+      <path d="M170 100h70M360 100h70" stroke="var(--u, var(--accent))" stroke-width="4" stroke-dasharray="2 10" stroke-linecap="round"/>
+      <g transform="translate(60 50) scale(1)"><ellipse cx="50" cy="56" rx="20" ry="26" fill="var(--u, var(--accent))"/><circle cx="50" cy="26" r="10" fill="var(--u, var(--accent))"/><path d="M30 46l-14-8M30 60H12M30 74l-14 8M70 46l14-8M70 60h18M70 74l14 8M44 18l-6-10M56 18l6-10" fill="none" stroke="var(--ink)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M50 34v48" stroke="var(--panel, #fff)" stroke-width="3"/></g><g transform="translate(225 25) scale(1.5)"><circle cx="42" cy="42" r="26" fill="var(--panel, #fff)" stroke="var(--ink)" stroke-width="4" stroke-linejoin="round"/><circle cx="42" cy="42" r="14" fill="var(--u, var(--accent))"/><path d="M62 62l24 24" stroke="var(--ink)" stroke-width="9" stroke-linecap="round"/></g><g transform="translate(440 50) scale(1)"><rect x="10" y="14" width="80" height="72" rx="8" fill="var(--panel, #fff)" stroke="var(--ink)" stroke-width="4" stroke-linejoin="round"/><path d="M20 70l16-16 12 10 18-24 14 12" fill="none" stroke="var(--ink)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="66" cy="40" r="6" fill="var(--u, var(--accent))"/></g>
+    </svg>
+        <p class="summary">Signs of compromise include unexpected pop-ups, slow performance, unknown programs, disabled security tools, odd network connections, and unfamiliar login alerts. Endpoint detection and response (EDR) tools and system logs help analysts confirm an infection and contain it, for example by disconnecting the device.</p>
+        
+        
+        <section class="card" style="margin-top:20px">
+          <h2 style="font-size:22px;margin-bottom:12px">Detecting Attacks on Devices vocabulary</h2>
+          <ul class="terms"><li><b>Indicator of compromise (IoC):</b> Evidence that a system may have been breached.</li><li><b>EDR:</b> Endpoint detection and response: tools that monitor and respond on devices.</li><li><b>Containment:</b> Isolating a system to stop an attack from spreading.</li><li><b>Event log:</b> A record of actions on a device, like logins and installs.</li></ul>
+        </section>
+        <section class="card quiz">
+          <div><h2 style="font-size:22px">AP-style practice questions</h2>
+          <p class="muted" style="margin:4px 0 0">Try each one, then open the answer. To save your progress, <a href="../../#/topic/4.4">take this quiz in the interactive course</a>.</p></div>
+          <div class="static-q">
+            <span class="skill">Skill: Detect Attacks</span>
+            <pre class="stim">Windows Security log, LIB-PC-07
+22:01:10  Event 4625  Logon failed   user: administrator
+22:01:11  Event 4625  Logon failed   user: administrator
+22:01:11  Event 4625  Logon failed   user: administrator
+... (312 more in 4 minutes)
+22:05:43  Event 4624  Logon success  user: administrator</pre>
+            <h3>1. Which of the following is indicated by this log?</h3>
+            <ol><li><b>(A)</b> A successful brute-force password attack</li><li><b>(B)</b> A normal software update</li><li><b>(C)</b> A user who forgot their password once</li><li><b>(D)</b> A printer error</li></ol>
+            <details><summary>Show answer</summary><p><b>(A) A successful brute-force password attack</b> Hundreds of rapid failures followed by a success is the signature of a brute-force attack that worked.</p></details>
+          </div><div class="static-q">
+            <span class="skill">Skill: Detect Attacks</span>
+            
+            <h3>2. Which of the following controls would have alerted staff during the attack in the log?</h3>
+            <ol><li><b>(A)</b> An alert rule for many failed logins in a short time</li><li><b>(B)</b> A brighter monitor</li><li><b>(C)</b> A visitor sign-in sheet</li><li><b>(D)</b> A longer screen saver timeout</li></ol>
+            <details><summary>Show answer</summary><p><b>(A) An alert rule for many failed logins in a short time</b> Thresholds on failed logins detect password attacks in progress.</p></details>
+          </div><div class="static-q">
+            <span class="skill">Skill: Detect Attacks</span>
+            
+            <h3>3. A laptop suddenly runs slowly, its antivirus has been disabled, and an unknown program starts at boot. Which of the following best describes these signs?</h3>
+            <ol><li><b>(A)</b> Indicators of compromise</li><li><b>(B)</b> Managerial controls</li><li><b>(C)</b> Firewall rules</li><li><b>(D)</b> Encryption keys</li></ol>
+            <details><summary>Show answer</summary><p><b>(A) Indicators of compromise</b> These are evidence that the device may be infected.</p></details>
+          </div><div class="static-q">
+            <span class="skill">Skill: Mitigate Risk</span>
+            
+            <h3>4. An analyst confirms that a laptop is infected and is beaconing to an outside server. What should happen first?</h3>
+            <ol><li><b>(A)</b> Isolate the laptop from the network</li><li><b>(B)</b> Delete the logs to save space</li><li><b>(C)</b> Post the issue on social media</li><li><b>(D)</b> Wait a week to see if it stops</li></ol>
+            <details><summary>Show answer</summary><p><b>(A) Isolate the laptop from the network</b> Containment stops spread and data theft while the investigation continues.</p></details>
+          </div>
+        </section>
+        <p style="margin-top:20px"><a class="btn primary" href="../../#/topic/4.4">Open 4.4 in the interactive course</a></p>
+        <nav class="pager">
+          <a class="btn" href="../4-3-protecting-devices/">← 4.3 Protecting Devices</a>
+          <a class="btn" href="../5-1-application-and-data-vulnerabilities-and-attacks/">5.1 Application and Data Vulnerabilities and Attacks →</a>
+        </nav>
+      </article>
+      <aside class="side">
+        <div class="card unitbox"><span class="label">Unit 4</span><h3 style="margin:6px 0 10px">Securing Devices</h3>
+          <ul class="lesson-list"><li><a href="../4-1-device-vulnerabilities-and-attacks/" style="text-decoration:none;color:var(--ink);">4.1 Device Vulnerabilities and Attacks</a></li><li><a href="../4-2-authentication/" style="text-decoration:none;color:var(--ink);">4.2 Authentication</a></li><li><a href="../4-3-protecting-devices/" style="text-decoration:none;color:var(--ink);">4.3 Protecting Devices</a></li><li><a href="../4-4-detecting-attacks-on-devices/" style="text-decoration:none;color:var(--ink);font-weight:700">4.4 Detecting Attacks on Devices</a></li></ul>
+        </div>
+      </aside>
+    </div>
+  </main>
+</div>
+</body></html>

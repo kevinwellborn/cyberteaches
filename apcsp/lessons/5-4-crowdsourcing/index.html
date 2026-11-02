@@ -1,0 +1,300 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>AP CSP 5.4 Crowdsourcing: Notes, Vocabulary and Practice | CyberTeaches</title>
+<meta name="description" content="AP CSP 5.4 Crowdsourcing. Crowdsourcing gets ideas, services, money, or data from a large group of people, usually online. Examples include online…">
+<link rel="canonical" href="https://cyberteaches.com/apcsp/lessons/5-4-crowdsourcing/">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="CyberTeaches">
+<meta property="og:title" content="AP CSP 5.4 Crowdsourcing: Notes, Vocabulary and Practice | CyberTeaches">
+<meta property="og:description" content="AP CSP 5.4 Crowdsourcing. Crowdsourcing gets ideas, services, money, or data from a large group of people, usually online. Examples include online…">
+<meta property="og:url" content="https://cyberteaches.com/apcsp/lessons/5-4-crowdsourcing/">
+<meta property="og:image" content="https://cyberteaches.com/yt-banner.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"LearningResource","name":"AP CSP 5.4 Crowdsourcing","description":"Crowdsourcing gets ideas, services, money, or data from a large group of people, usually online. Examples include online encyclopedias written by volunteers, apps that report traffic, and science projects where the public classifies photos. Citizen science lets ordinary people contribute to real research. The internet makes it easy to reach many contributors, but the quality of crowdsourced data can vary.","url":"https://cyberteaches.com/apcsp/lessons/5-4-crowdsourcing/","inLanguage":"en","isAccessibleForFree":true,"learningResourceType":"Lesson","teaches":"Crowdsourcing","keywords":"Crowdsourcing, Citizen science, Crowdfunding, Open access","isPartOf":{"@type":"Course","name":"AP Computer Science Principles","url":"https://cyberteaches.com/apcsp/"},"provider":{"@type":"Organization","name":"CyberTeaches","url":"https://cyberteaches.com/"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"CyberTeaches","item":"https://cyberteaches.com/"},{"@type":"ListItem","position":2,"name":"AP Computer Science Principles","item":"https://cyberteaches.com/apcsp/"},{"@type":"ListItem","position":3,"name":"Lessons","item":"https://cyberteaches.com/apcsp/lessons/"},{"@type":"ListItem","position":4,"name":"5.4 Crowdsourcing","item":"https://cyberteaches.com/apcsp/lessons/5-4-crowdsourcing/"}]}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Atkinson+Hyperlegible:wght@400;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+:root{
+  --bg:#EEF1EC; --panel:#FFFFFF; --panel-2:#F6F8F4; --ink:#1C292C; --muted:#5C6B6B; --line:#D5DCD4;
+  --accent:#0F7B78; --accent-ink:#FFFFFF; --accent-soft:#D6EEEA;
+  --good:#2E9363; --good-soft:#DDF1E6; --bad:#C8402F; --bad-soft:#F8E0DB; --term:#13201F; --term-ink:#B9F5DA;
+  --u1:#2F6FDE; --u2:#2E9363; --u3:#D97E16; --u4:#C2417A; --u5:#7A4FD0;
+  --f-display:"Bricolage Grotesque", "Trebuchet MS", system-ui, sans-serif;
+  --f-body:"Atkinson Hyperlegible", "Segoe UI", system-ui, sans-serif;
+  --f-mono:"JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#141B1C; --panel:#1C2526; --panel-2:#222D2E; --ink:#E6EEEC; --muted:#9AABA9; --line:#33403F;
+  --accent:#3FC1B8; --accent-ink:#0B1A1A; --accent-soft:#1D3A38;
+  --good:#4CC28A; --good-soft:#1B3328; --bad:#EF6B57; --bad-soft:#3A221E; --term:#0C1213; --term-ink:#9FEBC8; --u1:#5B8FF0; --u2:#45B57E; --u3:#E9A04A; --u4:#E06A9E; --u5:#A083EA; color-scheme:dark }
+}
+:root[data-theme="dark"]{
+  --bg:#141B1C; --panel:#1C2526; --panel-2:#222D2E; --ink:#E6EEEC; --muted:#9AABA9; --line:#33403F;
+  --accent:#3FC1B8; --accent-ink:#0B1A1A; --accent-soft:#1D3A38;
+  --good:#4CC28A; --good-soft:#1B3328; --bad:#EF6B57; --bad-soft:#3A221E; --term:#0C1213; --term-ink:#9FEBC8; --u1:#5B8FF0; --u2:#45B57E; --u3:#E9A04A; --u4:#E06A9E; --u5:#A083EA; color-scheme:dark
+}
+*{box-sizing:border-box}
+html,body{background:var(--bg)}
+body{margin:0;color:var(--ink);font-family:var(--f-body);font-size:17px;line-height:1.55;
+  padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px));padding-bottom:48px}
+button,input,select{font:inherit;color:inherit}
+button{cursor:pointer}
+a{color:var(--accent)}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+h1,h2,h3{font-family:var(--f-display);text-wrap:balance;margin:0;line-height:1.15}
+.wrap{max-width:1080px;margin:0 auto}
+.topbar{display:flex;align-items:center;gap:14px;padding-block:16px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:10px;font-family:var(--f-display);font-weight:800;font-size:20px;text-decoration:none;color:var(--ink)}
+.brand svg{width:32px;height:32px}
+.spacer{flex:1}
+.nav a{font-weight:700;text-decoration:none;padding:6px 10px;border-radius:8px;color:var(--ink)}
+.nav a:hover,.nav a.on{background:var(--accent-soft)}
+.btn{border:2px solid var(--line);background:var(--panel);border-radius:10px;padding:8px 14px;font-weight:700;display:inline-flex;align-items:center;gap:8px;text-decoration:none;color:var(--ink)}
+.btn:hover{border-color:var(--accent)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn.small{padding:4px 10px;font-size:14px}
+.label{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:700}
+.muted{color:var(--muted)}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:22px}
+
+.hero{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:28px;align-items:center;padding-block:20px 32px}
+.hero h1{font-size:clamp(32px,5vw,54px);font-weight:800;letter-spacing:-.02em}
+.hero h1 em{font-style:normal;color:var(--accent)}
+.hero p{font-size:18px;color:var(--muted);max-width:54ch;margin:14px 0 20px}
+.terminal{background:var(--term);color:var(--term-ink);border-radius:14px;padding:18px 20px;font-family:var(--f-mono);font-size:14px;line-height:1.7;overflow:hidden;min-width:0}
+.terminal .dim{opacity:.6}
+.meter{display:flex;flex-direction:column;gap:6px;max-width:360px}
+.meter-bar{height:10px;border-radius:99px;background:var(--line);overflow:hidden}
+.meter-bar i{display:block;height:100%;background:var(--accent);border-radius:99px;transition:width .4s}
+
+.units{display:grid;gap:18px}
+.unit{display:grid;grid-template-columns:auto minmax(0,1fr);gap:18px}
+.unit-num{font-family:var(--f-display);font-weight:800;width:54px;height:54px;border-radius:14px;display:grid;place-items:center;color:#fff;font-size:20px}
+.unit h2{font-size:24px}
+.unit .blurb{color:var(--muted);margin:4px 0 14px;max-width:72ch}
+.topics{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px}
+.topic-link{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:var(--panel-2);text-decoration:none;color:var(--ink);font-size:15px;line-height:1.35}
+.topic-link:hover{border-color:var(--accent)}
+.topic-link b{font-family:var(--f-mono);font-size:13px;color:var(--muted);flex:none;padding-top:1px}
+.topic-link .chk{margin-left:auto;flex:none;width:20px;height:20px;border-radius:50%;border:2px solid var(--line);display:grid;place-items:center;font-size:12px}
+.topic-link.done .chk{background:var(--u, var(--good));border-color:var(--u, var(--good));color:#fff}
+/* Unit color coding: each unit section sets --u and its cards, lessons and quiz pick it up */
+.unit{border-top:6px solid var(--u)}
+.unit .pill{background:color-mix(in srgb, var(--u) 16%, transparent)}
+.unit .topic-link{background:color-mix(in srgb, var(--u) 7%, var(--panel))}
+.unit .topic-link:hover{border-color:var(--u)}
+.unit .topic-link b{color:var(--u)}
+.u-scope .label.u{color:var(--u)}
+.u-scope h1{border-bottom:4px solid var(--u);padding-bottom:10px;display:inline-block}
+.u-scope .quiz,.u-scope .side .card.unitbox{border-top:6px solid var(--u)}
+.u-scope .choice:hover:not(:disabled){border-color:var(--u)}
+.u-band{display:inline-flex;align-items:center;gap:8px;font-weight:700;font-size:14px;padding:3px 12px 3px 4px;border-radius:99px;background:color-mix(in srgb, var(--u) 16%, transparent)}
+.u-band i{font-style:normal;width:22px;height:22px;border-radius:50%;background:var(--u);color:#fff;display:grid;place-items:center;font-size:12px}
+.section-head{display:flex;align-items:end;justify-content:space-between;gap:12px;margin:34px 0 14px;flex-wrap:wrap}
+.section-head h2{font-size:28px}
+.labs{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px}
+.lab-card{text-decoration:none;color:var(--ink);display:flex;flex-direction:column;gap:6px}
+.lab-card:hover{border-color:var(--accent)}
+.lab-card h3{font-size:19px}
+
+.crumbs{font-size:14px;color:var(--muted);margin:6px 0 14px}
+.crumbs a{text-decoration:none}
+.lesson{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:22px;align-items:start}
+.lesson h1{font-size:clamp(28px,4vw,40px);margin-bottom:14px}
+.lesson .summary{font-size:19px;max-width:68ch}
+.topic-art{display:block;width:100%;max-width:680px;height:auto;margin:14px 0 6px}
+.terms{display:grid;gap:10px;margin:0;padding:0;list-style:none}
+.terms li{border-left:4px solid var(--u, var(--accent));padding:4px 0 4px 12px}
+.terms dt,.terms b{font-weight:700}
+.side{display:grid;gap:14px;position:sticky;top:12px}
+.quiz{margin-top:22px;display:grid;gap:18px}
+.q h3{font-family:var(--f-body);font-size:18px;font-weight:700;margin-bottom:10px;line-height:1.4}
+.choices{display:grid;gap:8px}
+.choice{white-space:pre-line;text-align:left;border:2px solid var(--line);background:var(--panel-2);border-radius:10px;padding:10px 14px}
+.choice:hover:not(:disabled){border-color:var(--accent)}
+.choice:disabled{cursor:default}
+.choice.right{border-color:var(--good);background:var(--good-soft)}
+.choice.wrong{border-color:var(--bad);background:var(--bad-soft)}
+.why{margin-top:8px;font-size:15px}
+.stim{font-family:var(--f-mono);font-size:13.5px;line-height:1.55;background:var(--panel-2);border:1px solid var(--line);border-left:4px solid var(--u, var(--accent));border-radius:10px;padding:12px 14px;margin:0 0 12px;white-space:pre-wrap;word-break:break-word;overflow-x:auto}
+.skill{display:inline-block;font-size:12px;font-weight:700;letter-spacing:.04em;color:var(--muted);margin-bottom:6px}
+.choice .letter{font-family:var(--f-mono);font-size:14px;margin-right:4px}
+.pager{display:flex;justify-content:space-between;gap:12px;margin-top:26px;flex-wrap:wrap}
+.pill{display:inline-block;font-size:13px;font-weight:700;padding:2px 10px;border-radius:99px;background:var(--accent-soft);color:var(--ink)}
+
+/* labs */
+.lab h1{font-size:clamp(28px,4vw,40px)}
+.lab .intro{color:var(--muted);max-width:68ch;margin:8px 0 18px}
+.msg{border:1px solid var(--line);border-radius:12px;background:var(--panel-2);padding:14px 16px;font-size:15px}
+.msg .from{font-family:var(--f-mono);font-size:13px;color:var(--muted)}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.result{margin-top:10px;padding:10px 14px;border-radius:10px;font-size:15px}
+.result.ok{background:var(--good-soft)}
+.result.no{background:var(--bad-soft)}
+.mono{font-family:var(--f-mono)}
+.url{font-family:var(--f-mono);font-size:16px;word-break:break-all;padding:10px 14px;border-radius:10px;background:var(--term);color:var(--term-ink)}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th,td{text-align:left;padding:6px 10px;border-bottom:1px solid var(--line)}
+th{font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+.scroll{overflow-x:auto}
+.rule{display:grid;grid-template-columns:28px minmax(0,1fr) auto;gap:10px;align-items:center;padding:8px 10px;border:1px solid var(--line);border-radius:10px;background:var(--panel-2);font-family:var(--f-mono);font-size:14px}
+.tag{font-weight:700;padding:1px 8px;border-radius:6px;font-family:var(--f-body);font-size:13px}
+.tag.allow{background:var(--good-soft);color:var(--good)}
+.tag.deny{background:var(--bad-soft);color:var(--bad)}
+input[type=text],input[type=password]{width:100%;padding:10px 12px;border:2px solid var(--line);border-radius:10px;background:var(--panel)}
+input[type=range]{width:100%;accent-color:var(--accent)}
+.strength{height:12px;border-radius:99px;background:var(--line);overflow:hidden}
+.strength i{display:block;height:100%;transition:width .3s,background .3s}
+.brute{font-family:var(--f-mono);font-size:14px;display:grid;gap:2px;max-height:320px;overflow:auto;background:var(--term);color:var(--term-ink);padding:12px;border-radius:12px}
+.book{display:grid;grid-template-columns:auto minmax(0,1fr);gap:22px;align-items:center;margin-top:28px;background:var(--accent-soft);border-color:transparent}
+.book img{width:120px;height:auto;border-radius:8px;box-shadow:0 6px 18px rgba(0,0,0,.18)}
+.book .cover{width:120px;aspect-ratio:2/3;border-radius:8px;object-fit:cover;box-shadow:0 6px 18px rgba(0,0,0,.18)}
+.book .cover{background:var(--accent);color:var(--accent-ink);display:grid;place-items:center;text-align:center;padding:10px;font-family:var(--f-display);font-weight:800;font-size:15px;line-height:1.2}
+.book h2{font-size:26px}
+.book.big img,.book.big .cover{width:200px}
+.deeper{display:flex;gap:14px;align-items:flex-start}
+.deeper img{width:72px;height:auto;border-radius:6px;box-shadow:0 4px 12px rgba(0,0,0,.18);display:block}
+.video{position:relative;aspect-ratio:16/9;border-radius:14px;overflow:hidden;background:var(--term);margin:20px 0 0}
+.video iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.term-box{background:var(--term);color:var(--term-ink);border-radius:14px;font-family:var(--f-mono);font-size:14px;line-height:1.55;display:flex;flex-direction:column;min-width:0;height:520px;cursor:text}
+.term-out{flex:1;overflow:auto;padding:16px 16px 4px;white-space:pre-wrap;word-break:break-word}
+.term-out .cmd{opacity:.65;margin-top:8px}
+.term-out .win{color:#FFE08A}
+.term-in{display:flex;gap:8px;align-items:center;padding:10px 16px 14px;border-top:1px solid rgba(255,255,255,.08)}
+.term-in label{flex:none;opacity:.8}
+.term-in input{flex:1;min-width:0;background:transparent;border:0;color:inherit;font-size:14px;outline:none;padding:4px 0}
+.term-box:focus-within{box-shadow:0 0 0 3px var(--accent)}
+.steps{margin:0;padding:0;list-style:none;display:grid;gap:6px;font-size:15px}
+.steps li.ok{color:var(--good);font-weight:700}
+@media (max-width:820px){ .term-box{height:440px} .term-in label{display:none} }
+.foot{margin-top:40px;color:var(--muted);font-size:14px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+@media (max-width:820px){ .hero,.lesson{grid-template-columns:1fr} .side{position:static} .unit{grid-template-columns:1fr} }
+.lesson>*{min-width:0}
+.lesson h1{overflow-wrap:break-word}
+.yt-banner{position:relative;display:block;text-decoration:none;margin:12px 0 4px;border-radius:14px;overflow:hidden;box-shadow:0 4px 14px rgba(0,0,0,.12)}
+.yt-banner img{display:block;width:100%;height:auto}
+.yt-banner .yt-cta{position:absolute;right:12px;bottom:10px;display:inline-flex;align-items:center;gap:6px;background:#E02F2F;color:#fff;font-weight:700;font-size:14px;padding:6px 12px;border-radius:99px;text-decoration:none;box-shadow:0 2px 8px rgba(0,0,0,.25)}
+.yt-banner:hover .yt-cta,.yt-banner:focus-visible .yt-cta{background:#C21F1F}
+@media (max-width:560px){ .yt-banner .yt-cta{position:static;display:flex;justify-content:center;border-radius:0;box-shadow:none;font-size:13px;padding:7px} }
+
+.static-q{border-top:1px solid var(--line);padding-top:16px}
+.static-q ol{margin:10px 0;padding-left:0;list-style:none;display:grid;gap:6px}
+.static-q h3{font-family:var(--f-body);font-size:18px;font-weight:700;margin-bottom:10px;line-height:1.4}
+.static-q li{white-space:pre-line;background:var(--panel-2);border:1px solid var(--line);border-radius:10px;padding:8px 12px}
+.static-q details{margin-top:8px}
+.static-q summary{cursor:pointer;font-weight:700;color:var(--accent)}
+.lesson-list{display:grid;gap:4px;margin:8px 0 0;padding-left:0;list-style:none}
+
+  .lab-box{display:grid;gap:14px}
+  .bits{display:flex;gap:8px;flex-wrap:wrap}
+  .bit{display:grid;gap:6px;justify-items:center;font-family:var(--f-mono)}
+  .bit button{width:54px;height:64px;border-radius:10px;border:2px solid var(--line);background:var(--panel-2);font:700 26px var(--f-mono);color:var(--ink);cursor:pointer}
+  .bit button.on{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+  .bit small{color:var(--muted)}
+  .big-num{font:800 40px var(--f-display);font-variant-numeric:tabular-nums}
+  .lab-input{font:16px var(--f-mono);padding:10px 12px;border:2px solid var(--line);border-radius:10px;background:var(--panel);color:var(--ink);width:100%;max-width:520px}
+  .mono{font-family:var(--f-mono);word-break:break-all}
+  .lab-table{border-collapse:collapse;font-size:14px;font-variant-numeric:tabular-nums}
+  .lab-table th,.lab-table td{border-bottom:1px solid var(--line);padding:6px 10px;text-align:left}
+  .scroll{overflow-x:auto}
+  .bars{display:grid;gap:6px}
+  .bar{display:grid;grid-template-columns:110px 1fr 54px;gap:8px;align-items:center;font-size:14px}
+  .bar i{display:block;height:16px;border-radius:4px;background:var(--accent);min-width:2px}
+  .code{font-family:var(--f-mono);font-size:15px;background:var(--term);color:var(--term-ink);border-radius:12px;padding:12px 0;overflow-x:auto}
+  .code div{padding:1px 16px;white-space:pre}
+  .code div.cur{background:color-mix(in srgb, var(--accent) 45%, transparent)}
+  .lamp{display:grid;gap:4px;justify-items:center;font-family:var(--f-mono);font-size:14px}
+  .lamp i{width:44px;height:44px;border-radius:50%;background:var(--panel-2);border:3px solid var(--line)}
+  .lamp.on i{background:var(--good);border-color:var(--good);box-shadow:0 0 16px var(--good)}
+  .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(44px,1fr));gap:6px}
+  .cards button{height:44px;border-radius:8px;border:2px solid var(--line);background:var(--panel-2);font:700 14px var(--f-mono);color:var(--ink);cursor:pointer}
+  .cards button.out{opacity:.25}
+  .cards button.hit{background:var(--good);color:#fff;border-color:var(--good)}
+  .net svg{width:100%;max-width:560px;height:auto}
+  .net line{cursor:pointer}
+  
+.figure{margin:18px 0 6px;padding:16px;border:1px solid var(--line);border-radius:14px;background:var(--panel)}
+  .figure figcaption{margin-top:10px;color:var(--muted);font-size:15px}
+  .figure .label{display:block;margin-bottom:10px}
+  .fig-table{width:100%;font-family:var(--f-mono)}
+  .fig-table th{background:var(--panel-2)}
+  .fig-table td.on{background:color-mix(in srgb, var(--u, var(--accent)) 22%, transparent);font-weight:700}
+</style>
+</head><body>
+<div class="wrap">
+  <header class="topbar">
+    <a class="brand" href="../../">
+      <svg viewBox="0 0 32 32" aria-hidden="true"><rect x="2" y="4" width="28" height="24" rx="6" fill="var(--accent)"/><path d="M11 11l-5 5 5 5M21 11l5 5-5 5M18 9l-4 14" fill="none" stroke="var(--accent-ink)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      AP CSP
+    </a>
+    <span class="spacer"></span>
+    <nav class="nav" aria-label="Main">
+      <a href="../../">Interactive course</a>
+      <a href="../">All lessons</a>
+      <a href="../../../">All courses</a>
+    </nav>
+  </header>
+  <main>
+
+    <div class="crumbs"><a href="../../">AP Computer Science Principles</a> / <a href="../">All lessons</a> / Big Idea 5: Impact of Computing</div>
+    <div class="lesson u-scope" style="--u:var(--u5)">
+      <article>
+        <span class="u-band"><i>5</i>Big Idea 5: Impact of Computing</span><br><span class="label u" style="display:inline-block;margin-top:12px">AP CSP topic 5.4</span><br>
+        <h1>Crowdsourcing</h1>
+        <svg class="topic-art" viewBox="0 0 600 200" role="img" aria-label="Illustration for Crowdsourcing">
+      <rect width="600" height="200" rx="18" fill="var(--u, var(--accent))" opacity=".12"/>
+      <path d="M170 100h70M360 100h70" stroke="var(--u, var(--accent))" stroke-width="4" stroke-dasharray="2 10" stroke-linecap="round"/>
+      <g transform="translate(60 50) scale(1)"><circle cx="30" cy="34" r="11" fill="var(--u, var(--accent))"/><circle cx="70" cy="34" r="11" fill="var(--u, var(--accent))"/><circle cx="50" cy="28" r="13" fill="var(--u, var(--accent))"/><path d="M10 82c2-14 10-22 20-22M90 82c-2-14-10-22-20-22M26 86c2-18 12-26 24-26s22 8 24 26" fill="var(--panel, #fff)" stroke="var(--ink)" stroke-width="4" stroke-linejoin="round"/></g><g transform="translate(225 25) scale(1.5)"><circle cx="50" cy="50" r="38" fill="var(--panel, #fff)" stroke="var(--ink)" stroke-width="4" stroke-linejoin="round"/><ellipse cx="50" cy="50" rx="16" ry="38" fill="none" stroke="var(--ink)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 50h76M18 30h64M18 70h64" fill="none" stroke="var(--ink)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="78" cy="22" r="9" fill="var(--u, var(--accent))"/></g><g transform="translate(440 50) scale(1)"><path d="M50 10a28 28 0 0 0-16 51v11h32V61a28 28 0 0 0-16-51z" fill="var(--u, var(--accent))"/><path d="M38 82h24M42 90h16" fill="none" stroke="var(--ink)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></g>
+    </svg>
+        <p class="summary">Crowdsourcing gets ideas, services, money, or data from a large group of people, usually online. Examples include online encyclopedias written by volunteers, apps that report traffic, and science projects where the public classifies photos. Citizen science lets ordinary people contribute to real research. The internet makes it easy to reach many contributors, but the quality of crowdsourced data can vary.</p>
+        
+        
+        <section class="card" style="margin-top:20px">
+          <h2 style="font-size:22px;margin-bottom:12px">Crowdsourcing vocabulary</h2>
+          <ul class="terms"><li><b>Crowdsourcing:</b> Getting input, work, or funding from a large group of people online.</li><li><b>Citizen science:</b> Scientific research done with help from members of the public.</li><li><b>Crowdfunding:</b> Raising money for a project from many people, each giving a small amount.</li><li><b>Open access:</b> Making research or data free for anyone to use.</li></ul>
+        </section>
+        <section class="card quiz">
+          <div><h2 style="font-size:22px">AP-style practice questions</h2>
+          <p class="muted" style="margin:4px 0 0">Try each one, then open the answer. To save your progress, <a href="../../#/topic/5.4">take this quiz in the interactive course</a>.</p></div>
+          <div class="static-q">
+            <span class="skill">Skill: Computing Innovations</span>
+            
+            <h3>1. Which of the following is an example of crowdsourcing?</h3>
+            <ol><li><b>(A)</b> A company hires one expert to design a logo</li><li><b>(B)</b> Thousands of drivers report traffic and road hazards in a map app</li><li><b>(C)</b> A student writes an essay alone</li><li><b>(D)</b> A teacher grades tests</li></ol>
+            <details><summary>Show answer</summary><p><b>(B) Thousands of drivers report traffic and road hazards in a map app</b> Crowdsourcing collects input from many people, usually online.</p></details>
+          </div><div class="static-q">
+            <span class="skill">Skill: Computing Innovations</span>
+            
+            <h3>2. Volunteers around the world label galaxy photos to help astronomers. Which of the following best describes this?</h3>
+            <ol><li><b>(A)</b> Citizen science</li><li><b>(B)</b> Lossy compression</li><li><b>(C)</b> Phishing</li><li><b>(D)</b> Parallel processing on one computer</li></ol>
+            <details><summary>Show answer</summary><p><b>(A) Citizen science</b> Members of the public contributing to research is citizen science.</p></details>
+          </div><div class="static-q">
+            <span class="skill">Skill: Computing Innovations</span>
+            
+            <h3>3. Which of the following is a possible problem with crowdsourced data?</h3>
+            <ol><li><b>(A)</b> It always comes from experts</li><li><b>(B)</b> Some contributors may submit inaccurate or misleading information</li><li><b>(C)</b> It cannot be shared online</li><li><b>(D)</b> It is always too small to use</li></ol>
+            <details><summary>Show answer</summary><p><b>(B) Some contributors may submit inaccurate or misleading information</b> Quality can vary when anyone can contribute.</p></details>
+          </div><div class="static-q">
+            <span class="skill">Skill: Computing Innovations</span>
+            
+            <h3>4. An inventor raises money for a new device by collecting small donations from 5,000 people online. What is this called?</h3>
+            <ol><li><b>(A)</b> Crowdfunding</li><li><b>(B)</b> Data cleaning</li><li><b>(C)</b> Encryption</li><li><b>(D)</b> Redundancy</li></ol>
+            <details><summary>Show answer</summary><p><b>(A) Crowdfunding</b> Raising money from many small contributors online is crowdfunding.</p></details>
+          </div>
+        </section>
+        <p style="margin-top:20px"><a class="btn primary" href="../../#/topic/5.4">Open 5.4 in the interactive course</a></p>
+        <nav class="pager">
+          <a class="btn" href="../5-3-computing-bias/">← 5.3 Computing Bias</a>
+          <a class="btn" href="../5-5-legal-and-ethical-concerns/">5.5 Legal and Ethical Concerns →</a>
+        </nav>
+      </article>
+      <aside class="side">
+        <div class="card unitbox"><span class="label">Big Idea 5</span><h3 style="margin:6px 0 10px">Impact of Computing</h3>
+          <ul class="lesson-list"><li><a href="../5-1-beneficial-and-harmful-effects/" style="text-decoration:none;color:var(--ink);">5.1 Beneficial and Harmful Effects</a></li><li><a href="../5-2-digital-divide/" style="text-decoration:none;color:var(--ink);">5.2 Digital Divide</a></li><li><a href="../5-3-computing-bias/" style="text-decoration:none;color:var(--ink);">5.3 Computing Bias</a></li><li><a href="../5-4-crowdsourcing/" style="text-decoration:none;color:var(--ink);font-weight:700">5.4 Crowdsourcing</a></li><li><a href="../5-5-legal-and-ethical-concerns/" style="text-decoration:none;color:var(--ink);">5.5 Legal and Ethical Concerns</a></li><li><a href="../5-6-safe-computing/" style="text-decoration:none;color:var(--ink);">5.6 Safe Computing</a></li></ul>
+        </div>
+      </aside>
+    </div>
+  </main>
+</div>
+</body></html>
