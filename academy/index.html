@@ -304,7 +304,7 @@ const BLOCKS = {
   blast:{cls:'b-act', label:'blast wall ahead', text:'blastWallAhead();'},
   repeat:{cls:'b-loop', label:'repeat', container:true},
   until:{cls:'b-loop', label:'repeat until at flag', container:true},
-  ifelse:{cls:'b-logic', label:'if path', container:true},
+  ifelse:{cls:'b-logic', label:'if … else', container:true},
   fire:{cls:'b-act', label:'fire cannon', text:'fireCannon();'},
   iftank:{cls:'b-logic', label:'if tank ahead', container:true},
   untilclear:{cls:'b-loop', label:'repeat until no tanks left', container:true}
@@ -690,7 +690,7 @@ function renderBlock(n){
     s.onchange=()=>{ n.n=+s.value; changed() }; s.onclick=e=>e.stopPropagation(); row.appendChild(s); row.appendChild(h('span',null,'times'));
   } else if(n.type==='ifelse'){
     row.appendChild(h('span',null,'if'));
-    const s=h('select'); s.setAttribute('aria-label','direction'); [['ahead','ahead'],['left','to the left'],['right','to the right'],...(L.blocks.includes('collect')?[['crystal','crystal here']]:[]),...(L.blocks.includes('blast')?[['cracked','cracked wall ahead']]:[])].forEach(([v,t])=>s.appendChild(new Option(t,v,false,v===n.cond)));
+    const s=h('select'); s.setAttribute('aria-label','direction'); [['ahead','path ahead'],['left','path to the left'],['right','path to the right'],...(L.blocks.includes('collect')?[['crystal','crystal here']]:[]),...(L.blocks.includes('blast')?[['cracked','cracked wall ahead']]:[]),...(L.blocks.includes('fire')?[['tank','tank ahead']]:[])].forEach(([v,t])=>s.appendChild(new Option(t,v,false,v===n.cond)));
     s.onchange=()=>{ n.cond=s.value; changed() }; s.onclick=e=>e.stopPropagation(); row.appendChild(s);
   } else row.appendChild(h('span',null,B.label));
   [['first','▲',true,'Move block up'],['second','▼',false,'Move block down']].forEach(([c,t,up,lbl])=>{
@@ -730,7 +730,7 @@ function renderProgram(){
 }
 function renderCode(){
   const c=$('#code'); if(!c||c.hidden) return;
-  const cond={ahead:'isPathAhead()',left:'isPathLeft()',right:'isPathRight()',crystal:'isCrystalHere()',cracked:'isCrackedWallAhead()'};
+  const cond={ahead:'isPathAhead()',left:'isPathLeft()',right:'isPathRight()',crystal:'isCrystalHere()',cracked:'isCrackedWallAhead()',tank:'isTankAhead()'};
   const lines=(list,ind)=>list.flatMap(n=>{
     const p='  '.repeat(ind);
     if(n.type==='repeat') return [p+`for (let i = 0; i < ${n.n}; i++) {`,...lines(n.body,ind+1),p+'}'];
@@ -755,7 +755,7 @@ function* exec(list, ctx){
     else if(n.type==='until'){ while(!atFlag()){ guard(ctx); yield {id:n.id, act:'mark'}; yield* exec(n.body,ctx) } }
     else if(n.type==='untilclear'){ while(world.tanks.size){ guard(ctx); yield {id:n.id, act:'mark'}; yield* exec(n.body,ctx) } }
     else if(n.type==='iftank'){ guard(ctx); yield {id:n.id, act:'mark'}; if(world.tankAhead()) yield* exec(n.body,ctx) }
-    else if(n.type==='ifelse'){ guard(ctx); yield {id:n.id, act:'mark'}; const ok= n.cond==='crystal' ? world.gems.has(world.x+','+world.y) : n.cond==='cracked' ? crackedAhead() : pathOpen({ahead:0,left:-1,right:1}[n.cond]); yield* exec(ok?n.body:n.elseBody, ctx) }
+    else if(n.type==='ifelse'){ guard(ctx); yield {id:n.id, act:'mark'}; const ok= n.cond==='crystal' ? world.gems.has(world.x+','+world.y) : n.cond==='cracked' ? crackedAhead() : n.cond==='tank' ? world.tankAhead() : pathOpen({ahead:0,left:-1,right:1}[n.cond]); yield* exec(ok?n.body:n.elseBody, ctx) }
     else yield {id:n.id, act:n.type};
   }
 }
