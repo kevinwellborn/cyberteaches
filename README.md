@@ -62,6 +62,11 @@ Until `academy/firebase-config.js` has a config, the site works without sign-in 
 
 Teachers open `academy/teacher.html`, create a class, and share the class code or join link (for example in Google Classroom).
 
+The dashboard also has an **Answer key** with a 3-star solution for every puzzle. It stays hidden until the teacher presses
+Show answers, and `academy/answer-key.js` is only loaded after a teacher signs in. The data is encoded so it is not readable at a
+glance, but it is not truly secret: a student who signs in on the teacher page or decodes the file could read it. When you add or
+change puzzles, update the answer key too (decode and re-encode instructions are at the top of `academy/answer-key.js`).
+
 ### Teacher accounts
 
 Teachers sign in on `academy/teacher.html` with Google, or create an account with their email and a password

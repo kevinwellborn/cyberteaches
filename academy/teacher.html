@@ -105,6 +105,13 @@ td.name small{color:var(--muted)}
 .logins td.acts{text-align:right}
 .btn.sm{padding:4px 10px;font-size:13px;border-radius:8px}
 @media (max-width:760px){ .logins{grid-template-columns:minmax(0,1fr)} }
+.keylesson{margin:18px 0 6px;font-size:18px}
+.keygrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px;align-items:start}
+.keycard{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px;min-width:0}
+.keycard h3{font-size:16px;margin:0 0 2px}
+.keycard .meta{font-size:13px;color:var(--muted);margin-bottom:8px}
+.keycard pre{margin:0;background:var(--panel-2);border-radius:10px;padding:10px 12px;font-family:var(--f-mono);font-size:13px;line-height:1.55;white-space:pre-wrap;overflow-wrap:anywhere;color:var(--ink)}
+.keycard a{display:inline-block;margin-top:8px;font-size:14px;font-weight:700;color:var(--accent)}
 @media (max-width:820px){ .top2{grid-template-columns:minmax(0,1fr)} }
 </style>
 </head><body>
@@ -195,7 +202,10 @@ function dashboard(){
   app.innerHTML=`<div class="toolbar" style="margin-top:6px"><h2>Your classes</h2></div>
     <div class="classes" id="classes"></div>
     <form class="newclass" id="newclass"><label class="label" for="cname" style="align-self:center">New class</label><input id="cname" placeholder="e.g. Period 3 Coding" maxlength="60" required><button class="btn primary" id="cbtn">Create class</button><span class="err" id="cerr" role="alert"></span></form>
-    <div id="classview"></div><section id="loginsview"></section>`;
+    <div id="classview"></div><section id="loginsview"></section>
+    <section id="keyview"><div class="toolbar"><h2>Answer key</h2><div class="spacer"></div><button class="btn" id="keyBtn" aria-expanded="false">Show answers</button></div>
+      <p class="muted" style="margin:0">A 3-star solution for every puzzle, for teachers only. Answers stay hidden until you press Show answers, so it is safe to project this page.</p><div id="keybody"></div></section>`;
+  $('#keyBtn').onclick=toggleKey;
   $('#newclass').addEventListener('submit',async e=>{
     e.preventDefault(); const name=$('#cname').value.trim(); if(!name) return;
     $('#cbtn').disabled=true; $('#cerr').textContent='';
@@ -222,6 +232,37 @@ function selectClass(code){
   roster=[]; renderClass();
   stopRoster=Cloud.watchRoster(code,(list,err)=>{ roster=list.sort((a,b)=>(a.name||'').localeCompare(b.name||'')); renderClass(err) });
   renderLogins();
+}
+
+// ---------- answer key (teachers only; answer-key.js is loaded after sign-in) ----------
+const KEY_LABEL={forward:'move forward',left:'turn left',right:'turn right',collect:'collect crystal',fire:'fire cannon',blast:'blast wall ahead',until:'repeat until at flag',untilclear:'repeat until no tanks left',iftank:'if tank ahead'};
+const KEY_COND={ahead:'path ahead',left:'path to the left',right:'path to the right',crystal:'crystal here',cracked:'cracked wall ahead',tank:'tank ahead'};
+const KEY_DRIVE={forward:'↑ forward',left:'← turn left',right:'→ turn right',fire:'Space fire'};
+function keyLines(list,ind){
+  return list.flatMap(n=>{ const p='   '.repeat(ind);
+    if(n.type==='repeat') return [p+'repeat '+n.n+' times',...keyLines(n.body,ind+1)];
+    if(n.type==='ifelse') return [p+'if '+KEY_COND[n.cond],...keyLines(n.body,ind+1),p+'else',...(n.elseBody.length?keyLines(n.elseBody,ind+1):[p+'   (nothing)'])];
+    if(n.body) return [p+KEY_LABEL[n.type],...keyLines(n.body,ind+1)];
+    return [p+KEY_LABEL[n.type]] });
+}
+const keyCount=list=>list.reduce((s,n)=>s+1+keyCount(n.body||[])+keyCount(n.elseBody||[]),0);
+let keyData=null;
+function loadKey(){
+  if(keyData) return Promise.resolve(keyData);
+  return new Promise((ok,fail)=>{ const sc=document.createElement('script'); sc.src='answer-key.js?v=1'; sc.onload=()=>{ try{ keyData=window.decodeAnswerKey(); ok(keyData) }catch(e){ fail(e) } }; sc.onerror=fail; document.head.appendChild(sc) });
+}
+async function toggleKey(){
+  const btn=$('#keyBtn'), box=$('#keybody'), open=btn.getAttribute('aria-expanded')==='true';
+  if(open){ box.innerHTML=''; btn.textContent='Show answers'; btn.setAttribute('aria-expanded','false'); return }
+  btn.disabled=true; box.innerHTML='<p class="muted">Loading…</p>';
+  try{ await loadKey() }catch(e){ console.error(e); box.innerHTML='<p class="err">Could not load the answer key. Check your connection and try again.</p>'; btn.disabled=false; return }
+  box.innerHTML=UNITS.map(u=>`<h3 class="keylesson">Lesson ${u.n}: ${esc(u.title)}</h3><div class="keygrid">${LEVELS.filter(l=>l.unit===u.n).map(l=>{
+    const prog=keyData[l.n]||[];
+    const body = l.drive ? prog.map((n,i)=>(i+1+'. ').padStart(4,' ')+KEY_DRIVE[n.type]).join('\n') : keyLines(prog,0).join('\n');
+    const meta = l.drive ? `Drive mode · ${prog.length} moves (3 stars at ${l.ideal} or fewer)` : `${keyCount(prog)} blocks · goal ${l.ideal}`;
+    return `<article class="keycard"><h3>${u.n}.${l.k} ${esc(l.title)}</h3><div class="meta">${meta}</div><pre>${esc(prog.length?body:'No solution saved yet.')}</pre><a href="./#puzzle-${l.n}" target="_blank" rel="noopener">Open puzzle</a></article>` }).join('')}</div>`).join('')
+    + '<p class="muted" style="margin-top:14px;font-size:14px">Other correct programs also work. These are one way to reach the block goal.</p>';
+  btn.disabled=false; btn.textContent='Hide answers'; btn.setAttribute('aria-expanded','true');
 }
 
 // ---------- student logins: a username and password for each student, made by the teacher ----------
