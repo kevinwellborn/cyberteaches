@@ -22,7 +22,7 @@
 :root{
   --bg:#EEF1EC; --panel:#FFFFFF; --panel-2:#F6F8F4; --ink:#1C292C; --muted:#5C6B6B; --line:#D5DCD4;
   --accent:#0F7B78; --accent-ink:#FFFFFF; --accent-soft:#D6EEEA; --term:#13201F; --term-ink:#B9F5DA; --yt:#D93025;
-  --c-cyber:#0F7B78; --c-csp:#2F6FDE; --c-sec:#C2417A; --c-csd:#D97E16; --c-acad:#7A4FD0;
+  --c-cyber:#0F7B78; --c-csp:#2F6FDE; --c-sec:#C2417A; --c-net:#D97E16; --c-acad:#7A4FD0;
   --f-display:"Bricolage Grotesque", "Trebuchet MS", system-ui, sans-serif;
   --f-body:"Atkinson Hyperlegible", "Segoe UI", system-ui, sans-serif;
   --f-mono:"JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
@@ -30,12 +30,12 @@
 @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
   --bg:#141B1C; --panel:#1C2526; --panel-2:#222D2E; --ink:#E6EEEC; --muted:#9AABA9; --line:#33403F;
   --accent:#3FC1B8; --accent-ink:#0B1A1A; --accent-soft:#1D3A38; --term:#0C1213; --term-ink:#9FEBC8; --yt:#F2665B;
-  --c-cyber:#2FA8A1; --c-csp:#4B86EC; --c-sec:#D85A92; --c-csd:#E39232; --c-acad:#9473E0; color-scheme:dark }
+  --c-cyber:#2FA8A1; --c-csp:#4B86EC; --c-sec:#D85A92; --c-net:#E39232; --c-acad:#9473E0; color-scheme:dark }
 }
 :root[data-theme="dark"]{
   --bg:#141B1C; --panel:#1C2526; --panel-2:#222D2E; --ink:#E6EEEC; --muted:#9AABA9; --line:#33403F;
   --accent:#3FC1B8; --accent-ink:#0B1A1A; --accent-soft:#1D3A38; --term:#0C1213; --term-ink:#9FEBC8; --yt:#F2665B;
-  --c-cyber:#2FA8A1; --c-csp:#4B86EC; --c-sec:#D85A92; --c-csd:#E39232; --c-acad:#9473E0; color-scheme:dark
+  --c-cyber:#2FA8A1; --c-csp:#4B86EC; --c-sec:#D85A92; --c-net:#E39232; --c-acad:#9473E0; color-scheme:dark
 }
 *{box-sizing:border-box}
 html,body{background:var(--bg)}
@@ -151,7 +151,7 @@ img.cover,img.ad-art{padding:0;background:none;object-fit:cover}
     <div class="terminal" aria-hidden="true">
       <div><span class="dim">$</span> ls courses/</div>
       <div>apcybersecurity/ &nbsp;apcsp/ &nbsp;securityplus/</div>
-      <div>csdiscoveries/ &nbsp;&nbsp;academy/</div>
+      <div>apnetworking/ &nbsp;&nbsp;academy/</div>
       <div><span class="dim">$</span> cd apcybersecurity &amp;&amp; ./start</div>
       <div>5 units · 24 topics · 11 labs</div>
       <div class="dim">loading 1.1 understanding social engineering…</div>
@@ -182,10 +182,10 @@ img.cover,img.ad-art{padding:0;background:none;object-fit:cover}
         <div class="meta"><span class="chip">27 lessons</span><span class="chip">11 labs</span><span class="chip">116 exam-style questions</span><span class="chip">Companion book</span></div>
         <span class="go">Start the course →</span>
       </a>
-      <div class="course soon" style="--c:var(--c-csd)">
-        <div class="top"><span class="code">/csdiscoveries</span><span class="status soon">Coming soon</span></div>
-        <h3>CS Discoveries</h3>
-        <p>An introduction to computer science for middle and early high school.</p>
+      <div class="course soon" style="--c:var(--c-net)">
+        <div class="top"><span class="code">/apnetworking</span><span class="status soon">Coming soon</span></div>
+        <h3>AP Networking</h3>
+        <p>How networks connect devices and move data, from cables and Wi-Fi to IP addresses, routing, and troubleshooting.</p>
         <div class="meta"><span class="chip">Videos on YouTube</span></div>
       </div>
       <a class="course" style="--c:var(--c-acad)" href="academy/">
@@ -237,7 +237,7 @@ img.cover,img.ad-art{padding:0;background:none;object-fit:cover}
     <div>
       <span class="label" style="color:var(--term-ink);opacity:.75">YouTube</span>
       <h2>Watch every lesson on the CyberTeaches channel</h2>
-      <p class="muted" style="margin:0 0 16px;max-width:60ch">Short, clear videos for AP Cybersecurity, AP CSP, Security+, and CS Discoveries. Subscribe to get new lessons as they come out.</p>
+      <p class="muted" style="margin:0 0 16px;max-width:60ch">Short, clear videos for AP Cybersecurity, AP CSP, and Security+. Subscribe to get new lessons as they come out.</p>
       <a class="btn yt" href="https://www.youtube.com/@cyberteaches?sub_confirmation=1" target="_blank" rel="noopener">Subscribe</a>
     </div>
   </section>
