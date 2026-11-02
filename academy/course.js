@@ -17,10 +17,14 @@ const UNITS = [
    intro:['Puzzle 1 is drive mode. Use the arrow keys (or the buttons) to drive and Space to fire. Every move you make turns into a block in your program.',
           'After that, you write the program first. <b>fire cannon</b> shoots straight ahead until the shell hits a tank or a rock. Shells are limited, so do not waste them.',
           '<b>if tank ahead</b> runs the blocks inside only when a tank is in your line of fire. <b>repeat until no tanks left</b> keeps your patrol going until the job is done.',
-          'Careful: a red <b>!</b> means a tank has spotted you. If you are still in front of its cannon after your next move, it fires.']}
+          'Careful: a red <b>!</b> means a tank has spotted you. If you are still in front of its cannon after your next move, it fires.']},
+  {n:4, title:'If / else', color:'var(--b-move)', newBlocks:['ifelse'], video:'',
+   concept:'Teach the rover to decide. "If / else" checks something about the world, runs one plan when it is true and the other plan when it is false, so one program can handle paths it has never seen.',
+   intro:['The <b>if … else</b> block asks a question, like "is there a path ahead?". If the answer is yes, the rover runs the blocks in the top part. If not, it runs the blocks under <b>else</b>.',
+          'Pick the question with the menu on the block: path ahead, to the left, to the right, crystal here, or tank ahead.',
+          'Put an if / else inside <b>repeat until at flag</b> and the rover checks again at every step. You can even put an if / else inside another one.']}
 ];
 const UPCOMING = [
-  {title:'If / else', blurb:'Pick between two plans, depending on what the rover sees.'},
   {title:'Destroy walls', blurb:'Blast cracked walls, collect charges, and find keys to locked gates.'}
 ];
 
@@ -31,6 +35,7 @@ const UPCOMING = [
 const L1 = ['forward','left','right','collect','repeat'];
 const L2 = ['forward','left','right','collect','repeat','until'];
 const L3 = ['forward','left','right','fire','repeat'];
+const L4 = ['forward','left','right','until','ifelse'];
 const LEVELS = [
   {unit:1, title:'Pick it up', dir:1, ideal:3, blocks:L1,
    goal:'Drive onto the crystal and collect it.',
@@ -101,6 +106,27 @@ const LEVELS = [
   {unit:3, title:'Auto-pilot', dir:1, ideal:12, blocks:[...L3,'iftank','untilclear'],
    goal:'Write one patrol program that checks above and below the road and keeps going until no tanks are left. The tank at the end of the road is aiming at you!',
    hint:'Repeat until no tanks left: if tank ahead fire; move forward; turn left; if tank ahead fire; turn right; turn right; if tank ahead fire; turn left.',
-   map:['###########','#.^.^..^.##','#S.......<#','#..v.v..v.#','###########']}
+   map:['###########','#.^.^..^.##','#S.......<#','#..v.v..v.#','###########']},
+
+  {unit:4, title:'Snake path', dir:1, ideal:4, blocks:L4,
+   goal:'Reach the flag with 4 blocks. Move forward when the path is clear, and turn right when it is not.',
+   hint:'Inside "repeat until at flag", put "if path ahead": move forward in the top part, and turn right in the else part.',
+   map:['#######','#S....#','#####.#','#G....#','#######']},
+  {unit:4, title:'Left or right', dir:1, ideal:6, blocks:L4,
+   goal:'This path turns both ways. Put an if / else inside another one so the rover picks the right turn.',
+   hint:'Repeat until at flag: if path ahead, move forward. Else: if path to the left, turn left, else turn right.',
+   map:['#########','#S..#####','###.#####','###...###','#####.###','#####..G#','#########']},
+  {unit:4, title:'Crystal check', dir:1, ideal:4, blocks:[...L4,'collect'],
+   goal:'Only some squares have crystals. Collect every one on the way to the flag. The else part can stay empty.',
+   hint:'Repeat until at flag: move forward, then "if crystal here" collect crystal. Leave else empty.',
+   map:['############','#S.*..**.*G#','############']},
+  {unit:4, title:'Smart patrol', dir:1, ideal:6, blocks:[...L4,'fire'],
+   goal:'Parked tanks block the road. Fire when a tank is ahead, otherwise drive on, and reach the flag.',
+   hint:'Repeat until at flag: if tank ahead, fire cannon. Else: if path ahead, move forward, else turn right.',
+   map:['#########','#S..>...#','#######.#','#G..<...#','#########']},
+  {unit:4, title:'Maze runner', dir:1, ideal:8, blocks:[...L4,'collect'],
+   goal:'Use everything you know: collect each crystal and find your way through the maze to the flag.',
+   hint:'Repeat until at flag: if crystal here, collect. Then: if path ahead, move forward. Else: if path to the left, turn left, else turn right.',
+   map:['##########','#S.*.#####','####*#####','##..*.*###','######.###','####G..###','##########']}
 ];
 LEVELS.forEach((l,i)=>{ l.n=i+1; l.k=LEVELS.slice(0,i).filter(o=>o.unit===l.unit).length+1 });  // k: puzzle number inside its lesson

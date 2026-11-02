@@ -29,7 +29,9 @@ A self-paced, block-based coding course. Students guide a rover through lessons 
   Space to fire, and each move is recorded as a block. Puzzles 2 to 6 add `fire cannon`, `if tank ahead` and
   `repeat until no tanks left`, ending with a patrol program that clears every tank by itself. Enemy tanks (`^ > v <` in a
   map) fire if the rover stays in front of their cannon for a second move, and shells are limited.
-- Coming soon: If / else, Destroy walls
+- Lesson 4: If / else (5 puzzles). The `if … else` block checks path ahead, to the left or right, crystal here, or tank
+  ahead (when the puzzle has the cannon). Puzzles go from a snake path to a maze runner with nested if / else.
+- Coming soon: Destroy walls
 
 ## Lesson pages for search engines
 
