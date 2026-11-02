@@ -24,7 +24,7 @@ pretend-terminal mission for each unit (`missions.js`). Lesson text lives in `ap
 A self-paced, block-based coding course. Students guide a rover through lessons that each unlock one new block:
 
 - Lesson 1: Repeat and collect (10 puzzles)
-- Lesson 2: Repeat until (5 puzzles)
+- Lesson 2: Repeat until (9 puzzles)
 - Lesson 3: Tank battle (6 puzzles). Puzzle 1 is drive mode: students steer with the arrow keys or on-screen buttons and press
   Space to fire, and each move is recorded as a block. Puzzles 2 to 6 add `fire cannon`, `if tank ahead` and
   `repeat until no tanks left`, ending with a patrol program that clears every tank by itself. Enemy tanks (`^ > v <` in a

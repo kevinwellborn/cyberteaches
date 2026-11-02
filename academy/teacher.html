@@ -249,7 +249,7 @@ const keyCount=list=>list.reduce((s,n)=>s+1+keyCount(n.body||[])+keyCount(n.else
 let keyData=null;
 function loadKey(){
   if(keyData) return Promise.resolve(keyData);
-  return new Promise((ok,fail)=>{ const sc=document.createElement('script'); sc.src='answer-key.js?v=2'; sc.onload=()=>{ try{ keyData=window.decodeAnswerKey(); ok(keyData) }catch(e){ fail(e) } }; sc.onerror=fail; document.head.appendChild(sc) });
+  return new Promise((ok,fail)=>{ const sc=document.createElement('script'); sc.src='answer-key.js?v=3'; sc.onload=()=>{ try{ keyData=window.decodeAnswerKey(); ok(keyData) }catch(e){ fail(e) } }; sc.onerror=fail; document.head.appendChild(sc) });
 }
 async function toggleKey(){
   const btn=$('#keyBtn'), box=$('#keybody'), open=btn.getAttribute('aria-expanded')==='true';
