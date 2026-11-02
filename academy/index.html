@@ -325,7 +325,7 @@ let bonus = store.get('bonus', {});         // { levelNumber: true } when every 
 const $ = (s,r=document)=>r.querySelector(s);
 const h = (tag, cls, html)=>{ const e=document.createElement(tag); if(cls) e.className=cls; if(html!=null) e.innerHTML=html; return e };
 const doneCount = ()=>LEVELS.filter(l=>progress[l.n]).length;
-const nextLevel = ()=> (LEVELS.find(l=>!progress[l.n]) || LEVELS[LEVELS.length-1]).n;
+const nextLevel = ()=> (ORDER.find(l=>!progress[l.n]) || ORDER[ORDER.length-1]).n;
 
 // ---------- routing ----------
 function route(){
@@ -471,12 +471,12 @@ function showHome(){
       <h1 style="margin-top:10px">Teach a rover to explore. <em>Learn to code.</em></h1>
       <p>Snap together instruction blocks to guide a planetary rover through rocks and crystals. Each lesson unlocks one new block and builds on the last, from repeat loops to tank battles where your code does the aiming.</p>
       <div class="hero-actions">
-        <button class="btn primary" id="go">${done? (done===total?'Replay the course':'Continue with puzzle '+nextLevel()) : 'Start puzzle 1'}</button>
+        <button class="btn primary" id="go">${done? (done===total?'Replay the course':'Continue with puzzle '+(l=>l.unit+'.'+l.k)(LEVELS[nextLevel()-1])) : 'Start puzzle 1'}</button>
         <div class="meter"><span class="label">${done} of ${total} puzzles solved</span><div class="meter-bar"><i style="width:${done/total*100}%"></i></div></div>
       </div></div><div class="hero-art"></div>`;
   app.appendChild(hero);
   const preview=buildBoard(LEVELS[5]); $('.hero-art',hero).appendChild(preview.board);
-  $('#go',hero).onclick=()=>{ location.hash='puzzle-'+(done===total?1:nextLevel()) };
+  $('#go',hero).onclick=()=>{ location.hash='puzzle-'+(done===total?ORDER[0].n:nextLevel()) };
 
   const units=h('section','units');
   UNITS.forEach(u=>{
@@ -849,7 +849,7 @@ function finish(ok,msg){
   showWin(stars, used, target);
 }
 function showWin(stars, used, target){
-  const last=L.n===LEVELS.length, unitEnd = !last && LEVELS[L.n].unit!==L.unit;
+  const at=ORDER.indexOf(L), nextL=ORDER[at+1], last=!nextL, unitEnd = !last && nextL.unit!==L.unit;
   let msg = L.drive ? `You won in ${used} moves${stars<3?`. Can you do it in ${target}?`:'!'} Every button you pressed became a block, so your moves are now a program. Next, you write the program first and the rover drives itself.`
             : stars===3 ? `You solved it with ${used} blocks. That matches the goal of ${target}.`
             : `You solved it with ${used} blocks. Can you do it in ${target}? Try again for 3 stars.`;
@@ -864,7 +864,7 @@ function showWin(stars, used, target){
     <div class="acts"><button class="btn" id="again">Try again</button><button class="btn primary" id="nextBtn">${last?'Back to course map':'Next puzzle'}</button></div></div></div>`;
   const close=()=>{ m.innerHTML='' };
   $('#again').onclick=()=>{ close(); world.reset(); if(L.drive){ program=[]; changed() } };
-  $('#nextBtn').onclick=()=>{ close(); location.hash = last ? 'home' : 'puzzle-'+(L.n+1) };
+  $('#nextBtn').onclick=()=>{ close(); location.hash = last ? 'home' : 'puzzle-'+nextL.n };
   $('#nextBtn').focus();
 }
 

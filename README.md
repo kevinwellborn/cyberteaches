@@ -23,7 +23,7 @@ pretend-terminal mission for each unit (`missions.js`). Lesson text lives in `ap
 
 A self-paced, block-based coding course. Students guide a rover through lessons that each unlock one new block:
 
-- Lesson 1: Repeat and collect (6 puzzles)
+- Lesson 1: Repeat and collect (10 puzzles)
 - Lesson 2: Repeat until (5 puzzles)
 - Lesson 3: Tank battle (6 puzzles). Puzzle 1 is drive mode: students steer with the arrow keys or on-screen buttons and press
   Space to fire, and each move is recorded as a block. Puzzles 2 to 6 add `fire cannon`, `if tank ahead` and
@@ -39,6 +39,9 @@ The courses route topics with `#/topic/1.1`, which Google treats as one page. `t
 plain page for every topic (notes, vocabulary, practice questions with answers) to `<course>/lessons/<topic>/`, a
 lessons index per course, and `sitemap.xml`. These files are generated: after editing any `content.js` or
 `questions.js`, run `node tools/build-lesson-pages.js` and commit the result.
+
+New puzzles always go at the end of `LEVELS` in `academy/course.js`, even for an earlier lesson, because each puzzle's
+saved progress is stored by its position in that list. `ORDER` gives the play order by lesson.
 
 ## Run it
 
@@ -61,6 +64,11 @@ Until `academy/firebase-config.js` has a config, the site works without sign-in 
 4. Project settings → Your apps → add a Web app, then copy its `firebaseConfig` into `academy/firebase-config.js`.
 
 Teachers open `academy/teacher.html`, create a class, and share the class code or join link (for example in Google Classroom).
+
+The dashboard also has an **Answer key** with a 3-star solution for every puzzle. It stays hidden until the teacher presses
+Show answers, and `academy/answer-key.js` is only loaded after a teacher signs in. The data is encoded so it is not readable at a
+glance, but it is not truly secret: a student who signs in on the teacher page or decodes the file could read it. When you add or
+change puzzles, update the answer key too (decode and re-encode instructions are at the top of `academy/answer-key.js`).
 
 ### Teacher accounts
 
