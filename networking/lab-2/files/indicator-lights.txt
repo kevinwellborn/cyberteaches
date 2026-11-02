@@ -1,0 +1,31 @@
+LAB 2 - INDICATOR LIGHTS, ROOM 204 (observed 10:20 a.m.)
+--------------------------------------------------------------------------------
+Device manual key (all devices in this room):
+  Steady or flashing green ... normal operation / link active
+  Orange or red .............. hardware issue or connection failure
+  Unlit ...................... no link: faulty port or cable, or unplugged cable
+
+ROUTER-204 (wireless gateway, front of room)
+  Power ......... steady green
+  Internet ...... steady green
+  Wi-Fi ......... flashing green
+  LAN 1 ......... flashing green  (uplink to SWITCH-A)
+  LAN 2 ......... flashing green  (uplink to SWITCH-B)
+
+SWITCH-A (stations 01-12, 16 ports)
+  Power/status .. steady green
+  Port 1-9 ...... flashing green
+  Port 10 ....... UNLIT
+  Port 11-12 .... flashing green
+  Port 16 ....... flashing green  (uplink to ROUTER-204)
+
+SWITCH-B (stations 13-16, 8 ports, under the back counter)
+  Power/status .. UNLIT
+  All ports ..... UNLIT
+  Note: the switch's power adapter plugs into the outlet strip behind
+  Station 15. The vacuum cord was plugged into the same strip.
+
+STATION 03 MONITOR
+  Power light ... orange (blinking)
+  On-screen ..... "No signal" message appears briefly when the button is pressed
+  Video cable ... connector at the back of the tower is half out of its port

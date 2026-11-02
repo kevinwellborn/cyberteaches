@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lab 2: Computer Lab Disconnected | AP Networking | CyberTeaches</title>
+<meta name="description" content="Lab 2: Computer Lab Disconnected: student walkthrough, starter files, and rubric.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/site.css">
+</head><body>
+<header class="site"><div class="wrap"><a href="../">CyberTeaches &middot; AP Networking</a><nav><a href="../">Networking home</a><a href="../exam-1/">Practice exams</a><a href="../#labs">Labs</a><a href="../syllabus/">Syllabus</a><a href="../teachers/">Teachers</a><a href="../updates/">Updates</a></nav></div></header>
+<main class="wrap"><div class="crumbs"><a href="../">AP Networking</a> / Lab 2</div>
+<div class="eyebrow">Unit 2 Lab &middot; Managing My Shared Connections</div>
+<h1>Lab 2: Computer Lab Disconnected</h1>
+<p class="lead">Six help desk tickets arrive during one class period in Room 204. Your school technology support team restores every station using indicator lights, ping results, and IP configurations, documents the room's network, and then secures and segments it so the problems are less likely to return.</p>
+
+<div class="grid">
+ <div class="card"><h3>At a glance</h3><p class="meta">Based on Unit Scenario 2A in the AP Networking Course Framework</p><ul>
+  <li><b>Time:</b> 4 class periods (45 min)</li>
+  <li><b>Team size:</b> 4 (one role each)</li>
+  <li><b>Book lessons:</b> 2.1, 2.2, 2.3, 2.5, 2.6 (2.4 for the AI step)</li>
+  <li><b>Deliverables:</b> network troubleshooting incident report, network documentation, and a security and segmentation plan</li></ul></div>
+ <div class="card"><h3>Learning objectives</h3><ul>
+  <li><span class="tag">2.1.A</span> Identify likely root causes of a SOHO network issue.</li>
+  <li><span class="tag">2.1.B</span> Determine an appropriate solution.</li>
+  <li><span class="tag">2.2.D</span> Document an existing network including devices, addresses, and connections.</li>
+  <li><span class="tag">2.5.B</span> Determine security controls to mitigate vulnerabilities.</li>
+  <li><span class="tag">2.6.B</span> Determine device grouping for segmentation.</li>
+  <li><span class="tag">2.4.A</span> Evaluate an AI-generated suggestion.</li></ul>
+  <p class="meta">Skills: 1.A, 1.C, 2.A–2.C, 3.A–3.D, 4.A–4.D</p></div>
+</div>
+
+<h2>The situation</h2>
+<p>You are on the school technology support team. During third period, problems pile up in the computer science classroom: a screen goes black, single stations lose their connection, the teacher's laptop slows to a crawl, and then a whole row goes offline. Restore functionality as quickly as possible and report what happened so it does not happen again.</p>
+
+<h2>Starter files</h2>
+<ul class="files">
+ <li><a href="files/help-desk-tickets.txt" download>Help desk tickets 2041–2046</a> (.txt)</li>
+ <li><a href="files/indicator-lights.txt" download>Indicator light observations and device manual key</a> (.txt)</li>
+ <li><a href="files/diagnostics-output.txt" download>ipconfig, ifconfig, and ping output</a> (.txt)</li>
+ <li><a href="files/room-204-inventory.csv" download>Room 204 device inventory</a> (.csv, opens in a spreadsheet)</li>
+ <li><a href="files/router-admin-settings.txt" download>Router administration page capture</a> (.txt)</li>
+ <li><a href="files/Lab2_Incident_Report_Template.docx" download>Incident report and documentation template</a> (Word)</li>
+ <li><a href="files/Lab2_Packet_Tracer_Build_Sheet.txt" download>Packet Tracer build sheet</a> (.txt, for Part 5)</li>
+</ul>
+
+<h2>Team roles</h2>
+<div class="grid">
+<div class="role"><b>Project lead</b><br>Keeps the team on the plan and the clock, makes sure every requirement is covered, and makes the final call when the team is split. Owns the team log.</div>
+<div class="role"><b>Data analyst</b><br>Reads the evidence (readings, logs, command output), compares values with the thresholds from the book, and states what each piece of evidence shows.</div>
+<div class="role"><b>Configuration technician</b><br>Plans and carries out the configuration or fix in the simulator or on the device, and runs the verification tests.</div>
+<div class="role"><b>Documentation lead</b><br>Builds the deliverable, keeps diagrams and tables consistent, and records how the team used and checked AI.</div>
+</div>
+<p class="meta">Teams of three: the project lead also keeps documentation. Teams of five: add an <b>AI liaison</b> who writes the prompts and leads the evaluation of AI output. Rotate roles from lab to lab so that every student does each job once.</p>
+
+<h2>Walkthrough</h2>
+<h3>Part 1: Triage the tickets (Day 1)</h3>
+<ol class="steps">
+ <li>Read all six tickets. Decide the order you will work them in and explain why in your team log. (Hint: which ticket affects the most people?)</li>
+ <li>For each ticket, record the user's description, the affected device, and the diagnostic data from the indicator lights and the command output.</li>
+ <li>Interpret each piece of evidence using Lesson 2.1: green, orange or red, and unlit lights; ping response times over 100 ms or more than 1–2% packet loss; 169.254.x.x APIPA addresses; and a loopback-only 127.0.0.1 result.</li>
+</ol>
+<h3>Part 2: Determine causes and solutions (Day 1–2)</h3>
+<ol class="steps">
+ <li>For each ticket, write the most likely root cause and the evidence that supports it.</li>
+ <li>Choose the simplest appropriate solution first (reseat or replace a cable, try a different port, restart a device, <code>ipconfig /release</code> and <code>ipconfig /renew</code>, enable the adapter, switch to wired). Write the exact steps.</li>
+ <li>Describe how you will verify each fix: the station reaches the internet and the shared drive (10.204.0.10) and pages load without delay. Ask your teacher for the verification results, and record them.</li>
+</ol>
+<h3>Part 3: Document the network (Day 2)</h3>
+<ol class="steps">
+ <li>Using the inventory, draw a network diagram of Room 204 with the router, both switches, the file server, the printer, representative stations, and the wireless devices. Use <b>solid lines for wired</b> and <b>dashed lines for wireless</b> connections.</li>
+ <li>Label each device with a consistent name and its IP address. Add the MAC addresses for the router, file server, printer, and teacher laptop, and mark which devices use static addresses.</li>
+ <li>Answer in your report: Why should the printer and file server keep static addresses while the stations use DHCP?</li>
+</ol>
+<h3>Part 4: Secure and segment the room (Day 3)</h3>
+<ol class="steps">
+ <li>Review the router administration page. List every vulnerability you find and its possible impact (Lesson 2.5).</li>
+ <li>Ask an AI assistant: "Write a security and segmentation plan for a high school computer lab with 16 student stations, a teacher laptop, a file server, a printer, a smart projector, a smart thermostat, and visiting guest speakers' laptops." Paste the reply into your log, and evaluate it: what is realistic, what is overcomplicated or missing, and what is wrong for this room?</li>
+ <li>Write your team's plan: the corrected router settings, and a segmentation plan that groups devices by risk level and user type (for example, teacher and server, student stations, IoT, and guest). Explain how a firewall between segments limits lateral movement.</li>
+</ol>
+<h3>Part 5: Build and verify in a simulator (Day 4)</h3>
+<ol class="steps">
+ <li>Follow the Packet Tracer build sheet to build Room 204: router, two switches, four stations, the file server, the printer, and a wireless access point.</li>
+ <li>Configure DHCP on the router for the station range, give the server and printer static addresses, and secure the wireless network with WPA2 and a strong password (Packet Tracer does not offer WPA3 on every device).</li>
+ <li>Verify: run <code>ipconfig</code> on two stations and <code>ping</code> the file server and gateway. Then recreate one ticket from Part 1 (for example, unplug a cable or turn off a station's adapter) and show the fix.</li>
+</ol>
+
+<h2>Deliverables and rubric</h2>
+<p>Your incident report (use the template) must include: user descriptions of each loss of function and the affected devices; the diagnostic data with explanations; probable causes and the solutions you chose; verification of restored function; and recommendations to avoid similar issues. Attach the network diagram and the security and segmentation plan.</p>
+<div class="tablewrap"><table class="rubric"><tr><th>Criterion</th><th>Points</th></tr>
+<tr><td><b>Diagnosis.</b> Correct root cause for each of the six tickets, each supported by the specific light, address, or ping value.</td><td>6</td></tr>
+<tr><td><b>Solutions and verification.</b> Simplest appropriate fix chosen first; exact steps; verification recorded for each ticket.</td><td>4</td></tr>
+<tr><td><b>Documentation.</b> Diagram uses solid and dashed lines correctly, consistent labels, IP and MAC addresses, and static devices marked.</td><td>4</td></tr>
+<tr><td><b>Security.</b> All router vulnerabilities identified with impacts and matching controls.</td><td>4</td></tr>
+<tr><td><b>Segmentation and AI evaluation.</b> Sensible groups by risk and user type, firewall role explained, AI plan evaluated with reasons.</td><td>4</td></tr>
+<tr><td><b>Collaboration and communication.</b> Team log shows roles and decisions; report is clear and professional.</td><td>2</td></tr>
+<tr><th>Total</th><th>24</th></tr></table></div>
+
+<h2>Walkthrough video</h2>
+<div class="box y">A walkthrough of tickets 2041 and 2042 will be posted on <a href="https://www.youtube.com/@CyberTeaches">YouTube @CyberTeaches</a>.</div>
+<p class="meta">Teachers: the ticket key, verification results, documentation key, and a sample security plan are in the <a href="../teachers/">teacher area</a>.</p>
+
+</main>
+<footer class="site"><div class="wrap">Companion site for <i>AP Networking Course Text and Study Guide</i> &middot; <a href="https://cyberteaches.com/">All CyberTeaches courses</a> &middot; <a href="https://www.youtube.com/@CyberTeaches">YouTube @CyberTeaches</a><br>
+AP is a trademark registered by the College Board, which is not affiliated with, and does not endorse, this site. All practice questions, scenarios, and lab materials are original; the organizations in them are fictional.</div></footer>
+</body></html>

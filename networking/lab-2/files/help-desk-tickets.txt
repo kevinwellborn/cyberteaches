@@ -1,0 +1,30 @@
+LAB 2 - COMPUTER LAB DISCONNECTED               cyberteaches.com/networking/lab-2
+Ridgeview High School, Room 204 (Computer Science) - Help desk queue, Tuesday 3rd period
+--------------------------------------------------------------------------------
+TICKET 2041  Station 03  Reported by: student
+  "My screen just went black in the middle of class. The computer is still
+  humming and the power light on the tower is on."
+
+TICKET 2042  Station 07  Reported by: student
+  "Internet says 'No internet, secured' and I can't open the class website.
+  My neighbors at Stations 6 and 8 are fine."
+
+TICKET 2043  Station 10  Reported by: student
+  "No network at all since the start of class. Someone rolled a chair over
+  the cables under my desk this morning."
+
+TICKET 2044  Station 12 (Linux workstation)  Reported by: student
+  "Can't reach anything. Not even the shared drive. Yesterday I was messing
+  with the network settings to see what they do."
+
+TICKET 2045  Teacher laptop (wireless)  Reported by: Ms. Okafor
+  "Everything is crawling on my laptop at the front desk while the class
+  streams the lesson video. It is fine before class starts."
+
+TICKET 2046  Stations 13, 14, 15, 16  Reported by: four students
+  "Our whole back row lost the network at the same time, about 10 minutes
+  into class. The custodian was vacuuming behind our desks."
+
+Your job: gather diagnostic data for each ticket from diagnostics-output.txt
+and indicator-lights.txt, identify the most likely root cause, choose a
+solution, and record how you verified it in the incident report.

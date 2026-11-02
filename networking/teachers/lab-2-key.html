@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lab 2 Teacher Key | AP Networking | CyberTeaches</title>
+<meta name="description" content=""><meta name="robots" content="noindex, nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/site.css">
+</head><body>
+<header class="site"><div class="wrap"><a href="../">CyberTeaches &middot; AP Networking</a><nav><a href="../">Networking home</a><a href="../exam-1/">Practice exams</a><a href="../#labs">Labs</a><a href="../syllabus/">Syllabus</a><a href="../teachers/">Teachers</a><a href="../updates/">Updates</a></nav></div></header>
+<main class="wrap"><div class="crumbs"><a href="../">AP Networking</a> / Teachers / Lab 2 key</div>
+<div class="eyebrow">Teacher only &middot; Unit 2</div>
+<h1>Lab 2 Teacher Key: Computer Lab Disconnected</h1>
+<p class="lead">Root causes, solutions, and verification results for tickets 2041–2046, plus the documentation key and a sample security and segmentation plan.</p>
+
+<h2>Setup and pacing</h2>
+<ul>
+ <li><b>Day 1:</b> Parts 1–2 (tickets). <b>Day 2:</b> finish Part 2, Part 3 (documentation). <b>Day 3:</b> Part 4 (security, AI evaluation). <b>Day 4:</b> Part 5 (Packet Tracer) and report.</li>
+ <li>Give out the verification results below only after a team states its solution and its verification test.</li>
+ <li>Triage order: a strong answer works <b>2046 first</b> (four stations down), then the single-station outages, then 2045 (slow but working). Accept other orders with a reason.</li>
+</ul>
+
+<h2>Ticket key</h2>
+<div class="tablewrap"><table><tr><th>Ticket</th><th>Evidence</th><th>Root cause</th><th>Solution</th><th>Verification result to hand out</th></tr>
+<tr><td>2041 Station 03</td><td>Tower power on; monitor light blinking orange, "No signal"; video connector half out</td><td>Loose video cable (not a network fault)</td><td>Reseat the video cable</td><td>"Display returns; student's work is still open."</td></tr>
+<tr><td>2042 Station 07</td><td>169.254.201.44 (APIPA), no gateway, ping to gateway fails; neighbors fine; booted before the router finished restarting</td><td>Station did not receive an address from DHCP</td><td><code>ipconfig /release</code>, <code>ipconfig /renew</code> (or disconnect and reconnect)</td><td>"New address 10.204.0.137, gateway 10.204.0.1; ping 8.8.8.8 0% loss, 15 ms; class site loads."</td></tr>
+<tr><td>2043 Station 10</td><td>SWITCH-A port 10 unlit; "Media disconnected"; flattened cable, cracked clip</td><td>Damaged cable</td><td>Replace the Ethernet cable (if the light stays unlit, try a different port)</td><td>"Port 10 flashing green; address 10.204.0.122; shared drive opens."</td></tr>
+<tr><td>2044 Station 12 (Linux)</td><td><code>ifconfig</code> shows only <code>lo</code> 127.0.0.1; "Network is unreachable"; Settings shows Wired: Off; student changed settings</td><td>Network adapter disabled (loopback only)</td><td>Enable the wired adapter (Settings: Wired On); restart if needed</td><td>"enp0s3 inet 10.204.0.145; ping gateway 0% loss; shared drive mounts."</td></tr>
+<tr><td>2045 Teacher laptop</td><td>196 ms average, 5% loss, only while 28 stations stream the same HD video; 15 ms and 0% before class; 3 of 4 bars; unused Ethernet port at the desk</td><td>Network congestion during the lesson (wireless path)</td><td>Connect the laptop to the desk's Ethernet port (wired); also consider having students pause other large downloads</td><td>"Wired: 0% loss, average 22 ms during the lesson; video plays smoothly."</td></tr>
+<tr><td>2046 Stations 13–16</td><td>SWITCH-B power/status and all ports unlit; all four stations "Media disconnected"; switch adapter shares a strip with the vacuum</td><td>SWITCH-B lost power (adapter unplugged or strip tripped when the vacuum was used)</td><td>Reseat the power adapter or reset the outlet strip; restart the switch</td><td>"SWITCH-B status green; ports 1–4 flashing green; all four stations get addresses and reach the file server."</td></tr></table></div>
+<p><b>Recommendations to accept:</b> label and secure cables under desks with cable management; put SWITCH-B on its own outlet or a UPS and keep it off the custodial strip; tell students not to change adapter settings (or restrict that permission); give the teacher desk a wired connection; schedule bulk updates outside class.</p>
+
+<h2>Documentation key (Part 3)</h2>
+<ul>
+ <li>Solid lines: router to both switches, switches to stations, file server, and printer. Dashed lines: teacher laptop, projector, thermostat, and visitor laptops to the router's Wi-Fi.</li>
+ <li>Static: ROUTER-204 (10.204.0.1), FILESERVER-204 (10.204.0.10), PRINTER-204 (10.204.0.20). Dynamic (DHCP .100–.199): stations, teacher laptop, projector, thermostat, visitors.</li>
+ <li>Why static for the printer and server: every station must find them at a constant address; DHCP fits the stations and mobile devices, which do not need a fixed address and are easier to manage automatically.</li>
+ <li>Public versus private: the WAN address 198.51.100.40 is public; every 10.204.0.x address is private.</li>
+</ul>
+
+<h2>Security key (Part 4)</h2>
+<div class="tablewrap"><table><tr><th>Finding</th><th>Impact</th><th>Control</th></tr>
+<tr><td>Default admin password</td><td>Anyone could sign in and change settings or disable controls</td><td>Change the default credentials</td></tr>
+<tr><td>Firmware v1.4.2, automatic updates off, known remote-access vulnerability</td><td>Device compromise, data loss</td><td>Install v1.6.0 and turn on automatic updates</td></tr>
+<tr><td>WPA (TKIP)</td><td>Insecure encryption; captured traffic easier to read</td><td>WPA3 (WPA2 minimum)</td></tr>
+<tr><td>Weak password "ridgeview1"</td><td>Easily guessed, uses the school name</td><td>Long, complex, unique pass phrase</td></tr>
+<tr><td>WPS enabled</td><td>Weakens wireless security</td><td>Disable WPS</td></tr>
+<tr><td>Guest network off; visitors and IoT on the main network</td><td>Lateral movement from guest or IoT devices to the file server</td><td>Guest network separate from the main network; IoT on its own segment</td></tr>
+<tr><td>Unknown client "ESP_3F1A2C"</td><td>Unverified device could intercept traffic or spread malware</td><td>Identify and remove it; change the pass phrase; consider MAC filtering or DHCP reservations</td></tr></table></div>
+<h3>Sample segmentation plan</h3>
+<ul>
+ <li><b>Teacher and servers (high security):</b> teacher laptop, file server, printer access</li>
+ <li><b>Student stations:</b> stations 01–16; allowed to reach the file server and printer only</li>
+ <li><b>IoT:</b> smart projector, smart thermostat; no access to the other segments</li>
+ <li><b>Guest wireless:</b> visitor laptops; internet only</li>
+ <li><b>Firewall role:</b> rules between segments allow only the needed services (file sharing, printing) and block the rest, so a compromised IoT or guest device cannot move laterally to the file server.</li>
+</ul>
+<h3>What to look for in the AI evaluation</h3>
+<p>Typical AI replies recommend enterprise firewalls, RADIUS servers, or separate physical networks for each group. Credit students who call these overcomplicated or costly for one classroom, who notice when the AI forgets the guest speakers or the IoT devices, and who check that any addressing it proposes is valid.</p>
+
+<h2>Packet Tracer check (Part 5)</h2>
+<p>Expected: stations lease .100–.199 (<code>show ip dhcp binding</code> on the router), the server and printer are static, the teacher laptop joins the WPA2-PSK SSID, and pings to 10.204.0.1 and 10.204.0.10 succeed. A station configured for DHCP before the router has a pool will show an APIPA address (Packet Tracer reports "DHCP request failed. APIPA is being used"), which recreates ticket 2042.</p>
+
+</main>
+<footer class="site"><div class="wrap">Companion site for <i>AP Networking Course Text and Study Guide</i> &middot; <a href="https://cyberteaches.com/">All CyberTeaches courses</a> &middot; <a href="https://www.youtube.com/@CyberTeaches">YouTube @CyberTeaches</a><br>
+AP is a trademark registered by the College Board, which is not affiliated with, and does not endorse, this site. All practice questions, scenarios, and lab materials are original; the organizations in them are fictional.</div></footer>
+</body></html>

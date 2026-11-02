@@ -1,0 +1,60 @@
+LAB 4 - PACKET TRACER BUILD SHEET: SEGMENT FRESHWAY MARKET  cyberteaches.com/networking/lab-4
+For Cisco Packet Tracer 8.x. Scaled down: 2 registers, the 3 servers, the
+office PC, 1 camera, the break-room PC, and the customer Wi-Fi access point.
+--------------------------------------------------------------------------------
+1. BUILD
+   1 router (ISR4321) and 1 switch (2960-24TT) named SWITCH-1.
+   Router Gig0/0/0 -> SWITCH-1 Gig0/1. Connect devices to the ports in the
+   store's port map (Fa0/1, Fa0/2, Fa0/7, Fa0/8, Fa0/9, Fa0/10, Fa0/11,
+   Fa0/16, Fa0/17).
+
+2. YOUR VLAN PLAN
+   Fill in your team's plan from Part 6 before you type anything:
+     VLAN ID  Name        Ports            Subnet          Gateway
+     ____     ________    ____________     _____________   ____________
+   (Example only: VLAN 10 POS, Fa0/1-6, 10.0.10.0/24, 10.0.10.1)
+
+3. CREATE VLANS AND ASSIGN ACCESS PORTS (repeat for each VLAN)
+   SWITCH-1(config)# vlan 10
+   SWITCH-1(config-vlan)# name POS
+   SWITCH-1(config-vlan)# exit
+   SWITCH-1(config)# interface range fastEthernet 0/1 - 6
+   SWITCH-1(config-if-range)# switchport mode access
+   SWITCH-1(config-if-range)# switchport access vlan 10
+
+4. TRUNK TO THE ROUTER AND SHUT DOWN UNUSED PORTS
+   SWITCH-1(config)# interface gigabitEthernet 0/1
+   SWITCH-1(config-if)# switchport mode trunk
+   SWITCH-1(config-if)# exit
+   SWITCH-1(config)# interface range fastEthernet 0/18 - 24 , gigabitEthernet 0/2
+   SWITCH-1(config-if-range)# shutdown
+   SWITCH-1(config-if-range)# end
+   SWITCH-1# show vlan brief
+
+5. ROUTER SUBINTERFACES (one per VLAN)
+   Router(config)# interface gigabitEthernet 0/0/0
+   Router(config-if)# no shutdown
+   Router(config-if)# interface gigabitEthernet 0/0/0.10
+   Router(config-subif)# encapsulation dot1Q 10
+   Router(config-subif)# ip address 10.0.10.1 255.255.255.0
+   (repeat for each VLAN, then give each device an address in its new subnet
+    with that subnet's gateway)
+
+6. RESTRICT THE UNTRUSTED VLANS (example for the guest Wi-Fi VLAN, 10.0.60.0/24,
+   and the break-room VLAN, 10.0.50.0/24, blocking the server VLAN 10.0.20.0/24)
+   Router(config)# access-list 120 deny ip 10.0.60.0 0.0.0.255 10.0.20.0 0.0.0.255
+   Router(config)# access-list 120 permit ip any any
+   Router(config)# interface gigabitEthernet 0/0/0.60
+   Router(config-subif)# ip access-group 120 in
+   Router(config)# access-list 121 deny ip 10.0.50.0 0.0.0.255 10.0.20.0 0.0.0.255
+   Router(config)# access-list 121 permit ip any any
+   Router(config)# interface gigabitEthernet 0/0/0.50
+   Router(config-subif)# ip access-group 121 in
+
+7. VERIFY AND SCREENSHOT
+   - show vlan brief: each used port under the right VLAN
+   - show ip interface brief: Fa0/18-24 and Gi0/2 are "administratively down"
+   - ping register 1 -> register 2 (same VLAN)          -> succeeds
+   - ping register 1 -> payment gateway (POS -> servers) -> succeeds
+   - ping break-room PC -> inventory server             -> fails (blocked)
+   - ping Wi-Fi laptop  -> inventory server             -> fails (blocked)
