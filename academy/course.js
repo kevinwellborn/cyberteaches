@@ -128,5 +128,27 @@ const LEVELS = [
    goal:'Use everything you know: collect each crystal and find your way through the maze to the flag.',
    hint:'Repeat until at flag: if crystal here, collect. Then: if path ahead, move forward. Else: if path to the left, turn left, else turn right.',
    map:['##########','#S.*.#####','####*#####','##..*.*###','######.###','####G..###','##########']}
+,
+
+  // Lesson 1 extra puzzles (added later, so they sit at the end of the list; see the note below)
+  {unit:1, title:'Two at a time', dir:1, ideal:6, blocks:L1,
+   goal:'The crystals come in pairs with a gap between them. Collect all 6 using 6 blocks.',
+   hint:'One pair is: forward, collect, forward, collect, forward. Repeat it 3 times.',
+   map:['###########','#S**.**.**#','###########']},
+  {unit:1, title:'Big steps', dir:1, ideal:8, blocks:L1,
+   goal:'Each step of these stairs is two crystals wide. Collect all 9 with 8 blocks.',
+   hint:'Repeat 3 times: repeat 2 times (forward, collect), then turn right, forward, collect, turn left.',
+   map:['#########','#S**#####','###***###','#####***#','#######*#','#########']},
+  {unit:1, title:'Crystal star', dir:0, ideal:9, blocks:L1,
+   goal:'Collect the crystals on all four arms of the star. Go out, come back to the middle, then turn to the next arm.',
+   hint:'One arm is: repeat 2 times (forward, collect), turn right twice to face back, repeat 2 times (forward), turn left. Repeat the arm 4 times.',
+   map:['#######','###*###','###*###','#**S**#','###*###','###*###','#######']},
+  {unit:1, title:'Lawn mower', dir:1, ideal:15, blocks:L1,
+   goal:'Mow the whole field like a lawn mower: across, down, back, down. Collect all 15 crystals.',
+   hint:'Inside a repeat 2 times: repeat 3 (forward, collect), turn right, forward, collect, turn right, repeat 3 (forward, collect), turn left, forward, collect, turn left.',
+   map:['######','#S***#','#****#','#****#','#****#','######']}
 ];
+// New puzzles always go at the END of LEVELS, even when they belong to an earlier lesson: n is the puzzle's saved id
+// (progress, programs and the answer key are stored by n), so it must never change. ORDER is the play order, by lesson.
 LEVELS.forEach((l,i)=>{ l.n=i+1; l.k=LEVELS.slice(0,i).filter(o=>o.unit===l.unit).length+1 });  // k: puzzle number inside its lesson
+const ORDER = [...LEVELS].sort((a,b)=>a.unit-b.unit || a.k-b.k);
