@@ -127,3 +127,6 @@ img.ad-art{object-fit:cover;background:none}
 .ad .ad-cta{font-weight:700;color:var(--blue);white-space:nowrap}
 @media (max-width:560px){.ad{flex-wrap:wrap}}
 @media print{.ad{display:none!important}}
+header.site .brand{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+header.site .logo-link{display:inline-flex;align-items:center;gap:10px}
+header.site .logo{width:36px;height:36px;flex:none;border-radius:9px;background:#fff;padding:2px}
