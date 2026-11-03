@@ -37,12 +37,18 @@ A self-paced, block-based coding course. Students guide a rover through lessons 
 - Lesson 2: Repeat practice (10 easy puzzles, no new blocks, one repeat at a time)
 - Lesson 3: Repeat patterns (10 puzzles, no new blocks: find a pattern and repeat it, including a repeat inside a repeat)
 - Lesson 4: Repeat until (10 puzzles)
-- Lesson 5: Tank battle (10 puzzles). Puzzle 1 is drive mode: students steer with the arrow keys or on-screen buttons and press
+- Lesson 5: Repeat until practice (10 easy puzzles, no new blocks)
+- Lesson 6: Repeat until patterns (10 puzzles, no new blocks: counting repeats and repeat until together)
+- Lesson 7: Tank battle (10 puzzles). Puzzle 1 is drive mode: students steer with the arrow keys or on-screen buttons and press
   Space to fire, and each move is recorded as a block. Puzzles 2 to 10 add `fire cannon`, `if tank ahead` and
   `repeat until no tanks left`, ending with a patrol program that clears every tank by itself. Enemy tanks (`^ > v <` in a
   map) fire if the rover stays in front of their cannon for a second move, and shells are limited.
-- Lesson 6: If / else (10 puzzles). The `if … else` block checks path ahead, to the left or right, crystal here, or tank
+- Lesson 8: Tank practice (10 easy puzzles: turn and fire, no new blocks)
+- Lesson 9: Tank patrols (10 puzzles: practice with `if tank ahead` and `repeat until no tanks left`)
+- Lesson 10: If / else (10 puzzles). The `if … else` block checks path ahead, to the left or right, crystal here, or tank
   ahead (when the puzzle has the cannon). Puzzles go from a snake path to a maze runner with nested if / else.
+- Lesson 11: If / else practice (10 easy puzzles, no new blocks)
+- Lesson 12: If / else challenges (10 puzzles: longer mazes, right-hand rule, tanks and crystals together)
 - Coming soon: Destroy walls
 
 ## Lesson pages for search engines
