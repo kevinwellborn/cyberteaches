@@ -604,7 +604,7 @@ function showIntro(unit){
   m.innerHTML=`<div class="scrim"><div class="dialog wide" role="dialog" aria-modal="true" aria-labelledby="it">
     <span class="label" style="color:${unit.color}">Lesson ${unit.n}</span>
     <h2 id="it" style="margin-top:6px">${unit.title}</h2>
-    <p style="margin:10px 0 12px">New ${unit.newBlocks.length>1?'blocks':'block'} in this lesson:</p>
+    <p style="margin:10px 0 12px">${unit.newBlocks.length?'New '+(unit.newBlocks.length>1?'blocks':'block')+' in this lesson:':'Practice lesson: no new blocks.'}</p>
     <div class="intro-blocks">${blocks}</div>
     ${videoEmbed(unit.video)}
     <ul class="intro-list">${unit.intro.map(t=>`<li><span>${t}</span></li>`).join('')}</ul>
