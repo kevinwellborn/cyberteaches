@@ -1,0 +1,71 @@
+LAB 2 - PACKET TRACER BUILD SHEET: ROOM 204       cyberteaches.com/networking/lab-2
+Tested layout for Cisco Packet Tracer 8.x. Device models are suggestions; any
+router with a GigabitEthernet port and any 2960 switch will work.
+--------------------------------------------------------------------------------
+SIMPLIFICATION: The real Room 204 gateway has two LAN ports. In the simulator,
+connect SWITCH-B to SWITCH-A instead. Everything else matches the inventory.
+
+1. PLACE DEVICES
+   - 1 router (ISR4321 or 1941), named ROUTER-204
+   - 2 switches (2960-24TT), named SWITCH-A and SWITCH-B
+   - 1 AccessPoint-PT, named WAP-204
+   - 4 PCs: ST-01 and ST-02 on SWITCH-A, ST-13 and ST-14 on SWITCH-B
+   - 1 Server-PT named FILESERVER-204, 1 Printer-PT named PRINTER-204
+   - 1 Laptop-PT named TEACHER-LT (power off, replace its Ethernet module with
+     the WPC300N wireless module, power on)
+
+2. CABLE (Copper Straight-Through)
+   ROUTER-204 Gig0/0/0 (or Gig0/0) -> SWITCH-A Gig0/1
+   SWITCH-A Gig0/2                 -> SWITCH-B Gig0/1
+   SWITCH-A Fa0/1, Fa0/2           -> ST-01, ST-02
+   SWITCH-A Fa0/15                 -> FILESERVER-204
+   SWITCH-A Fa0/20                 -> WAP-204 Port 0
+   SWITCH-B Fa0/1, Fa0/2           -> ST-13, ST-14
+   SWITCH-B Fa0/8                  -> PRINTER-204
+
+3. CONFIGURE THE ROUTER (CLI tab)
+   Router> enable
+   Router# configure terminal
+   Router(config)# hostname ROUTER-204
+   ROUTER-204(config)# interface gigabitEthernet 0/0/0      (use g0/0 on a 1941)
+   ROUTER-204(config-if)# ip address 10.204.0.1 255.255.255.0
+   ROUTER-204(config-if)# no shutdown
+   ROUTER-204(config-if)# exit
+   ROUTER-204(config)# ip dhcp excluded-address 10.204.0.1 10.204.0.99
+   ROUTER-204(config)# ip dhcp excluded-address 10.204.0.200 10.204.0.254
+   ROUTER-204(config)# ip dhcp pool ROOM204
+   ROUTER-204(dhcp-config)# network 10.204.0.0 255.255.255.0
+   ROUTER-204(dhcp-config)# default-router 10.204.0.1
+   ROUTER-204(dhcp-config)# dns-server 8.8.8.8
+   ROUTER-204(dhcp-config)# end
+   ROUTER-204# copy running-config startup-config
+   (The two excluded ranges leave .100-.199 for DHCP, matching the inventory.)
+
+4. STATIC ADDRESSES (Desktop > IP Configuration > Static)
+   FILESERVER-204: 10.204.0.10   mask 255.255.255.0   gateway 10.204.0.1
+   PRINTER-204:    10.204.0.20   mask 255.255.255.0   gateway 10.204.0.1
+
+5. DHCP CLIENTS (Desktop > IP Configuration > DHCP)
+   ST-01, ST-02, ST-13, ST-14. Each should receive an address from .100-.199.
+
+6. SECURE THE WIRELESS NETWORK (WAP-204 > Config > Port 1)
+   SSID: choose a unique name (not "Room204" or a default name)
+   Authentication: WPA2-PSK, Encryption: AES
+   Pass phrase: a long, unique pass phrase (12+ characters, all four sets)
+   Then on TEACHER-LT: Desktop > PC Wireless > Connect, choose your SSID,
+   enter the pass phrase, and set IP Configuration to DHCP.
+
+7. VERIFY
+   On ST-13: Desktop > Command Prompt
+     ipconfig             (address in .100-.199, gateway 10.204.0.1)
+     ping 10.204.0.1      (gateway)
+     ping 10.204.0.10     (file server)
+   On TEACHER-LT: ipconfig, then ping 10.204.0.10
+   On ROUTER-204: show ip dhcp binding   (lists the leased addresses)
+
+8. RECREATE A TICKET
+   Pick one: delete the ST-14 cable (ticket 2043), turn off ST-02's interface
+   (Config > FastEthernet0 > Port Status: uncheck On, like ticket 2044), or set
+   ST-01 to DHCP before ROUTER-204 is configured (like ticket 2042). Record the
+   symptom, the evidence (ipconfig, ping, link lights), the fix, and the
+   verification.

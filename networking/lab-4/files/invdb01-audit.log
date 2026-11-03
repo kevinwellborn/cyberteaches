@@ -1,0 +1,13 @@
+# invdb01 (10.0.0.10) database audit log - excerpt, retrieved from log server
+2026-11-06 23:36:18  SESSION OPEN   user=inv_admin  from=10.0.0.87  via=ssh
+2026-11-06 23:38:02  SELECT * FROM customer_loyalty           rows=48,912
+2026-11-06 23:40:55  EXPORT customer_loyalty TO /tmp/cl.csv   size=1.4 GB
+2026-11-06 23:58:31  SESSION CLOSE  user=inv_admin
+2026-11-07 08:44:03  SESSION OPEN   user=inv_admin  from=10.0.0.87  via=ssh
+2026-11-07 08:47:30  FILE /tmp/cl.csv sent to 203.0.113.99:443 by process "curl"
+2026-11-07 08:52:11  UPDATE products SET price = price * 10 WHERE dept IN ('produce','dairy')   rows=1,240
+2026-11-07 08:52:14  UPDATE inventory SET stock_qty = 0 WHERE aisle BETWEEN 4 AND 9   rows=310
+2026-11-07 08:53:40  DELETE FROM audit_log WHERE ts > '2026-11-07 08:40'   -> DENIED (permission)
+2026-11-07 08:54:02  SESSION CLOSE  user=inv_admin
+# NOTE: inv_admin is a shared account. Its password was last changed in 2023.
+# Employees do not normally log in to invdb01 outside 7:00 a.m. - 9:30 p.m.

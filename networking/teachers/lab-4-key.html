@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lab 4 Teacher Key | AP Networking | CyberTeaches</title>
+<meta name="description" content=""><meta name="robots" content="noindex, nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="icon" type="image/png" href="/favicon.png"><link rel="stylesheet" href="../assets/site.css">
+</head><body>
+<header class="site"><div class="wrap"><span class="brand"><a href="/" class="logo-link"><img class="logo" src="/logo.png" alt="" width="36" height="36">CyberTeaches</a> &middot; <a href="../">AP Networking</a></span><nav><a href="/">← All courses</a><a href="../">Networking home</a><a href="../exam-1/">Practice exams</a><a href="../#labs">Labs</a><a href="../syllabus/">Syllabus</a><a href="../teachers/">Teachers</a><a href="../updates/">Updates</a></nav></div></header>
+<main class="wrap"><div class="crumbs"><a href="../">AP Networking</a> / Teachers / Lab 4 key</div>
+<div class="eyebrow">Teacher only &middot; Unit 4</div>
+<h1>Lab 4 Teacher Key: Grocery Store Downtime</h1>
+<p class="lead">The complete incident timeline, the CIA analysis with evidence, the traceroute interpretation, a model VLAN plan, and setup notes for an optional class SFTP server.</p>
+
+<h2>Optional: set up the class SFTP server (Part 1)</h2>
+<p>Any Linux machine or virtual machine that you control on the school's lab network works. Never use a production server.</p>
+<pre>sudo apt install openssh-server        # SSH and SFTP both use port 22
+sudo adduser intern                    # give students the password in class
+sudo mkdir -p /var/log/invdb
+sudo cp invdb01-audit.log /var/log/invdb/
+sudo chmod 644 /var/log/invdb/invdb01-audit.log</pre>
+<p>Students then run <code>sftp intern@&lt;server address&gt;</code>, <code>cd /var/log/invdb</code>, and <code>get invdb01-audit.log</code>. If no server is available, students download the file and write the command sequence with an explanation.</p>
+<p><b>Part 1 answers:</b> <code>pwd</code> shows the current directory; <code>mkdir -p lab4 &amp;&amp; cd lab4</code> makes and enters the folder; inside SFTP, <code>pwd</code>, <code>cd</code>, and <code>ls</code> act on the remote server; <code>get</code> downloads to the local working directory, so the file lands in <code>/home/student/lab4/invdb01-audit.log</code>. SFTP runs over SSH on port 22, so the credentials and the log are encrypted; FTP on port 21 sends both in plain text.</p>
+
+<h2>Timeline key (Part 2)</h2>
+<div class="tablewrap"><table><tr><th>Time</th><th>Event</th><th>Type</th></tr>
+<tr><td>Fri 23:14</td><td>Port scan of 10.0.0.0/24 from the break-room PC (10.0.0.87)</td><td>Attack</td></tr>
+<tr><td>Fri 23:19–23:31</td><td>112 failed SSH logins as admin, then 37 as inv_admin, to invdb01</td><td>Attack</td></tr>
+<tr><td>Fri 23:36</td><td>SSH login succeeds as inv_admin (shared account, password unchanged since 2023), after hours</td><td>Attack</td></tr>
+<tr><td>Fri 23:38–23:41</td><td>customer_loyalty table (48,912 rows) read and exported to /tmp/cl.csv; connection to known malicious IP 203.0.113.99</td><td>Attack</td></tr>
+<tr><td>Sat 08:47</td><td>1.4 GB file sent from invdb01 to 203.0.113.99</td><td>Attack (exfiltration)</td></tr>
+<tr><td>Sat 08:52</td><td>Prices × 10 for 1,240 produce and dairy items; stock set to 0 for 310 items; attempt to delete audit entries denied</td><td>Attack (tampering)</td></tr>
+<tr><td>Sat 08:58–09:25</td><td>Wrong prices at registers; items shown out of stock; online orders cancelled</td><td>Symptom</td></tr>
+<tr><td>Sat 09:31</td><td>UDP broadcast traffic 40 times baseline from 10.0.0.87</td><td>Attack (flood)</td></tr>
+<tr><td>Sat 09:33–10:05</td><td>Switch uplink output drops; registers time out reaching the payment gateway; camera video loss; slow PCs</td><td>Performance (caused by the flood)</td></tr></table></div>
+<p><b>Weak point:</b> the break-room computer (Fa0/16) is shared by employees and customers, was left on overnight, and sits on the same flat network (VLAN 1, 10.0.0.0/24, no internal firewall) as the registers and the inventory server. The customer Wi-Fi (password on the window) is on the same network too.</p>
+
+<h2>CIA key (Part 3)</h2>
+<ul>
+ <li><b>Confidentiality: compromised.</b> Unauthorized login as inv_admin from a non-admin PC after hours (23:36); SELECT and EXPORT of the customer_loyalty table (23:38, 23:40); connection to a known malicious IP (23:41); 1.4 GB sent to 203.0.113.99 (08:47).</li>
+ <li><b>Integrity: compromised.</b> UPDATE prices × 10 on 1,240 rows (08:52:11); stock_qty set to 0 on 310 rows (08:52:14); the attempt to delete audit entries (08:53, denied) shows an effort to hide changes; wrong register prices and false out-of-stock messages.</li>
+ <li><b>Availability: compromised.</b> Traffic 40 times baseline (09:31); switch uplink drops (09:33); payment timeouts and "Declined - timeout" (09:38–09:40); online orders cancelled; camera video loss; slow office PC.</li>
+ <li><b>Threat versus performance indicators:</b> threat indicators are the port scan, repeated failed logins, after-hours access, the connection to a known malicious IP, and the large outbound transfer. Performance indicators are the output drops, timeouts, failed connections, and packet loss. Here the performance problems were caused by the attacker's traffic flood, which is why both kinds of entry must be read together.</li>
+</ul>
+
+<h2>Traceroute key (Part 4)</h2>
+<p>Both runs have 5 hops. Before opening, every hop is under 20 ms. During the incident, the delay (about 400 ms, with lost probes) already appears at <b>hop 1, the store's own gateway (10.0.0.1)</b>, and continues through every later hop. A problem that starts at hop 1 is inside the store's network, not at the ISP or the processor. That matches the broadcast flood and the switch uplink drops. Accept starting at the network layer (gateway and IP path) or at the data link layer (switch drops, broadcast traffic on the LAN) with that reasoning.</p>
+
+<h2>Impact key (Part 5)</h2>
+<ul>
+ <li><b>Short-term:</b> long lines and overcharges on the busiest Saturday of a holiday weekend; cash-only registers; cancelled pickup orders and lost sales; staff time spent on manual price checks; refunds owed. Peak timing multiplies the impact.</li>
+ <li><b>Long-term:</b> 48,912 loyalty members' data exposed (notification duties under data-protection law, possible fraud); reputational damage and lost customer trust; financial loss; possible payment-card compliance review because the payment gateway shares a flat network with an untrusted PC (PCI DSS).</li>
+</ul>
+
+<h2>Model VLAN plan (Part 6)</h2>
+<div class="tablewrap"><table><tr><th>VLAN</th><th>Name</th><th>Ports</th><th>Subnet / gateway</th><th>Allowed to reach</th></tr>
+<tr><td>10</td><td>POS</td><td>Fa0/1–6</td><td>10.0.10.0/24, .1</td><td>Payment gateway and inventory server only</td></tr>
+<tr><td>20</td><td>SERVERS</td><td>Fa0/7–9</td><td>10.0.20.0/24, .1</td><td>Payment processor (internet, 443); log forwarding</td></tr>
+<tr><td>30</td><td>OFFICE</td><td>Fa0/10</td><td>10.0.30.0/24, .1</td><td>Servers (management over SSH), camera recorder, internet</td></tr>
+<tr><td>40</td><td>CAMERAS</td><td>Fa0/11–15</td><td>10.0.40.0/24, .1</td><td>Office viewer only</td></tr>
+<tr><td>50</td><td>BREAKROOM</td><td>Fa0/16</td><td>10.0.50.0/24, .1</td><td>Internet only</td></tr>
+<tr><td>60</td><td>GUEST-WIFI</td><td>Fa0/17</td><td>10.0.60.0/24, .1</td><td>Internet only</td></tr>
+<tr><td>n/a</td><td>Unused</td><td>Fa0/18–24, Gi0/2</td><td colspan="2">Shut down (wall jacks in public aisles)</td></tr></table></div>
+<p><b>Verification:</b> <code>show vlan brief</code> lists Fa0/1–6 under VLAN 10, Fa0/7–9 under 20, and so on; ping between registers succeeds; ping from a register to the payment gateway succeeds through the router; ping from the break-room PC or a guest laptop to 10.0.20.x fails after the ACL is applied.</p>
+
+<h2>Controls key</h2>
+<ul>
+ <li><b>Scan and lateral movement:</b> segmentation (VLANs) plus deny-by-default rules between VLANs; NGFW or IPS with alerting.</li>
+ <li><b>Password guessing:</b> account lockout after 3–5 failures; strong, unique passwords; MFA for administrative access.</li>
+ <li><b>Shared inv_admin account:</b> individual named accounts with least privilege; disable logins outside business hours; change the password now.</li>
+ <li><b>Exfiltration:</b> block outbound connections to known malicious IPs; monitor and alert on large outbound transfers.</li>
+ <li><b>Break-room PC:</b> AUP for the shared computer, automatic sign-out, no customer use, and no access to store systems.</li>
+ <li><b>Customer Wi-Fi:</b> separate guest network with its own SSID, WPA2 or WPA3, a captive portal, and no internal access.</li>
+</ul>
+<h3>Availability plan</h3>
+<p>Accept plans that add redundancy (backup cellular internet for the payment gateway, a secondary switch for the registers), a UPS for the network closet and registers, monitoring and alerting on traffic spikes, an IPS to block floods, and documented patching. Restore the price and inventory data from a backup taken before 08:52 Saturday, then verify it against the audit log.</p>
+
+</main>
+<footer class="site"><div class="wrap">Companion site for <i>AP Networking Course Text and Study Guide</i> &middot; <a href="https://cyberteaches.com/">All CyberTeaches courses</a> &middot; <a href="https://www.youtube.com/@CyberTeaches">YouTube @CyberTeaches</a><br>
+AP is a trademark registered by the College Board, which is not affiliated with, and does not endorse, this site. All practice questions, scenarios, and lab materials are original; the organizations in them are fictional.</div></footer>
+</body></html>

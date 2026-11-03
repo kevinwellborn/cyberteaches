@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lab 1: The Case of the Sluggish Device | AP Networking | CyberTeaches</title>
+<meta name="description" content="Lab 1: The Case of the Sluggish Device: student walkthrough, starter files, and rubric.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="icon" type="image/png" href="/favicon.png"><link rel="stylesheet" href="../assets/site.css">
+</head><body>
+<header class="site"><div class="wrap"><span class="brand"><a href="/" class="logo-link"><img class="logo" src="/logo.png" alt="" width="36" height="36">CyberTeaches</a> &middot; <a href="../">AP Networking</a></span><nav><a href="/">← All courses</a><a href="../">Networking home</a><a href="../exam-1/">Practice exams</a><a href="../#labs">Labs</a><a href="../syllabus/">Syllabus</a><a href="../teachers/">Teachers</a><a href="../updates/">Updates</a></nav></div></header>
+<main class="wrap"><div class="crumbs"><a href="../">AP Networking</a> / Lab 1</div>
+<div class="eyebrow">Unit 1 Lab &middot; Managing My Connections</div>
+<h1>Lab 1: The Case of the Sluggish Device</h1>
+<p class="lead">Your team gets a slow, unreliable laptop and the readings that came with it. Use a structured troubleshooting process to find the root cause, choose and test a fix, and then teach someone else how you did it in a device recovery walkthrough.</p>
+
+<div class="grid">
+ <div class="card"><h3>At a glance</h3><p class="meta">Based on Unit Scenario 1A in the AP Networking Course Framework</p><ul>
+  <li><b>Time:</b> 3 class periods (45 min) plus recording time</li>
+  <li><b>Team size:</b> 4 (one role each)</li>
+  <li><b>Book lessons:</b> 1.1 and 1.2 (review 1.3 and 1.4 for the prevention step)</li>
+  <li><b>Deliverable:</b> device recovery walkthrough (video, narrated screen recording, or annotated slides)</li></ul></div>
+ <div class="card"><h3>Learning objectives</h3><ul>
+  <li><span class="tag">1.1.A</span> Explain how to troubleshoot common device and network issues.</li>
+  <li><span class="tag">1.1.B</span> Identify likely root causes of a device issue using diagnostic tools and techniques.</li>
+  <li><span class="tag">1.1.C</span> Determine an appropriate solution to resolve a device issue.</li>
+  <li><span class="tag">1.2.B</span> Determine strategies to improve speed, reliability, or performance.</li></ul>
+  <p class="meta">Skills: 3.A–3.D Troubleshoot &middot; 4.A–4.D Collaborate</p></div>
+</div>
+
+<h2>The situation</h2>
+<p>It is the weekend. A classmate needs to finish a project and wants to stream a show afterward, but the laptop is crawling: apps lag, videos buffer, and sometimes it misbehaves in ways the owner cannot explain. Your team is the help desk. You need to restore the laptop quickly, and you need to show your work so that the owner could follow the same steps next time.</p>
+
+<h2>Starter files</h2>
+<p>Your teacher assigns your team one case card. Every case has a different root cause, so do not copy another team's answer.</p>
+<ul class="files">
+ <li><a href="files/case-A-device-readings.txt" download>Case card A: device readings</a> (.txt)</li>
+ <li><a href="files/case-B-device-readings.txt" download>Case card B: device readings</a> (.txt)</li>
+ <li><a href="files/case-C-device-readings.txt" download>Case card C: device readings</a> (.txt)</li>
+ <li><a href="files/case-D-device-readings.txt" download>Case card D: device readings</a> (.txt)</li>
+ <li><a href="files/ai-assistant-suggestions.txt" download>AI assistant suggestions for all four cases</a> (.txt)</li>
+ <li><a href="files/Lab1_Walkthrough_Planner.docx" download>Walkthrough planner and team log</a> (Word)</li>
+</ul>
+<div class="box b"><h4>Want to use a real device instead?</h4>With your teacher's permission, you can recreate your case on a school lab laptop: open Task Manager (Windows: Ctrl+Shift+Esc) or Activity Monitor (Mac), check storage in Settings, and run <code>ping 8.8.8.8</code> in a terminal. Use only school devices you are allowed to use, and never change settings on a device you do not own or have permission to work on.</div>
+
+<h2>Team roles</h2>
+<div class="grid">
+<div class="role"><b>Project lead</b><br>Keeps the team on the plan and the clock, makes sure every requirement is covered, and makes the final call when the team is split. Owns the team log.</div>
+<div class="role"><b>Data analyst</b><br>Reads the evidence (readings, logs, command output), compares values with the thresholds from the book, and states what each piece of evidence shows.</div>
+<div class="role"><b>Configuration technician</b><br>Plans and carries out the configuration or fix in the simulator or on the device, and runs the verification tests.</div>
+<div class="role"><b>Documentation lead</b><br>Builds the deliverable, keeps diagrams and tables consistent, and records how the team used and checked AI.</div>
+</div>
+<p class="meta">Teams of three: the project lead also keeps documentation. Teams of five: add an <b>AI liaison</b> who writes the prompts and leads the evaluation of AI output. Rotate roles from lab to lab so that every student does each job once.</p>
+
+<h2>Walkthrough</h2>
+<h3>Part 1: Gather information (Day 1, 15 min)</h3>
+<ol class="steps">
+ <li>Read the user report on your case card out loud. As a team, list every symptom in your planner: what is slow, when it started, and where the device is.</li>
+ <li>Decide whether a simple, well-known fix should be tried before full diagnosis (restart, close apps, reconnect). Write down which one you would try first and why. Ask your teacher for the result of that quick fix.</li>
+ <li>If the quick fix does not restore function, keep going. If it does, you must still verify it in Part 4.</li>
+</ol>
+<h3>Part 2: Read the diagnostic data (Day 1, 20 min)</h3>
+<ol class="steps">
+ <li>Fill in the readings table in your planner: CPU, RAM, storage (calculate the percent free), Wi-Fi signal, ping results, temperature, and error messages.</li>
+ <li>Mark each reading <b>normal</b> or <b>problem</b> using the thresholds from Lesson 1.1: CPU or RAM sustained above 80–90%, storage below 10% free, a weak signal, ping over 100 ms or more than 1–2% loss, and temperature warnings.</li>
+ <li>Write a theory of probable cause in one sentence that names the evidence, for example: "The processor is overloaded because CPU has been above 90% for 20 minutes and one process is using 78%." Some cases have more than one cause. Look carefully.</li>
+</ol>
+<h3>Part 3: Work with AI, then decide (Day 2, 20 min)</h3>
+<ol class="steps">
+ <li>Open the AI assistant suggestions file and find your case. The AI saw only the user report, not your readings.</li>
+ <li>For each suggestion, decide <b>keep</b>, <b>test first</b>, or <b>reject</b>, and justify it with a reading. Note anything the AI got wrong or overcomplicated.</li>
+ <li>Rank your possible solutions from simplest and cheapest to most complex and expensive. Choose the one you will implement first.</li>
+</ol>
+<h3>Part 4: Implement and verify (Day 2, 20 min)</h3>
+<ol class="steps">
+ <li>Write the exact steps you would take to implement your solution (for example, "Open Task Manager, select CloudSync Helper, choose End task").</li>
+ <li>Tell your teacher which solution you implemented. Your teacher will hand you the readings taken after your fix.</li>
+ <li>Compare the new readings with the old ones. Is functionality restored? If not, the root cause may have been misidentified, or there may be a second issue. Return to Part 2 or Part 3, document what you learned, and try the next solution.</li>
+</ol>
+<h3>Part 5: Build the device recovery walkthrough (Day 3)</h3>
+<p>Create a walkthrough that someone outside your team could follow step by step. It can be a narrated screen recording, a demonstration video, or an annotated slide deck. Include:</p>
+<ul>
+ <li>Initial observations and any early troubleshooting steps (Part 1)</li>
+ <li>The diagnostic data, with the readings that pointed to the cause (Part 2)</li>
+ <li>The potential solutions you considered, including what you kept and rejected from the AI (Part 3)</li>
+ <li>The steps taken to implement the chosen solution (Part 4)</li>
+ <li>Verification that functionality was restored, with before-and-after readings (Part 4)</li>
+ <li>Two suggestions for avoiding or troubleshooting a similar issue in the future, including one security habit from Lessons 1.3–1.4</li>
+</ul>
+
+<h2>Deliverable rubric</h2>
+<div class="tablewrap"><table class="rubric"><tr><th>Criterion</th><th>Points</th></tr>
+<tr><td><b>Process.</b> Walkthrough follows the troubleshooting process in order: information, quick fix, diagnosis, theory, solution, implementation, verification.</td><td>4</td></tr>
+<tr><td><b>Evidence.</b> Root cause is correct and is supported by at least two specific readings with their thresholds.</td><td>4</td></tr>
+<tr><td><b>Solution.</b> Solutions are ranked simple to complex; the chosen solution matches the cause; implementation steps are exact enough to repeat.</td><td>4</td></tr>
+<tr><td><b>Verification.</b> Before-and-after readings show restored function. If the first fix failed, the walkthrough shows how the team continued.</td><td>3</td></tr>
+<tr><td><b>AI evaluation.</b> Each AI suggestion is kept, tested, or rejected with a reason tied to the data.</td><td>3</td></tr>
+<tr><td><b>Prevention.</b> Two realistic suggestions for the future, one of them a security habit.</td><td>2</td></tr>
+<tr><td><b>Collaboration.</b> Team log shows each role's contributions and how the team decided.</td><td>2</td></tr>
+<tr><td><b>Communication.</b> Clear, accurate vocabulary; an outside viewer could follow it.</td><td>2</td></tr>
+<tr><th>Total</th><th>24</th></tr></table></div>
+
+<h2>Walkthrough video</h2>
+<div class="box y">A teacher walkthrough of Case A will be posted on <a href="https://www.youtube.com/@CyberTeaches">YouTube @CyberTeaches</a>. Watch it after your team finishes Part 2 so it does not give away your case.</div>
+<p class="meta">Teachers: the follow-up readings, quick-fix results, and answer key for all four cases are in the <a href="../teachers/">teacher area</a>.</p>
+
+<div data-ad="strip"></div>
+</main>
+<footer class="site"><div class="wrap">Companion site for <i>AP Networking Course Text and Study Guide</i> &middot; <a href="https://cyberteaches.com/">All CyberTeaches courses</a> &middot; <a href="https://www.youtube.com/@CyberTeaches">YouTube @CyberTeaches</a><br>
+AP is a trademark registered by the College Board, which is not affiliated with, and does not endorse, this site. All practice questions, scenarios, and lab materials are original; the organizations in them are fictional.</div></footer>
+<script src="../assets/ads.js"></script></body></html>

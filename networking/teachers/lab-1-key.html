@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lab 1 Teacher Key | AP Networking | CyberTeaches</title>
+<meta name="description" content=""><meta name="robots" content="noindex, nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="icon" type="image/png" href="/favicon.png"><link rel="stylesheet" href="../assets/site.css">
+</head><body>
+<header class="site"><div class="wrap"><span class="brand"><a href="/" class="logo-link"><img class="logo" src="/logo.png" alt="" width="36" height="36">CyberTeaches</a> &middot; <a href="../">AP Networking</a></span><nav><a href="/">← All courses</a><a href="../">Networking home</a><a href="../exam-1/">Practice exams</a><a href="../#labs">Labs</a><a href="../syllabus/">Syllabus</a><a href="../teachers/">Teachers</a><a href="../updates/">Updates</a></nav></div></header>
+<main class="wrap"><div class="crumbs"><a href="../">AP Networking</a> / Teachers / Lab 1 key</div>
+<div class="eyebrow">Teacher only &middot; Unit 1</div>
+<h1>Lab 1 Teacher Key: The Case of the Sluggish Device</h1>
+<p class="lead">Quick-fix results, the follow-up readings to hand out after each team implements a fix, the expected root causes, and the AI-evaluation key for all four case cards.</p>
+
+<h2>Setup and pacing</h2>
+<ul>
+ <li><b>Before class:</b> print one case card per team (or post them) and print the follow-up readings below on separate slips. Hand a slip only when a team tells you the exact solution it implemented.</li>
+ <li><b>Day 1:</b> Parts 1–2. <b>Day 2:</b> Parts 3–4. <b>Day 3:</b> Part 5 (record or build slides). Walkthroughs can be finished as homework.</li>
+ <li><b>Assign cases</b> so that neighboring teams have different ones. Case D is the hardest (two causes); give it to a strong team.</li>
+ <li>If a team implements a solution that does not match its cause, hand it the "no change" slip for that case. That is a teaching moment for 1.1.A.6 (the root cause might have been misidentified).</li>
+</ul>
+
+<h2>Case A: runaway process (high CPU)</h2>
+<table><tr><th>Item</th><th>Key</th></tr>
+<tr><td>Quick fix result (restart)</td><td>"After the restart, the laptop is fine for about 10 minutes. Then CPU climbs back to 95%, and CloudSync Helper shows Not responding again. It is listed in Startup apps as Enabled."</td></tr>
+<tr><td>Root cause</td><td>Overloaded processor: CPU 96%, above 90% for 20 minutes; CloudSync Helper is using 78% and not responding. RAM (62%), storage (55% free), Wi-Fi (4 bars, 0% loss, 18 ms), and temperature are normal.</td></tr>
+<tr><td>Best first solution</td><td>End the unresponsive CloudSync Helper process in Task Manager. Because it restarts at startup, also update the app or disable it in Startup apps.</td></tr>
+<tr><td>Follow-up slip (correct fix)</td><td>"CPU 14%. Video plays without buffering. CloudSync Helper updated to the newest version and no longer appears as not responding after two restarts."</td></tr>
+<tr><td>AI suggestions</td><td>1 reject (age is not supported; one process causes the load) &middot; 2 keep &middot; 3 reject (RAM is 62%, normal; costly) &middot; 4 keep or test first (explains the return after restart)</td></tr></table>
+
+<h2>Case B: low storage</h2>
+<table><tr><th>Item</th><th>Key</th></tr>
+<tr><td>Quick fix result (restart)</td><td>"No change. Still 4.8 GB free, and the slideshow still will not save."</td></tr>
+<tr><td>Root cause</td><td>Insufficient storage: 4.8 ÷ 128 = 3.75% free, below 10%, with save errors and slow file access. CPU 22%, RAM 48%, and ping (0% loss, 24 ms) are normal.</td></tr>
+<tr><td>Ranked solutions</td><td>Delete temporary files (9.2 GB) and old installers in Downloads; uninstall the two unused games (22.0 GB); move photos and videos to cloud or external storage; install more storage only if the problem persists.</td></tr>
+<tr><td>Follow-up slip (temp files + unused games removed)</td><td>"36.0 GB free of 128 GB. The slideshow saves, and files open in about one second." (4.8 + 9.2 + 22.0 = 36.0 GB; 36.0 ÷ 128 ≈ 28% free.)</td></tr>
+<tr><td>Follow-up slip (temp files only)</td><td>"14.0 GB free. The slideshow saves, but the low-space warning appears again after one large download." (14.0 ÷ 128 ≈ 10.9%, barely above the threshold, so a good team should keep going.)</td></tr>
+<tr><td>AI suggestions</td><td>1 keep &middot; 2 reject (CPU is 22%) &middot; 3 keep &middot; 4 reject (disruptive and risks data loss; simpler fixes come first)</td></tr></table>
+
+<h2>Case C: weak wireless signal</h2>
+<table><tr><th>Item</th><th>Key</th></tr>
+<tr><td>Quick fix result (restart the router or reconnect)</td><td>"No change in the bedroom: still 1 bar, about 150 ms, 9% loss."</td></tr>
+<tr><td>Root cause</td><td>Weak wireless signal from distance and obstacles (two walls and a stairwell): 1 of 4 bars, 164 ms, 10% loss in the bedroom. The kitchen test (0% loss, 16 ms, 240 Mbps) shows the router and internet are fine. Bandwidth is not the cause: about 15 Mbps of a 300 Mbps plan is in use.</td></tr>
+<tr><td>Best solution</td><td>Connect to the bedroom's Ethernet wall port (wired connection). Alternatives: move closer to the router or reduce obstacles.</td></tr>
+<tr><td>Follow-up slip (Ethernet)</td><td>"Wired: ping 0% loss, average 12 ms; speed test 285 Mbps. The show streams without buffering."</td></tr>
+<tr><td>AI suggestions</td><td>1 test first (simple, but the kitchen test already shows the router works; result: no change) &middot; 2 reject (plenty of bandwidth; costly) &middot; 3 keep &middot; 4 keep</td></tr></table>
+
+<h2>Case D: overheating plus high memory (two causes)</h2>
+<table><tr><th>Item</th><th>Key</th></tr>
+<tr><td>Quick fix result</td><td>The laptop was already restarted after the shutdown. "Still hot, still slow."</td></tr>
+<tr><td>Root causes</td><td>(1) Overheating: blanket blocks vents, direct sunlight, 97 °C, speed reduced to 0.9 GHz, protective shutdown at 1:58 p.m. (2) High RAM use: 91%, above 85% for 30 minutes, with 38 browser tabs using 4.6 GB.</td></tr>
+<tr><td>Best solutions</td><td>Move the laptop to a hard, flat surface away from the window (ventilation, cooler area); close unused tabs and the idle video call app. Install more RAM only if use stays high afterward.</td></tr>
+<tr><td>Follow-up slip (both fixes)</td><td>"CPU temperature 62 °C, processor speed 2.6 GHz, RAM 58%. No shutdowns in the last hour."</td></tr>
+<tr><td>Follow-up slip (cooling only)</td><td>"Temperature 64 °C and no shutdowns, but pages still lag; RAM 90%."</td></tr>
+<tr><td>Follow-up slip (closing tabs only)</td><td>"RAM 57%, but the temperature warning returns after 15 minutes and the speed drops to 1.1 GHz."</td></tr>
+<tr><td>AI suggestions</td><td>1 reject (no evidence of malware; three antivirus programs conflict and add load) &middot; 2 keep &middot; 3 keep &middot; 4 test first (only if RAM stays high)</td></tr></table>
+
+<h2>Scoring notes</h2>
+<ul>
+ <li><b>Evidence (4 pts):</b> full credit needs the reading <i>and</i> the threshold, such as "3.75% free, below 10%." Saying "storage is low" earns 2.</li>
+ <li><b>Verification (3 pts):</b> a team that got a "no change" slip and documented what it did next can earn full credit. That is the process working.</li>
+ <li><b>Prevention (2 pts):</b> good security habits include automatic updates (1.4.B.3), unique passwords with MFA (1.4.B.4, 1.4.B.6), and disabling automatic connection to open networks.</li>
+ <li><b>Common mistakes:</b> blaming the internet in Case A (the ping is fine); choosing "buy more storage" first in Case B; choosing a faster plan in Case C; finding only one of the two causes in Case D.</li>
+</ul>
+<h2>Exit ticket (optional, 5 min)</h2>
+<p>"A device shows 92% RAM for an hour and 6% free storage. Which problem would you address first, and why?" Accept either order with a justification that ranks solutions by simplicity and disruption (for example, closing apps first because it is instant and free, then deleting temporary files).</p>
+
+</main>
+<footer class="site"><div class="wrap">Companion site for <i>AP Networking Course Text and Study Guide</i> &middot; <a href="https://cyberteaches.com/">All CyberTeaches courses</a> &middot; <a href="https://www.youtube.com/@CyberTeaches">YouTube @CyberTeaches</a><br>
+AP is a trademark registered by the College Board, which is not affiliated with, and does not endorse, this site. All practice questions, scenarios, and lab materials are original; the organizations in them are fictional.</div></footer>
+</body></html>

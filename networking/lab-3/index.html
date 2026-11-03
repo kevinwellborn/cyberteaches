@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lab 3: Game Day Network Design | AP Networking | CyberTeaches</title>
+<meta name="description" content="Lab 3: Game Day Network Design: student walkthrough, starter files, and rubric.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="icon" type="image/png" href="/favicon.png"><link rel="stylesheet" href="../assets/site.css">
+</head><body>
+<header class="site"><div class="wrap"><span class="brand"><a href="/" class="logo-link"><img class="logo" src="/logo.png" alt="" width="36" height="36">CyberTeaches</a> &middot; <a href="../">AP Networking</a></span><nav><a href="/">← All courses</a><a href="../">Networking home</a><a href="../exam-1/">Practice exams</a><a href="../#labs">Labs</a><a href="../syllabus/">Syllabus</a><a href="../teachers/">Teachers</a><a href="../updates/">Updates</a></nav></div></header>
+<main class="wrap"><div class="crumbs"><a href="../">AP Networking</a> / Lab 3</div>
+<div class="eyebrow">Unit 3 Lab &middot; Managing Many Connections</div>
+<h1>Lab 3: Game Day Network Design</h1>
+<p class="lead">Your school is hosting a regional esports tournament with a live audience and an online livestream. Plan a segmented network that supports every device and user type, build it in a simulator, and present an event network document the tournament director can sign off on.</p>
+
+<div class="grid">
+ <div class="card"><h3>At a glance</h3><p class="meta">Based on Unit Scenario 3A in the AP Networking Course Framework</p><ul>
+  <li><b>Time:</b> 5 class periods (45 min)</li>
+  <li><b>Team size:</b> 4 (one role each)</li>
+  <li><b>Book lessons:</b> 3.1–3.5 (3.6 for documentation)</li>
+  <li><b>Deliverable:</b> event network document plus a working simulator file</li></ul></div>
+ <div class="card"><h3>Learning objectives</h3><ul>
+  <li><span class="tag">3.1.A</span> <span class="tag">3.1.B</span> Determine endpoint devices and the number and type of connections.</li>
+  <li><span class="tag">3.2.B</span> <span class="tag">3.2.D</span> Determine segmentation methods; evaluate an AI-generated LAN configuration.</li>
+  <li><span class="tag">3.3.C</span> <span class="tag">3.3.D</span> Configure a LAN and a guest and internal wireless network.</li>
+  <li><span class="tag">3.4.C</span> Configure subnetting.</li>
+  <li><span class="tag">3.5.C</span> Configure firewall rules for different segments.</li>
+  <li><span class="tag">3.6.A</span> Document the network design.</li></ul>
+  <p class="meta">Skills: 1.B–1.D, 2.B–2.D, 4.A–4.D</p></div>
+</div>
+
+<h2>The situation</h2>
+<p>Players, coaches, judges, event staff, a livestream crew, and hundreds of spectators will all connect on game day. A slow or dropped connection could disrupt the stream, delay matches, or even change the outcome of the competition. The event team has given you the venue details, user groups, and performance needs. Determine the devices, connections, and segments for a flawless setup.</p>
+
+<h2>Starter files</h2>
+<ul class="files">
+ <li><a href="files/event-brief.txt" download>Event brief: venue, user groups, equipment, addressing, director's rules</a> (.txt)</li>
+ <li><a href="files/ai-design-draft.txt" download>AI-generated design draft to evaluate</a> (.txt)</li>
+ <li><a href="files/Lab3_Event_Network_Document_Template.docx" download>Event network document template</a> (Word)</li>
+ <li><a href="files/Lab3_Packet_Tracer_Build_Sheet.txt" download>Packet Tracer build sheet: VLANs, gateways, DHCP, ACL</a> (.txt)</li>
+</ul>
+
+<h2>Team roles</h2>
+<div class="grid">
+<div class="role"><b>Project lead</b><br>Keeps the team on the plan and the clock, makes sure every requirement is covered, and makes the final call when the team is split. Owns the team log.</div>
+<div class="role"><b>Data analyst</b><br>Reads the evidence (readings, logs, command output), compares values with the thresholds from the book, and states what each piece of evidence shows.</div>
+<div class="role"><b>Configuration technician</b><br>Plans and carries out the configuration or fix in the simulator or on the device, and runs the verification tests.</div>
+<div class="role"><b>Documentation lead</b><br>Builds the deliverable, keeps diagrams and tables consistent, and records how the team used and checked AI.</div>
+</div>
+<p class="meta">Teams of three: the project lead also keeps documentation. Teams of five: add an <b>AI liaison</b> who writes the prompts and leads the evaluation of AI output. Rotate roles from lab to lab so that every student does each job once.</p>
+
+<h2>Walkthrough</h2>
+<h3>Part 1: Devices and connections (Day 1)</h3>
+<ol class="steps">
+ <li>Make a device list by user role. For each role, name the endpoint device and justify it (for example, why tablets fit judges who walk the stage).</li>
+ <li>Assign every device a connection type, wired or wireless, and justify it with the brief: which devices need high reliability, low latency, or large transfers?</li>
+ <li>Count the wired devices and determine the number of switches and ports, remembering the reserved uplink port. Count wireless devices in each space and determine the number of WAPs. The concrete wall matters.</li>
+</ol>
+<h3>Part 2: Evaluate the AI draft (Day 1)</h3>
+<ol class="steps">
+ <li>Read the AI-generated design. For each numbered item, decide whether it is workable, overcomplicated or too costly, missing a requirement, or technically wrong. Check the subnets carefully.</li>
+ <li>Rewrite the volunteer's prompt so that it includes the technical requirements an AI tool would need: user groups and counts, traffic needs, security rules, redundancy needs, and the physical layout. Run your new prompt and note what improved and what you still had to fix.</li>
+</ol>
+<h3>Part 3: Segments and subnets (Day 2)</h3>
+<ol class="steps">
+ <li>Choose your segments (VLANs) and say what separates them: risk, user type, or performance. At least players, production (stream and server), judges, coaches, staff, and spectators need to be considered. You may combine groups if you justify it against the director's rules.</li>
+ <li>Divide 10.60.0.0/24 into the smallest subnets that fit each segment. For each one, record the network address, mask (CIDR and dotted decimal), gateway, usable range, and broadcast address. Subnets must not overlap.</li>
+ <li>Decide which devices get static addresses (server, cameras, management workstation) and where DHCP is used.</li>
+</ol>
+<h3>Part 4: Wireless and firewall rules (Day 3)</h3>
+<ol class="steps">
+ <li>Plan the SSIDs: which segments get wireless, the SSID names, WPA3 or WPA2, and the guest network settings that meet the director's rule 2.</li>
+ <li>Write firewall rules in the course format (rule number, ALLOW or DENY, direction, protocol, port, source, destination) that enforce rules 2–4. Put specific rules above broad ones and end with deny-by-default. Name the ports: HTTPS 443, DNS 53, SSH 22.</li>
+</ol>
+<h3>Part 5: Build, verify, and document (Days 4–5)</h3>
+<ol class="steps">
+ <li>Build a scaled-down version in Packet Tracer using the build sheet: VLANs, access and trunk ports, one gateway per VLAN, and a spectator SSID.</li>
+ <li>Verify with <code>show vlan brief</code>, <code>ping</code> within and between segments, and the spectator ACL test. Screenshot each result for your document.</li>
+ <li>Complete the event network document: device list by role; connection types; a segmentation diagram that separates user types; switch, port, and WAP counts; the subnet table; SSIDs and firewall rules; and the justifications.</li>
+</ol>
+
+<h2>Deliverable rubric</h2>
+<div class="tablewrap"><table class="rubric"><tr><th>Criterion</th><th>Points</th></tr>
+<tr><td><b>Devices and connections.</b> Appropriate endpoint and connection type for every role, each justified.</td><td>4</td></tr>
+<tr><td><b>Counts.</b> Switches, ports, and WAPs calculated correctly, including uplinks and the wall between spaces.</td><td>3</td></tr>
+<tr><td><b>Segmentation and subnets.</b> Sensible segments; smallest valid, non-overlapping subnets with correct masks, gateways, ranges, and broadcast addresses.</td><td>5</td></tr>
+<tr><td><b>Security.</b> Firewall rules in correct order enforce the director's rules; guest network settings meet rule 2; encrypted management only.</td><td>4</td></tr>
+<tr><td><b>AI evaluation.</b> Every AI item judged with a reason; improved prompt includes the technical requirements.</td><td>3</td></tr>
+<tr><td><b>Simulator verification.</b> Working build with show vlan brief, ping, and ACL evidence.</td><td>3</td></tr>
+<tr><td><b>Documentation and collaboration.</b> Clear diagram with consistent labels; team log shows roles and decisions.</td><td>2</td></tr>
+<tr><th>Total</th><th>24</th></tr></table></div>
+
+<h2>Walkthrough video</h2>
+<div class="box y">A walkthrough of the VLAN and router subinterface steps in Packet Tracer will be posted on <a href="https://www.youtube.com/@CyberTeaches">YouTube @CyberTeaches</a>.</div>
+<p class="meta">Teachers: a model design, subnet table, rule set, and the AI-draft evaluation are in the <a href="../teachers/">teacher area</a>.</p>
+
+<div data-ad="strip"></div>
+</main>
+<footer class="site"><div class="wrap">Companion site for <i>AP Networking Course Text and Study Guide</i> &middot; <a href="https://cyberteaches.com/">All CyberTeaches courses</a> &middot; <a href="https://www.youtube.com/@CyberTeaches">YouTube @CyberTeaches</a><br>
+AP is a trademark registered by the College Board, which is not affiliated with, and does not endorse, this site. All practice questions, scenarios, and lab materials are original; the organizations in them are fictional.</div></footer>
+<script src="../assets/ads.js"></script></body></html>

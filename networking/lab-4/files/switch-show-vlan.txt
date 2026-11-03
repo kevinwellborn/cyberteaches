@@ -1,0 +1,33 @@
+LAB 4 - SWITCH-1 OUTPUT, FRESHWAY MARKET (captured Saturday 10:30)
+--------------------------------------------------------------------------------
+SWITCH-1# show vlan brief
+
+VLAN Name                             Status    Ports
+---- -------------------------------- --------- -------------------------------
+1    default                          active    Fa0/1, Fa0/2, Fa0/3, Fa0/4
+                                                Fa0/5, Fa0/6, Fa0/7, Fa0/8
+                                                Fa0/9, Fa0/10, Fa0/11, Fa0/12
+                                                Fa0/13, Fa0/14, Fa0/15, Fa0/16
+                                                Fa0/17, Fa0/18, Fa0/19, Fa0/20
+                                                Fa0/21, Fa0/22, Fa0/23, Fa0/24
+                                                Gi0/2
+1002 fddi-default                     act/unsup
+1003 token-ring-default               act/unsup
+1004 fddinet-default                  act/unsup
+1005 trnet-default                    act/unsup
+
+PORT MAP (from the store's wiring closet label sheet)
+  Fa0/1 - Fa0/6   Registers 1-6 (POS terminals)       10.0.0.21 - 10.0.0.26
+  Fa0/7           Inventory database server invdb01  10.0.0.10 (static)
+  Fa0/8           Payment gateway appliance          10.0.0.5  (static)
+  Fa0/9           Log server                         10.0.0.15 (static)
+  Fa0/10          Manager's office PC                10.0.0.30
+  Fa0/11 - Fa0/14 Security cameras                   10.0.0.40 - 10.0.0.43
+  Fa0/15          Camera recorder (NVR)              10.0.0.35 (static)
+  Fa0/16          Break-room computer                10.0.0.87
+  Fa0/17          Customer Wi-Fi access point        clients 10.0.0.100 - .199
+  Fa0/18 - Fa0/24 Unused (wall jacks in the aisles and stockroom)
+  Gi0/1           Uplink to router (10.0.0.1), configured as a trunk port
+  Gi0/2           Unused
+All devices share 10.0.0.0/24 with mask 255.255.255.0. There is no firewall
+between devices inside the store.

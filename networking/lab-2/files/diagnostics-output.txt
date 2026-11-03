@@ -1,0 +1,54 @@
+LAB 2 - DIAGNOSTIC OUTPUT, ROOM 204
+Network: 10.204.0.0/24, gateway 10.204.0.1 (ROUTER-204), DHCP range .100-.199
+--------------------------------------------------------------------------------
+=== Station 06 (working, for comparison) ===
+C:\> ipconfig
+   IPv4 Address. . . . . . . . . . . : 10.204.0.116
+   Subnet Mask . . . . . . . . . . . : 255.255.255.0
+   Default Gateway . . . . . . . . . : 10.204.0.1
+C:\> ping 8.8.8.8
+   Packets: Sent = 4, Received = 4, Lost = 0 (0% loss), Average = 14ms
+
+=== Station 07 (ticket 2042) ===
+C:\> ipconfig
+   Autoconfiguration IPv4 Address. . : 169.254.201.44
+   Subnet Mask . . . . . . . . . . . : 255.255.0.0
+   Default Gateway . . . . . . . . . :
+C:\> ping 10.204.0.1
+   PING: transmit failed. General failure.  (x4)
+   Packets: Sent = 4, Received = 0, Lost = 4 (100% loss)
+   Note from student: "Station 07 was turned on before the router finished
+   restarting this morning."
+
+=== Station 10 (ticket 2043) ===
+C:\> ipconfig
+   Ethernet adapter Ethernet:
+   Media State . . . . . . . . . . . : Media disconnected
+   Note: the cable from Station 10 to SWITCH-A port 10 has a flattened
+   section and a cracked RJ45 clip.
+
+=== Station 12, Linux (ticket 2044) ===
+student@st12:~$ ifconfig
+lo: flags=73<UP,LOOPBACK,RUNNING>  mtu 65536
+        inet 127.0.0.1  netmask 255.0.0.0
+student@st12:~$ ping -c 4 10.204.0.1
+ping: connect: Network is unreachable
+   Note: Settings > Network shows "Wired: Off".
+
+=== Teacher laptop, wireless (ticket 2045) ===
+C:\> ipconfig
+   IPv4 Address. . . . . . . . . . . : 10.204.0.151
+   Subnet Mask . . . . . . . . . . . : 255.255.255.0
+   Default Gateway . . . . . . . . . : 10.204.0.1
+C:\> ping -n 20 8.8.8.8
+   Packets: Sent = 20, Received = 19, Lost = 1 (5% loss)
+   Minimum = 41ms, Maximum = 388ms, Average = 196ms
+   Wi-Fi signal: 3 of 4 bars. The teacher desk has an Ethernet port wired to
+   SWITCH-A port 13 (currently unused). During the lesson, 28 stations stream
+   the same HD video at the same time.
+   Same test at 7:45 a.m., before class: 0% loss, Average = 15ms
+
+=== Station 14 (ticket 2046) ===
+C:\> ipconfig
+   Ethernet adapter Ethernet:
+   Media State . . . . . . . . . . . : Media disconnected

@@ -8,6 +8,7 @@ and small ad spots (edit `CT_ADS` in `index.html`).
 | --- | --- |
 | `apcybersecurity/` | AP Cybersecurity (high school) |
 | `apcsp/` | AP Computer Science Principles (high school) |
+| `networking/` | AP Networking (companion site for the book: labs, practice exams, syllabus, teacher keys) |
 | `academy/` | CyberTeaches Academy block coding (grades 6 to 8) |
 
 Old links keep working: `ap-cyber/` and `teacher.html` redirect, and the hub forwards `?class=CODE` join links
@@ -18,6 +19,15 @@ and `#puzzle-N` links to `academy/`.
 `apcybersecurity/` covers all five units and 24 topics of the College Board course framework. Each topic has a short
 paragraph, vocabulary, a video, and AP-style practice questions (`questions.js`). There are six quick labs and a
 pretend-terminal mission for each unit (`missions.js`). Lesson text lives in `apcybersecurity/content.js`.
+
+## AP Networking (high school)
+
+`networking/` is the companion site for the AP Networking Course Text and Study Guide, at the URLs the book prints
+(`/networking/lab-1` to `lab-4`, `exam-1`, `exam-2`, `syllabus`, `teachers`, `updates`). It has two full practice exams
+(60 MCQ and 1 FRQ each, timed or by unit, with a score report), four labs with starter files and Word templates, an
+editable sample syllabus, and a teacher area with lab keys, exam keys, and printable booklets. The teacher area is
+noindex and blocked in `robots.txt`. `apnetworking/` redirects to it. The pages are built from source files kept with the
+book project (exam JSON and page fragments), so edit there and copy the built folder in.
 
 ## CyberTeaches Academy (grades 6 to 8)
 

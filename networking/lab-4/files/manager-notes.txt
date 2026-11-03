@@ -1,0 +1,16 @@
+LAB 4 - GROCERY STORE DOWNTIME: MANAGER'S NOTES   cyberteaches.com/networking/lab-4
+FreshWay Market (fictional), Saturday. Store opens at 8:00 a.m., closes 9:00 p.m.
+--------------------------------------------------------------------------------
+08:58  Cashier at register 3: shelf prices and register prices don't match.
+       Bananas ring up at $14.99 a pound.
+09:12  Price problems at all six registers. Customers complaining; line is
+       out the door. Busiest Saturday of the month (holiday weekend).
+09:25  Inventory screen shows "OUT OF STOCK" for hundreds of items that are
+       sitting on the shelves. Online pickup orders are being cancelled
+       automatically.
+09:40  Card payments failing about 1 time in 3: "Declined - timeout".
+       Cash only at registers 5 and 6.
+10:05  Office PC and registers are very slow. Security camera video freezing.
+10:20  Called the IT support intern (you). The break-room computer was left
+       on overnight; employees and some customers use it to check email.
+       Customer Wi-Fi password is posted on the front window.

@@ -1,0 +1,29 @@
+LAB 1 - THE CASE OF THE SLUGGISH DEVICE
+CASE CARD B                                   cyberteaches.com/networking/lab-1
+--------------------------------------------------------------------------------
+USER REPORT (Priya, student)
+"Opening my files takes forever, and this morning my slideshow would not save.
+The computer keeps showing a warning in the corner of the screen."
+
+DEVICE: Laptop, 4-core CPU, 8 GB RAM, 128 GB storage
+WHEN: Saturday 9:15 a.m., in the living room
+
+SYSTEM SNAPSHOT (9:17 a.m.)
+  CPU ..................... 22%
+  Memory (RAM) ............ 48%  (3.8 of 8 GB)
+  Storage ................. 4.8 GB free of 128 GB
+  Wi-Fi ................... Connected, signal 3 of 4 bars
+
+STORAGE BREAKDOWN
+  Downloads folder ........ 31.0 GB  (installers, old videos)
+  Temporary files ......... 9.2 GB
+  Apps and games .......... 38.5 GB  (two games not opened since last year: 22.0 GB)
+  Photos and videos ....... 26.1 GB
+  System .................. 18.4 GB
+
+NETWORK CHECK
+  ping 8.8.8.8 ............. 4 sent, 4 received, 0% loss, average 24 ms
+
+ERROR MESSAGE ON SCREEN
+  "Low disk space. You are running out of space on this device."
+  "Could not save 'History Project.pptx'. There is not enough space on the disk."

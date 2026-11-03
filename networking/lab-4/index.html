@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lab 4: Grocery Store Downtime | AP Networking | CyberTeaches</title>
+<meta name="description" content="Lab 4: Grocery Store Downtime: student walkthrough, starter files, and rubric.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="icon" type="image/png" href="/favicon.png"><link rel="stylesheet" href="../assets/site.css">
+</head><body>
+<header class="site"><div class="wrap"><span class="brand"><a href="/" class="logo-link"><img class="logo" src="/logo.png" alt="" width="36" height="36">CyberTeaches</a> &middot; <a href="../">AP Networking</a></span><nav><a href="/">← All courses</a><a href="../">Networking home</a><a href="../exam-1/">Practice exams</a><a href="../#labs">Labs</a><a href="../syllabus/">Syllabus</a><a href="../teachers/">Teachers</a><a href="../updates/">Updates</a></nav></div></header>
+<main class="wrap"><div class="crumbs"><a href="../">AP Networking</a> / Lab 4</div>
+<div class="eyebrow">Unit 4 Lab &middot; Managing Our Global Connections</div>
+<h1>Lab 4: Grocery Store Downtime</h1>
+<p class="lead">It is a busy Saturday morning at a local grocery store. Prices are wrong, the inventory system says full shelves are empty, and card payments keep failing. As the IT support intern, you investigate the logs, decide which parts of the CIA triad were compromised, measure the impact, fix the network design that let it happen, and report to store management.</p>
+
+<div class="grid">
+ <div class="card"><h3>At a glance</h3><p class="meta">Based on Unit Scenario 4A in the AP Networking Course Framework</p><ul>
+  <li><b>Time:</b> 5 class periods (45 min)</li>
+  <li><b>Team size:</b> 4 (one role each)</li>
+  <li><b>Book lessons:</b> 4.1–4.6</li>
+  <li><b>Deliverable:</b> incident evidence and impact report for store management</li></ul></div>
+ <div class="card"><h3>Learning objectives</h3><ul>
+  <li><span class="tag">4.1.A</span> <span class="tag">4.1.B</span> Identify evidence of compromised CIA; explain the impact of unreliable connectivity.</li>
+  <li><span class="tag">4.2.C</span> Use the OSI and TCP/IP models when troubleshooting.</li>
+  <li><span class="tag">4.3.A</span> <span class="tag">4.3.B</span> Navigate with the CLI and transfer files securely.</li>
+  <li><span class="tag">4.4.C</span> Determine the path of data with a routing tool.</li>
+  <li><span class="tag">4.5.B</span> <span class="tag">4.5.C</span> <span class="tag">4.5.D</span> Choose controls, read IDS logs, and configure a VLAN.</li>
+  <li><span class="tag">4.6.B</span> Improve reliability and availability.</li></ul>
+  <p class="meta">Skills: 2.A–2.C, 3.A–3.D, 4.A–4.D</p></div>
+</div>
+
+<h2>The situation</h2>
+<p>The store manager fears a security incident affecting confidentiality, integrity, and availability all at once. Your job is to find out what happened and when, which systems were affected, what evidence proves each CIA impact, and what the short-term and long-term consequences could be for the store and its customers.</p>
+
+<h2>Starter files</h2>
+<ul class="files">
+ <li><a href="files/manager-notes.txt" download>Store manager's notes</a> (.txt)</li>
+ <li><a href="files/ids-alerts.csv" download>IDS alerts, Friday night through Saturday morning</a> (.csv)</li>
+ <li><a href="files/invdb01-audit.log" download>Inventory database audit log</a> (.log, also retrieved by SFTP in Part 1)</li>
+ <li><a href="files/traceroute-payment.txt" download>tracert to the payment processor, before and during the incident</a> (.txt)</li>
+ <li><a href="files/switch-show-vlan.txt" download>Switch show vlan brief output and port map</a> (.txt)</li>
+ <li><a href="files/Lab4_Incident_Report_Template.docx" download>Incident evidence and impact report template</a> (Word)</li>
+ <li><a href="files/Lab4_Packet_Tracer_Build_Sheet.txt" download>Packet Tracer build sheet: segment the store with VLANs</a> (.txt)</li>
+</ul>
+
+<h2>Team roles</h2>
+<div class="grid">
+<div class="role"><b>Project lead</b><br>Keeps the team on the plan and the clock, makes sure every requirement is covered, and makes the final call when the team is split. Owns the team log.</div>
+<div class="role"><b>Data analyst</b><br>Reads the evidence (readings, logs, command output), compares values with the thresholds from the book, and states what each piece of evidence shows.</div>
+<div class="role"><b>Configuration technician</b><br>Plans and carries out the configuration or fix in the simulator or on the device, and runs the verification tests.</div>
+<div class="role"><b>Documentation lead</b><br>Builds the deliverable, keeps diagrams and tables consistent, and records how the team used and checked AI.</div>
+</div>
+<p class="meta">Teams of three: the project lead also keeps documentation. Teams of five: add an <b>AI liaison</b> who writes the prompts and leads the evaluation of AI output. Rotate roles from lab to lab so that every student does each job once.</p>
+
+<h2>Walkthrough</h2>
+<h3>Part 1: Collect the evidence securely (Day 1)</h3>
+<p>In a real investigation you copy logs off the server instead of working on it. If your teacher has set up the class Linux lab server, retrieve the audit log with SFTP. Otherwise, download it above and write the commands you would use.</p>
+<pre>student@lab:~$ pwd
+student@lab:~$ mkdir -p lab4 &amp;&amp; cd lab4
+student@lab:~/lab4$ sftp intern@&lt;log server address from your teacher&gt;
+sftp&gt; pwd
+sftp&gt; cd /var/log/invdb
+sftp&gt; ls
+sftp&gt; get invdb01-audit.log
+sftp&gt; exit
+student@lab:~/lab4$ ls</pre>
+<ol class="steps">
+ <li>Explain in your log what each command does and why SFTP (SSH, port 22) is used instead of FTP (port 21).</li>
+ <li>Record the absolute path where the file now sits on your device.</li>
+</ol>
+<h3>Part 2: Build the timeline (Day 1)</h3>
+<ol class="steps">
+ <li>Merge the manager's notes, IDS alerts, and audit log into one timeline from Friday 23:14 to Saturday 10:20. Mark each entry as an attack step, a symptom, or a performance problem.</li>
+ <li>Identify the device the activity came from and explain why that device was a weak point (check the port map and the manager's notes).</li>
+</ol>
+<h3>Part 3: CIA analysis (Day 2)</h3>
+<ol class="steps">
+ <li>For <b>confidentiality</b>, <b>integrity</b>, and <b>availability</b>, state whether it was compromised and cite at least two pieces of evidence for each (log time and entry).</li>
+ <li>Separate IDS entries that indicate a <b>security threat</b> from entries that indicate a <b>performance or configuration issue</b>. Explain how the two are connected in this incident.</li>
+</ol>
+<h3>Part 4: Trace the payment failures (Day 2)</h3>
+<ol class="steps">
+ <li>Compare the two tracert runs. Count the hops, and find where the delay begins.</li>
+ <li>Is the payment problem inside the store, at the ISP, or at the processor? Use the OSI model to say which layer you would investigate first and why (Lesson 4.2).</li>
+</ol>
+<h3>Part 5: Impact assessment (Day 3)</h3>
+<ol class="steps">
+ <li>Short-term: list the immediate effects on customers, employees, and operations. Why did timing make this worse?</li>
+ <li>Long-term: describe possible consequences for sales, reputation, and customer trust, including the loyalty-program data.</li>
+</ol>
+<h3>Part 6: Fix and harden (Days 4–5)</h3>
+<ol class="steps">
+ <li>Design a VLAN segmentation plan for the store using the port map: group devices by function and security level, assign VLAN IDs and names, and say which ports go in each VLAN. Unused ports should be shut down.</li>
+ <li>Configure your plan in Packet Tracer using the build sheet. Verify with <code>show vlan brief</code> and <code>ping</code> tests: same-VLAN devices communicate; the customer Wi-Fi and break-room VLANs cannot reach the inventory server.</li>
+ <li>Recommend controls that address each step of the attack (accounts and passwords, lockout, least privilege, segmentation, firewall, monitoring, physical security, policies such as an AUP).</li>
+ <li>Write an availability plan: how would the store keep taking card payments during the next outage? Consider redundancy, backup internet, UPS, monitoring, and patching (Lesson 4.6).</li>
+</ol>
+
+<h2>Report and rubric</h2>
+<p>Your incident evidence and impact report must include: an incident summary (what happened, when, and which systems were affected); the CIA analysis with evidence; the impact assessment; the traceroute and IDS findings; the segmentation plan with verification; and recommended controls and the availability plan.</p>
+<div class="tablewrap"><table class="rubric"><tr><th>Criterion</th><th>Points</th></tr>
+<tr><td><b>Evidence handling.</b> Correct SFTP commands explained; timeline complete and accurate.</td><td>3</td></tr>
+<tr><td><b>CIA analysis.</b> All three parts correctly identified, each with at least two specific log entries.</td><td>5</td></tr>
+<tr><td><b>Log and path analysis.</b> Threat versus performance indicators separated; tracert interpreted correctly with the layer to check first.</td><td>4</td></tr>
+<tr><td><b>Impact.</b> Realistic short- and long-term impacts, including timing and customer data.</td><td>3</td></tr>
+<tr><td><b>Fix.</b> Sensible VLAN plan configured and verified with show vlan brief and ping.</td><td>4</td></tr>
+<tr><td><b>Controls and availability.</b> Controls matched to each attack step; workable availability plan.</td><td>3</td></tr>
+<tr><td><b>Collaboration and communication.</b> Written for store managers; team log shows roles and decisions.</td><td>2</td></tr>
+<tr><th>Total</th><th>24</th></tr></table></div>
+
+<h2>Walkthrough video</h2>
+<div class="box y">A walkthrough of the SFTP steps and the VLAN configuration will be posted on <a href="https://www.youtube.com/@CyberTeaches">YouTube @CyberTeaches</a>.</div>
+<p class="meta">Teachers: the complete timeline, CIA key, VLAN model plan, and setup notes for a class SFTP server are in the <a href="../teachers/">teacher area</a>.</p>
+
+<div data-ad="strip"></div>
+</main>
+<footer class="site"><div class="wrap">Companion site for <i>AP Networking Course Text and Study Guide</i> &middot; <a href="https://cyberteaches.com/">All CyberTeaches courses</a> &middot; <a href="https://www.youtube.com/@CyberTeaches">YouTube @CyberTeaches</a><br>
+AP is a trademark registered by the College Board, which is not affiliated with, and does not endorse, this site. All practice questions, scenarios, and lab materials are original; the organizations in them are fictional.</div></footer>
+<script src="../assets/ads.js"></script></body></html>
