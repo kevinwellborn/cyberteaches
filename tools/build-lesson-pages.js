@@ -63,6 +63,7 @@ function page({ course, css, title, desc, url, depth, body, data }) {
 <meta property="og:image" content="${SITE}yt-banner.jpg">
 <meta name="twitter:card" content="summary_large_image">
 ${data.map(ld).join('\n')}
+<link rel="icon" type="image/png" href="${up}../favicon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Atkinson+Hyperlegible:wght@400;700&family=JetBrains+Mono:wght@400;600&display=swap">
 ${styles(course, css)}
@@ -70,7 +71,7 @@ ${styles(course, css)}
 <div class="wrap">
   <header class="topbar">
     <a class="brand" href="${up}">
-      <svg viewBox="0 0 32 32" aria-hidden="true"><rect x="2" y="4" width="28" height="24" rx="6" fill="var(--accent)"/><path d="M11 11l-5 5 5 5M21 11l5 5-5 5M18 9l-4 14" fill="none" stroke="var(--accent-ink)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <img class="logo" src="${up}../logo.png" alt="" width="36" height="36">
       ${esc(course.short)}
     </a>
     <span class="spacer"></span>

@@ -115,3 +115,18 @@ textarea{width:100%;min-height:150px;font:inherit;font-size:15px;padding:10px;bo
   pre{background:#f3f5f9;color:#000;border:1px solid #ccc}
   .card,.box{break-inside:avoid}
 }
+/* Ad spots (filled by assets/ads.js). Quiet, labeled, and in the page's card style. */
+.ad{position:relative;border:1px dashed var(--line);border-radius:12px;background:var(--card);color:var(--ink);text-decoration:none;display:flex;align-items:center;gap:16px;padding:14px 18px;margin:28px 0 0}
+a.ad:hover{border-color:var(--blue)}
+.ad .ad-tag{position:absolute;top:6px;right:12px;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--mute)}
+.ad .ad-art{flex:none;width:48px;height:64px;border-radius:6px;background:var(--navy);color:var(--bg);display:grid;place-items:center;font-weight:800;font-size:18px}
+img.ad-art{object-fit:cover;background:none}
+.ad .ad-text{flex:1;min-width:0}
+.ad b{display:block;font-size:16px;color:var(--navy)}
+.ad .ad-sub{font-size:14px;color:var(--mute)}
+.ad .ad-cta{font-weight:700;color:var(--blue);white-space:nowrap}
+@media (max-width:560px){.ad{flex-wrap:wrap}}
+@media print{.ad{display:none!important}}
+header.site .brand{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+header.site .logo-link{display:inline-flex;align-items:center;gap:10px}
+header.site .logo{width:36px;height:36px;flex:none;border-radius:9px;background:#fff;padding:2px}
