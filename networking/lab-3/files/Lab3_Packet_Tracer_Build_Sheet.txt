@@ -1,0 +1,70 @@
+LAB 3 - PACKET TRACER BUILD SHEET: GAME DAY NETWORK  cyberteaches.com/networking/lab-3
+For Cisco Packet Tracer 8.x. Build a scaled-down version: you do not need 20
+player PCs. Two devices per segment are enough to prove the design works.
+--------------------------------------------------------------------------------
+BEFORE YOU BUILD: finish your subnet plan (Part 3). Replace every <...> below
+with values from YOUR plan. Example values are in [brackets].
+
+1. DEVICES
+   1 router (ISR4321), 1 switch (2960-24TT), 1 Server-PT, PCs for PLAYERS,
+   PRODUCTION, and JUDGES (2 each), 1 AccessPoint-PT for spectators,
+   1 smartphone (SMARTPHONE-PT) as a spectator.
+
+2. CABLES
+   Router Gig0/0/0 -> Switch Gig0/1 (this link will be a trunk)
+   PCs, server, and AccessPoint-PT -> switch Fa ports, grouped by VLAN
+
+3. SWITCH: CREATE VLANS AND ASSIGN ACCESS PORTS
+   Switch> enable
+   Switch# configure terminal
+   Switch(config)# vlan 10
+   Switch(config-vlan)# name PLAYERS
+   Switch(config-vlan)# vlan 20
+   Switch(config-vlan)# name PRODUCTION
+   Switch(config-vlan)# vlan 30
+   Switch(config-vlan)# name JUDGES
+   Switch(config-vlan)# vlan 60
+   Switch(config-vlan)# name SPECTATORS
+   Switch(config-vlan)# exit
+   Switch(config)# interface range fastEthernet 0/1 - 2
+   Switch(config-if-range)# switchport mode access
+   Switch(config-if-range)# switchport access vlan 10
+   (repeat for the PRODUCTION, JUDGES, and SPECTATORS ports)
+   Switch(config)# interface gigabitEthernet 0/1
+   Switch(config-if)# switchport mode trunk
+   Switch(config-if)# end
+   Switch# show vlan brief        <- check every port is in the right VLAN
+
+4. ROUTER: ONE SUBINTERFACE PER VLAN (default gateway for each segment)
+   Router(config)# interface gigabitEthernet 0/0/0
+   Router(config-if)# no shutdown
+   Router(config-if)# interface gigabitEthernet 0/0/0.10
+   Router(config-subif)# encapsulation dot1Q 10
+   Router(config-subif)# ip address <first usable in PLAYERS> <mask>  [10.60.0.1 255.255.255.224]
+   (repeat for .20, .30, and .60 with each VLAN's gateway and mask;
+    SPECTATORS uses 10.61.0.1 255.255.255.0)
+
+5. ADDRESSES
+   Give the server a static address in PRODUCTION. Give the PCs static
+   addresses in their segments, or add a DHCP pool per VLAN:
+   Router(config)# ip dhcp pool SPECTATORS
+   Router(dhcp-config)# network 10.61.0.0 255.255.255.0
+   Router(dhcp-config)# default-router 10.61.0.1
+   Router(dhcp-config)# dns-server 8.8.8.8
+   Set the AccessPoint-PT SSID (for example, Invitational-Guest) with WPA2-PSK,
+   and connect the smartphone to it with DHCP.
+
+6. VERIFY
+   - ping between two PCs in the same VLAN       -> should succeed
+   - ping from a PLAYERS PC to the server         -> succeeds (routing on)
+   - ping from the smartphone to a PLAYERS PC     -> succeeds now; Step 7 fixes this
+   - show vlan brief on the switch; show ip interface brief on the router
+
+7. FIREWALL RULES (extension: implement rule set 1 as an IOS ACL)
+   Router(config)# access-list 110 deny ip 10.61.0.0 0.0.0.255 10.60.0.0 0.0.0.255
+   Router(config)# access-list 110 permit ip any any
+   Router(config)# interface gigabitEthernet 0/0/0.60
+   Router(config-subif)# ip access-group 110 in
+   Re-test: the smartphone can no longer ping 10.60.0.x devices. In the real
+   event, the permit line would allow only DNS (53) and HTTPS (443) to the
+   internet, and a perimeter firewall would enforce the rest.

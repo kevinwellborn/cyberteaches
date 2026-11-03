@@ -1,0 +1,33 @@
+LAB 1 - AI ASSISTANT SUGGESTIONS                cyberteaches.com/networking/lab-1
+--------------------------------------------------------------------------------
+Each team typed its user report (but NOT the diagnostic readings) into an AI
+assistant and asked: "How do I fix my slow laptop?"  Evaluate the reply for
+YOUR case. For each numbered suggestion, decide: keep, test first, or reject,
+and justify each choice with a reading from your case card.
+
+CASE A reply
+ 1. Your laptop may be too old for modern software. Consider buying a new one.
+ 2. Open Task Manager and end any program that is not responding.
+ 3. Install more RAM; 32 GB is recommended for students.
+ 4. If a program keeps restarting, check its startup settings or update it.
+
+CASE B reply
+ 1. Run a disk cleanup to remove temporary files.
+ 2. Your processor is overloaded. Close all background apps.
+ 3. Move large files you do not use often to cloud or external storage.
+ 4. Reset your computer to factory settings to make it like new.
+
+CASE C reply
+ 1. Restart your router.
+ 2. Buy a faster internet plan (1 Gbps).
+ 3. Use a wired Ethernet connection if one is available.
+ 4. Move closer to the router or remove obstacles between the device and router.
+
+CASE D reply
+ 1. Your laptop has a virus. Install three different antivirus programs.
+ 2. Use the laptop on a hard, flat surface so its vents are not blocked.
+ 3. Close browser tabs and apps you are not using.
+ 4. Install more RAM if memory use stays high after closing apps.
+
+Remember: AI tools can suggest causes and solutions, but every suggestion must
+be checked against the diagnostic data and verified on the device.

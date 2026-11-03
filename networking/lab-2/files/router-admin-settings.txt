@@ -1,0 +1,14 @@
+LAB 2 - ROUTER-204 ADMINISTRATION PAGE (http://10.204.0.1), captured Tuesday
+--------------------------------------------------------------------------------
+Administrator account ...... username: admin   password: (factory default)
+Firmware ................... v1.4.2  (v1.6.0 available - "fixes a remote
+                             access security vulnerability")
+Automatic updates .......... Off
+Wireless network (SSID) .... Room204
+Security mode .............. WPA (TKIP)
+Wireless password .......... ridgeview1
+WPS ........................ Enabled
+Guest network .............. Disabled
+Connected wireless clients . teacher laptop, smart projector, smart thermostat,
+                             2 visitor laptops, 1 unknown device "ESP_3F1A2C"
+Firewall ................... Enabled (default rules)

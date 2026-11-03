@@ -1,0 +1,31 @@
+LAB 1 - THE CASE OF THE SLUGGISH DEVICE
+CASE CARD A                                   cyberteaches.com/networking/lab-1
+--------------------------------------------------------------------------------
+USER REPORT (Jordan, student)
+"Since this morning everything freezes for a few seconds at a time. My video
+keeps buffering, and the fan is really loud. I have a project due tomorrow."
+
+DEVICE: Windows laptop, 4-core CPU, 16 GB RAM, 256 GB SSD
+WHEN: Saturday 10:40 a.m., at the kitchen table, about 3 m from the router
+
+TASK MANAGER SNAPSHOT (10:42 a.m.)
+  CPU ..................... 96%  (above 90% for the last 20 minutes)
+  Memory (RAM) ............ 62%  (9.9 of 16 GB)
+  Disk (C:) ............... 141 GB free of 256 GB
+  Wi-Fi ................... Connected, HomeNet-5G, signal 4 of 4 bars
+
+  Process                    Status          CPU     Memory
+  CloudSync Helper           Not responding  78%     410 MB
+  Web browser (6 tabs)       Running          9%     2.1 GB
+  Video player               Running          5%     380 MB
+  System                     Running          3%     150 MB
+
+NETWORK CHECK
+  Speed test ............... 182 Mbps down / 21 Mbps up
+  ping 8.8.8.8 ............. 4 sent, 4 received, 0% loss, average 18 ms
+
+TEMPERATURE
+  No warnings. Laptop is on a hard table with vents clear.
+
+ERROR MESSAGE ON SCREEN
+  "CloudSync Helper is not responding. Close the program or wait?"

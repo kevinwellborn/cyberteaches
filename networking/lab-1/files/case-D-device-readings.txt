@@ -1,0 +1,28 @@
+LAB 1 - THE CASE OF THE SLUGGISH DEVICE
+CASE CARD D                                   cyberteaches.com/networking/lab-1
+--------------------------------------------------------------------------------
+USER REPORT (Ava, student)
+"I'm doing research for my project in bed. The laptop got really slow, and then
+it turned itself off once. It feels hot on the bottom."
+
+DEVICE: Laptop, 2-core CPU, 8 GB RAM, 256 GB SSD
+WHEN: Saturday 2:05 p.m., laptop resting on a thick blanket, next to a sunny window
+
+SYSTEM SNAPSHOT (2:07 p.m., after the laptop was turned back on)
+  CPU ..................... 74%   (processor speed 0.9 GHz; normal 2.6 GHz)
+  Memory (RAM) ............ 91%   (7.3 of 8 GB, above 85% for 30 minutes)
+  Storage ................. 118 GB free of 256 GB
+  Wi-Fi ................... Connected, signal 4 of 4 bars
+
+  Process                    Status          CPU     Memory
+  Web browser (38 tabs)      Running         41%     4.6 GB
+  Video call app (idle)      Running          8%     690 MB
+  Music app                  Running          4%     310 MB
+
+TEMPERATURE / WARNINGS
+  "Your device is too hot. Performance has been reduced to cool it down."
+  CPU temperature: 97 C
+  System log: "The system shut down unexpectedly to protect the hardware" (1:58 p.m.)
+
+NETWORK CHECK
+  ping 8.8.8.8 ............. 4 sent, 4 received, 0% loss, average 21 ms

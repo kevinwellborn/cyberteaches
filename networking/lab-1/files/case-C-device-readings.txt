@@ -1,0 +1,30 @@
+LAB 1 - THE CASE OF THE SLUGGISH DEVICE
+CASE CARD C                                   cyberteaches.com/networking/lab-1
+--------------------------------------------------------------------------------
+USER REPORT (Marcus, student)
+"My show keeps buffering and web pages take a long time to load. It works fine
+when I take the laptop downstairs to the kitchen."
+
+DEVICE: Laptop, 8-core CPU, 16 GB RAM, 512 GB SSD
+WHEN: Saturday 7:30 p.m., in an upstairs bedroom at the far end of the house.
+The router is downstairs in the kitchen, behind two walls and a stairwell.
+The bedroom has an Ethernet wall port that is connected to the router.
+
+SYSTEM SNAPSHOT (7:31 p.m.)
+  CPU ..................... 18%
+  Memory (RAM) ............ 44%
+  Storage ................. 302 GB free of 512 GB
+  Wi-Fi ................... Connected, HomeNet-5G, signal 1 of 4 bars
+
+NETWORK CHECK (bedroom)
+  ping 8.8.8.8 ............. 10 sent, 9 received, 10% loss, average 164 ms
+  Speed test ............... 6 Mbps down / 1 Mbps up
+
+OTHER DEVICES ON THE NETWORK (from the router's app)
+  Smart TV (living room) ... streaming, about 15 Mbps
+  Phone (kitchen) .......... idle
+  Internet plan ............ 300 Mbps
+
+NETWORK CHECK (same laptop, in the kitchen 2 m from the router, 5 minutes later)
+  ping 8.8.8.8 ............. 10 sent, 10 received, 0% loss, average 16 ms
+  Speed test ............... 240 Mbps down / 22 Mbps up

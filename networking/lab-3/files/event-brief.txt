@@ -1,0 +1,52 @@
+LAB 3 - GAME DAY NETWORK DESIGN: EVENT BRIEF      cyberteaches.com/networking/lab-3
+Ridgeview Regional Esports Invitational - Saturday, 9:00 a.m. to 6:00 p.m.
+--------------------------------------------------------------------------------
+VENUE
+  Gym ............. 40 m x 30 m. Players' stage on the north end, spectator
+                    bleachers on the south side.
+  Lobby ........... next to the gym, separated by a concrete block wall.
+                    Spectators wait and watch the stream on a large screen.
+  Broadcast booth . above the gym's north end, 25 m of cable from the stage.
+  Network closet .. behind the stage; holds the school's router and firewall.
+
+USER GROUPS AND NEEDS
+  Players ......... 4 teams x 5 players = 20 school-owned gaming PCs on stage.
+                    Matches need high frame rates and low input latency. Players
+                    reach the local game server only (no general internet).
+  Coaches ......... 4 coaches, each with a laptop, moving along the sideline.
+                    Coaches open the team stats dashboard on the local server.
+                    Coaches must NOT reach the judges' scoring system.
+  Judges .......... 6 judges walking the stage with tablets to enter scores
+                    in the scoring app on the local server.
+  Event staff ..... 5 staff laptops (mobile) to run online check-in and the
+                    schedule (internet, HTTPS), plus 1 management workstation
+                    in the network closet.
+  Livestream ...... 2 streaming PCs in the broadcast booth and 3 network
+                    cameras on the gym floor. The stream uploads to the internet
+                    and must not be interrupted.
+  Local server .... 1 server in the network closet running three services:
+                      game server ......... UDP port 7777
+                      stats dashboard ..... HTTPS, TCP port 443
+                      judges' scoring app . HTTPS, TCP port 8443
+  Spectators ...... Up to 250 phones: about 180 in the bleachers and 70 in the
+                    lobby. Internet access only. Must never reach event systems.
+
+EQUIPMENT AVAILABLE
+  - Managed 24-port switches. On each switch, reserve 1 port as the uplink
+    toward the router.
+  - Wireless access points (WAPs). Plan on 40 mobile devices or 20 laptops per
+    WAP. Each WAP can broadcast up to 4 SSIDs, each mapped to its own VLAN.
+  - Twisted pair cable (runs up to 100 m) and one router with a firewall.
+
+ADDRESSING
+  - Event systems: 10.60.0.0/24, to be divided into subnets.
+  - Spectator Wi-Fi: 10.61.0.0/24 (already assigned; do not subnet it).
+  - In every host count, include one address for the segment's default gateway.
+
+RULES FROM THE TOURNAMENT DIRECTOR
+  1. A player PC must never depend on Wi-Fi.
+  2. Spectators get internet only, with a captive portal and a 3-hour session
+     limit.
+  3. Only the management workstation may administer the switches, router, and
+     server, and only with encrypted protocols.
+  4. Coaches cannot see or change judges' scores.

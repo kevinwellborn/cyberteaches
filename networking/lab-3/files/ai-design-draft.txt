@@ -1,0 +1,24 @@
+LAB 3 - AI-GENERATED DESIGN DRAFT                cyberteaches.com/networking/lab-3
+--------------------------------------------------------------------------------
+A volunteer typed this prompt into an AI tool:
+  "Design a network for a school esports tournament."
+The AI replied:
+
+  Recommended design
+  1. Topology: a full mesh, with every switch and WAP cabled to every other
+     switch and WAP so nothing can ever fail.
+  2. Wireless: 2 high-power WAPs in the gym cover everyone. Put the 20 player
+     PCs on Wi-Fi to avoid running cables across the stage.
+  3. One SSID, "Esports-Event", with a password announced over the speakers
+     so that players, coaches, judges, staff, and fans can all connect easily.
+  4. Subnets:
+       Players     10.60.0.0/26
+       Production  10.60.0.32/27
+       Staff       10.60.0.128/25
+  5. Security: install a next-generation firewall at the perimeter and allow
+     all traffic inside the event network so that nothing gets blocked during
+     matches.
+
+Your task: evaluate each numbered item. Which parts are workable, which are
+overcomplicated or too costly, which miss a requirement in the event brief,
+and which are technically wrong? Justify every judgment with the brief.

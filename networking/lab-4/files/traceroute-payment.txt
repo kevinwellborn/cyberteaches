@@ -1,0 +1,21 @@
+LAB 4 - PATH TO THE CARD PAYMENT PROCESSOR (run from register 2, 10.0.0.22)
+--------------------------------------------------------------------------------
+=== Saturday 07:50 (before opening) ===
+C:\> tracert pay.processor.example
+Tracing route to pay.processor.example [198.51.100.80]
+  1     1 ms     1 ms     1 ms  10.0.0.1
+  2     6 ms     5 ms     6 ms  203.0.113.1
+  3     9 ms     8 ms     9 ms  203.0.113.65
+  4    14 ms    13 ms    14 ms  192.0.2.33
+  5    15 ms    15 ms    16 ms  198.51.100.80
+Trace complete.
+
+=== Saturday 09:45 (during the incident) ===
+C:\> tracert pay.processor.example
+Tracing route to pay.processor.example [198.51.100.80]
+  1   412 ms   *      389 ms  10.0.0.1
+  2   420 ms   431 ms   *     203.0.113.1
+  3   418 ms   426 ms   433 ms  203.0.113.65
+  4     *      440 ms   436 ms  192.0.2.33
+  5   441 ms   *      447 ms  198.51.100.80
+Trace complete.

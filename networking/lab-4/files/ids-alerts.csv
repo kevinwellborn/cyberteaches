@@ -1,0 +1,12 @@
+date,time,source,destination,signature,severity
+Fri,23:14:05,10.0.0.87,10.0.0.0/24,Port scan detected (TCP 1-1024),medium
+Fri,23:19:40,10.0.0.87,10.0.0.10,SSH login failed (user: admin) x112,high
+Fri,23:31:52,10.0.0.87,10.0.0.10,SSH login failed (user: inv_admin) x37,high
+Fri,23:36:18,10.0.0.87,10.0.0.10,SSH login succeeded (user: inv_admin),high
+Fri,23:41:07,10.0.0.87,203.0.113.99,Connection to known malicious IP,high
+Sat,08:47:30,10.0.0.10,203.0.113.99,Large outbound transfer 1.4 GB (TCP 443),high
+Sat,08:52:11,10.0.0.87,10.0.0.10,Database write burst (2 statements/1,550 rows),medium
+Sat,09:31:00,10.0.0.87,10.0.0.0/24,Traffic volume 40x baseline (UDP broadcast),high
+Sat,09:33:12,switch-1,Gi0/1 (uplink to router),Output drops increasing; queue full,medium
+Sat,09:38:45,10.0.0.21-26,10.0.0.5,Repeated failed connections to payment gateway (timeout),medium
+Sat,10:02:19,10.0.0.40-43,10.0.0.30,Video stream packet loss 18%,low
