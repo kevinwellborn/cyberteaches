@@ -1,0 +1,35 @@
+/* Shared styles for CyberTeaches Academy teacher resources (slides and classwork). */
+:root{
+  --bg:#EEF1EC; --panel:#FFFFFF; --panel-2:#F6F8F4; --ink:#1C292C; --muted:#5C6B6B; --line:#D5DCD4;
+  --accent:#0F7B78; --accent-ink:#FFFFFF; --accent-soft:#D6EEEA;
+  --sand:#E8D9B8; --sand-2:#E1D0AA; --rock:#8C7F69; --rock-2:#6F6453;
+  --rover:#F2A93B; --wheel:#2E3A3D; --eye:#1C292C; --gem:#2BB3C9; --gem-hi:#8FE3EF;
+  --b-move:#2F6FDE; --b-act:#C2417A; --b-loop:#D97E16; --b-logic:#2E9363;
+  --f-display:"Bricolage Grotesque","Trebuchet MS",system-ui,sans-serif;
+  --f-body:"Atkinson Hyperlegible","Segoe UI",system-ui,sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-body);line-height:1.45}
+h1,h2,h3{font-family:var(--f-display);margin:0;line-height:1.1}
+.label{font-size:.75em;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:700}
+
+/* map boards drawn by resources.js from data-map */
+.board{display:inline-grid;gap:3px;padding:6px;background:var(--rock-2);border-radius:12px;--cell:44px}
+.board .c{width:var(--cell);height:var(--cell);border-radius:6px;background:var(--sand);display:grid;place-items:center;position:relative}
+.board .c.rock{background:var(--rock)}
+.board .c.alt{background:var(--sand-2)}
+.board .c svg{width:70%;height:70%}
+.board .c.rover svg{width:86%;height:86%}
+.board .c.goal::after{content:"";position:absolute;inset:4px;border:3px dashed var(--accent);border-radius:6px}
+.board.blank .c{background:#fff;border:1px solid var(--line)}
+.board.blank{background:var(--line)}
+
+/* code blocks */
+.blk{display:inline-flex;align-items:center;gap:.4em;color:#fff;font-weight:700;border-radius:.5em;padding:.3em .7em;margin:.15em 0;font-size:.95em;box-shadow:0 3px 0 rgba(0,0,0,.18);white-space:nowrap}
+.blk.move{background:var(--b-move)} .blk.act{background:var(--b-act)} .blk.loop{background:var(--b-loop)}
+.prog{display:flex;flex-direction:column;align-items:flex-start;gap:.25em}
+.rep{background:var(--b-loop);border-radius:.6em;padding:.35em .45em .45em;color:#fff;font-weight:700;box-shadow:0 3px 0 rgba(0,0,0,.18)}
+.rep>.head{padding:.1em .3em .3em}
+.rep>.inner{background:rgba(255,255,255,.22);border-radius:.45em;padding:.3em .45em;display:flex;flex-direction:column;align-items:flex-start;gap:.25em;min-width:8em}
+.code{font-family:var(--f-mono);font-weight:600}
