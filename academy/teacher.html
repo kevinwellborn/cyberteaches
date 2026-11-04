@@ -84,6 +84,15 @@ td.name small{color:var(--muted)}
 .s0{color:var(--line)}
 th.score,td.score{background:var(--panel-2);border-right:2px solid var(--line)}
 small.rank{display:block;font-size:11px}
+.lbpanel{max-width:760px}
+.lbtitle{font-size:20px;margin-bottom:8px}
+.lb td.l,.lb th.l{text-align:left}
+.lb tr.top1 td:first-child b{color:var(--coin,#C9971A)}
+.lb tr.top1 td,.lb tr.top2 td,.lb tr.top3 td{background:var(--panel-2)}
+.lbpanel:fullscreen{max-width:none;padding:40px 8vw;overflow:auto;background:var(--panel)}
+.lbpanel:fullscreen .lbtitle{font-size:44px;margin-bottom:20px}
+.lbpanel:fullscreen .lb{font-size:26px}
+.lbpanel:fullscreen .lb th{font-size:18px}
 .legend{display:flex;gap:14px;flex-wrap:wrap;align-items:center;font-size:13px;color:var(--muted);margin:10px 2px}
 .legend span{display:inline-flex;gap:6px;align-items:center}
 .empty{padding:28px;text-align:center;color:var(--muted)}
@@ -377,9 +386,22 @@ function renderClass(err){
       ${lessonDone.map(x=>`<div class="stat"><b>${x.done}</b><span class="muted">finished Lesson ${x.u.n}</span><div class="bar"><i style="width:${n?x.done/n*100:0}%;background:${x.u.color}"></i></div></div>`).join('')}</div></section></div>
     <div class="toolbar"><h2>Progress</h2><div class="spacer"></div><button class="btn" id="csv" ${n?'':'disabled'}>Download CSV</button></div>
     <div class="legend"><span><i class="cell s3">★★★</i> 3 stars</span><span><i class="cell s2">★★</i> 2 stars</span><span><i class="cell s1">★</i> 1 star</span><span><i class="cell s0">·</i> not solved</span><span><b>Score</b> per lesson out of 100: 3 stars = 100, 2 stars = 90, 1 star = 80 for each puzzle, unsolved = 0</span><span>Updates live as students play.</span></div>
-    <div class="tablewrap">${err?'<div class="empty err">Could not load students. Check that the Firestore rules are published.</div>': n?table():'<div class="empty">No students yet. Share the code or link above.</div>'}</div>`;
+    <div class="tablewrap">${err?'<div class="empty err">Could not load students. Check that the Firestore rules are published.</div>': n?table():'<div class="empty">No students yet. Share the code or link above.</div>'}</div>
+    ${n&&!err?`<div class="toolbar"><h2>Leaderboard</h2><div class="spacer"></div><button class="btn" id="lbFull">Show full screen</button></div>
+    <section class="panel lbpanel" id="lbPanel"><h2 class="lbtitle">${esc(c.name||c.code)} leaderboard</h2>${leaderboard()}</section>`:''}`;
   $('#copy').onclick=async()=>{ try{ await navigator.clipboard.writeText(joinLink(c.code)); $('#copy').textContent='Copied' }catch(e){ const r=document.createRange(); r.selectNodeContents($('#jl')); getSelection().removeAllRanges(); getSelection().addRange(r) } };
   $('#csv').onclick=()=>downloadCsv(c);
+  const fs=$('#lbFull'); if(fs) fs.onclick=()=>{ const el=$('#lbPanel'); (el.requestFullscreen||el.webkitRequestFullscreen||(()=>{})).call(el) };
+}
+// Same ranking students see in the app: by stars, then puzzles solved. Names are first name + last initial so it is safe to project.
+function leaderboard(){
+  const short=n=>{ const w=String(n||'Student').trim().split(/\s+/); return w.length>1 ? w[0]+' '+w[w.length-1][0]+'.' : w[0] };
+  const rows=roster.map(s=>{ const p=s.progress||{}; return {name:short(s.name), stars:totalStars(p), solved:LEVELS.filter(l=>p[l.n]).length} })
+    .sort((a,b)=>b.stars-a.stars || b.solved-a.solved || a.name.localeCompare(b.name));
+  let place=0, prev=null;
+  return `<table class="lb"><thead><tr><th>#</th><th class="l">Student</th><th class="l">Rank</th><th>Stars</th><th>Solved</th></tr></thead><tbody>${rows.map((r,i)=>{
+    if(r.stars!==prev){ place=i+1; prev=r.stars }
+    return `<tr class="${place<=3&&r.stars?'top'+place:''}"><td><b>${place}</b></td><td class="l"><b>${esc(r.name)}</b></td><td class="l">${rankFor(r.stars).title}</td><td><b>${r.stars}</b> ★</td><td>${r.solved}/${LEVELS.length}</td></tr>` }).join('')}</tbody></table>`;
 }
 function table(){
   // Each lesson's puzzle columns end with a Score column (out of 100, see lessonScore in course.js).
