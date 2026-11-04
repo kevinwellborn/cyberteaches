@@ -8,7 +8,8 @@
   const TANKDIR={'^':0,'>':1,'v':2,'<':3};
   const ARMED=ROVER.replace('<path d="M20 2.5 25 8.5H15z" fill="var(--rover)" stroke="var(--wheel)" stroke-width="1.5" stroke-linejoin="round"/>','<rect x="17.8" y="0.5" width="4.4" height="13" rx="1.4" fill="var(--wheel)"/>');
   const FLAG='<svg viewBox="0 0 24 24" aria-label="flag"><path d="M6 3v18" stroke="var(--wheel)" stroke-width="2"/><path d="M7 4h11l-3 4 3 4H7z" fill="#D9443C"/></svg>';
-  document.querySelectorAll('.board[data-map]').forEach(b=>{
+  function drawBoards(root){ (root||document).querySelectorAll('.board[data-map]').forEach(b=>{
+    if(b.dataset.drawn) return; b.dataset.drawn='1';
     const rows=b.dataset.map.split('|'), dir=+(b.dataset.dir||1);
     b.style.gridTemplateColumns=`repeat(${rows[0].length},var(--cell))`;
     if(b.dataset.cell) b.style.setProperty('--cell',b.dataset.cell);
@@ -27,7 +28,8 @@
     if(!b.closest('.slide') && innerWidth<640){ const cols=rows[0].length, room=innerWidth-110;
       const cur=parseFloat(getComputedStyle(b).getPropertyValue('--cell'))||44;
       if(cols*(cur+3)+12>room) b.style.setProperty('--cell',Math.max(16,Math.floor((room-12)/cols)-3)+'px') }
-  });
+   }) }
+  window.drawBoards=drawBoards; drawBoards();
 })();
 // Printed worksheets: shrink a page's content if it would spill onto a second sheet (11in = 1056px).
 (function(){
