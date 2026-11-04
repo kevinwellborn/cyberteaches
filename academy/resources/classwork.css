@@ -1,0 +1,61 @@
+/* Shared classwork styles for teacher resources (extracted from Lesson 1). */
+body{padding:24px 16px 60px}
+.toolbar{max-width:8.5in;margin:0 auto 16px;display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.toolbar .spacer{flex:1}
+.btn{border:2px solid var(--line);background:var(--panel);border-radius:10px;padding:8px 14px;font:700 15px var(--f-body);cursor:pointer;color:var(--ink);text-decoration:none}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.page{background:#fff;max-width:8.5in;min-height:11in;margin:0 auto 24px;padding:.6in .65in;box-shadow:0 2px 14px rgba(0,0,0,.08);font-size:15px}
+.head{display:flex;justify-content:space-between;align-items:flex-end;border-bottom:3px solid var(--ink);padding-bottom:10px;margin-bottom:16px;gap:20px}
+.head h1{font-size:28px}
+.name{font-size:14px;min-width:2.6in}
+.name div{border-bottom:1.5px solid var(--ink);height:26px;margin-bottom:6px}
+.key-ref{display:flex;gap:16px;flex-wrap:wrap;background:var(--panel-2);border:1px solid var(--line);border-radius:10px;padding:8px 12px;font-size:14px;margin-bottom:16px}
+.key-ref b{font-family:var(--f-mono)}
+h2{font-size:19px;margin:18px 0 6px}
+h2 .pts{font-family:var(--f-body);font-size:13px;color:var(--muted);font-weight:400;margin-left:6px}
+.instr{color:var(--muted);margin:0 0 10px}
+.q{display:grid;grid-template-columns:auto 1fr;gap:18px;align-items:start;margin:0 0 16px;break-inside:avoid}
+.q .num{font-family:var(--f-display);font-weight:800;font-size:18px}
+.task{display:flex;gap:22px;align-items:flex-start;flex-wrap:wrap}
+.lines{flex:1;min-width:2.4in}
+.ln{border-bottom:1.5px solid #9AA6A3;height:30px}
+.code{font-family:var(--f-mono);font-weight:600;font-size:15px;background:var(--panel-2);border-radius:6px;padding:2px 8px;display:inline-block}
+.board{--cell:34px;padding:4px;gap:2px}
+table.pat{border-collapse:collapse;width:100%;font-size:14px}
+table.pat th,table.pat td{border:1.5px solid var(--line);padding:8px;text-align:left;vertical-align:top}
+table.pat th{background:var(--panel-2);font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}
+table.pat td.blank{height:40px}
+.answer{color:var(--accent);font-weight:700}
+.teacher-tag{background:var(--accent);color:#fff;border-radius:999px;padding:3px 12px;font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase}
+.plan{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;font-size:14px;margin:8px 0 4px}
+.plan b{font-family:var(--f-mono)}
+@media print{
+  @page{size:letter;margin:0}
+  body{padding:0;background:#fff}
+  .toolbar{display:none}
+  .page{box-shadow:none;margin:0;max-width:none;width:8.5in;min-height:11in;page-break-after:always;break-after:page}
+  body.no-key .page.key{display:none}
+  .page{padding:.5in .6in;height:11in;overflow:hidden}
+  .board{--cell:28px}
+  .q{margin-bottom:10px} .ln{height:26px}
+  .page.key{font-size:13px} .page.key h2{margin:10px 0 4px} .page.key p{margin:0 0 5px}
+}
+/* Part E: language practice */
+.match{display:grid;grid-template-columns:1fr 1.6fr;gap:40px;font-size:15px}
+.match ol{margin:0;padding-left:1.4em} .match li{margin:0 0 14px}
+.match .es{color:var(--muted);font-style:italic;font-weight:400}
+.mc{margin:0 0 12px;break-inside:avoid} .mc p{margin:0 0 6px}
+.mc .opts{display:flex;gap:18px;flex-wrap:wrap;align-items:center;padding-left:1.4em}
+.mc .opts span{display:inline-flex;gap:6px;align-items:center}
+.bank{display:flex;gap:8px;flex-wrap:wrap;align-items:center;background:var(--panel-2);border:1px solid var(--line);border-radius:10px;padding:8px 12px;margin:0 0 10px}
+.bank span{border:1.5px solid var(--line);background:#fff;border-radius:999px;padding:2px 12px;font-weight:700}
+.frame{font-size:16px;margin:0 0 14px;line-height:2}
+.frame .gap{display:inline-block;min-width:1.6in;border-bottom:1.5px solid var(--ink);margin:0 4px}
+@media (max-width:640px){
+  .name{min-width:0;width:100%}
+  .q{grid-template-columns:auto minmax(0,1fr)}
+  .task>*{max-width:100%}
+  .task .board{--cell:30px}
+  .board.blank{--cell:28px}
+  .task .prog{font-size:13px}
+}

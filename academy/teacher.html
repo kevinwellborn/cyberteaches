@@ -136,6 +136,7 @@ small.rank{display:block;font-size:11px}
       CyberTeaches Academy <small>Teacher</small>
     </a>
     <div class="spacer"></div>
+    <a class="btn" href="resources/" style="text-decoration:none">Teacher resources</a>
     <div id="acct" style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"></div>
   </header>
   <main id="app"><p class="muted">Loading…</p></main>
@@ -218,6 +219,8 @@ function dashboard(){
     <div class="classes" id="classes"></div>
     <form class="newclass" id="newclass"><label class="label" for="cname" style="align-self:center">New class</label><input id="cname" placeholder="e.g. Period 3 Coding" maxlength="60" required><button class="btn primary" id="cbtn">Create class</button><span class="err" id="cerr" role="alert"></span></form>
     <div id="classview"></div><section id="loginsview"></section>
+    <section id="resview"><div class="toolbar"><h2>Teacher resources</h2><div class="spacer"></div><a class="btn primary" href="resources/">Open Teacher resources</a></div>
+      <p class="muted" style="margin:0">Lesson plans, slides to teach each lesson before students start the puzzles, and printable classwork with an answer key.</p></section>
     <section id="keyview"><div class="toolbar"><h2>Answer key</h2><div class="spacer"></div><button class="btn" id="keyBtn" aria-expanded="false">Show answers</button></div>
       <p class="muted" style="margin:0">A 3-star solution for every puzzle, for teachers only. Answers stay hidden until you press Show answers, so it is safe to project this page.</p><div id="keybody"></div></section>`;
   $('#keyBtn').onclick=toggleKey;

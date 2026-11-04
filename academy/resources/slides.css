@@ -1,0 +1,45 @@
+/* Shared slides styles for teacher resources (extracted from Lesson 1). */
+html,body{height:100%}
+body{overflow:hidden;background:#1C292C}
+.deck{position:fixed;inset:0;display:grid;place-items:center}
+/* 16:9 slide scaled to fit the window */
+.slide{display:none;width:1280px;height:720px;background:var(--bg);border-radius:0;padding:64px 80px;position:absolute;left:50%;top:50%;transform-origin:center;font-size:30px;overflow:hidden}
+.slide.on{display:flex;flex-direction:column}
+.slide h1{font-size:76px;font-weight:800;letter-spacing:-.02em}
+.slide h2{font-size:54px;font-weight:800;letter-spacing:-.01em;margin-bottom:28px}
+.slide h1 em,.slide h2 em{font-style:normal;color:var(--accent)}
+.slide p{margin:0 0 18px}
+.slide ul{margin:0;padding-left:1.1em} .slide li{margin:0 0 14px}
+.slide .muted{color:var(--muted)}
+.slide .kicker{font-size:22px;margin-bottom:14px;color:var(--accent)}
+.row{display:flex;gap:56px;align-items:center;flex:1}
+.row>.grow{flex:1;min-width:0}
+.title-slide{background:linear-gradient(135deg,var(--accent) 0%,#0B5E5C 100%);color:#fff;justify-content:center}
+.title-slide .label{color:rgba(255,255,255,.75)}
+.title-slide h1 em{color:#FFD27A}
+.box{background:var(--panel);border:2px solid var(--line);border-radius:20px;padding:24px 28px}
+.big{font-size:40px;font-weight:700}
+.legend{display:grid;grid-template-columns:auto 1fr;gap:14px 18px;align-items:center;font-size:26px}
+.legend .board{--cell:48px;padding:4px}
+.reveal{visibility:hidden} .reveal.shown{visibility:visible}
+.count{display:inline-block;background:var(--ink);color:#fff;border-radius:999px;padding:4px 18px;font-weight:700;font-size:24px}
+.hl{background:#FFE6A8;border-radius:10px;padding:4px 6px;margin:-4px -6px}
+.stars{color:#E9A21B;letter-spacing:4px}
+.foot{position:absolute;left:80px;right:80px;bottom:26px;display:flex;justify-content:space-between;font-size:16px;color:var(--muted)}
+.title-slide .foot{color:rgba(255,255,255,.7)}
+/* teacher notes + controls */
+.bar{position:fixed;right:14px;bottom:12px;display:flex;gap:8px;z-index:5}
+.bar button{font:700 14px var(--f-body);background:rgba(255,255,255,.12);color:#fff;border:1px solid rgba(255,255,255,.25);border-radius:8px;padding:6px 12px;cursor:pointer}
+.bar button:hover{background:rgba(255,255,255,.22)}
+.notes{position:fixed;left:14px;bottom:12px;max-width:min(620px,calc(100vw - 260px));background:#fff;color:var(--ink);border-radius:12px;padding:12px 16px;font-size:15px;box-shadow:0 8px 30px rgba(0,0,0,.35);z-index:5;display:none}
+.notes.on{display:block}
+.notes b{display:block;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);margin-bottom:4px}
+.note{display:none}
+@media print{
+  @page{size:13.333in 7.5in;margin:0}
+  html,body{height:auto;overflow:visible;background:#fff}
+  .deck{position:static;display:block}
+  .slide{display:flex!important;flex-direction:column;position:relative;left:0;top:0;transform:none!important;page-break-after:always;break-after:page;width:13.333in;height:7.5in}
+  .reveal{visibility:visible}
+  .bar,.notes{display:none!important}
+}

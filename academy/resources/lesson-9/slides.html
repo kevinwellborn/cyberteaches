@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Lesson 9 Slides · Tank patrols</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="../../../favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Atkinson+Hyperlegible:wght@400;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<link rel="stylesheet" href="../resources.css">
+<link rel="stylesheet" href="../slides.css">
+</head>
+<body>
+<div class="deck" id="deck">
+<section class="slide title-slide">
+  <span class="label" style="font-size:22px">CyberTeaches Academy · Lesson 9</span>
+  <h1 style="margin:18px 0 22px">Tank <em>patrols</em></h1>
+  <p style="font-size:32px;max-width:900px">Write patrols that look for tanks and keep going until the job is done.</p>
+  <div class="foot"><span>cyberteaches.com/academy</span><span>Press → to start</span></div>
+  <div class="note">A practice lesson with no new blocks: patrol programs with if tank ahead and repeat until no tanks left. Plan: warm-up 5 min, slides 15 min, classwork 12 min, coding 15 min, exit ticket 3 min.</div>
+</section>
+
+<section class="slide ">
+  <span class="label kicker">Today we will</span>
+  <h2>Learning goals</h2>
+  <ul class="big" style="font-weight:400;font-size:34px"><li>Write a <b>patrol</b>: move, look, fire if a tank is there, turn back</li><li>Use <b>repeat until no tanks left</b></li><li>Look to <b>both sides</b> of the road</li></ul>
+  <div class="note">Read the goals aloud. Students check them off with the exit ticket at the end.</div>
+</section>
+
+<section class="slide ">
+  <span class="label kicker">Warm-up · 3 minutes</span>
+  <h2>Security guard</h2>
+  <div class="row"><div class="grow"><p>A guard walks down a hallway. At every door they <b>look</b>. <b>If</b> the door is open, they close it.</p><p class="muted">What does the guard do at every door? When do they stop?</p></div><div class="box" style="width:420px"><p class="big" style="margin:0 0 8px">Patrol</p><p style="margin:0" class="reveal">Step, look, close if open. Stop when all doors are closed.</p></div></div>
+  <div class="note">The guard routine is exactly a patrol program: a repeated step with an if inside.</div>
+</section>
+
+<section class="slide ">
+  <span class="label kicker">Quick review</span>
+  <h2>Remember the patrol blocks</h2>
+  <div class="row"><div class="prog"><div class="rep logic" style="display:inline-block"><div class="head">if tank ahead</div><div class="inner"><span class="blk act">fire cannon</span></div></div><div class="rep " style="display:inline-block"><div class="head">repeat until no tanks left</div><div class="inner">&nbsp;</div></div></div><div class="grow"><p><b>if tank ahead</b>: fire only if a tank is in your line.</p><p><b>repeat until no tanks left</b>: keep going until every tank is gone.</p></div></div>
+  <div class="note">Quick review from Lesson 7.</div>
+</section>
+
+<section class="slide ">
+  <span class="label kicker">Big idea</span>
+  <h2>The <em>patrol</em> pattern</h2>
+  <div class="row"><div class="board" data-map="######|#.^.^#|#S...#|######" data-dir="1" style="--cell:64px"></div><div class="grow"><p>Move, look up, fire if a tank, look back.</p><div class="reveal"><div class="rep " style="display:inline-block"><div class="head">repeat 3 times</div><div class="inner"><span class="blk move">move forward</span><span class="blk move">turn left</span><div class="rep logic" style="display:inline-block"><div class="head">if tank ahead</div><div class="inner"><span class="blk act">fire cannon</span></div></div><span class="blk move">turn right</span></div></div></div></div></div>
+  <div class="note">Puzzle 9.1. Turning back (R) after looking keeps the rover facing down the road.</div>
+</section>
+
+<section class="slide ">
+  <span class="label kicker">Big idea</span>
+  <h2>Look to <em>both sides</em></h2>
+  <div class="row"><div class="board" data-map="########|#.^..^.#|#S.....#|#.v.v..#|########" data-dir="1" style="--cell:52px"></div><div class="grow"><p>Tanks above and below. Look up, look down.</p><div class="reveal" style="font-size:22px"><div class="rep " style="display:inline-block"><div class="head">repeat until no tanks left</div><div class="inner"><span class="blk move">move forward</span><span class="blk move">turn left</span><div class="rep logic" style="display:inline-block"><div class="head">if tank ahead</div><div class="inner"><span class="blk act">fire cannon</span></div></div><span class="blk move">turn right</span><span class="blk move">turn right</span><div class="rep logic" style="display:inline-block"><div class="head">if tank ahead</div><div class="inner"><span class="blk act">fire cannon</span></div></div><span class="blk move">turn left</span></div></div></div></div></div>
+  <div class="note">Puzzle 9.6. Two looks in each step: left (up) and, after two right turns, down.</div>
+</section>
+
+<section class="slide ">
+  <span class="label kicker">Let's try together · Puzzle 9.2</span>
+  <h2>Patrol below</h2>
+  <div class="row">
+      <div class="board" data-map="#######|#S....#|#.vv.v#|#######" data-dir="1" data-cell="80px"></div>
+      <div class="grow"><p>The tanks are below the road this time. Which way does the rover look?</p>
+        <div class="prog reveal" style="font-size:26px"><div class="rep "><div class="head">repeat <span class="num">4</span> times</div><div class="inner"><span class="blk move">move forward</span><span class="blk move">turn right</span><div class="rep logic"><div class="head">if tank ahead</div><div class="inner"><span class="blk act">fire cannon</span></div></div><span class="blk move">turn left</span></div></div></div>
+        <p class="reveal" style="margin-top:16px"><span class="count">6 blocks</span></p></div></div>
+  <div class="note">Puzzle 9.2: turn right to look down, then left to face the road again. Press → to reveal the answer.</div>
+</section>
+
+<section class="slide ">
+  <span class="label kicker">Think, pair, share · Puzzle 9.7</span>
+  <h2>Clear the road</h2>
+  <div class="row">
+      <div class="board" data-map="#S..&lt;.&lt;..G#" data-dir="1" data-cell="50px"></div>
+      <div class="grow"><p>Two tanks block the road to the flag. Clear them, then drive.</p>
+        <div class="prog reveal" style="font-size:26px"><div class="rep "><div class="head">repeat until no tanks left</div><div class="inner"><span class="blk act">fire cannon</span></div></div><div class="rep "><div class="head">repeat until at flag</div><div class="inner"><span class="blk move">move forward</span></div></div></div>
+        <p class="reveal" style="margin-top:16px"><span class="count">4 blocks</span></p></div></div>
+  <div class="note">Puzzle 9.7: until no tanks [X], then until flag [F]. Press → to reveal the answer.</div>
+</section>
+
+<section class="slide ">
+  <span class="label kicker">When it doesn't work</span>
+  <h2>Debugging tips</h2>
+  <ul style="font-size:30px"><li><b>Face it first.</b> The shell flies the way the rover faces.</li><li><b>Shells are limited.</b> Only fire when a tank is in your line of fire.</li><li><b>Red ! means danger.</b> Fire or move out of the tank's line on your next move.</li><li><b>Run, watch, fix.</b> Count tanks and shells before you run.</li></ul>
+  <div class="note">Remind students to turn back after looking, or the next move goes the wrong way.</div>
+</section>
+
+<section class="slide ">
+  <span class="label kicker">Classwork · 12 minutes</span>
+  <h2>Unplugged practice</h2>
+  <div class="row"><div class="grow"><p>Use the worksheet. Write programs with letters:</p>
+    <p class="code" style="font-size:28px;line-height:1.5">F = move forward &nbsp; L = turn left &nbsp; R = turn right<br>X = fire cannon</p>
+    <p class="code" style="font-size:26px;margin:0 0 6px">if tank [ X ]</p><p class="code" style="font-size:26px;margin:0 0 6px">until no tanks [ … ]</p></div>
+    <div class="box" style="width:400px"><p class="big" style="margin:0 0 8px">Parts</p><p style="margin:0">A. Trace the rover<br>B. Write the program<br>C. Fix the patrol<br>D. Design your own</p></div></div>
+  <div class="note">Hand out the Lesson 9 classwork. Students can work in pairs. Part D is a challenge for early finishers. The answer key is on the last page.</div>
+</section>
+
+<section class="slide title-slide">
+  <span class="label" style="font-size:22px">Your turn</span>
+  <h1 style="margin:18px 0 22px">Now <em>code</em> it!</h1>
+  <p style="font-size:34px">Go to <b>cyberteaches.com/academy</b>, sign in, and solve puzzles <b>9.1 to 9.10</b>.</p>
+  <p style="font-size:28px;opacity:.85">Move, look, fire if a tank, turn back. Repeat until no tanks are left.</p>
+  <div class="note">Students sign in with Google or the username and password from the Teacher Dashboard. Watch their stars live on the dashboard and help anyone stuck on the same puzzle.</div>
+</section>
+
+<section class="slide ">
+  <span class="label kicker">Exit ticket</span>
+  <h2>Before you go</h2>
+  <p>Fill in the patrol for tanks <b>below</b> the road:</p><div class="box" style="display:inline-block"><span class="code">until no tanks [ F ___ if tank [ X ] ___ ]</span></div>
+    <p class="reveal" style="margin-top:20px"><span class="code">until no tanks [ F R if tank [ X ] L ]</span></p>
+  <div class="note">Collect answers on sticky notes or in your LMS. Reveal the answer with → after students have written theirs.</div>
+</section>
+</div>
+<div class="notes" id="notes"><b>Teacher notes</b><span id="noteText"></span></div>
+<div class="bar"><button id="prev" aria-label="Previous slide">←</button><span id="num" style="color:#fff;font:700 14px var(--f-body);align-self:center;min-width:52px;text-align:center"></span><button id="next" aria-label="Next slide">→</button><button id="nBtn" title="Teacher notes (N)">Notes</button><button id="fBtn" title="Full screen (F)">Full screen</button></div>
+<script src="../resources.js"></script>
+<script src="../slides.js"></script>
+</body></html>
