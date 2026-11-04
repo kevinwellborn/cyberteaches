@@ -90,8 +90,8 @@ small.rank{display:block;font-size:11px}
 .lessonbtn:focus-visible{outline:2px solid #fff;outline-offset:2px}
 .lbtitle{font-size:20px;margin-bottom:8px}
 .lb td.l,.lb th.l{text-align:left}
-.lb tr.top1 td:first-child b{color:var(--coin,#C9971A)}
-.lb tr.top1 td,.lb tr.top2 td,.lb tr.top3 td{background:var(--panel-2)}
+.lb tr.place1 td:first-child b{color:var(--coin,#C9971A)}
+.lb tr.place1 td,.lb tr.place2 td,.lb tr.place3 td{background:var(--panel-2)}
 .lbpanel:fullscreen{max-width:none;padding:40px 8vw;overflow:auto;background:var(--panel)}
 .lbpanel:fullscreen .lbtitle{font-size:44px;margin-bottom:20px}
 .lbpanel:fullscreen .lb{font-size:26px}
@@ -408,7 +408,7 @@ function leaderboard(){
   let place=0, prev=null;
   return `<table class="lb"><thead><tr><th>#</th><th class="l">Student</th><th class="l">Rank</th><th>Stars</th><th>Solved</th></tr></thead><tbody>${rows.map((r,i)=>{
     if(r.stars!==prev){ place=i+1; prev=r.stars }
-    return `<tr class="${place<=3&&r.stars?'top'+place:''}"><td><b>${place}</b></td><td class="l"><b>${esc(r.name)}</b></td><td class="l">${rankFor(r.stars).title}</td><td><b>${r.stars}</b> ★</td><td>${r.solved}/${LEVELS.length}</td></tr>` }).join('')}</tbody></table>`;
+    return `<tr class="${place<=3&&r.stars?'place'+place:''}"><td><b>${place}</b></td><td class="l"><b>${esc(r.name)}</b></td><td class="l">${rankFor(r.stars).title}</td><td><b>${r.stars}</b> ★</td><td>${r.solved}/${LEVELS.length}</td></tr>` }).join('')}</tbody></table>`;
 }
 function table(){
   // Lessons start collapsed to just their Score (out of 100, see lessonScore in course.js). Clicking a lesson shows its puzzles.
