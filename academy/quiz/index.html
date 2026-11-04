@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Quiz Battle · Join</title>
+<meta name="description" content="Join a CyberTeaches Academy quiz battle with your game PIN.">
+<link rel="icon" href="../../favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Atkinson+Hyperlegible:wght@400;700&family=JetBrains+Mono:wght@400;600;800&display=swap">
+<link rel="stylesheet" href="../resources/resources.css">
+<link rel="stylesheet" href="quiz.css?v=3">
+</head><body>
+<div class="wrap" style="max-width:640px">
+  <div class="top"><a class="brand" href="../">CyberTeaches · Quiz Battle</a></div>
+  <main id="app" class="center"><p class="muted">Loading…</p></main>
+</div>
+<script src="../firebase-config.js"></script>
+<script src="../cloud.js?v=8"></script>
+<script src="../resources/resources.js"></script>
+<script src="questions.js?v=1"></script>
+<script src="quiz.js?v=2"></script>
+<script>
+const app = $('#app');
+let S = null;           // {pin, set, quiz, me, unsub: [], answered: {}}
+const params = new URLSearchParams(location.search);
+
+Cloud.onChange(c => {
+  if(!c.ready) return;
+  if(!c.enabled){ app.innerHTML = '<div class="card"><h2>Quiz Battle is not available</h2></div>'; return }
+  if(!c.user){ leave(); return signInView() }
+  if(!S) pinView();
+});
+
+function signInView(err){
+  app.innerHTML = `<div class="card" style="width:100%">
+    <h2 style="font-size:28px">Sign in to play</h2>
+    <p class="muted">Use the login from your teacher.</p>
+    <label class="label" for="cc">Class code</label><input id="cc" class="textin" maxlength="6" autocapitalize="characters" autocomplete="off">
+    <label class="label" for="un">Username</label><input id="un" class="textin" maxlength="24" autocapitalize="none" autocomplete="off" spellcheck="false">
+    <label class="label" for="pw">Password</label><input id="pw" class="textin" type="password" maxlength="40" autocomplete="current-password">
+    <p class="err" id="err" role="alert">${esc(err || '')}</p>
+    <button class="btn" id="sBtn" type="button" style="width:100%;background:var(--qbg-2);color:#fff">Sign in</button>
+    <div class="or">or</div>
+    <button class="btn" id="gBtn" type="button" style="width:100%;border:2px solid var(--qline)">${G_ICON}Sign in with Google</button></div>`;
+  const cc = $('#cc'); cc.oninput = () => { cc.value = cc.value.toUpperCase().replace(/[^A-Z0-9]/g, '') };
+  const go = async () => {
+    const code = cc.value, user = $('#un').value.trim().toLowerCase(), pass = $('#pw').value, err = $('#err');
+    if(code.length !== 6){ err.textContent = 'Class codes have 6 letters and numbers.'; return }
+    if(!user || !pass){ err.textContent = 'Type your username and password.'; return }
+    err.textContent = 'Signing in…';
+    try { await Cloud.signInStudent(code, user, pass) } catch(e){ err.textContent = 'That did not match. Check your class code, username and password.' }
+  };
+  $('#sBtn').onclick = go; $('#pw').onkeydown = e => { if(e.key === 'Enter') go() };
+  $('#gBtn').onclick = () => Cloud.signIn().catch(() => signInView('Sign-in did not work. Try again.'));
+}
+
+function pinView(err){
+  const name = shortName(Cloud.user.displayName || 'Student');
+  app.innerHTML = `<div class="card" style="width:100%">
+    <h2 style="font-size:30px">Join a game</h2>
+    <p class="muted">Playing as <b>${esc(name)}</b></p>
+    <input id="pin" class="textin" inputmode="numeric" maxlength="6" placeholder="Game PIN" aria-label="Game PIN" style="font-size:32px;letter-spacing:.1em" value="${esc((params.get('pin') || '').replace(/\D/g, '').slice(0, 6))}">
+    <p class="err" id="err" role="alert">${esc(err || '')}</p>
+    <button class="btn big" id="jBtn" type="button" style="width:100%;background:var(--qbg-2);color:#fff">Enter</button>
+    <p class="muted" style="font-size:14px;margin:14px 0 0">Not you? <button class="btn" id="outBtn" type="button" style="font-size:14px;padding:4px 10px;border:1px solid var(--qline)">Sign out</button></p></div>`;
+  const pin = $('#pin'); pin.oninput = () => { pin.value = pin.value.replace(/\D/g, '') };
+  pin.onkeydown = e => { if(e.key === 'Enter') join() };
+  $('#jBtn').onclick = join; $('#outBtn').onclick = () => Cloud.signOut();
+  pin.focus();
+}
+
+async function join(){
+  const pin = $('#pin').value, err = $('#err');
+  if(pin.length !== 6){ err.textContent = 'The game PIN has 6 numbers.'; return }
+  err.textContent = 'Joining…';
+  try {
+    const q = await quizRef(pin).get();
+    if(!q.exists || q.data().state === 'end'){ err.textContent = 'No game with that PIN. Check the PIN on the screen.'; return }
+    const set = QUIZZES[q.data().lesson];
+    if(!set){ err.textContent = 'This game needs a newer page. Reload and try again.'; return }
+    const me = quizRef(pin).collection('players').doc(Cloud.user.uid);
+    const mine = await me.get();
+    if(!mine.exists) await me.set({name: shortName(Cloud.user.displayName || 'Student'), score: 0, joinedAt: TS()});
+    watch(pin, set);
+  } catch(e){ console.error(e); err.textContent = 'Could not join. Check your internet connection and try again.' }
+}
+
+function leave(){ if(S){ S.unsub.forEach(u => u()); S = null } }
+
+function watch(pin, set){
+  leave();
+  S = {pin, set, quiz: null, me: null, unsub: [], answered: {}, shown: null};
+  S.unsub.push(quizRef(pin).onSnapshot(s => {
+    if(!s.exists){ leave(); pinView('The game has ended.'); return }
+    S.quiz = s.data(); render();
+  }, e => console.error(e)));
+  S.unsub.push(quizRef(pin).collection('players').doc(Cloud.user.uid).onSnapshot(s => {
+    if(!s.exists){ if(S.me){ leave(); pinView('You were removed from the game.') } return }
+    S.me = s.data(); render();
+  }, e => console.error(e)));
+}
+
+function meBar(){ return `<div class="me"><span>${esc(S.me ? S.me.name : '')}</span><span>${S.me ? S.me.score || 0 : 0} pts</span></div>` }
+
+function render(){
+  if(!S || !S.quiz || !S.me) return;
+  const st = S.quiz.state, q = S.quiz.q;
+  const key = [st, q, S.answered[q] != null, S.late === q, S.me.score, S.me.last && S.me.last.q].join(':');
+  if(key === S.shown) return; S.shown = key;
+  app.className = 'center'; app.style.flex = '';
+  if(st === 'lobby'){
+    app.innerHTML = meBar() + `<h1 style="font-size:40px">You're in!</h1><p class="muted" style="font-size:20px">Look for your name on the big screen. The game starts soon.</p>`;
+  } else if(st === 'question'){
+    const Q = S.set.questions[q];
+    if(S.late === q){
+      app.innerHTML = meBar() + `<p class="result bad">Too late</p><p class="muted">Time ran out before your answer arrived.</p>`; return }
+    if(S.answered[q] != null){
+      app.innerHTML = meBar() + `<div class="opt o${S.answered[q]}" style="width:140px;height:140px;justify-content:center;padding:0">${SHAPES[S.answered[q]].replace('class="shape"', 'class="shape" style="width:80px;height:80px"')}</div>
+        <h2 style="font-size:32px">Answer locked</h2><p class="muted">Waiting for everyone…</p>`;
+      return;
+    }
+    app.className = ''; app.style.flex = '1'; app.style.display = 'flex'; app.style.flexDirection = 'column';
+    app.innerHTML = meBar() + `<div class="stq">${q + 1}. ${esc(Q.q)}</div>${Q.pic ? `<div class="pic" style="flex:none;min-height:0">${Q.pic}</div>` : ''}
+      <div class="sopts">${Q.opts.map((o, k) => optButton(k, o, 'button')).join('')}</div>`;
+    drawBoards(app);
+    app.querySelectorAll('button.opt').forEach(b => b.onclick = () => answer(q, +b.dataset.i));
+  } else if(st === 'reveal' || st === 'board'){
+    const L = S.me.last && S.me.last.q === q ? S.me.last : null;
+    app.innerHTML = meBar() + (L && L.correct
+      ? `<p class="result good">Correct!</p><p class="big-num">+${L.pts}</p>${(S.me.streak || 0) > 1 ? `<p class="pill">🔥 ${S.me.streak} in a row</p>` : ''}`
+      : L && L.choice >= 0 ? `<p class="result bad">Not quite</p><p class="muted" style="font-size:20px">Look at the big screen to see the right answer.</p>`
+      : `<p class="result bad">Time's up</p><p class="muted" style="font-size:20px">Be quick on the next one!</p>`)
+      + `<p style="font-size:22px" id="rank"></p>`;
+    showRank();
+  } else if(st === 'end'){
+    app.innerHTML = meBar() + `<h1 style="font-size:40px">Game over</h1><p class="big-num">${S.me.score || 0}</p><p style="font-size:22px" id="rank"></p>
+      <button class="btn" id="againBtn" type="button">Join another game</button>`;
+    showRank();
+    $('#againBtn').onclick = () => { leave(); pinView() };
+  }
+}
+async function showRank(){
+  try {
+    const s = await quizRef(S.pin).collection('players').get();
+    const scores = s.docs.map(d => d.data().score || 0), mine = S.me.score || 0;
+    const rank = 1 + scores.filter(v => v > mine).length, el = $('#rank');
+    if(el) el.innerHTML = `You are <b>${rank === 1 ? '1st' : rank === 2 ? '2nd' : rank === 3 ? '3rd' : rank + 'th'}</b> of ${scores.length}`;
+  } catch(e){ console.error(e) }
+}
+async function answer(q, choice){
+  S.answered[q] = choice; render();
+  try {
+    await quizRef(S.pin).collection('answers').doc(q + '_' + Cloud.user.uid).set({uid: Cloud.user.uid, q, choice, at: TS()});
+  } catch(e){
+    console.error(e); S.late = q; render();
+  }
+}
+if(params.get('pin')) history.replaceState(null, '', location.pathname + '?pin=' + params.get('pin').replace(/\D/g, '').slice(0, 6));
+</script>
+</body></html>

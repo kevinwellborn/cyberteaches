@@ -1,0 +1,248 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Quiz Battle · Host</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="../../favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Atkinson+Hyperlegible:wght@400;700&family=JetBrains+Mono:wght@400;600;800&display=swap">
+<link rel="stylesheet" href="../resources/resources.css">
+<link rel="stylesheet" href="quiz.css?v=3">
+</head><body>
+<div class="wrap">
+  <div class="top"><a class="brand" href="../teacher.html">CyberTeaches · Quiz Battle</a><div class="spacer"></div><span id="status" class="pill" hidden></span><button class="btn ghost" id="fsBtn" type="button">Full screen</button></div>
+  <main id="app" class="center"><p class="muted">Loading…</p></main>
+</div>
+<script src="../firebase-config.js"></script>
+<script src="../cloud.js?v=8"></script>
+<script src="../resources/resources.js"></script>
+<script src="questions.js?v=1"></script>
+<script src="quiz.js?v=2"></script>
+<script>
+const app = $('#app');
+let G = null;          // current game: {pin, lesson, set, quiz (latest doc), players: [], unsub: []}
+let timer = null, answersUnsub = null;
+$('#fsBtn').onclick = () => { const d = document.documentElement; document.fullscreenElement ? document.exitFullscreen() : (d.requestFullscreen || (() => {})).call(d) };
+
+Cloud.onChange(c => {
+  if(!c.ready) return;
+  if(!c.enabled){ app.innerHTML = '<div class="card"><h2>Sign-in is not available</h2><p class="muted">The quiz needs the online class features.</p></div>'; return }
+  if(!c.user){ G = null; return signInView() }
+  if(!G) resumeOrSetup();
+});
+
+function signInView(err){
+  app.innerHTML = `<div class="card" style="width:min(440px,100%)">
+    <h2 style="font-size:30px">Host a quiz battle</h2>
+    <p class="muted">Sign in with your teacher account.</p>
+    <button class="btn" id="gBtn" type="button" style="width:100%;border:2px solid var(--qline)">${G_ICON}Sign in with Google</button>
+    <div class="or">or</div>
+    <label class="label" for="em">Email</label><input id="em" class="textin" type="email" autocomplete="email" style="text-align:left;font-size:18px">
+    <label class="label" for="pw">Password</label><input id="pw" class="textin" type="password" autocomplete="current-password" style="text-align:left;font-size:18px">
+    <p class="err" id="err" role="alert">${esc(err || '')}</p>
+    <button class="btn" id="eBtn" type="button" style="width:100%;background:var(--qbg-2);color:#fff">Sign in</button></div>`;
+  $('#gBtn').onclick = () => Cloud.signIn().catch(e => signInView('Sign-in did not work. Try again.'));
+  const go = () => Cloud.signInTeacher($('#em').value, $('#pw').value).catch(() => { $('#err').textContent = 'That email and password did not match.' });
+  $('#eBtn').onclick = go; $('#pw').onkeydown = e => { if(e.key === 'Enter') go() };
+}
+
+async function resumeOrSetup(){
+  let pin = null; try { pin = sessionStorage.getItem('quizPin') } catch(e){}
+  if(pin){
+    try { const s = await quizRef(pin).get(); const d = s.data();
+      if(s.exists && d.hostUid === Cloud.user.uid && d.state !== 'end'){ startWatching(pin, d.lesson); return } } catch(e){ console.error(e) }
+  }
+  setupView();
+}
+
+function setupView(msg){
+  stopAll(); G = null; app.className = 'center'; app.style.flex = '';
+  const sets = Object.entries(QUIZZES);
+  app.innerHTML = `<h1 style="font-size:clamp(36px,6vw,64px)">Quiz Battle</h1>
+    <p class="muted" style="font-size:20px;max-width:640px">Students join on their own devices with a game PIN and race to answer. Faster correct answers score more points.</p>
+    ${msg ? `<p class="pill">${esc(msg)}</p>` : ''}
+    <div style="display:flex;gap:14px;flex-wrap:wrap;justify-content:center">${sets.map(([n, s]) => `<div class="card" style="width:300px;text-align:left">
+      <span class="muted" style="font-weight:700;font-size:13px;letter-spacing:.08em;text-transform:uppercase">Lesson ${n}</span>
+      <h2 style="font-size:26px;margin:6px 0 4px">${esc(s.title)}</h2>
+      <p class="muted" style="margin:0 0 14px">${s.questions.length} questions</p>
+      <button class="btn" data-n="${n}" style="background:var(--qbg-2);color:#fff;width:100%">Create game</button></div>`).join('')}</div>
+    <p class="muted" style="font-size:15px">More lessons are coming soon. <button class="btn ghost" id="outBtn" type="button" style="font-size:14px;padding:6px 12px">Sign out</button></p>`;
+  app.querySelectorAll('button[data-n]').forEach(b => b.onclick = () => createGame(+b.dataset.n, b));
+  $('#outBtn').onclick = () => Cloud.signOut();
+}
+
+async function createGame(lesson, btn){
+  btn.disabled = true; btn.textContent = 'Creating…';
+  for(let attempt = 0; attempt < 5; attempt++){
+    const pin = String(100000 + Math.floor(Math.random() * 900000));
+    try {
+      await quizRef(pin).set({hostUid: Cloud.user.uid, lesson, state: 'lobby', q: -1, total: QUIZZES[lesson].questions.length, createdAt: TS()});
+      try { sessionStorage.setItem('quizPin', pin) } catch(e){}
+      startWatching(pin, lesson); return;
+    } catch(e){ if(e.code !== 'permission-denied' || attempt === 4){ console.error(e); btn.disabled = false; btn.textContent = 'Create game'; alert('Could not create the game. Check your internet connection and try again.'); return } }
+  }
+}
+
+function stopAll(){ clearInterval(timer); timer = null; if(answersUnsub){ answersUnsub(); answersUnsub = null } if(G) G.unsub.forEach(u => u()); }
+
+function startWatching(pin, lesson){
+  stopAll();
+  G = {pin, lesson, set: QUIZZES[lesson], quiz: null, players: [], unsub: [], shown: null};
+  G.unsub.push(quizRef(pin).collection('players').onSnapshot(s => {
+    G.players = s.docs.map(d => ({uid: d.id, ...d.data()}));
+    if(G.quiz && G.quiz.state === 'lobby') lobbyNames();
+    if(G.quiz && G.quiz.state === 'question') answerCount();
+    if(G.quiz && ['reveal', 'board', 'end'].includes(G.quiz.state)) render();
+  }, e => console.error(e)));
+  G.unsub.push(quizRef(pin).onSnapshot(s => {
+    if(!s.exists){ setupView('That game has ended.'); return }
+    G.quiz = s.data({serverTimestamps: 'estimate'});
+    const key = G.quiz.state + ':' + G.quiz.q;
+    if(key !== G.shown){ G.shown = key; render() }
+  }, e => console.error(e)));
+  const st = $('#status'); st.hidden = false; st.textContent = 'PIN ' + pin;
+}
+
+function render(){
+  const s = G.quiz.state;
+  if(s === 'lobby') lobbyView();
+  else if(s === 'question') questionView();
+  else if(s === 'reveal') revealView();
+  else if(s === 'board') boardView();
+  else if(s === 'end') endView();
+}
+
+// ---------- lobby ----------
+function lobbyView(){
+  app.className = 'center'; app.style.flex = '';
+  const url = location.origin + location.pathname.replace(/host\.html$/, '');
+  app.innerHTML = `<p style="font-size:22px;margin:0">Go to <b>${esc(url.replace(/^https?:\/\//, ''))}</b> and enter the game PIN</p>
+    <div class="pinbox"><span class="muted" style="font-weight:700">Game PIN</span><span class="pin">${G.pin}</span></div>
+    <p style="font-size:20px;margin:0"><b id="pc">0</b> players · Lesson ${G.lesson}: ${esc(G.set.title)}</p>
+    <div class="names" id="names"></div>
+    <div style="display:flex;gap:12px"><button class="btn ghost" id="endBtn" type="button">Cancel game</button><button class="btn big" id="startBtn" type="button" disabled>Start</button></div>
+    <p class="muted" style="font-size:14px;margin:0">Tap a name to remove that player.</p>`;
+  $('#startBtn').onclick = () => goQuestion(0);
+  $('#endBtn').onclick = cancelGame;
+  lobbyNames();
+}
+function lobbyNames(){
+  const box = $('#names'); if(!box) return;
+  box.innerHTML = G.players.map(p => `<span data-uid="${esc(p.uid)}" style="cursor:pointer" title="Remove">${esc(p.name)}</span>`).join('');
+  box.querySelectorAll('span').forEach(el => el.onclick = () => quizRef(G.pin).collection('players').doc(el.dataset.uid).delete().catch(console.error));
+  $('#pc').textContent = G.players.length; $('#startBtn').disabled = !G.players.length;
+}
+async function cancelGame(){
+  if(!confirm('Cancel this game?')) return;
+  try { sessionStorage.removeItem('quizPin') } catch(e){}
+  await quizRef(G.pin).update({state: 'end'}).catch(console.error);
+  $('#status').hidden = true; setupView();
+}
+
+// ---------- question ----------
+function goQuestion(i){
+  const Q = G.set.questions[i];
+  quizRef(G.pin).update({state: 'question', q: i, time: Q.time, startedAt: TS()}).catch(e => { console.error(e); alert('Could not reach the game. Check your connection.') });
+}
+function questionView(){
+  const i = G.quiz.q, Q = G.set.questions[i];
+  app.className = ''; app.style.flex = '1';
+  app.innerHTML = `<div class="qhead"><div class="timer" id="tm"><span id="tmn">${Q.time}</span></div><div class="qtext">${esc(Q.q)}</div>
+      <div class="count"><span id="ac">0</span><small>answers</small></div></div>
+    <div class="pic">${Q.pic ? `<div class="picwrap">${Q.pic}</div>` : `<span class="pill">Question ${i + 1} of ${G.set.questions.length}</span>`}</div>
+    <div class="opts">${Q.opts.map((o, k) => optButton(k, o)).join('')}</div>
+    <div class="bar"><span class="pill" style="align-self:center">Question ${i + 1} of ${G.set.questions.length}</span><div style="flex:1"></div><button class="btn ghost" id="skipBtn" type="button">Show answer</button></div>`;
+  drawBoards(app);
+  $('#skipBtn').onclick = () => reveal();
+  const start = G.quiz.startedAt ? G.quiz.startedAt.toMillis() : Date.now();
+  const end = Math.min(start, Date.now()) + Q.time * 1000;
+  clearInterval(timer);
+  const tick = () => { const left = Math.max(0, end - Date.now());
+    $('#tmn').textContent = Math.ceil(left / 1000); $('#tm').style.setProperty('--p', (left / (Q.time * 1000) * 100) + '%');
+    if(left <= 0) reveal(i) };
+  timer = setInterval(tick, 200); tick();
+  if(answersUnsub) answersUnsub();
+  G.answers = [];
+  answersUnsub = quizRef(G.pin).collection('answers').where('q', '==', i).onSnapshot(s => {
+    G.answers = s.docs.map(d => d.data({serverTimestamps: 'estimate'})); answerCount();
+  }, e => console.error(e));
+}
+function answerCount(){
+  const el = $('#ac'); if(!el) return; el.textContent = G.answers.length;
+  if(G.players.length && G.answers.length >= G.players.length){ const q = G.quiz.q; setTimeout(() => reveal(q), 600) }
+}
+
+// ---------- reveal and scoring ----------
+let revealing = false;
+async function reveal(only){
+  if(revealing || !G || G.quiz.state !== 'question' || (typeof only === 'number' && only !== G.quiz.q)) return; revealing = true;
+  clearInterval(timer); timer = null;
+  const i = G.quiz.q, Q = G.set.questions[i];
+  try {
+    const [qs, as] = await Promise.all([quizRef(G.pin).get(), quizRef(G.pin).collection('answers').where('q', '==', i).get()]);
+    const startedAt = qs.data().startedAt.toMillis();
+    const byUid = {}; as.docs.forEach(d => { const a = d.data(); byUid[a.uid] = a });
+    const batch = Cloud.db.batch();
+    G.players.forEach(p => {
+      const a = byUid[p.uid], correct = !!a && a.choice === Q.a;
+      const streak = correct ? (p.streak || 0) + 1 : 0;
+      const pts = correct ? points(a.at.toMillis() - startedAt, Q.time, streak) : 0;
+      batch.update(quizRef(G.pin).collection('players').doc(p.uid), {
+        score: firebase.firestore.FieldValue.increment(pts), streak,
+        last: {q: i, choice: a ? a.choice : -1, correct, pts}
+      });
+    });
+    batch.update(quizRef(G.pin), {state: 'reveal'});
+    await batch.commit();
+  } catch(e){ console.error(e); alert('Could not score this question. Check your connection, then press Show answer again.') }
+  revealing = false;
+}
+function revealView(){
+  clearInterval(timer); if(answersUnsub){ answersUnsub(); answersUnsub = null }
+  const i = G.quiz.q, Q = G.set.questions[i];
+  const tally = [0, 0, 0, 0]; G.players.forEach(p => { if(p.last && p.last.q === i && p.last.choice >= 0) tally[p.last.choice]++ });
+  const right = tally[Q.a], total = G.players.length;
+  app.className = ''; app.style.flex = '1';
+  app.innerHTML = `<div class="qhead"><div class="qtext">${esc(Q.q)}</div></div>
+    <div class="pic">${Q.pic ? `<div class="picwrap">${Q.pic}</div>` : ''}</div>
+    <div class="opts">${Q.opts.map((o, k) => optButton(k, o, 'div', k === Q.a ? 'right' : 'dim', `<span class="tally">${tally[k]}</span>`)).join('')}</div>
+    <div class="bar"><span class="pill" style="align-self:center">${right} of ${total} correct</span><div style="flex:1"></div><button class="btn big" id="nextBtn" type="button">Next</button></div>`;
+  drawBoards(app);
+  $('#nextBtn').onclick = () => quizRef(G.pin).update({state: 'board'}).catch(console.error);
+}
+
+// ---------- scoreboard ----------
+const ranked = () => [...G.players].sort((a, b) => (b.score || 0) - (a.score || 0));
+function boardView(){
+  const i = G.quiz.q, last = i >= G.set.questions.length - 1;
+  app.className = 'center'; app.style.flex = '';
+  const top = ranked().slice(0, 5);
+  app.innerHTML = `<h1 style="font-size:48px">Scoreboard</h1>
+    <div class="board-list">${top.map((p, k) => `<div class="row" style="animation-delay:${k * .12}s"><span class="rk">${k + 1}</span><span class="nm">${esc(p.name)}</span>
+      <span class="sc">${p.score || 0}${p.last && p.last.q === i && p.last.pts ? `<span class="up">+${p.last.pts}</span>` : ''}</span></div>`).join('') || '<p>No players yet.</p>'}</div>
+    <button class="btn big" id="nextBtn" type="button">${last ? 'See the winners' : 'Next question'}</button>`;
+  $('#nextBtn').onclick = () => last ? quizRef(G.pin).update({state: 'end'}).catch(console.error) : goQuestion(i + 1);
+}
+
+// ---------- podium ----------
+function endView(){
+  try { sessionStorage.removeItem('quizPin') } catch(e){}
+  app.className = 'center'; app.style.flex = '';
+  const r = ranked(), step = (p, k) => p ? `<div class="step p${k}"><span class="who">${esc(p.name)}</span><span class="pts">${p.score || 0} pts</span><div class="block">${k}</div></div>` : '';
+  app.innerHTML = `<h1 style="font-size:52px">Winners</h1>
+    <div class="podium">${step(r[1], 2)}${step(r[0], 1)}${step(r[2], 3)}</div>
+    <div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-top:10px">
+      <button class="btn ghost" id="allBtn" type="button">Full results</button>
+      <button class="btn ghost" id="csvBtn" type="button">Download results (CSV)</button>
+      <button class="btn" id="newBtn" type="button">New game</button></div>
+    <div class="board-list" id="all" hidden>${r.map((p, k) => `<div class="row"><span class="rk">${k + 1}</span><span class="nm">${esc(p.name)}</span><span class="sc">${p.score || 0}</span></div>`).join('')}</div>`;
+  $('#allBtn').onclick = () => { $('#all').hidden = !$('#all').hidden };
+  $('#newBtn').onclick = () => { $('#status').hidden = true; setupView() };
+  $('#csvBtn').onclick = () => {
+    const rows = [['Rank', 'Name', 'Score']].concat(r.map((p, k) => [k + 1, p.name, p.score || 0]));
+    const csv = rows.map(row => row.map(v => `"${String(v).replace(/"/g, '""')}"`).join(',')).join('\n');
+    const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([csv], {type: 'text/csv'}));
+    a.download = `quiz-lesson-${G.lesson}-${G.pin}.csv`; a.click();
+  };
+}
+</script>
+</body></html>

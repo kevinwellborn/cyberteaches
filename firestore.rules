@@ -50,5 +50,43 @@ service cloud.firestore {
         allow read, write: if signedIn() && teacherOf(code);
       }
     }
+
+    // Live quiz battles. Anyone signed in can host (hostUid is their own uid) or join with the 6-digit PIN.
+    match /quizzes/{pin} {
+      function quiz() { return get(/databases/$(database)/documents/quizzes/$(pin)).data; }
+      function isHost() { return quiz().hostUid == request.auth.uid; }
+      allow read: if signedIn();
+      allow create: if signedIn() && pin.matches('^[0-9]{6}$')
+        && request.resource.data.hostUid == request.auth.uid;
+      allow update, delete: if signedIn() && resource.data.hostUid == request.auth.uid
+        && request.resource.data.hostUid == resource.data.hostUid;
+
+      // Players join themselves with a score of 0. Only the host changes scores or removes players.
+      match /players/{uid} {
+        allow read: if signedIn();
+        allow create: if signedIn() && request.auth.uid == uid && quiz().state != 'end'
+          && request.resource.data.keys().hasOnly(['name', 'score', 'joinedAt'])
+          && request.resource.data.name is string && request.resource.data.name.size() <= 40
+          && request.resource.data.score == 0;
+        allow update: if signedIn() && isHost();
+        allow delete: if signedIn() && (isHost() || request.auth.uid == uid);
+      }
+
+      // One answer per player per question, only while that question is open. The host reads and scores them.
+      match /answers/{id} {
+        allow read: if signedIn() && (isHost() || resource.data.uid == request.auth.uid);
+        allow create: if signedIn()
+          && request.resource.data.keys().hasOnly(['uid', 'q', 'choice', 'at'])
+          && request.resource.data.uid == request.auth.uid
+          && request.resource.data.q is int && request.resource.data.choice is int
+          && request.resource.data.choice >= 0 && request.resource.data.choice <= 3
+          && id == string(request.resource.data.q) + '_' + request.auth.uid
+          && request.resource.data.at == request.time
+          && quiz().state == 'question' && quiz().q == request.resource.data.q
+          && request.time < quiz().startedAt + duration.value(quiz().time + 3, 's')
+          && exists(/databases/$(database)/documents/quizzes/$(pin)/players/$(request.auth.uid));
+        allow delete: if signedIn() && isHost();
+      }
+    }
   }
 }
