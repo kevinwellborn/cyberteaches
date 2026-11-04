@@ -45,11 +45,19 @@ A self-paced, block-based coding course. Students guide a rover through lessons 
   map) fire if the rover stays in front of their cannon for a second move, and shells are limited.
 - Lesson 8: Tank practice (10 easy puzzles: turn and fire, no new blocks)
 - Lesson 9: Tank patrols (10 puzzles: practice with `if tank ahead` and `repeat until no tanks left`)
-- Lesson 10: If / else (10 puzzles). The `if … else` block checks path ahead, to the left or right, crystal here, or tank
+- Lesson 10: Tank missions (10 puzzles with limited shells and a block limit, `maxBlocks` in `course.js`). There are too
+  many tanks for one block each, so students must use repeat. The limit is the goal plus 4: 3 stars at the goal, 2 stars
+  within 2 of it, 1 star for any other program inside the limit.
+- Lesson 11: If / else (10 puzzles). The `if … else` block checks path ahead, to the left or right, crystal here, or tank
   ahead (when the puzzle has the cannon). Puzzles go from a snake path to a maze runner with nested if / else.
-- Lesson 11: If / else practice (10 easy puzzles, no new blocks)
-- Lesson 12: If / else challenges (10 puzzles: longer mazes, right-hand rule, tanks and crystals together)
+- Lesson 12: If / else practice (10 easy puzzles, no new blocks)
+- Lesson 13: If / else challenges (10 puzzles: longer mazes, right-hand rule, tanks and crystals together)
 - Coming soon: Destroy walls
+
+Ranks and leaderboard: students are promoted (Recruit to General, `RANKS` in `course.js`) as their total stars grow.
+Signed-in students in a class see a class leaderboard (first name, last initial, stars, puzzles solved), stored in
+`classes/{code}/board/{uid}`. The teacher dashboard shows a score out of 100 for each lesson: every puzzle counts
+3 stars = 100, 2 stars = 90, 1 star = 80, unsolved = 0, averaged over the lesson.
 
 ## Lesson pages for search engines
 

@@ -31,6 +31,20 @@ service cloud.firestore {
         allow delete: if signedIn() && (request.auth.uid == uid || teacherOf(code));
       }
 
+      // Leaderboard: a short name, total stars and puzzles solved. Students in the class (and its teacher) can read it;
+      // each student writes only their own row.
+      match /board/{uid} {
+        allow read: if signedIn() && (teacherOf(code)
+          || get(/databases/$(database)/documents/users/$(request.auth.uid)).data.get('classCode', '') == code);
+        allow create, update: if signedIn() && request.auth.uid == uid
+          && exists(/databases/$(database)/documents/classes/$(code))
+          && request.resource.data.keys().hasOnly(['name', 'stars', 'solved', 'updatedAt'])
+          && request.resource.data.name is string && request.resource.data.name.size() <= 40
+          && request.resource.data.stars is int && request.resource.data.stars >= 0 && request.resource.data.stars <= 600
+          && request.resource.data.solved is int && request.resource.data.solved >= 0 && request.resource.data.solved <= 200;
+        allow delete: if signedIn() && (request.auth.uid == uid || teacherOf(code));
+      }
+
       // Student logins the teacher made (name, username, password). Only the class's teacher can see or change them.
       match /logins/{uid} {
         allow read, write: if signedIn() && teacherOf(code);

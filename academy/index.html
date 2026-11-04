@@ -76,6 +76,21 @@ h1,h2,h3{font-family:var(--f-display);text-wrap:balance;margin:0;line-height:1.1
 .hero-art{min-width:0}
 .hero-art .board{max-width:420px;margin-left:auto}
 .units{display:grid;gap:18px}
+.rankbar{display:flex;gap:16px;align-items:center;flex-wrap:wrap;background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:16px 20px;margin-bottom:18px}
+.rankbar .rk{flex:1 1 220px;min-width:0}
+.rankbar h2{font-size:22px;margin-top:2px}
+.rankbar .meter-bar{margin-top:8px}
+.badge{flex:none;width:52px;height:58px}
+.badge text{font-family:var(--f-display);font-weight:800;font-size:15px;fill:#fff}
+.promo{display:flex;gap:12px;align-items:center;justify-content:center;background:var(--accent-soft);border-radius:12px;padding:10px 14px;margin:0 0 14px;text-align:left}
+.promo .badge{width:40px;height:45px}
+.lb{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums;font-size:15px}
+.lb th,.lb td{padding:8px 6px;border-bottom:1px solid var(--line);text-align:left}
+.lb th{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+.lb td.n{text-align:right} .lb th.n{text-align:right}
+.lb tr.me td{background:var(--accent-soft);font-weight:700}
+.lb small{display:block;color:var(--muted);font-weight:400}
+.lbwrap{max-height:55vh;overflow:auto}
 .unit{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:22px;display:grid;grid-template-columns:auto minmax(0,1fr);gap:18px;align-items:start}
 .unit-num{font-family:var(--f-display);font-weight:800;font-size:15px;width:52px;height:52px;border-radius:14px;display:grid;place-items:center;color:#fff}
 .unit h2{font-size:24px}
@@ -192,6 +207,7 @@ h1,h2,h3{font-family:var(--f-display);text-wrap:balance;margin:0;line-height:1.1
 .prog-head{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
 .prog-head .spacer{flex:1}
 .count{font-family:var(--f-mono);font-size:13px;color:var(--muted)}
+.count.full{color:var(--bad);font-weight:700}
 .target{font-size:13px;color:var(--muted);margin:6px 0 10px;min-height:20px}
 .target b{color:var(--ink)}
 
@@ -460,6 +476,39 @@ function buildBoard(level){
   return world;
 }
 
+// ---------- ranks and leaderboard ----------
+function badgeSvg(r){ return `<svg class="badge" viewBox="0 0 52 58" aria-hidden="true"><path d="M26 2 48 10v18c0 14-9.5 23.5-22 28C13.5 51.5 4 42 4 28V10z" fill="${r.i>=9?'var(--coin)':'var(--accent)'}" stroke="var(--ink)" stroke-opacity=".25" stroke-width="2"/><path d="M15 36l11-7 11 7M15 43l11-7 11 7" fill="none" stroke="#fff" stroke-opacity=".5" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><text x="26" y="25" text-anchor="middle">${r.i+1}</text></svg>` }
+function rankBar(){
+  const stars=totalStars(progress), r=rankFor(stars), bar=h('section','rankbar');
+  const toNext = r.next ? `${r.next[0]-stars} more star${r.next[0]-stars===1?'':'s'} to ${r.next[1]}` : 'Top rank. Amazing work!';
+  const pct = r.next ? (stars-r.min)/(r.next[0]-r.min)*100 : 100;
+  bar.innerHTML=`${badgeSvg(r)}<div class="rk"><span class="label">Your rank · ${stars} star${stars===1?'':'s'}</span><h2>${r.title}</h2>
+    <div class="meter-bar" title="${toNext}"><i style="width:${pct}%"></i></div><span class="label" style="text-transform:none;letter-spacing:0">${toNext}</span></div>`;
+  const p=Cloud&&Cloud.user&&Cloud.profile||{};
+  if(Cloud&&Cloud.user&&p.classCode){ const b=h('button','btn primary','Class leaderboard'); b.onclick=openBoard; bar.appendChild(b) }
+  else if(Cloud&&Cloud.ready) bar.appendChild(h('span','label',Cloud.user?'Join a class to see the leaderboard':'Sign in and join a class to see the leaderboard'));
+  return bar;
+}
+let boardStop=null;
+function openBoard(){
+  const p=Cloud.profile||{}, me=Cloud.user.uid;
+  showMsg('Leaderboard: '+esc(p.className||p.classCode), '<div class="lbwrap" id="lbBox"><p>Loading…</p></div><p style="margin-top:10px;font-size:14px">Earn stars to climb the board and get promoted. 3 stars on every puzzle is the top score.</p>', [['Close',true,()=>{ if(boardStop){ boardStop(); boardStop=null } }]]);
+  if(boardStop) boardStop();
+  boardStop=Cloud.watchBoard(p.classCode, (rows,err)=>{
+    const box=$('#lbBox'); if(!box){ if(boardStop){ boardStop(); boardStop=null } return }
+    if(err||!rows){ box.innerHTML='<p>The leaderboard is not available right now. Try again in a moment.</p>'; return }
+    // Show this student's live stars even before their latest save reaches the board.
+    const mine={uid:me, name:'You', stars:totalStars(progress), solved:Object.values(progress).filter(Boolean).length};
+    rows=rows.filter(r=>r.uid!==me).concat([{...(rows.find(r=>r.uid===me)||{}), ...mine}]);
+    rows.sort((a,b)=>b.stars-a.stars || b.solved-a.solved || String(a.name).localeCompare(b.name));
+    let place=0, prev=null;
+    box.innerHTML=`<table class="lb"><thead><tr><th>#</th><th>Student</th><th class="n">Stars</th><th class="n">Solved</th></tr></thead><tbody>${rows.map((r,i)=>{
+      if(r.stars!==prev){ place=i+1; prev=r.stars }
+      return `<tr class="${r.uid===me?'me':''}"><td>${place}</td><td>${esc(r.uid===me?'You':r.name)}<small>${rankFor(r.stars).title}</small></td><td class="n">${r.stars} ★</td><td class="n">${r.solved}</td></tr>` }).join('')}</tbody></table>`;
+    const mineRow=$('tr.me',box); if(mineRow) mineRow.scrollIntoView({block:'nearest'});
+  });
+}
+
 // ---------- home ----------
 function showHome(){
   $('#topRight').innerHTML='';
@@ -478,6 +527,7 @@ function showHome(){
   const preview=buildBoard(LEVELS[5]); $('.hero-art',hero).appendChild(preview.board);
   $('#go',hero).onclick=()=>{ location.hash='puzzle-'+(done===total?ORDER[0].n:nextLevel()) };
 
+  app.appendChild(rankBar());
   const units=h('section','units');
   UNITS.forEach(u=>{
     const card=h('article','unit');
@@ -569,7 +619,7 @@ function showPuzzle(n){
     const isNew=UNITS[L.unit-1].newBlocks.includes(t);
     const b=h('button','block pal '+B.cls, `<div class="row">${ICON[t]}<span>${lbl}</span>${isNew?'<span class="newtag">New</span>':''}</div>`);
     b.draggable=true;
-    b.onclick=()=>{ if(running) return; const nn=newNode(t); getList(selKey).push(nn); if(BLOCKS[t].container) selKey=nn.id+':body'; changed() };
+    b.onclick=()=>{ if(running||atLimit()) return; const nn=newNode(t); getList(selKey).push(nn); if(BLOCKS[t].container) selKey=nn.id+':body'; changed() };
     b.addEventListener('dragstart',e=>{ dragNew=t; dragId=null; e.dataTransfer.setData('text/plain',t); e.dataTransfer.effectAllowed='copy' });
     b.addEventListener('dragend',()=>{ dragNew=null; clearDrop() });
     list.appendChild(b);
@@ -642,6 +692,8 @@ function findParent(id, list=program){ for(let i=0;i<list.length;i++){ const n=l
 function getList(key){ if(key==='root') return program; const [id,which]=key.split(':'); const n=findNode(id); return n ? n[which] : (selKey='root', program) }
 function contains(node,id){ if(node.id===id) return true; return [...(node.body||[]),...(node.elseBody||[])].some(c=>contains(c,id)) }
 function countBlocks(list=program){ return list.reduce((s,n)=>s+1+countBlocks(n.body||[])+countBlocks(n.elseBody||[]),0) }
+// Puzzles with maxBlocks only let the program grow to that many blocks, so students have to use repeat.
+function atLimit(){ if(!L.maxBlocks || countBlocks()<L.maxBlocks) return false; setFb('bad',`Block limit reached: this mission allows ${L.maxBlocks} blocks. Look for steps that happen again and again, and put them in a repeat.`); return true }
 function changed(){ programs[L.n]=program; store.set('programs',programs); renderProgram() }
 
 function clearDrop(){ document.querySelectorAll('.over,.drop-before,.drop-after').forEach(e=>e.classList.remove('over','drop-before','drop-after')) }
@@ -667,7 +719,7 @@ function moveBlock(id, up){
   if(el){ el.classList.add('moved'); const b=el.querySelector(':scope > .row > .mv.'+(up?'first':'second')); if(b&&!b.disabled) b.focus(); else el.scrollIntoView({block:'nearest'}) }
 }
 function canMove(id, up){ const p=findParent(id); if(!p) return false; return !!p.list[p.i+(up?-1:1)] || !!ownerOf(p.list) }
-function takeDragged(){ if(dragNew) return newNode(dragNew); if(dragId){ const p=findParent(dragId); if(p) return p.list.splice(p.i,1)[0] } return null }
+function takeDragged(){ if(dragNew) return atLimit() ? null : newNode(dragNew); if(dragId){ const p=findParent(dragId); if(p) return p.list.splice(p.i,1)[0] } return null }
 function canDropInto(key){ if(!dragId || key==='root') return true; const moving=findNode(dragId); return !moving || !contains(moving, key.split(':')[0]) }
 
 function renderSlot(list,key,inner){
@@ -722,7 +774,7 @@ function renderProgram(){
   const ws=$('#ws'); if(!ws) return; ws.innerHTML='';
   ws.appendChild(renderSlot(program,'root',false));
   const c=countBlocks();
-  $('#count').textContent=c+' block'+(c===1?'':'s')+' · goal '+L.ideal;
+  $('#count').textContent=c+' block'+(c===1?'':'s')+(L.maxBlocks?' of '+L.maxBlocks+' max':'')+' · goal '+L.ideal; $('#count').classList.toggle('full',!!L.maxBlocks&&c>=L.maxBlocks);
   let where='the main program';
   if(selKey!=='root'){ const [id,which]=selKey.split(':'); const n=findNode(id); if(n) where = n.type==='repeat'?'inside “repeat”': n.type==='until'?'inside “repeat until at flag”': n.type==='iftank'?'inside “if tank ahead”': n.type==='untilclear'?'inside “repeat until no tanks left”': which==='elseBody'?'the “else” part':'the “if” part' }
   $('#target').innerHTML='New blocks go into <b>'+where+'</b>.'+(selKey!=='root'?' Tap the grey area to go back to the main program.':'');
@@ -800,6 +852,7 @@ function doAct(a){
 }
 function run(){
   if(!program.length){ setFb('bad','Your program is empty. Add some blocks first.'); return }
+  if(L.maxBlocks && countBlocks()>L.maxBlocks){ setFb('bad',`Too many blocks: this mission allows ${L.maxBlocks}. Remove some, or use a repeat.`); return }
   world.reset(); running=true;
   const btn=$('#runBtn'); btn.textContent='■ Stop';
   setFb('info','Running…');
@@ -841,14 +894,16 @@ function finish(ok,msg){
   if(!ok){ setFb('bad',msg); return }
   const allCoins = world.m.coins>0 && world.coins===world.m.coins;
   const target = allCoins && L.idealBonus ? L.idealBonus : L.ideal;
-  const used=countBlocks(), stars = used<=target ? 3 : used<=target+3 ? 2 : 1;
+  const used=countBlocks(), stars = used<=target ? 3 : used<=target+(L.maxBlocks?Math.ceil((L.maxBlocks-target)/2):3) ? 2 : 1;
+  const before=rankFor(totalStars(progress));
   progress[L.n]=Math.max(progress[L.n]||0, stars); store.set('progress',progress);
+  const after=rankFor(totalStars(progress)), promoted = after.i>before.i ? after : null;
   if(allCoins){ bonus[L.n]=true; store.set('bonus',bonus) }
   setFb('info','Solved! Press Run again to watch it, or move on to the next puzzle.');
   document.querySelectorAll('.dot').forEach(d=>{ if(+d.dataset.n===L.n) d.classList.add('done') });
-  showWin(stars, used, target);
+  showWin(stars, used, target, promoted);
 }
-function showWin(stars, used, target){
+function showWin(stars, used, target, promoted){
   const at=ORDER.indexOf(L), nextL=ORDER[at+1], last=!nextL, unitEnd = !last && nextL.unit!==L.unit;
   let msg = L.drive ? `You won in ${used} moves${stars<3?`. Can you do it in ${target}?`:'!'} Every button you pressed became a block, so your moves are now a program. Next, you write the program first and the rover drives itself.`
             : stars===3 ? `You solved it with ${used} blocks. That matches the goal of ${target}.`
@@ -860,6 +915,7 @@ function showWin(stars, used, target){
   m.innerHTML=`<div class="scrim"><div class="dialog" role="dialog" aria-modal="true" aria-labelledby="wt">
     <h2 id="wt">${last||unitEnd?'Lesson complete!':'Puzzle solved!'}</h2>
     <div class="stars" aria-label="${stars} of 3 stars">${'★'.repeat(stars)}<span class="off">${'★'.repeat(3-stars)}</span></div>
+    ${promoted?`<div class="promo">${badgeSvg(promoted)}<div><b>Promoted to ${promoted.title}!</b><br><span style="color:var(--muted)">You now have ${totalStars(progress)} stars.</span></div></div>`:''}
     <p>${msg}${extra}</p>
     <div class="acts"><button class="btn" id="again">Try again</button><button class="btn primary" id="nextBtn">${last?'Back to course map':'Next puzzle'}</button></div></div></div>`;
   const close=()=>{ m.innerHTML='' };
@@ -965,6 +1021,7 @@ if(Cloud) Cloud.onChange(c=>{
   if(!u && lastUid){ lastUid=null; store.clear(); progress={}; bonus={}; programs={}; route() }
   if(c.ready && !u && joinParam && !lastUid && !$('#modal').innerHTML) openJoin(joinParam);
   renderAccount();
+  const rb=$('.rankbar'); if(rb) rb.replaceWith(rankBar());
 });
 
 route();
