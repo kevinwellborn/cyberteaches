@@ -37,24 +37,36 @@
       </ol>
     </div>
     <div>
-      <h2>Standards</h2>
+      <h2>Computer science standards</h2>
       <p class="muted" style="margin-bottom:6px">CSTA K-12 Computer Science Standards (2017)</p>
       <ul class="std">
         <li><b>2-AP-10</b> Use flowcharts and/or pseudocode to address complex problems as algorithms.</li>
-        <li><b>2-AP-12</b> Design and iteratively develop programs that combine control structures, including nested loops.</li>
+        <li><b>2-AP-12</b> Design and iteratively develop programs that combine control structures, including nested loops and compound conditionals.</li>
         <li><b>2-AP-13</b> Decompose problems and subproblems into parts to facilitate the design, implementation, and review of programs.</li>
         <li><b>2-AP-17</b> Systematically test and refine programs using a range of test cases.</li>
       </ul>
-      <h2>Vocabulary</h2>
-      <dl class="vocab">
-        <dt>Program</dt><dd>A set of instructions a computer follows.</dd>
-        <dt>Sequence</dt><dd>Instructions run one after another, in order.</dd>
-        <dt>Pattern</dt><dd>A group of steps that happens again and again.</dd>
-        <dt>Loop</dt><dd>A block that repeats the instructions inside it.</dd>
-        <dt>Bug / debugging</dt><dd>A mistake in a program / finding and fixing it.</dd>
-      </dl>
+      <h2>English language development standards</h2>
+      <p class="muted" style="margin-bottom:6px">WIDA ELD Standards Framework (2020), grades 6 to 8</p>
+      <ul class="std">
+        <li><b>ELD-SI.6-8</b> Language for Social and Instructional Purposes: follow and give step-by-step directions, and work with a partner to solve a problem.</li>
+        <li><b>ELD-SC.6-8.Explain</b> Language for Science: explain how a program works (interpretive and expressive), using sequence words such as first, next and then.</li>
+        <li><b>ELD-MA.6-8.Explain</b> Language for Mathematics: explain patterns, counting and "how many times" with numbers and words.</li>
+      </ul>
     </div>
   </section>
+
+  <h2>Vocabulary</h2>
+  <table class="voc">
+    <thead><tr><th>Word</th><th>Student-friendly meaning</th><th>Spanish</th></tr></thead>
+    <tbody>
+      <tr><td><b>program</b></td><td>a list of steps for a computer</td><td lang="es">programa</td></tr>
+      <tr><td><b>sequence</b></td><td>steps that happen in order, one after another</td><td lang="es">secuencia</td></tr>
+      <tr><td><b>pattern</b></td><td>steps that happen again and again</td><td lang="es">patrón</td></tr>
+      <tr><td><b>loop</b></td><td>a block that repeats the blocks inside it</td><td lang="es">bucle</td></tr>
+      <tr><td><b>debug</b></td><td>find a mistake and fix it</td><td lang="es">depurar</td></tr>
+      <tr><td><b>repeat</b></td><td>do the same thing again</td><td lang="es">repetir</td></tr>
+    </tbody>
+  </table>
 
   <section class="cols">
     <div>
@@ -69,8 +81,8 @@
     <div>
       <h2>Before class</h2>
       <ul>
+        <li>Try puzzles 1.1 to 1.10 yourself (the answer key is on the Teacher Dashboard).</li>
         <li>Create the class on the Teacher Dashboard and share the code, or print student login cards.</li>
-        <li>Try puzzles 1.1 to 1.10 yourself (the answer key is on the dashboard).</li>
         <li>Clear a short path in the room for the warm-up.</li>
       </ul>
     </div>
@@ -83,8 +95,8 @@
       <tr><td>5 min</td><td><b>Warm-up</b><br>Be the robot <span class="sl">Slide 3</span></td><td>A student "programmer" guides a "robot" partner to the door using only <i>step forward</i>, <i>turn left</i>, <i>turn right</i>. Count how many times "step forward" was said. Ask: <i>Is there a shorter way to say it?</i></td></tr>
       <tr><td>10 min</td><td><b>Direct instruction</b><br><span class="sl">Slides 4 to 10</span></td><td>Define program and sequence. Introduce the map and blocks; stress that left and right are from the rover's point of view. Solve puzzle 1.1 together. Show the 8-block program for puzzle 1.2, find the pattern, and replace it with <span class="code">repeat 4 [ F C ]</span> (3 blocks). Explain the block goal and stars.</td></tr>
       <tr><td>5 min</td><td><b>Guided practice</b><br>Think, pair, share <span class="sl">Slides 11 to 12</span></td><td>Pairs find the pattern in puzzle 1.3 before the reveal: <span class="code">repeat 3 [ F F C ]</span>. Review the debugging tips.</td></tr>
-      <tr><td>12 min</td><td><b>Unplugged practice</b><br>Classwork <span class="sl">Slide 13</span></td><td>Students complete Parts A to C in pairs: trace programs, write programs, and rewrite long programs with repeat. Part D (design your own) is for early finishers. Circulate and check Part B question 4 (the left/right turn).</td></tr>
-      <tr><td>15 min</td><td><b>Independent practice</b><br>Code <span class="sl">Slide 14</span></td><td>Students sign in and solve puzzles 1.1 to 1.10. Encourage "make it work, then make it shorter" for 3 stars. Monitor stars live on the Teacher Dashboard and help students who are stuck on the same puzzle.</td></tr>
+      <tr><td>12 min</td><td><b>Unplugged practice</b><br>Classwork <span class="sl">Slide 13</span></td><td>Students complete Parts A to C and E in pairs. Part D (design your own) is for early finishers. Check Part B question 4 (the left/right turn).</td></tr>
+      <tr><td>15 min</td><td><b>Independent practice</b><br>Code <span class="sl">Slide 14</span></td><td>Students sign in and solve puzzles 1.1 to 1.10. Encourage "make it work, then make it shorter" for 3 stars. Monitor stars live on the Teacher Dashboard.</td></tr>
       <tr><td>3 min</td><td><b>Closure</b><br>Exit ticket <span class="sl">Slide 15</span></td><td>Students rewrite <span class="code">F C F C F C F C F C</span> with a repeat and count the blocks (answer: <span class="code">repeat 5 [ F C ]</span>, 3 blocks).</td></tr>
     </tbody>
   </table>
@@ -111,6 +123,14 @@
         <li><b>Support:</b> pair students; let them build the long program first, then find the pattern. Lesson 2 (Repeat practice) gives more easy puzzles.</li>
         <li><b>Extension:</b> aim for 3 stars on every puzzle; try puzzles 1.6 and 1.10 (a repeat inside a repeat); swap Part D designs with a partner.</li>
         <li><b>Accessibility:</b> blocks can be added by tapping or by dragging, and moved with the ▲▼ buttons.</li>
+      </ul>
+      <h2>Supports for English learners</h2>
+      <ul>
+        <li><b>Visuals:</b> post the block pictures and vocabulary on a word wall; point to blocks while you say them.</li>
+        <li><b>Gestures:</b> students stand and turn left or right with the rover before coding turns.</li>
+        <li><b>Partners:</b> pair students to read programs aloud; first-language talk is welcome.</li>
+        <li><b>Sentence frames:</b> “First, the rover moves ___. Then it ___ the crystal.” “The same steps happen again and again. This is a ___.” “I use a ___ block to make my program shorter.”</li>
+        <li><b>Classwork Part E</b> uses a word bank, pictures and fill-in sentences.</li>
       </ul>
       <h2>Connections</h2>
       <ul>

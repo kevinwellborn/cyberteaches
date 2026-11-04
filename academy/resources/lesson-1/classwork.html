@@ -7,45 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Atkinson+Hyperlegible:wght@400;700&family=JetBrains+Mono:wght@400;600&display=swap">
 <link rel="stylesheet" href="../resources.css">
-<style>
-body{padding:24px 16px 60px}
-.toolbar{max-width:8.5in;margin:0 auto 16px;display:flex;gap:10px;flex-wrap:wrap;align-items:center}
-.toolbar .spacer{flex:1}
-.btn{border:2px solid var(--line);background:var(--panel);border-radius:10px;padding:8px 14px;font:700 15px var(--f-body);cursor:pointer;color:var(--ink);text-decoration:none}
-.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
-.page{background:#fff;max-width:8.5in;min-height:11in;margin:0 auto 24px;padding:.6in .65in;box-shadow:0 2px 14px rgba(0,0,0,.08);font-size:15px}
-.head{display:flex;justify-content:space-between;align-items:flex-end;border-bottom:3px solid var(--ink);padding-bottom:10px;margin-bottom:16px;gap:20px}
-.head h1{font-size:28px}
-.name{font-size:14px;min-width:2.6in}
-.name div{border-bottom:1.5px solid var(--ink);height:26px;margin-bottom:6px}
-.key-ref{display:flex;gap:16px;flex-wrap:wrap;background:var(--panel-2);border:1px solid var(--line);border-radius:10px;padding:8px 12px;font-size:14px;margin-bottom:16px}
-.key-ref b{font-family:var(--f-mono)}
-h2{font-size:19px;margin:18px 0 6px}
-h2 .pts{font-family:var(--f-body);font-size:13px;color:var(--muted);font-weight:400;margin-left:6px}
-.instr{color:var(--muted);margin:0 0 10px}
-.q{display:grid;grid-template-columns:auto 1fr;gap:18px;align-items:start;margin:0 0 16px;break-inside:avoid}
-.q .num{font-family:var(--f-display);font-weight:800;font-size:18px}
-.task{display:flex;gap:22px;align-items:flex-start;flex-wrap:wrap}
-.lines{flex:1;min-width:2.4in}
-.ln{border-bottom:1.5px solid #9AA6A3;height:30px}
-.code{font-family:var(--f-mono);font-weight:600;font-size:15px;background:var(--panel-2);border-radius:6px;padding:2px 8px;display:inline-block}
-.board{--cell:34px;padding:4px;gap:2px}
-table.pat{border-collapse:collapse;width:100%;font-size:14px}
-table.pat th,table.pat td{border:1.5px solid var(--line);padding:8px;text-align:left;vertical-align:top}
-table.pat th{background:var(--panel-2);font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}
-table.pat td.blank{height:40px}
-.answer{color:var(--accent);font-weight:700}
-.teacher-tag{background:var(--accent);color:#fff;border-radius:999px;padding:3px 12px;font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase}
-.plan{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;font-size:14px;margin:8px 0 4px}
-.plan b{font-family:var(--f-mono)}
-@media print{
-  @page{size:letter;margin:0}
-  body{padding:0;background:#fff}
-  .toolbar{display:none}
-  .page{box-shadow:none;margin:0;max-width:none;width:8.5in;min-height:11in;page-break-after:always;break-after:page}
-  body.no-key .page.key{display:none}
-}
-</style>
+<link rel="stylesheet" href="../classwork.css">
 </head>
 <body>
 <div class="toolbar">
@@ -61,27 +23,25 @@ table.pat td.blank{height:40px}
     <div class="name">Name<div></div>Date<div></div></div>
   </div>
   <div class="key-ref"><span><b>F</b> = move forward</span><span><b>L</b> = turn left</span><span><b>R</b> = turn right</span><span><b>C</b> = collect crystal</span><span><b>repeat 3 [ F C ]</b> = do F C three times</span></div>
-
   <h2>Part A · Trace the rover <span class="pts">Follow the program one block at a time.</span></h2>
-  <p class="instr">Draw the rover's path with a pencil. Circle every crystal it collects.</p>
+  <p class="instr">Draw the rover's path with a pencil.</p>
   <div class="q"><span class="num">1</span><div class="task">
     <div class="board" data-map="########|#S**.*.#|########" data-dir="1"></div>
     <div class="lines"><p style="margin:0 0 6px">Program: <span class="code">F C F C F F</span></p>
-      <p style="margin:0">Which crystal is <b>not</b> collected? Why?</p><div class="ln"></div><div class="ln"></div></div>
+      <p style="margin:0">Circle the crystals it collects. Which crystal is <b>not</b> collected? Why?</p><div class="ln"></div><div class="ln"></div></div>
   </div></div>
-  <div class="q"><span class="num">2</span><div class="task">
+<div class="q"><span class="num">2</span><div class="task">
     <div class="board" data-map="#####|#S..#|#..*#|#..*#|#####" data-dir="1"></div>
-    <div class="lines"><p style="margin:0 0 6px">Program: <span class="code">repeat 2 [ F ]  R  repeat 2 [ F C ]</span></p>
+    <div class="lines"><p style="margin:0 0 6px">Program: <span class="code">repeat 2 [ F ] R repeat 2 [ F C ]</span></p>
       <p style="margin:0">Does the rover collect both crystals? Mark the square where it stops.</p><div class="ln"></div></div>
   </div></div>
-
-  <h2>Part B · Write the program <span class="pts">Use the letters F, L, R, C.</span></h2>
+  <h2>Part B · Write the program <span class="pts">Use the letters above.</span></h2>
   <p class="instr">Look at which way the rover faces. Left and right are from the rover's point of view.</p>
   <div class="q"><span class="num">3</span><div class="task">
     <div class="board" data-map="######|#S..*#|######" data-dir="1"></div>
-    <div class="lines"><div class="ln"></div><p style="margin:6px 0 0">How many blocks? ______</p></div>
+    <div class="lines"><p style="margin:0 0 6px">Write the program.</p><div class="ln"></div><div class="ln"></div><p style="margin:6px 0 0">How many blocks? ______</p></div>
   </div></div>
-  <div class="q"><span class="num">4</span><div class="task">
+<div class="q"><span class="num">4</span><div class="task">
     <div class="board" data-map="#####|#S###|#*###|#**##|#####" data-dir="2"></div>
     <div class="lines"><p style="margin:0 0 6px">The rover faces <b>down</b>. Collect all 3 crystals.</p><div class="ln"></div><div class="ln"></div><p style="margin:6px 0 0">How many blocks? ______</p></div>
   </div></div>
@@ -89,28 +49,43 @@ table.pat td.blank{height:40px}
 
 <section class="page">
   <h2 style="margin-top:0">Part C · Find the pattern <span class="pts">Make each program shorter with repeat.</span></h2>
-  <p class="instr">Underline the pattern. Then rewrite the program with a repeat block and count the blocks. A repeat counts as 1 block, plus the blocks inside it.</p>
+  <p class="instr">Underline the pattern. Rewrite the program with a repeat block and count the blocks. A repeat counts as 1 block, plus the blocks inside it.</p>
   <table class="pat">
-    <thead><tr><th style="width:4%">#</th><th style="width:40%">Long program</th><th>With repeat</th><th style="width:15%">Blocks before → after</th></tr></thead>
+    <thead><tr><th style="width:4%">#</th><th style="width:46%">Long program</th><th>With repeat</th><th style="width:15%">Blocks before → after</th></tr></thead>
     <tbody>
       <tr><td>5</td><td><span class="code">F C F C F C F C F C</span></td><td class="blank"></td><td>10 → ____</td></tr>
       <tr><td>6</td><td><span class="code">F F C F F C F F C</span></td><td class="blank"></td><td>9 → ____</td></tr>
       <tr><td>7</td><td><span class="code">F C R F C L F C R F C L</span></td><td class="blank"></td><td>12 → ____</td></tr>
-      <tr><td>8</td><td><span class="code">F C F C F C R F C F C F C R</span><br><span style="font-size:13px;color:var(--muted)">Challenge: use a repeat inside a repeat.</span></td><td class="blank"></td><td>14 → ____</td></tr>
+      <tr><td>8</td><td><span class="code">F C F C F C R F C F C F C R</span><br><small>Challenge: use a repeat inside a repeat.</small></td><td class="blank"></td><td>14 → ____</td></tr>
     </tbody>
   </table>
-
   <h2>Part D · Design your own <span class="pts">Challenge</span></h2>
-  <p class="instr">Draw a rover (with an arrow for the way it faces), some rocks (shade the square) and crystals (◆). Write the shortest program you can, then swap with a partner and check each other's work.</p>
+  <p class="instr">Draw a rover (with an arrow for the way it faces), some rocks (shade the square) and crystals (◆). Write the shortest program you can with a repeat, then swap with a partner and check each other's work.</p>
   <div class="task">
     <div class="board blank" data-map="........|........|........|........|........" data-cell="40px"></div>
     <div class="lines"><p style="margin:0 0 6px">My program:</p><div class="ln"></div><div class="ln"></div><div class="ln"></div>
       <p style="margin:8px 0 0">Blocks: ______ &nbsp; Partner checked: ______</p></div>
   </div>
-
   <h2>Reflect</h2>
   <p class="instr" style="margin-bottom:4px">In your own words, when should you use a repeat block?</p>
   <div class="ln"></div><div class="ln"></div>
+</section>
+
+<section class="page">
+  <h2 style="margin-top:0">Part E · Words and pictures <span class="pts">Language practice</span></h2>
+  <p class="instr">Draw a line from each word to its meaning.</p>
+  <div class="match">
+    <ol class="mw"><li><b>program</b> <span class="es" lang="es">(programa)</span></li><li><b>sequence</b> <span class="es" lang="es">(secuencia)</span></li><li><b>pattern</b> <span class="es" lang="es">(patrón)</span></li><li><b>loop</b> <span class="es" lang="es">(bucle)</span></li><li><b>debug</b> <span class="es" lang="es">(depurar)</span></li></ol>
+    <ol class="mm" type="a"><li>steps that happen again and again</li><li>find a mistake and fix it</li><li>a list of steps for a computer</li><li>a block that repeats the blocks inside it</li><li>steps that happen in order, one after another</li></ol>
+  </div>
+  <p class="instr" style="margin-top:14px">Circle the best answer.</p>
+  <div class="mc"><p><b>9.</b> Which block picks up a crystal?</p><div class="opts"><span><b>a)</b> <span class="blk move">move forward</span></span><span><b>b)</b> <span class="blk act">collect crystal</span></span><span><b>c)</b> <span class="blk move">turn right</span></span></div></div>
+  <div class="mc"><p><b>10.</b> Which program is shorter?</p><div class="opts"><span><b>a)</b> <span class="code">F C F C F C</span></span><span><b>b)</b> <span class="code">repeat 3 [ F C ]</span></span></div></div>
+  <p class="instr" style="margin-top:14px">Finish each sentence. Use the word bank.</p>
+  <div class="bank"><b>Word bank:</b> <span>collects</span><span>forward</span><span>pattern</span><span>repeat</span></div>
+  <p class="frame"><b>11.</b> First, the rover moves <span class="gap"></span>. Then it <span class="gap"></span> the crystal.</p>
+  <p class="frame"><b>12.</b> The same steps happen again and again. This is a <span class="gap"></span>.</p>
+  <p class="frame"><b>13.</b> I use a <span class="gap"></span> block to make my program shorter.</p>
 </section>
 
 <section class="page key">
@@ -119,37 +94,34 @@ table.pat td.blank{height:40px}
     <span class="teacher-tag">Teacher only</span>
   </div>
   <h2 style="margin-top:0">Lesson timing (50 minutes)</h2>
-  <div class="plan">
-    <b>5 min</b><span>Warm-up: "Be the robot" (slide 3)</span>
-    <b>15 min</b><span>Slides 4 to 12: program, sequence, pattern, repeat block, stars, debugging</span>
-    <b>12 min</b><span>This classwork, in pairs. Part D for early finishers</span>
-    <b>15 min</b><span>Code puzzles 1.1 to 1.10 at cyberteaches.com/academy</span>
-    <b>3 min</b><span>Exit ticket (last slide). Full plan: <a href="lesson-plan.html">Lesson 1 lesson plan</a></span>
-  </div>
-
+  <div class="plan"><b>5 min</b><span>Warm-up: Be the robot (slide 3)</span><b>10 min</b><span>Direct instruction: slides 4 to 10</span><b>5 min</b><span>Guided practice: think, pair, share and debugging tips (slides 11 to 12)</span><b>12 min</b><span>Unplugged practice: this classwork, in pairs. Part D for early finishers</span><b>15 min</b><span>Independent practice: code puzzles 1.1 to 1.10 at cyberteaches.com/academy</span><b>3 min</b><span>Closure: exit ticket (last slide)</span></div>
   <h2>Part A</h2>
-  <p><b>1.</b> <span class="answer">The last crystal is not collected.</span> The rover collects the first two, then drives F F to the third crystal but the program ends without a C.</p>
-  <p><b>2.</b> <span class="answer">Yes, both.</span> F F moves right to the top-right square, R turns to face down, then F C twice collects both crystals. It stops on the bottom crystal.</p>
-
+  <p><b>1.</b> <span class="answer">The last crystal is not collected.</span> The program drives onto it with F F but never uses C there.</p>
+  <p><b>2.</b> <span class="answer">Yes, both.</span> F F moves right, R turns to face down, then F C twice collects both. It stops on the bottom crystal.</p>
   <h2>Part B</h2>
   <p><b>3.</b> <span class="answer code">F F F C</span> · 4 blocks <span style="color:var(--muted)">(or <span class="code">repeat 3 [ F ] C</span>, 3 blocks)</span></p>
-  <p><b>4.</b> <span class="answer code">F C F C L F C</span> · 7 blocks. Facing down, the rover's <b>left</b> is the right side of the page. A common mistake is <span class="code">R</span>.</p>
-
+  <p><b>4.</b> <span class="answer code">F C F C L F C</span> · 7 blocks <span style="color:var(--muted)">Facing down, the rover's left is the right side of the page. A common mistake is R.</span></p>
   <h2>Part C</h2>
   <table class="pat">
-    <thead><tr><th>#</th><th>With repeat</th><th>Blocks</th></tr></thead>
+    <thead><tr><th>#</th><th>Answer</th></tr></thead>
     <tbody>
-      <tr><td>5</td><td class="answer code">repeat 5 [ F C ]</td><td>10 → 3</td></tr>
-      <tr><td>6</td><td class="answer code">repeat 3 [ F F C ]</td><td>9 → 4</td></tr>
-      <tr><td>7</td><td class="answer code">repeat 2 [ F C R F C L ]</td><td>12 → 7</td></tr>
-      <tr><td>8</td><td class="answer code">repeat 2 [ repeat 3 [ F C ] R ]</td><td>14 → 5</td></tr>
+      <tr><td>5</td><td class="answer"><span class="code">repeat 5 [ F C ]</span> · 10 → 3</td></tr>
+      <tr><td>6</td><td class="answer"><span class="code">repeat 3 [ F F C ]</span> · 9 → 4</td></tr>
+      <tr><td>7</td><td class="answer"><span class="code">repeat 2 [ F C R F C L ]</span> · 12 → 7</td></tr>
+      <tr><td>8</td><td class="answer"><span class="code">repeat 2 [ repeat 3 [ F C ] R ]</span> · 14 → 5</td></tr>
     </tbody>
   </table>
-
+  <h2>Part E</h2>
+  <p><b>Matching:</b> 1–c, 2–e, 3–a, 4–d, 5–b</p>
+  <p><b>9.</b> <span class="answer">b) collect crystal</span></p>
+  <p><b>10.</b> <span class="answer">b) repeat 3 [ F C ]</span></p>
+  <p><b>11.</b> <span class="answer">forward / collects</span></p>
+  <p><b>12.</b> <span class="answer">pattern</span></p>
+  <p><b>13.</b> <span class="answer">repeat</span></p>
   <h2>Part D and Reflect</h2>
-  <p>Answers vary. Look for: a correct start direction, a program a partner can follow, and a repeat used for any pattern. Reflection: use a repeat when the same steps happen again and again; it makes the program shorter and easier to read and fix.</p>
+  <p>Answers vary. Look for a correct start direction, a program a partner can follow, and a repeat used for any pattern. Reflection: use a repeat when the same steps happen again and again; it makes the program shorter and easier to read and fix.</p>
   <h2>Exit ticket</h2>
-  <p><span class="answer code">repeat 5 [ F C ]</span> · 3 blocks</p>
+  <p><span class="code">repeat 5 [ F C ]</span> · 3 blocks</p>
 </section>
 
 <script src="../resources.js"></script>

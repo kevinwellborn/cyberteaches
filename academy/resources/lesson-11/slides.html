@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Lesson 11 Slides · If / else</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="../../../favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Atkinson+Hyperlegible:wght@400;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<link rel="stylesheet" href="../resources.css">
+<link rel="stylesheet" href="../slides.css">
+</head>
+<body>
+<div class="deck" id="deck">
+<section class="slide title-slide">
+  <span class="label" style="font-size:22px">CyberTeaches Academy · Lesson 11</span>
+  <h1 style="margin:18px 0 22px">If / <em>else</em></h1>
+  <p style="font-size:32px;max-width:900px">Teach the rover to decide. One smart program for paths it has never seen.</p>
+  <div class="foot"><span>cyberteaches.com/academy</span><span>Press → to start</span></div>
+  <div class="note">Students learn the if / else block, use it inside repeat until at flag, and nest one if / else in another. Plan: warm-up 5 min, slides 15 min, classwork 12 min, coding 15 min, exit ticket 3 min.</div>
+</section>
+
+<section class="slide ">
+  <span class="label kicker">Today we will</span>
+  <h2>Learning goals</h2>
+  <ul class="big" style="font-weight:400;font-size:34px"><li>Explain what <b>if / else</b> does</li><li>Use if / else inside <b>repeat until at flag</b></li><li>Put an if / else <b>inside</b> another if / else</li></ul>
+  <div class="note">Read the goals aloud. Students check them off with the exit ticket at the end.</div>
+</section>
+
+<section class="slide ">
+  <span class="label kicker">Warm-up · 3 minutes</span>
+  <h2>Choose your path</h2>
+  <div class="row"><div class="grow"><p>"<b>If</b> it is sunny, we go outside. <b>Else</b>, we play inside."</p><p class="muted">Make your own: If ___, then ___. Else, ___.</p></div><div class="box" style="width:420px"><p class="big" style="margin:0 0 8px">If / else</p><p style="margin:0">Yes → do the first plan. No → do the other plan.</p></div></div>
+  <div class="note">Students write one if/else sentence on a sticky note. Share two or three.</div>
+</section>
+
+<section class="slide ">
+  <span class="label kicker">New block</span>
+  <h2>The <em>if / else</em> block</h2>
+  <div class="row"><div><div class="rep logic" style="display:inline-block"><div class="head">if path ahead</div><div class="inner"><span class="blk move">move forward</span></div><div class="elsel">else</div><div class="inner"><span class="blk move">turn right</span></div></div></div><div class="grow"><p>Is there a path ahead?</p><p><b>Yes</b> → move forward. <b>No</b> → turn right.</p><p class="muted">Questions: path ahead, path left, path right, crystal here, tank ahead.</p></div></div>
+  <div class="note">Read it aloud as a sentence. The menu on the block chooses the question.</div>
+</section>
+
+<section class="slide ">
+  <span class="label kicker">Big idea</span>
+  <h2>Check at <em>every step</em></h2>
+  <div class="row"><div class="board" data-map="#######|#S....#|#####.#|#G....#|#######" data-dir="1" style="--cell:58px"></div><div class="grow"><p>Put the if / else inside repeat until at flag.</p><div class="reveal"><div class="rep " style="display:inline-block"><div class="head">repeat until at flag</div><div class="inner"><div class="rep logic" style="display:inline-block"><div class="head">if path ahead</div><div class="inner"><span class="blk move">move forward</span></div><div class="elsel">else</div><div class="inner"><span class="blk move">turn right</span></div></div></div></div></div><p class="reveal" style="margin-top:10px"><span class="count" style="background:var(--accent)">4 blocks</span></p></div></div>
+  <div class="note">Puzzle 11.1. The same 4 blocks would work for a road of any length or shape that turns right.</div>
+</section>
+
+<section class="slide ">
+  <span class="label kicker">Big idea</span>
+  <h2>An if / else <em>inside</em> an if / else</h2>
+  <div class="row"><div class="grow"><p>Path ahead? → move forward.</p><p>Else: path left? → turn left. Else → turn right.</p><p class="code" style="font-size:24px">if path ahead [ F ] else [ if path left [ L ] else [ R ] ]</p><p class="muted">Three choices need two questions.</p></div></div>
+  <div class="note">This nested decision lets the rover follow a road that turns both ways (puzzles 11.2, 11.6).</div>
+</section>
+
+<section class="slide ">
+  <span class="label kicker">Let's try together · Puzzle 11.3</span>
+  <h2>Crystal check</h2>
+  <div class="row">
+      <div class="board" data-map="############|#S.*..**.*G#|############" data-dir="1" data-cell="48px"></div>
+      <div class="grow"><p>Only some squares have a crystal. When should the rover collect?</p>
+        <div class="prog reveal" style="font-size:26px"><div class="rep "><div class="head">repeat until at flag</div><div class="inner"><span class="blk move">move forward</span><div class="rep logic"><div class="head">if crystal here</div><div class="inner"><span class="blk act">collect crystal</span></div><div class="elsel">else</div><div class="inner">&nbsp;</div></div></div></div></div>
+        <p class="reveal" style="margin-top:16px"><span class="count">4 blocks</span></p></div></div>
+  <div class="note">Puzzle 11.3: move forward, then if crystal here, collect. Press → to reveal the answer.</div>
+</section>
+
+<section class="slide ">
+  <span class="label kicker">Think, pair, share · Puzzle 11.2</span>
+  <h2>Left or right</h2>
+  <div class="row">
+      <div class="board" data-map="#########|#S..#####|###.#####|###...###|#####.###|#####..G#|#########" data-dir="1" data-cell="62px"></div>
+      <div class="grow"><p>The road turns right, then left. What should the rover check?</p>
+        <div class="prog reveal" style="font-size:26px"><div class="rep "><div class="head">repeat until at flag</div><div class="inner"><div class="rep logic"><div class="head">if path ahead</div><div class="inner"><span class="blk move">move forward</span></div><div class="elsel">else</div><div class="inner"><div class="rep logic"><div class="head">if path left</div><div class="inner"><span class="blk move">turn left</span></div><div class="elsel">else</div><div class="inner"><span class="blk move">turn right</span></div></div></div></div></div></div></div>
+        <p class="reveal" style="margin-top:16px"><span class="count">6 blocks</span></p></div></div>
+  <div class="note">Puzzle 11.2: if path ahead [F] else [ if path left [L] else [R] ]. Press → to reveal the answer.</div>
+</section>
+
+<section class="slide ">
+  <span class="label kicker">When it doesn't work</span>
+  <h2>Debugging tips</h2>
+  <ul style="font-size:30px"><li><b>Read it as a sentence:</b> "If there is a path ahead, move forward, else turn right."</li><li><b>Check at every step.</b> Put the if / else inside repeat until at flag.</li><li><b>Most important first.</b> Check for a tank before you check the path.</li><li><b>Left or right?</b> Paths are checked from the rover's point of view.</li></ul>
+  <div class="note">Encourage students to read programs aloud as English sentences.</div>
+</section>
+
+<section class="slide ">
+  <span class="label kicker">Classwork · 12 minutes</span>
+  <h2>Unplugged practice</h2>
+  <div class="row"><div class="grow"><p>Use the worksheet. Write programs with letters:</p>
+    <p class="code" style="font-size:28px;line-height:1.5">F = move forward &nbsp; L = turn left &nbsp; R = turn right<br>C = collect crystal<br>X = fire cannon</p>
+    <p class="code" style="font-size:26px;margin:0 0 6px">if path ahead [ F ] else [ R ]</p><p class="code" style="font-size:26px;margin:0 0 6px">until flag [ … ]</p></div>
+    <div class="box" style="width:400px"><p class="big" style="margin:0 0 8px">Parts</p><p style="margin:0">A. Trace the rover<br>B. Write the program<br>C. Complete the sentence<br>D. Design your own</p></div></div>
+  <div class="note">Hand out the Lesson 11 classwork. Students can work in pairs. Part D is a challenge for early finishers. The answer key is on the last page.</div>
+</section>
+
+<section class="slide title-slide">
+  <span class="label" style="font-size:22px">Your turn</span>
+  <h1 style="margin:18px 0 22px">Now <em>code</em> it!</h1>
+  <p style="font-size:34px">Go to <b>cyberteaches.com/academy</b>, sign in, and solve puzzles <b>11.1 to 11.10</b>.</p>
+  <p style="font-size:28px;opacity:.85">Read your if / else out loud as a sentence before you run it.</p>
+  <div class="note">Students sign in with Google or the username and password from the Teacher Dashboard. Watch their stars live on the dashboard and help anyone stuck on the same puzzle.</div>
+</section>
+
+<section class="slide ">
+  <span class="label kicker">Exit ticket</span>
+  <h2>Before you go</h2>
+  <p>Write an if / else that collects a crystal if there is one, else moves forward.</p>
+    <p class="reveal" style="margin-top:20px"><span class="code">if crystal here [ C ] else [ F ]</span></p>
+  <div class="note">Collect answers on sticky notes or in your LMS. Reveal the answer with → after students have written theirs.</div>
+</section>
+</div>
+<div class="notes" id="notes"><b>Teacher notes</b><span id="noteText"></span></div>
+<div class="bar"><button id="prev" aria-label="Previous slide">←</button><span id="num" style="color:#fff;font:700 14px var(--f-body);align-self:center;min-width:52px;text-align:center"></span><button id="next" aria-label="Next slide">→</button><button id="nBtn" title="Teacher notes (N)">Notes</button><button id="fBtn" title="Full screen (F)">Full screen</button></div>
+<script src="../resources.js"></script>
+<script src="../slides.js"></script>
+</body></html>

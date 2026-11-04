@@ -33,3 +33,7 @@ a{color:var(--accent)}
   table.proc tr,.cols>div{break-inside:avoid}
   a{color:inherit;text-decoration:none}
 }
+table.voc{border-collapse:collapse;width:100%;font-size:13.5px;margin-bottom:4px}
+table.voc th,table.voc td{border:1.5px solid var(--line);padding:5px 9px;text-align:left;vertical-align:top}
+table.voc th{background:var(--panel-2);font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}
+table.voc td:last-child{font-style:italic;color:var(--muted)}
