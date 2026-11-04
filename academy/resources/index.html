@@ -17,6 +17,7 @@
 .btn:hover{border-color:var(--accent)}
 .btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
 .btn.off{opacity:.5;pointer-events:none}
+.btn.quiz{background:#E9A21B;border-color:#E9A21B;color:#1C292C}
 .hero{padding:18px 0 22px}
 .hero h1{font-size:clamp(32px,5vw,52px);font-weight:800;letter-spacing:-.02em;margin:8px 0 10px}
 .hero p{color:var(--muted);font-size:18px;max-width:62ch;margin:0}
@@ -56,14 +57,19 @@
   <div class="grid" id="grid"></div>
 </div>
 <script src="../course.js?v=8"></script>
+<script src="../quiz/questions.js?v=1"></script>
 <script>
 // Lessons whose slides and classwork exist in resources/lesson-N/. Add a lesson number here when its files are ready.
 const READY = UNITS.map(u => u.n);
+// Quiz Battle: live class game for lessons that have questions in quiz/questions.js.
+const quizBtn = n => window.QUIZZES && QUIZZES[n]
+  ? `<a class="btn quiz" href="../quiz/host.html?lesson=${n}" target="_blank" rel="noopener">⚡ Quiz Battle</a>`
+  : '<span class="btn off" title="Coming soon">⚡ Quiz Battle · soon</span>';
 document.getElementById('grid').innerHTML = UNITS.map(u=>{
   const ok = READY.includes(u.n), base = 'lesson-'+u.n+'/';
   return `<article class="card"><div class="num" style="background:${u.color}">L${u.n}</div><div>
     <span class="label">Lesson ${u.n}</span><h2>${u.title}</h2><p>${u.concept}</p>
-    <div class="acts">${ok ? `<a class="btn primary" href="${base}slides.html" target="_blank" rel="noopener">Slides</a><a class="btn" href="${base}classwork.html" target="_blank" rel="noopener">Classwork</a><a class="btn" href="${base}lesson-plan.html" target="_blank" rel="noopener">Lesson plan</a>`
+    <div class="acts">${ok ? `<a class="btn primary" href="${base}slides.html" target="_blank" rel="noopener">Slides</a><a class="btn" href="${base}classwork.html" target="_blank" rel="noopener">Classwork</a><a class="btn" href="${base}lesson-plan.html" target="_blank" rel="noopener">Lesson plan</a>${quizBtn(u.n)}`
       : '<span class="soon">Slides, classwork and lesson plan coming soon</span>'}</div></div></article>`;
 }).join('');
 </script>

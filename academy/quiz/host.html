@@ -56,7 +56,8 @@ async function resumeOrSetup(){
 
 function setupView(msg){
   stopAll(); G = null; app.className = 'center'; app.style.flex = '';
-  const sets = Object.entries(QUIZZES);
+  const want = new URLSearchParams(location.search).get('lesson');
+  const sets = Object.entries(QUIZZES).filter(([n]) => !want || !QUIZZES[want] || n === want);
   app.innerHTML = `<h1 style="font-size:clamp(36px,6vw,64px)">Quiz Battle</h1>
     <p class="muted" style="font-size:20px;max-width:640px">Students join on their own devices with a game PIN and race to answer. Faster correct answers score more points.</p>
     ${msg ? `<p class="pill">${esc(msg)}</p>` : ''}
