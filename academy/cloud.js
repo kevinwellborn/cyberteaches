@@ -72,9 +72,24 @@
     const base = who();
     await db.collection('users').doc(Cloud.user.uid).set({...base, progress, bonus, programs}, {merge: true});
     const code = Cloud.profile && Cloud.profile.classCode;
-    if(code) await db.collection('classes').doc(code).collection('students').doc(Cloud.user.uid).set({...base, progress, bonus}, {merge: true});
+    if(code){
+      await db.collection('classes').doc(code).collection('students').doc(Cloud.user.uid).set({...base, progress, bonus}, {merge: true});
+      await Cloud.saveBoard(code, progress).catch(e => console.error('Could not update the leaderboard', e));
+    }
     Cloud.profile = {...Cloud.profile, progress, bonus, programs};
   };
+
+  // Class leaderboard: classmates can read each other's first name, last initial, stars and puzzles solved, nothing else.
+  const shortName = n => { const w = String(n || 'Student').trim().split(/\s+/); return (w.length > 1 ? w[0] + ' ' + w[w.length-1][0] + '.' : w[0]).slice(0, 40) };
+  Cloud.saveBoard = (code, progress) => {
+    const vals = Object.values(progress || {}).map(Number).filter(v => v > 0);
+    return db.collection('classes').doc(code).collection('board').doc(Cloud.user.uid).set({
+      name: shortName(who().name), stars: vals.reduce((a, b) => a + b, 0), solved: vals.length,
+      updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+  };
+  Cloud.watchBoard = (code, cb) => db.collection('classes').doc(code).collection('board')
+    .onSnapshot(s => cb(s.docs.map(d => ({uid: d.id, ...d.data()}))), e => { console.error(e); cb(null, e) });
 
   Cloud.findClass = async code => {
     const s = await db.collection('classes').doc(code).get();
@@ -133,6 +148,7 @@
       await u.delete();
     });
     await db.collection('classes').doc(code).collection('students').doc(login.uid).delete();
+    await db.collection('classes').doc(code).collection('board').doc(login.uid).delete().catch(() => {});
     await db.collection('classes').doc(code).collection('logins').doc(login.uid).delete();
   };
 

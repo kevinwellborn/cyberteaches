@@ -82,6 +82,8 @@ td.name small{color:var(--muted)}
 .s2{background:color-mix(in srgb,var(--accent) 60%,var(--panel))}
 .s1{background:color-mix(in srgb,var(--accent) 30%,var(--panel))}
 .s0{color:var(--line)}
+th.score,td.score{background:var(--panel-2);border-right:2px solid var(--line)}
+small.rank{display:block;font-size:11px}
 .legend{display:flex;gap:14px;flex-wrap:wrap;align-items:center;font-size:13px;color:var(--muted);margin:10px 2px}
 .legend span{display:inline-flex;gap:6px;align-items:center}
 .empty{padding:28px;text-align:center;color:var(--muted)}
@@ -249,7 +251,7 @@ const keyCount=list=>list.reduce((s,n)=>s+1+keyCount(n.body||[])+keyCount(n.else
 let keyData=null;
 function loadKey(){
   if(keyData) return Promise.resolve(keyData);
-  return new Promise((ok,fail)=>{ const sc=document.createElement('script'); sc.src='answer-key.js?v=5'; sc.onload=()=>{ try{ keyData=window.decodeAnswerKey(); ok(keyData) }catch(e){ fail(e) } }; sc.onerror=fail; document.head.appendChild(sc) });
+  return new Promise((ok,fail)=>{ const sc=document.createElement('script'); sc.src='answer-key.js?v=7'; sc.onload=()=>{ try{ keyData=window.decodeAnswerKey(); ok(keyData) }catch(e){ fail(e) } }; sc.onerror=fail; document.head.appendChild(sc) });
 }
 async function toggleKey(){
   const btn=$('#keyBtn'), box=$('#keybody'), open=btn.getAttribute('aria-expanded')==='true';
@@ -374,24 +376,27 @@ function renderClass(err){
       <div class="stat"><b>${avg.toFixed(1)}</b><span class="muted">puzzles solved on average, of ${LEVELS.length}</span></div>
       ${lessonDone.map(x=>`<div class="stat"><b>${x.done}</b><span class="muted">finished Lesson ${x.u.n}</span><div class="bar"><i style="width:${n?x.done/n*100:0}%;background:${x.u.color}"></i></div></div>`).join('')}</div></section></div>
     <div class="toolbar"><h2>Progress</h2><div class="spacer"></div><button class="btn" id="csv" ${n?'':'disabled'}>Download CSV</button></div>
-    <div class="legend"><span><i class="cell s3">★★★</i> 3 stars</span><span><i class="cell s2">★★</i> 2 stars</span><span><i class="cell s1">★</i> 1 star</span><span><i class="cell s0">·</i> not solved</span><span>Updates live as students play.</span></div>
+    <div class="legend"><span><i class="cell s3">★★★</i> 3 stars</span><span><i class="cell s2">★★</i> 2 stars</span><span><i class="cell s1">★</i> 1 star</span><span><i class="cell s0">·</i> not solved</span><span><b>Score</b> per lesson out of 100: 3 stars = 100, 2 stars = 90, 1 star = 80 for each puzzle, unsolved = 0</span><span>Updates live as students play.</span></div>
     <div class="tablewrap">${err?'<div class="empty err">Could not load students. Check that the Firestore rules are published.</div>': n?table():'<div class="empty">No students yet. Share the code or link above.</div>'}</div>`;
   $('#copy').onclick=async()=>{ try{ await navigator.clipboard.writeText(joinLink(c.code)); $('#copy').textContent='Copied' }catch(e){ const r=document.createRange(); r.selectNodeContents($('#jl')); getSelection().removeAllRanges(); getSelection().addRange(r) } };
   $('#csv').onclick=()=>downloadCsv(c);
 }
 function table(){
-  const head1=UNITS.map(u=>`<th class="lesson" colspan="${LEVELS.filter(l=>l.unit===u.n).length}" style="background:${u.color}">Lesson ${u.n}: ${esc(u.title)}</th>`).join('');
-  const head2=ORDER.map(l=>`<th title="${esc(l.title)}">${l.unit}.${l.k}</th>`).join('');
+  // Each lesson's puzzle columns end with a Score column (out of 100, see lessonScore in course.js).
+  const head1=UNITS.map(u=>`<th class="lesson" colspan="${LEVELS.filter(l=>l.unit===u.n).length+1}" style="background:${u.color}">Lesson ${u.n}: ${esc(u.title)}</th>`).join('');
+  const head2=UNITS.map(u=>ORDER.filter(l=>l.unit===u.n).map(l=>`<th title="${esc(l.title)}">${l.unit}.${l.k}</th>`).join('')+`<th class="score" title="Lesson ${u.n} score out of 100">Score</th>`).join('');
   const rows=roster.map(s=>{
-    const p=s.progress||{}, done=LEVELS.filter(l=>p[l.n]).length;
-    return `<tr><td class="name"><b>${esc(s.name)}</b><small>${esc(s.email||(s.username?'Username: '+s.username:''))}</small></td>${ORDER.map(l=>{ const st=p[l.n]||0; return `<td><span class="cell s${st}" title="${esc(l.title)}: ${st?st+' star'+(st>1?'s':''):'not solved'}">${st?'★'.repeat(st):'·'}</span></td>` }).join('')}<td><b>${done}</b>/${LEVELS.length}</td><td class="muted">${ago(s.updatedAt)}</td></tr>`;
+    const p=s.progress||{}, done=LEVELS.filter(l=>p[l.n]).length, stars=totalStars(p);
+    const cells=UNITS.map(u=>ORDER.filter(l=>l.unit===u.n).map(l=>{ const st=p[l.n]||0; return `<td><span class="cell s${st}" title="${esc(l.title)}: ${st?st+' star'+(st>1?'s':''):'not solved'}">${st?'★'.repeat(st):'·'}</span></td>` }).join('')
+      +`<td class="score"><b>${lessonScore(p,u.n)}</b></td>`).join('');
+    return `<tr><td class="name"><b>${esc(s.name)}</b><small>${esc(s.email||(s.username?'Username: '+s.username:''))}</small></td>${cells}<td><b>${done}</b>/${LEVELS.length}</td><td><b>${stars}</b> ★<small class="muted rank">${rankFor(stars).title}</small></td><td class="muted">${ago(s.updatedAt)}</td></tr>`;
   }).join('');
-  return `<table><thead><tr><th class="name" rowspan="2">Student</th>${head1}<th rowspan="2">Solved</th><th rowspan="2">Last active</th></tr><tr>${head2}</tr></thead><tbody>${rows}</tbody></table>`;
+  return `<table><thead><tr><th class="name" rowspan="2">Student</th>${head1}<th rowspan="2">Solved</th><th rowspan="2">Stars and rank</th><th rowspan="2">Last active</th></tr><tr>${head2}</tr></thead><tbody>${rows}</tbody></table>`;
 }
 function downloadCsv(c){
   const q=v=>'"'+String(v==null?'':v).replace(/"/g,'""')+'"';
-  const lines=[['Student','Email or username',...ORDER.map(l=>'L'+l.unit+'.'+l.k+' '+l.title),'Solved','Last active'].map(q).join(',')];
-  roster.forEach(s=>{ const p=s.progress||{}; lines.push([s.name,s.email||s.username,...ORDER.map(l=>p[l.n]||0),LEVELS.filter(l=>p[l.n]).length,s.updatedAt&&s.updatedAt.toDate?s.updatedAt.toDate().toISOString():''].map(q).join(',')) });
+  const lines=[['Student','Email or username',...ORDER.map(l=>'L'+l.unit+'.'+l.k+' '+l.title),...UNITS.map(u=>'Lesson '+u.n+' score'),'Solved','Stars','Rank','Last active'].map(q).join(',')];
+  roster.forEach(s=>{ const p=s.progress||{}, stars=totalStars(p); lines.push([s.name,s.email||s.username,...ORDER.map(l=>p[l.n]||0),...UNITS.map(u=>lessonScore(p,u.n)),LEVELS.filter(l=>p[l.n]).length,stars,rankFor(stars).title,s.updatedAt&&s.updatedAt.toDate?s.updatedAt.toDate().toISOString():''].map(q).join(',')) });
   const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([lines.join('\n')],{type:'text/csv'})); a.download=(c.name||c.code).replace(/[^a-z0-9]+/gi,'-')+'-progress.csv'; document.body.appendChild(a); a.click(); a.remove();
 }
 
