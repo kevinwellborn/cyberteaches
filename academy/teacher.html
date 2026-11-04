@@ -84,6 +84,18 @@ td.name small{color:var(--muted)}
 .s0{color:var(--line)}
 th.score,td.score{background:var(--panel-2);border-right:2px solid var(--line)}
 small.rank{display:block;font-size:11px}
+.lbpanel{max-width:760px}
+.lessonbtn{all:unset;cursor:pointer;color:#fff;font-weight:700;letter-spacing:.06em;white-space:nowrap;padding:2px 4px;border-radius:6px}
+.lessonbtn:hover{text-decoration:underline}
+.lessonbtn:focus-visible{outline:2px solid #fff;outline-offset:2px}
+.lbtitle{font-size:20px;margin-bottom:8px}
+.lb td.l,.lb th.l{text-align:left}
+.lb tr.top1 td:first-child b{color:var(--coin,#C9971A)}
+.lb tr.top1 td,.lb tr.top2 td,.lb tr.top3 td{background:var(--panel-2)}
+.lbpanel:fullscreen{max-width:none;padding:40px 8vw;overflow:auto;background:var(--panel)}
+.lbpanel:fullscreen .lbtitle{font-size:44px;margin-bottom:20px}
+.lbpanel:fullscreen .lb{font-size:26px}
+.lbpanel:fullscreen .lb th{font-size:18px}
 .legend{display:flex;gap:14px;flex-wrap:wrap;align-items:center;font-size:13px;color:var(--muted);margin:10px 2px}
 .legend span{display:inline-flex;gap:6px;align-items:center}
 .empty{padding:28px;text-align:center;color:var(--muted)}
@@ -135,6 +147,7 @@ small.rank{display:block;font-size:11px}
 const $=(s,r=document)=>r.querySelector(s);
 const esc=t=>String(t==null?'':t).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const app=$('#app'), acct=$('#acct');
+const openUnits=new Set();  // lessons expanded in the progress table
 let classes=[], current=null, roster=[], stopRoster=null, stopClasses=null, uid=null;
 const pick={ get(){ try{ return localStorage.getItem('cyberteaches:teacherClass') }catch(e){ return null } }, set(v){ try{ localStorage.setItem('cyberteaches:teacherClass',v) }catch(e){} } };
 
@@ -376,18 +389,35 @@ function renderClass(err){
       <div class="stat"><b>${avg.toFixed(1)}</b><span class="muted">puzzles solved on average, of ${LEVELS.length}</span></div>
       ${lessonDone.map(x=>`<div class="stat"><b>${x.done}</b><span class="muted">finished Lesson ${x.u.n}</span><div class="bar"><i style="width:${n?x.done/n*100:0}%;background:${x.u.color}"></i></div></div>`).join('')}</div></section></div>
     <div class="toolbar"><h2>Progress</h2><div class="spacer"></div><button class="btn" id="csv" ${n?'':'disabled'}>Download CSV</button></div>
-    <div class="legend"><span><i class="cell s3">★★★</i> 3 stars</span><span><i class="cell s2">★★</i> 2 stars</span><span><i class="cell s1">★</i> 1 star</span><span><i class="cell s0">·</i> not solved</span><span><b>Score</b> per lesson out of 100: 3 stars = 100, 2 stars = 90, 1 star = 80 for each puzzle, unsolved = 0</span><span>Updates live as students play.</span></div>
-    <div class="tablewrap">${err?'<div class="empty err">Could not load students. Check that the Firestore rules are published.</div>': n?table():'<div class="empty">No students yet. Share the code or link above.</div>'}</div>`;
+    <div class="legend"><span><i class="cell s3">★★★</i> 3 stars</span><span><i class="cell s2">★★</i> 2 stars</span><span><i class="cell s1">★</i> 1 star</span><span><i class="cell s0">·</i> not solved</span><span>Click a lesson to show or hide each puzzle.</span><span><b>Score</b> per lesson out of 100: 3 stars = 100, 2 stars = 90, 1 star = 80 for each puzzle, unsolved = 0</span><span>Updates live as students play.</span></div>
+    <div class="tablewrap" id="progressTable">${err?'<div class="empty err">Could not load students. Check that the Firestore rules are published.</div>': n?table():'<div class="empty">No students yet. Share the code or link above.</div>'}</div>
+    ${n&&!err?`<div class="toolbar"><h2>Leaderboard</h2><div class="spacer"></div><button class="btn" id="lbFull">Show full screen</button></div>
+    <section class="panel lbpanel" id="lbPanel"><h2 class="lbtitle">${esc(c.name||c.code)} leaderboard</h2>${leaderboard()}</section>`:''}`;
   $('#copy').onclick=async()=>{ try{ await navigator.clipboard.writeText(joinLink(c.code)); $('#copy').textContent='Copied' }catch(e){ const r=document.createRange(); r.selectNodeContents($('#jl')); getSelection().removeAllRanges(); getSelection().addRange(r) } };
   $('#csv').onclick=()=>downloadCsv(c);
+  const tw=$('#progressTable'); tw.onclick=e=>{ const b=e.target.closest('.lessonbtn'); if(!b) return; const u=+b.dataset.unit;
+    openUnits.has(u)?openUnits.delete(u):openUnits.add(u); const x=tw.scrollLeft; tw.innerHTML=table(); tw.scrollLeft=x;
+    const nb=tw.querySelector(`.lessonbtn[data-unit="${u}"]`); if(nb) nb.focus() };
+  const fs=$('#lbFull'); if(fs) fs.onclick=()=>{ const el=$('#lbPanel'); (el.requestFullscreen||el.webkitRequestFullscreen||(()=>{})).call(el) };
+}
+// Same ranking students see in the app: by stars, then puzzles solved. Names are first name + last initial so it is safe to project.
+function leaderboard(){
+  const short=n=>{ const w=String(n||'Student').trim().split(/\s+/); return w.length>1 ? w[0]+' '+w[w.length-1][0]+'.' : w[0] };
+  const rows=roster.map(s=>{ const p=s.progress||{}; return {name:short(s.name), stars:totalStars(p), solved:LEVELS.filter(l=>p[l.n]).length} })
+    .sort((a,b)=>b.stars-a.stars || b.solved-a.solved || a.name.localeCompare(b.name));
+  let place=0, prev=null;
+  return `<table class="lb"><thead><tr><th>#</th><th class="l">Student</th><th class="l">Rank</th><th>Stars</th><th>Solved</th></tr></thead><tbody>${rows.map((r,i)=>{
+    if(r.stars!==prev){ place=i+1; prev=r.stars }
+    return `<tr class="${place<=3&&r.stars?'top'+place:''}"><td><b>${place}</b></td><td class="l"><b>${esc(r.name)}</b></td><td class="l">${rankFor(r.stars).title}</td><td><b>${r.stars}</b> ★</td><td>${r.solved}/${LEVELS.length}</td></tr>` }).join('')}</tbody></table>`;
 }
 function table(){
-  // Each lesson's puzzle columns end with a Score column (out of 100, see lessonScore in course.js).
-  const head1=UNITS.map(u=>`<th class="lesson" colspan="${LEVELS.filter(l=>l.unit===u.n).length+1}" style="background:${u.color}">Lesson ${u.n}: ${esc(u.title)}</th>`).join('');
-  const head2=UNITS.map(u=>ORDER.filter(l=>l.unit===u.n).map(l=>`<th title="${esc(l.title)}">${l.unit}.${l.k}</th>`).join('')+`<th class="score" title="Lesson ${u.n} score out of 100">Score</th>`).join('');
+  // Lessons start collapsed to just their Score (out of 100, see lessonScore in course.js). Clicking a lesson shows its puzzles.
+  const lv=u=>openUnits.has(u.n)?ORDER.filter(l=>l.unit===u.n):[];
+  const head1=UNITS.map(u=>{ const o=openUnits.has(u.n); return `<th class="lesson" colspan="${lv(u).length+1}" style="background:${u.color}"><button class="lessonbtn" data-unit="${u.n}" aria-expanded="${o}" title="${o?'Hide':'Show'} each puzzle">${o?'▾':'▸'} L${u.n}${o?': '+esc(u.title):''}</button></th>` }).join('');
+  const head2=UNITS.map(u=>lv(u).map(l=>`<th title="${esc(l.title)}">${l.unit}.${l.k}</th>`).join('')+`<th class="score" title="Lesson ${u.n}: ${esc(u.title)}. Score out of 100">Score</th>`).join('');
   const rows=roster.map(s=>{
     const p=s.progress||{}, done=LEVELS.filter(l=>p[l.n]).length, stars=totalStars(p);
-    const cells=UNITS.map(u=>ORDER.filter(l=>l.unit===u.n).map(l=>{ const st=p[l.n]||0; return `<td><span class="cell s${st}" title="${esc(l.title)}: ${st?st+' star'+(st>1?'s':''):'not solved'}">${st?'★'.repeat(st):'·'}</span></td>` }).join('')
+    const cells=UNITS.map(u=>lv(u).map(l=>{ const st=p[l.n]||0; return `<td><span class="cell s${st}" title="${esc(l.title)}: ${st?st+' star'+(st>1?'s':''):'not solved'}">${st?'★'.repeat(st):'·'}</span></td>` }).join('')
       +`<td class="score"><b>${lessonScore(p,u.n)}</b></td>`).join('');
     return `<tr><td class="name"><b>${esc(s.name)}</b><small>${esc(s.email||(s.username?'Username: '+s.username:''))}</small></td>${cells}<td><b>${done}</b>/${LEVELS.length}</td><td><b>${stars}</b> ★<small class="muted rank">${rankFor(stars).title}</small></td><td class="muted">${ago(s.updatedAt)}</td></tr>`;
   }).join('');
