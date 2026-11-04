@@ -69,7 +69,7 @@ document.getElementById('grid').innerHTML = UNITS.map(u=>{
   const ok = READY.includes(u.n), base = 'lesson-'+u.n+'/';
   return `<article class="card"><div class="num" style="background:${u.color}">L${u.n}</div><div>
     <span class="label">Lesson ${u.n}</span><h2>${u.title}</h2><p>${u.concept}</p>
-    <div class="acts">${ok ? `<a class="btn primary" href="${base}slides.html" target="_blank" rel="noopener">Slides</a><a class="btn" href="${base}classwork.html" target="_blank" rel="noopener">Classwork</a><a class="btn" href="${base}lesson-plan.html" target="_blank" rel="noopener">Lesson plan</a>${quizBtn(u.n)}`
+    <div class="acts">${ok ? `<a class="btn primary" href="${base}slides.html" target="_blank" rel="noopener">Slides</a><a class="btn" href="${base}classwork.html" target="_blank" rel="noopener">Classwork</a><a class="btn" href="${base}classwork.docx" download title="Editable classwork for Word or Google Docs">Word</a><a class="btn" href="${base}lesson-plan.html" target="_blank" rel="noopener">Lesson plan</a>${quizBtn(u.n)}`
       : '<span class="soon">Slides, classwork and lesson plan coming soon</span>'}</div></div></article>`;
 }).join('');
 </script>
