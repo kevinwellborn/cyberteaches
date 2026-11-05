@@ -10,9 +10,10 @@ const ROOT = path.join(__dirname, '../..'); const only = process.argv[2] ? +proc
 const TMP = fs.mkdtempSync(path.join(require('os').tmpdir(), 'cwd-'));
 (async () => {
   const b = await chromium.launch(); const p = await b.newPage({viewport: {width: 1000, height: 1300}, deviceScaleFactor: 2});
-  for (let n = 1; n <= 13; n++) {
+  for (let n = 1; n <= 13; n++) for (const sub of ['', 'easy/']) {   // lesson-N/ is the Hard level, lesson-N/easy/ the Easy level
     if (only && n !== only) continue;
-    await p.goto('http://localhost:8123/academy/resources/lesson-' + n + '/classwork.html'); await p.waitForTimeout(700);
+    if (sub && !fs.existsSync(path.join(ROOT, `academy/resources/lesson-${n}/${sub}classwork.html`))) continue;
+    await p.goto('http://localhost:8123/academy/resources/lesson-' + n + '/' + sub + 'classwork.html'); await p.waitForTimeout(700);
     await p.evaluate(() => { document.querySelectorAll('section.key').forEach(s => s.remove()); document.querySelectorAll('.page .board.blank').forEach(e => e.closest('.task').querySelector('.board').remove()) });
     // Maps and block programs become pictures (outermost ones only).
     for (const el of await p.$$('.page .board, .page .prog, .page .rep, .page .blk')) {
@@ -93,8 +94,8 @@ const TMP = fs.mkdtempSync(path.join(require('os').tmpdir(), 'cwd-'));
     }, n);
     const htmlFile = path.join(TMP, `lesson-${n}.html`);
     fs.writeFileSync(htmlFile, `<!doctype html><html><head><meta charset="utf-8"></head><body>${html}</body></html>`);
-    execFileSync('python3', [path.join(__dirname, 'docx-finish.py'), htmlFile, path.join(ROOT, `academy/resources/lesson-${n}/classwork-digital.docx`)]);
-    console.log('Lesson', n, 'classwork-digital.docx written');
+    execFileSync('python3', [path.join(__dirname, 'docx-finish.py'), htmlFile, path.join(ROOT, `academy/resources/lesson-${n}/${sub}classwork-digital.docx`)]);
+    console.log('Lesson', n, sub || 'hard', 'classwork-digital.docx written');
   }
   await b.close();
 })().catch(e => { console.error(e); process.exit(1) });
