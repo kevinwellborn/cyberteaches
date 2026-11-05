@@ -60,6 +60,22 @@
   };
   Cloud.resetTeacherPassword = email => auth.sendPasswordResetEmail(email.trim());
 
+  // Teacher access: Kevin (the admin) approves each teacher. teachers/{uid} holds the request and its status.
+  const ADMIN_EMAIL = 'kevinwellborn714@gmail.com';
+  Cloud.isAdmin = u => !!(u && u.email && u.email.toLowerCase() === ADMIN_EMAIL);
+  Cloud.watchTeacherStatus = cb => db.collection('teachers').doc(Cloud.user.uid)
+    .onSnapshot(s => cb(s.exists ? s.data() : null), e => { console.error(e); cb(null, e) });
+  Cloud.requestTeacher = (name, school) => db.collection('teachers').doc(Cloud.user.uid).set({
+    name: String(name).trim().slice(0, 60), school: String(school).trim().slice(0, 80), email: Cloud.user.email || '',
+    status: 'pending', requestedAt: firebase.firestore.FieldValue.serverTimestamp()
+  });
+  Cloud.watchTeachers = cb => db.collection('teachers')
+    .onSnapshot(s => cb(s.docs.map(d => ({uid: d.id, ...d.data()}))), e => { console.error(e); cb([], e) });
+  Cloud.setTeacherStatus = (uid, status) => db.collection('teachers').doc(uid).update({status, decidedAt: firebase.firestore.FieldValue.serverTimestamp()});
+  Cloud.removeTeacher = uid => db.collection('teachers').doc(uid).delete();
+  Cloud.getConfig = doc => db.collection('config').doc(doc).get().then(s => s.exists ? s.data() : null);
+  Cloud.setConfig = (doc, data) => db.collection('config').doc(doc).set(data, {merge: true});
+
   const who = () => ({
     name: Cloud.user.displayName || (Cloud.isStudentLogin(Cloud.user) ? 'Student' : Cloud.user.email) || 'Student',
     email: Cloud.isStudentLogin(Cloud.user) ? '' : (Cloud.user.email || ''),
@@ -104,7 +120,7 @@
 
   // Teacher helpers
   Cloud.watchClasses = cb => db.collection('classes').where('teacherUid', '==', Cloud.user.uid)
-    .onSnapshot(s => cb(s.docs.map(d => ({code: d.id, ...d.data()}))), e => { console.error(e); cb([], e) });
+    .onSnapshot(s => cb(s.docs.map(d => ({code: d.id, ...d.data(), pending: d.metadata.hasPendingWrites}))), e => { console.error(e); cb([], e) });
   Cloud.watchRoster = (code, cb) => db.collection('classes').doc(code).collection('students')
     .onSnapshot(s => cb(s.docs.map(d => ({uid: d.id, ...d.data()}))), e => { console.error(e); cb([], e) });
   // A second Firebase app signs in as a student to set up or change their account,
@@ -150,6 +166,25 @@
     await db.collection('classes').doc(code).collection('students').doc(login.uid).delete();
     await db.collection('classes').doc(code).collection('board').doc(login.uid).delete().catch(() => {});
     await db.collection('classes').doc(code).collection('logins').doc(login.uid).delete();
+  };
+
+  Cloud.archiveClass = (code, archived) => db.collection('classes').doc(code).update({archived: !!archived});
+  // Deletes a class for good: its student logins (and their accounts), roster, leaderboard, then the class itself.
+  Cloud.deleteClass = async (code, onStep) => {
+    const ref = db.collection('classes').doc(code);
+    const logins = await ref.collection('logins').get();
+    let i = 0;
+    for(const d of logins.docs){
+      if(onStep) onStep(`Removing student login ${++i} of ${logins.size}…`);
+      try { await Cloud.removeStudentLogin(code, {uid: d.id, ...d.data()}) }
+      catch(e){ console.error(e); await d.ref.delete() }
+    }
+    if(onStep) onStep('Removing the roster…');
+    for(const sub of ['students', 'board']){
+      const s = await ref.collection(sub).get();
+      await Promise.all(s.docs.map(d => d.ref.delete()));
+    }
+    await ref.delete();
   };
 
   Cloud.createClass = async name => {
