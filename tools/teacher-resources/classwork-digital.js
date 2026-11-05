@@ -1,7 +1,7 @@
 // Makes a digital, student-only version of each lesson's classwork for Google Classroom.
 // Every "draw / circle / underline / draw a line" task becomes something students can type,
 // answers go in shaded boxes, Part D gets a grid to build a map in, and there is no answer key.
-// Usage: node tools/teacher-resources/classwork-digital.js [lesson]
+// Usage: [LEVEL=easy|medium|hard] node tools/teacher-resources/classwork-digital.js [lesson]
 // Needs the site served on localhost:8123 (python3 -m http.server 8123), Playwright, and pandoc.
 // Writes academy/resources/lesson-N/classwork-digital.docx (open in Google Docs, then assign
 // with "Make a copy for each student").
@@ -10,8 +10,9 @@ const ROOT = path.join(__dirname, '../..'); const only = process.argv[2] ? +proc
 const TMP = fs.mkdtempSync(path.join(require('os').tmpdir(), 'cwd-'));
 (async () => {
   const b = await chromium.launch(); const p = await b.newPage({viewport: {width: 1000, height: 1300}, deviceScaleFactor: 2});
-  for (let n = 1; n <= 13; n++) for (const sub of ['', 'easy/']) {   // lesson-N/ is the Hard level, lesson-N/easy/ the Easy level
+  for (let n = 1; n <= 13; n++) for (const sub of ['', 'easy/', 'medium/']) {   // lesson-N/ is the Hard level, lesson-N/easy/ and lesson-N/medium/ the other levels
     if (only && n !== only) continue;
+    if (process.env.LEVEL && sub !== (process.env.LEVEL === 'hard' ? '' : process.env.LEVEL + '/')) continue;   // LEVEL=medium builds one level only
     if (sub && !fs.existsSync(path.join(ROOT, `academy/resources/lesson-${n}/${sub}classwork.html`))) continue;
     await p.goto('http://localhost:8123/academy/resources/lesson-' + n + '/' + sub + 'classwork.html'); await p.waitForTimeout(700);
     await p.evaluate(() => { document.querySelectorAll('section.key').forEach(s => s.remove()); document.querySelectorAll('.page .board.blank').forEach(e => e.closest('.task').querySelector('.board').remove()) });

@@ -163,7 +163,7 @@ body{border-top:6px solid var(--lv,var(--accent))}
   </header>
   <main id="app"><p class="muted">Loading…</p></main>
 </div>
-<script src="course.js?v=10"></script>
+<script src="course.js?v=11"></script>
 <script src="firebase-config.js"></script>
 <script src="cloud.js?v=9"></script>
 <script>
@@ -172,7 +172,7 @@ const esc=t=>String(t==null?'':t).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;'
 const app=$('#app'), acct=$('#acct');
 const openUnits=new Set();  // lessons expanded in the progress table
 let classes=[], showArchived=false, keepArchived=false, current=null, roster=[], stopRoster=null, stopClasses=null, uid=null, tw0=null;
-const LEVEL_HELP={easy:'Small maps, short programs', medium:'In between', hard:'The full challenge'};
+const LEVEL_HELP={easy:'Small maps, short programs', medium:'Mid-size maps, a step up', hard:'The full challenge'};
 const pick={ get(){ try{ return localStorage.getItem('cyberteaches:teacherClass') }catch(e){ return null } }, set(v){ try{ localStorage.setItem('cyberteaches:teacherClass',v) }catch(e){} } };
 
 function signInView(mode){
@@ -307,7 +307,7 @@ let keyData=null;
 async function loadKey(){
   if(keyData) return keyData;
   const cfg=await Cloud.getConfig('answerKey'); if(!cfg||!cfg.secret) throw new Error('no-secret');
-  await new Promise((ok,fail)=>{ if(window.ANSWER_KEY_ENC) return ok(); const sc=document.createElement('script'); sc.src='answer-key.js?v=9'; sc.onload=ok; sc.onerror=fail; document.head.appendChild(sc) });
+  await new Promise((ok,fail)=>{ if(window.ANSWER_KEY_ENC) return ok(); const sc=document.createElement('script'); sc.src='answer-key.js?v=10'; sc.onload=ok; sc.onerror=fail; document.head.appendChild(sc) });
   const b64=x=>Uint8Array.from(atob(x),c=>c.charCodeAt(0)), enc=window.ANSWER_KEY_ENC, te=new TextEncoder();
   const base=await crypto.subtle.importKey('raw',te.encode(cfg.secret),'PBKDF2',false,['deriveKey']);
   const key=await crypto.subtle.deriveKey({name:'PBKDF2',salt:b64(enc.salt),iterations:100000,hash:'SHA-256'},base,{name:'AES-GCM',length:256},false,['decrypt']);

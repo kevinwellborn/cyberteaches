@@ -9,7 +9,8 @@ new Function('ctx', fs.readFileSync(path.join(ROOT, 'academy/course.js'), 'utf8'
 const KEY = require('../answer-key/crypt.js').load();   // needs ANSWER_KEY_SECRET or tools/answer-key/.secret
 const { UNITS, LEVELS, ORDER, LEVEL_NAMES, LEVEL_COLORS } = ctx;
 const LESSONS = require('./lessons.js');
-const EASY = require('./lessons-easy.js');
+const EASY = require('./lessons-easy.js'), MEDIUM = require('./lessons-medium.js');
+const OVERRIDES = { easy: EASY, medium: MEDIUM };   // per-level overrides of the shared lesson content
 // Difficulty level being built: 'hard' pages go in lesson-N/, other levels in lesson-N/<level>/ with the same file names.
 let CUR_LEVEL = 'hard';
 const LV = () => CUR_LEVEL === 'hard' ? '' : ` · ${LEVEL_NAMES[CUR_LEVEL]} level`;
@@ -428,13 +429,13 @@ const STANDARDS = {
 
 // ---------- build ----------
 const only = process.argv[2] ? +process.argv[2] : null;
-// Pages in a level folder (lesson-N/easy/) link one folder further up to the shared css, js and the lessons index.
+// Pages in a level folder (lesson-N/easy/, lesson-N/medium/) link one folder further up to the shared css, js and the lessons index.
 const deeper = html => html.replace(/(href|src)="\.\.\//g, '$1="../../');
-for (const L0 of LESSONS) for (const level of ['hard', 'easy']) {
+for (const L0 of LESSONS) for (const level of ['hard', 'easy', 'medium']) {
   if (only && L0.n !== only) continue;
   CUR_LEVEL = level;
-  const L = level === 'hard' ? L0 : withLevel(L0, EASY[L0.n]);
-  if (level !== 'hard' && !EASY[L0.n]) continue;
+  const L = level === 'hard' ? L0 : withLevel(L0, OVERRIDES[level][L0.n]);
+  if (level !== 'hard' && !OVERRIDES[level][L0.n]) continue;
   const u = UNITS.find(x => x.n === L.n);
   const sl = L.handSlides ? null : slidesPage(L, u);
   // slide numbers: 1 title, 2 goals, 3 warm-up, then review/concepts, then together puzzles, tips, classwork, code, exit
@@ -444,7 +445,7 @@ for (const L0 of LESSONS) for (const level of ['hard', 'easy']) {
   const base = path.join(ROOT, 'academy/resources/lesson-' + L.n), dir = level === 'hard' ? base : path.join(base, level); fs.mkdirSync(dir, { recursive: true });
   const fix = level === 'hard' ? (x => x) : deeper;
   if (sl) fs.writeFileSync(path.join(dir, 'slides.html'), fix(sl.html));
-  else if (level !== 'hard') fs.writeFileSync(path.join(dir, 'slides.html'), deeper(fs.readFileSync(path.join(base, 'slides.html'), 'utf8')).replace(/<body[^>]*>/, LVBODY()));   // hand-made deck, shared by every level
+  else if (level !== 'hard') fs.writeFileSync(path.join(dir, 'slides.html'), deeper(fs.readFileSync(path.join(base, 'slides.html'), 'utf8')).replace(/<body[^>]*>\s*(?:<div class="lvlrib">.*?<\/div>\s*)?/s, LVBODY()));   // hand-made deck, shared by every level (its own ribbon is replaced)
   fs.writeFileSync(path.join(dir, 'classwork.html'), fix(classworkPage(L, u)));
   fs.writeFileSync(path.join(dir, 'lesson-plan.html'), fix(planPage(L, u)));
   console.log('Lesson', L.n, level, 'built:', sl ? sl.count : 'hand-made', 'slides');
