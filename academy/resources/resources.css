@@ -10,7 +10,12 @@
   --f-mono:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;
 }
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-body);line-height:1.45}
+body{margin:0;background:var(--lv-soft,var(--bg));color:var(--ink);font-family:var(--f-body);line-height:1.45}
+/* Level ribbon: every resource page carries its level's color (green Easy, yellow Medium, red Hard). */
+.lvlrib{background:var(--lv);color:var(--lv-ink);text-align:center;font-weight:700;font-size:14px;padding:7px 14px;letter-spacing:.02em}
+.lvlrib a{color:inherit;text-decoration:underline}
+.lvlrib b{text-transform:uppercase;letter-spacing:.08em}
+@media print{ .lvlrib{display:none} body{background:#fff} }
 h1,h2,h3{font-family:var(--f-display);margin:0;line-height:1.1}
 .label{font-size:.75em;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:700}
 

@@ -1,6 +1,6 @@
 // Slide engine for teacher resources: arrow keys or click, reveal steps, N notes, F full screen.
 const slides=[...document.querySelectorAll('.slide')]; let i=0;
-function fit(){ const s=Math.min(innerWidth/1280, innerHeight/720); slides.forEach(sl=>sl.style.transform=`translate(-50%,-50%) scale(${s})`) }
+function fit(){ const s=Math.min(innerWidth/1280, (innerHeight-34)/720); slides.forEach(sl=>sl.style.transform=`translate(-50%,-50%) scale(${s})`) }
 function show(n){ i=Math.max(0,Math.min(slides.length-1,n)); slides.forEach((s,k)=>s.classList.toggle('on',k===i));
   document.getElementById('num').textContent=(i+1)+' / '+slides.length;
   const note=slides[i].querySelector('.note'); document.getElementById('noteText').textContent=note?note.textContent:'';
