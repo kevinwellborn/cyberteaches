@@ -14,6 +14,15 @@ for item in zin.infolist():
             tbl = re.sub(r'<w:tblPr>', '<w:tblPr>' + B, tbl, count=1)
             return tbl
         x = re.sub(r'<w:p>(?:(?!<w:p>).)*?GRIDTABLE.*?</w:p>\s*(<w:tbl>.*?</w:tbl>)', lambda m: re.sub(r'<w:tblPr>', '<w:tblPr>' + B, m.group(1), count=1), x, flags=re.S)
+        # BOXTABLE: a one-cell answer box, bordered and shaded (digital classwork).
+        SHD = '<w:shd w:val="clear" w:color="auto" w:fill="EAF3F1"/>'
+        def shade(t): return re.sub(r'<w:tcPr>', '<w:tcPr>' + SHD, re.sub(r'<w:tc>(?!<w:tcPr>)', '<w:tc><w:tcPr></w:tcPr>', t))
+        x = re.sub(r'<w:p>(?:(?!<w:p>).)*?BOXTABLE.*?</w:p>\s*(<w:tbl>.*?</w:tbl>)', lambda m: shade(re.sub(r'<w:tblPr>', '<w:tblPr>' + B, m.group(1), count=1)), x, flags=re.S)
+        # ANSWERCELL: shade a table cell students type in, then drop the marker.
+        def cell(m):
+            tc = m.group(0); tc = re.sub(r'<w:tc>(?!<w:tcPr>)', '<w:tc><w:tcPr></w:tcPr>', tc)
+            return re.sub(r'<w:tcPr>', '<w:tcPr>' + SHD, tc, count=1).replace('ANSWERCELL', '')
+        x = re.sub(r'<w:tc>(?:(?!<w:tc>).)*?ANSWERCELL.*?</w:tc>', cell, x, flags=re.S)
         x = re.sub(r'<w:p>(?:(?!<w:p>).)*?PAGEBREAK.*?</w:p>', '<w:p><w:r><w:br w:type="page"/></w:r></w:p>', x, flags=re.S)
         data = x.encode('utf8')
     zout.writestr(item, data)
