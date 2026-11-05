@@ -109,6 +109,11 @@ small.rank{display:block;font-size:11px}
 .lockbtn .lstate{flex:none;font-size:12px;font-weight:700;color:var(--accent)}
 .lockbtn.off{background:var(--panel-2);border-style:dashed}
 .lockbtn.off .ltitle,.lockbtn.off .lstate{color:var(--muted)}
+.levels{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+.lvlbtn{display:flex;flex-direction:column;align-items:flex-start;gap:2px;border:2px solid var(--line);background:var(--panel);border-radius:12px;padding:8px 14px;font:inherit;color:var(--ink);cursor:pointer;min-width:150px}
+.lvlbtn small{color:var(--muted);font-size:12px}
+.lvlbtn.on{border-color:var(--accent);background:var(--accent);color:var(--accent-ink)} .lvlbtn.on small{color:inherit;opacity:.85}
+.stulvl{display:block;margin-top:4px;font:inherit;font-size:12px;border:1px solid var(--line);border-radius:8px;padding:2px 6px;background:var(--panel);color:var(--muted);max-width:170px}
 .note{margin-top:18px;font-size:14px}
 .err{color:var(--bad);font-weight:700}
 .auth{max-width:420px;margin-top:20px}
@@ -150,7 +155,7 @@ small.rank{display:block;font-size:11px}
   </header>
   <main id="app"><p class="muted">Loading…</p></main>
 </div>
-<script src="course.js?v=8"></script>
+<script src="course.js?v=9"></script>
 <script src="firebase-config.js"></script>
 <script src="cloud.js?v=8"></script>
 <script>
@@ -158,7 +163,8 @@ const $=(s,r=document)=>r.querySelector(s);
 const esc=t=>String(t==null?'':t).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const app=$('#app'), acct=$('#acct');
 const openUnits=new Set();  // lessons expanded in the progress table
-let classes=[], current=null, roster=[], stopRoster=null, stopClasses=null, uid=null;
+let classes=[], current=null, roster=[], stopRoster=null, stopClasses=null, uid=null, tw0=null;
+const LEVEL_HELP={easy:'Small maps, short programs', medium:'In between', hard:'The full challenge'};
 const pick={ get(){ try{ return localStorage.getItem('cyberteaches:teacherClass') }catch(e){ return null } }, set(v){ try{ localStorage.setItem('cyberteaches:teacherClass',v) }catch(e){} } };
 
 function signInView(mode){
@@ -242,9 +248,10 @@ function dashboard(){
   });
   if(stopClasses) stopClasses();
   stopClasses=Cloud.watchClasses((list,err)=>{
-    const was=JSON.stringify((classes.find(c=>c.code===current)||{}).locked||[]);
+    const snap=c=>JSON.stringify([c.locked||[], c.level||'', c.levels||{}]);
+    const was=snap(classes.find(c=>c.code===current)||{});
     classes=list.sort((a,b)=>(a.name||'').localeCompare(b.name||''));
-    const now=classes.find(c=>c.code===current); if(now && JSON.stringify(now.locked||[])!==was && $('#locks')) renderClass();
+    const now=classes.find(c=>c.code===current); if(now && snap(now)!==was && $('#locks')) renderClass();
     renderTabs(err);
     if(!current || !classes.find(c=>c.code===current)){ const saved=pick.get(); const first=(classes.find(c=>c.code===saved)||classes[0]); if(first) selectClass(first.code); else $('#classview').innerHTML=`<div class="panel empty" style="margin-top:12px">Create your first class to get a code for your students.</div>` }
   });
@@ -278,18 +285,18 @@ const keyCount=list=>list.reduce((s,n)=>s+1+keyCount(n.body||[])+keyCount(n.else
 let keyData=null;
 function loadKey(){
   if(keyData) return Promise.resolve(keyData);
-  return new Promise((ok,fail)=>{ const sc=document.createElement('script'); sc.src='answer-key.js?v=7'; sc.onload=()=>{ try{ keyData=window.decodeAnswerKey(); ok(keyData) }catch(e){ fail(e) } }; sc.onerror=fail; document.head.appendChild(sc) });
+  return new Promise((ok,fail)=>{ const sc=document.createElement('script'); sc.src='answer-key.js?v=8'; sc.onload=()=>{ try{ keyData=window.decodeAnswerKey(); ok(keyData) }catch(e){ fail(e) } }; sc.onerror=fail; document.head.appendChild(sc) });
 }
 async function toggleKey(){
   const btn=$('#keyBtn'), box=$('#keybody'), open=btn.getAttribute('aria-expanded')==='true';
   if(open){ box.innerHTML=''; btn.textContent='Show answers'; btn.setAttribute('aria-expanded','false'); return }
   btn.disabled=true; box.innerHTML='<p class="muted">Loading…</p>';
   try{ await loadKey() }catch(e){ console.error(e); box.innerHTML='<p class="err">Could not load the answer key. Check your connection and try again.</p>'; btn.disabled=false; return }
-  box.innerHTML=UNITS.map(u=>`<h3 class="keylesson">Lesson ${u.n}: ${esc(u.title)}</h3><div class="keygrid">${LEVELS.filter(l=>l.unit===u.n).map(l=>{
+  box.innerHTML=UNITS.map(u=>LEVELS_AVAILABLE.map(v=>`<h3 class="keylesson">Lesson ${u.n}: ${esc(u.title)} · ${LEVEL_NAMES[v]} level</h3><div class="keygrid">${levelsOf(v,u.n).map(l=>{
     const prog=keyData[l.n]||[];
     const body = l.drive ? prog.map((n,i)=>(i+1+'. ').padStart(4,' ')+KEY_DRIVE[n.type]).join('\n') : keyLines(prog,0).join('\n');
     const meta = l.drive ? `Drive mode · ${prog.length} moves (3 stars at ${l.ideal} or fewer)` : `${keyCount(prog)} blocks · goal ${l.ideal}`;
-    return `<article class="keycard"><h3>${u.n}.${l.k} ${esc(l.title)}</h3><div class="meta">${meta}</div><pre>${esc(prog.length?body:'No solution saved yet.')}</pre><a href="./#puzzle-${l.n}" target="_blank" rel="noopener">Open puzzle</a></article>` }).join('')}</div>`).join('')
+    return `<article class="keycard"><h3>${u.n}.${l.k} ${esc(l.title)}</h3><div class="meta">${meta}</div><pre>${esc(prog.length?body:'No solution saved yet.')}</pre><a href="./#puzzle-${l.n}" target="_blank" rel="noopener">Open puzzle</a></article>` }).join('')}</div>`).join('')).join('')
     + '<p class="muted" style="margin-top:14px;font-size:14px">Other correct programs also work. These are one way to reach the block goal.</p>';
   btn.disabled=false; btn.textContent='Hide answers'; btn.setAttribute('aria-expanded','true');
 }
@@ -387,12 +394,16 @@ function ago(ts){
   if(m<1) return 'just now'; if(m<60) return m+' min ago'; if(m<1440) return Math.round(m/60)+' h ago';
   return d.toLocaleDateString(undefined,{month:'short',day:'numeric'});
 }
+// Difficulty: the class has one level (Easy / Medium / Hard); a student can be moved to another level on their own.
+const classLevel=c=>LEVELS_AVAILABLE.includes(c&&c.level)?c.level:DEFAULT_LEVEL;
+const studentLevel=(c,s)=>{ const v=(c&&c.levels||{})[s.uid]; return LEVELS_AVAILABLE.includes(v)?v:classLevel(c) };
 function renderClass(err){
   const view=$('#classview'); if(!view) return;
   const c=classes.find(x=>x.code===current)||{code:current,name:current};
-  const solved=s=>LEVELS.filter(l=>(s.progress||{})[l.n]).length;
+  const solved=s=>levelsOf(studentLevel(c,s)).filter(l=>(s.progress||{})[l.n]).length;
   const n=roster.length, avg=n?roster.reduce((t,s)=>t+solved(s),0)/n:0;
-  const lessonDone=UNITS.map(u=>{ const lv=LEVELS.filter(l=>l.unit===u.n); return {u, done:roster.filter(s=>lv.every(l=>(s.progress||{})[l.n])).length} });
+  const lessonDone=UNITS.map(u=>({u, done:roster.filter(s=>levelsOf(studentLevel(c,s),u.n).every(l=>(s.progress||{})[l.n])).length}));
+  const cl=classLevel(c);
   view.innerHTML=`<div class="top2">
     <section class="panel"><span class="label">${esc(c.name)} · class code</span><div class="code">${esc(c.code)}</div>
       <p class="muted" style="margin:0 0 8px">Students sign in with Google and enter this code. Or share this link, which fills in the code for them:</p>
@@ -400,8 +411,11 @@ function renderClass(err){
       <p class="muted" style="margin:10px 0 0">No Google accounts for students? <a href="#loginsview">Make student logins</a> with a username and password instead.</p></section>
     <section class="panel"><span class="label">Class summary</span>
       <div class="stats"><div class="stat"><b>${n}</b><span class="muted">students joined</span></div>
-      <div class="stat"><b>${avg.toFixed(1)}</b><span class="muted">puzzles solved on average, of ${LEVELS.length}</span></div>
+      <div class="stat"><b>${avg.toFixed(1)}</b><span class="muted">puzzles solved on average, of ${levelsOf(cl).length}</span></div>
       ${lessonDone.map(x=>`<div class="stat"><b>${x.done}</b><span class="muted">finished Lesson ${x.u.n}</span><div class="bar"><i style="width:${n?x.done/n*100:0}%;background:${x.u.color}"></i></div></div>`).join('')}</div></section></div>
+    <div class="toolbar"><h2>Difficulty level</h2></div>
+    <p class="muted" style="margin:0 0 8px">Every lesson has its own set of 10 puzzles at each level. Pick the level for this class, for example Easy for 6th grade and Hard for 8th. You can move single students to another level in the Progress table. Stars earned at each level are kept.</p>
+    <div class="levels" id="levels" role="group" aria-label="Class difficulty level">${LEVELS_AVAILABLE.map(v=>`<button class="lvlbtn${v===cl?' on':''}" data-level="${v}" aria-pressed="${v===cl}"><b>${LEVEL_NAMES[v]}</b><small>${LEVEL_HELP[v]}</small></button>`).join('')}</div>
     <div class="toolbar"><h2>Lessons open to students</h2><div class="spacer"></div><button class="btn" id="unlockAll">Unlock all</button><button class="btn" id="lockAll">Lock all</button></div>
     <p class="muted" style="margin:0 0 8px">Tap a lesson to lock or unlock it for this class. Students see a lock and can't open its puzzles. Changes reach students right away. Their stars are kept.</p>
     <div class="locks" id="locks">${UNITS.map(u=>{ const off=(c.locked||[]).includes(u.n); return `<button class="lockbtn${off?' off':''}" data-unit="${u.n}" aria-pressed="${!off}"><span class="lnum" style="background:${off?'var(--line)':u.color}">L${u.n}</span><span class="ltitle">${esc(u.title)}</span><span class="lstate">${off?'🔒 Locked':'Open'}</span></button>` }).join('')}</div>
@@ -418,6 +432,9 @@ function renderClass(err){
   const save=data=>{ $('#lockErr').textContent=''; cref.update(data).catch(e=>{ console.error(e); $('#lockErr').textContent='Could not save. Check your connection and try again.' }) };
   $('#locks').onclick=e=>{ const b=e.target.closest('.lockbtn'); if(!b) return; const u=+b.dataset.unit, off=b.classList.contains('off');
     b.classList.toggle('off'); save({locked: off ? FV.arrayRemove(u) : FV.arrayUnion(u)}) };
+  $('#levels').onclick=e=>{ const b=e.target.closest('.lvlbtn'); if(!b) return; save({level: b.dataset.level}) };
+  tw0=$('#progressTable'); tw0.onchange=e=>{ const sel=e.target.closest('.stulvl'); if(!sel) return;
+    save({['levels.'+sel.dataset.uid]: sel.value ? sel.value : FV.delete()}) };
   $('#unlockAll').onclick=()=>save({locked: []});
   $('#lockAll').onclick=()=>save({locked: UNITS.map(u=>u.n)});
   const tw=$('#progressTable'); tw.onclick=e=>{ const b=e.target.closest('.lessonbtn'); if(!b) return; const u=+b.dataset.unit;
@@ -428,30 +445,34 @@ function renderClass(err){
 // Same ranking students see in the app: by stars, then puzzles solved. Names are first name + last initial so it is safe to project.
 function leaderboard(){
   const short=n=>{ const w=String(n||'Student').trim().split(/\s+/); return w.length>1 ? w[0]+' '+w[w.length-1][0]+'.' : w[0] };
-  const rows=roster.map(s=>{ const p=s.progress||{}; return {name:short(s.name), stars:totalStars(p), solved:LEVELS.filter(l=>p[l.n]).length} })
+  const rows=roster.map(s=>{ const p=s.progress||{}; const sl=studentLevel(c,s); return {name:short(s.name), stars:totalStars(p), solved:levelsOf(sl).filter(l=>p[l.n]).length, total:levelsOf(sl).length} })
     .sort((a,b)=>b.stars-a.stars || b.solved-a.solved || a.name.localeCompare(b.name));
   let place=0, prev=null;
   return `<table class="lb"><thead><tr><th>#</th><th class="l">Student</th><th class="l">Rank</th><th>Stars</th><th>Solved</th></tr></thead><tbody>${rows.map((r,i)=>{
     if(r.stars!==prev){ place=i+1; prev=r.stars }
-    return `<tr class="${place<=3&&r.stars?'place'+place:''}"><td><b>${place}</b></td><td class="l"><b>${esc(r.name)}</b></td><td class="l">${rankFor(r.stars).title}</td><td><b>${r.stars}</b> ★</td><td>${r.solved}/${LEVELS.length}</td></tr>` }).join('')}</tbody></table>`;
+    return `<tr class="${place<=3&&r.stars?'place'+place:''}"><td><b>${place}</b></td><td class="l"><b>${esc(r.name)}</b></td><td class="l">${rankFor(r.stars).title}</td><td><b>${r.stars}</b> ★</td><td>${r.solved}/${r.total}</td></tr>` }).join('')}</tbody></table>`;
 }
 function table(){
   // Lessons start collapsed to just their Score (out of 100, see lessonScore in course.js). Clicking a lesson shows its puzzles.
-  const lv=u=>openUnits.has(u.n)?ORDER.filter(l=>l.unit===u.n):[];
+  // Columns show the class level's puzzles; a student on another level gets their own level's score and a note.
+  const c=classes.find(x=>x.code===current)||{}, cl=classLevel(c);
+  const lv=u=>openUnits.has(u.n)?levelsOf(cl,u.n):[];
   const head1=UNITS.map(u=>{ const o=openUnits.has(u.n); return `<th class="lesson" colspan="${lv(u).length+1}" style="background:${u.color}"><button class="lessonbtn" data-unit="${u.n}" aria-expanded="${o}" title="${o?'Hide':'Show'} each puzzle">${o?'▾':'▸'} L${u.n}${o?': '+esc(u.title):''}</button></th>` }).join('');
   const head2=UNITS.map(u=>lv(u).map(l=>`<th title="${esc(l.title)}">${l.unit}.${l.k}</th>`).join('')+`<th class="score" title="Lesson ${u.n}: ${esc(u.title)}. Score out of 100">Score</th>`).join('');
   const rows=roster.map(s=>{
-    const p=s.progress||{}, done=LEVELS.filter(l=>p[l.n]).length, stars=totalStars(p);
-    const cells=UNITS.map(u=>lv(u).map(l=>{ const st=p[l.n]||0; return `<td><span class="cell s${st}" title="${esc(l.title)}: ${st?st+' star'+(st>1?'s':''):'not solved'}">${st?'★'.repeat(st):'·'}</span></td>` }).join('')
-      +`<td class="score"><b>${lessonScore(p,u.n)}</b></td>`).join('');
-    return `<tr><td class="name"><b>${esc(s.name)}</b><small>${esc(s.email||(s.username?'Username: '+s.username:''))}</small></td>${cells}<td><b>${done}</b>/${LEVELS.length}</td><td><b>${stars}</b> ★<small class="muted rank">${rankFor(stars).title}</small></td><td class="muted">${ago(s.updatedAt)}</td></tr>`;
+    const p=s.progress||{}, sl=studentLevel(c,s), other=sl!==cl, done=levelsOf(sl).filter(l=>p[l.n]).length, stars=totalStars(p);
+    const cells=UNITS.map(u=>lv(u).map(l=>{ const st=p[l.n]||0; return other ? '<td><span class="cell s0" title="This student is on another level">–</span></td>' : `<td><span class="cell s${st}" title="${esc(l.title)}: ${st?st+' star'+(st>1?'s':''):'not solved'}">${st?'★'.repeat(st):'·'}</span></td>` }).join('')
+      +`<td class="score"><b>${lessonScore(p,u.n,sl)}</b></td>`).join('');
+    const pick=`<select class="stulvl" data-uid="${esc(s.uid)}" aria-label="Level for ${esc(s.name)}"><option value="">Class level (${LEVEL_NAMES[cl]})</option>${LEVELS_AVAILABLE.map(v=>`<option value="${v}"${(c.levels||{})[s.uid]===v?' selected':''}>${LEVEL_NAMES[v]}</option>`).join('')}</select>`;
+    return `<tr><td class="name"><b>${esc(s.name)}</b><small>${esc(s.email||(s.username?'Username: '+s.username:''))}</small>${pick}</td>${cells}<td><b>${done}</b>/${levelsOf(sl).length}</td><td><b>${stars}</b> ★<small class="muted rank">${rankFor(stars).title}</small></td><td class="muted">${ago(s.updatedAt)}</td></tr>`;
   }).join('');
   return `<table><thead><tr><th class="name" rowspan="2">Student</th>${head1}<th rowspan="2">Solved</th><th rowspan="2">Stars and rank</th><th rowspan="2">Last active</th></tr><tr>${head2}</tr></thead><tbody>${rows}</tbody></table>`;
 }
 function downloadCsv(c){
   const q=v=>'"'+String(v==null?'':v).replace(/"/g,'""')+'"';
-  const lines=[['Student','Email or username',...ORDER.map(l=>'L'+l.unit+'.'+l.k+' '+l.title),...UNITS.map(u=>'Lesson '+u.n+' score'),'Solved','Stars','Rank','Last active'].map(q).join(',')];
-  roster.forEach(s=>{ const p=s.progress||{}, stars=totalStars(p); lines.push([s.name,s.email||s.username,...ORDER.map(l=>p[l.n]||0),...UNITS.map(u=>lessonScore(p,u.n)),LEVELS.filter(l=>p[l.n]).length,stars,rankFor(stars).title,s.updatedAt&&s.updatedAt.toDate?s.updatedAt.toDate().toISOString():''].map(q).join(',')) });
+  const cl=classLevel(c), cols=levelsOf(cl);
+  const lines=[['Student','Email or username','Level',...cols.map(l=>'L'+l.unit+'.'+l.k+' '+l.title),...UNITS.map(u=>'Lesson '+u.n+' score'),'Solved','Stars','Rank','Last active'].map(q).join(',')];
+  roster.forEach(s=>{ const p=s.progress||{}, stars=totalStars(p), sl=studentLevel(c,s); lines.push([s.name,s.email||s.username,LEVEL_NAMES[sl],...cols.map(l=>sl===cl?(p[l.n]||0):''),...UNITS.map(u=>lessonScore(p,u.n,sl)),levelsOf(sl).filter(l=>p[l.n]).length,stars,rankFor(stars).title,s.updatedAt&&s.updatedAt.toDate?s.updatedAt.toDate().toISOString():''].map(q).join(',')) });
   const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([lines.join('\n')],{type:'text/csv'})); a.download=(c.name||c.code).replace(/[^a-z0-9]+/gi,'-')+'-progress.csv'; document.body.appendChild(a); a.click(); a.remove();
 }
 

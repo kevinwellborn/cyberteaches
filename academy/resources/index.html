@@ -30,6 +30,11 @@
 .card h2{font-size:20px;margin:2px 0 6px}
 .card p{margin:0 0 12px;color:var(--muted);font-size:14px}
 .acts{display:flex;gap:8px;flex-wrap:wrap}
+.lvlbar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:0 0 14px}
+.lvlpick{display:inline-flex;gap:4px;background:var(--panel-2);border:1px solid var(--line);border-radius:999px;padding:3px}
+.lvlpick button{border:0;background:transparent;font:inherit;font-weight:800;color:var(--muted);padding:6px 16px;border-radius:999px;cursor:pointer}
+.lvlpick button.on{background:var(--accent);color:#fff}
+.muted{color:var(--muted);font-size:14px}
 .soon{font-size:13px;color:var(--muted);font-weight:700}
 </style>
 </head><body>
@@ -54,9 +59,10 @@
     <div><b>2. Practice</b>Print the classwork. "Print student pages" leaves out the answer key.</div>
     <div><b>3. Code</b>Students solve the lesson's 10 puzzles. Watch their stars live on the Teacher Dashboard.</div>
   </div>
+  <div class="lvlbar"><span class="label">Difficulty level</span><div class="lvlpick" id="lvlpick" role="group" aria-label="Difficulty level"></div><span class="muted" id="lvlnote"></span></div>
   <div class="grid" id="grid"></div>
 </div>
-<script src="../course.js?v=8"></script>
+<script src="../course.js?v=9"></script>
 <script src="../quiz/questions.js?v=3"></script>
 <script>
 // Lessons whose slides and classwork exist in resources/lesson-N/. Add a lesson number here when its files are ready.
@@ -65,12 +71,22 @@ const READY = UNITS.map(u => u.n);
 const quizBtn = n => window.QUIZZES && QUIZZES[n]
   ? `<a class="btn quiz" href="../quiz/host.html?lesson=${n}" target="_blank" rel="noopener">⚡ Quiz Battle</a>`
   : '<span class="btn off" title="Coming soon">⚡ Quiz Battle · soon</span>';
+// Difficulty level: each level has its own puzzles, so its own classwork, slides and lesson plan (lesson-N/ is Hard, lesson-N/easy/ is Easy).
+const LEVEL_NOTE = {easy:'Smaller maps and shorter programs, for example 6th grade. Set the level for your class on the Teacher Dashboard.', medium:'In between.', hard:'The full challenge, for example 8th grade. Set the level for your class on the Teacher Dashboard.'};
+let level = LEVELS_AVAILABLE.includes(location.hash.slice(1)) ? location.hash.slice(1) : DEFAULT_LEVEL;
+function renderLevels(){
+  document.getElementById('lvlpick').innerHTML = LEVELS_AVAILABLE.map(v=>`<button class="${v===level?'on':''}" data-level="${v}" aria-pressed="${v===level}">${LEVEL_NAMES[v]}</button>`).join('');
+  document.getElementById('lvlnote').textContent = LEVEL_NOTE[level];
+}
+document.getElementById('lvlpick').onclick = e => { const b = e.target.closest('button'); if(!b) return; level = b.dataset.level; history.replaceState(null, '', '#'+level); render() };
+function render(){ renderLevels();
 document.getElementById('grid').innerHTML = UNITS.map(u=>{
-  const ok = READY.includes(u.n), base = 'lesson-'+u.n+'/';
+  const ok = READY.includes(u.n), base = 'lesson-'+u.n+'/' + (level==='hard' ? '' : level+'/');
   return `<article class="card"><div class="num" style="background:${u.color}">L${u.n}</div><div>
     <span class="label">Lesson ${u.n}</span><h2>${u.title}</h2><p>${u.concept}</p>
     <div class="acts">${ok ? `<a class="btn primary" href="${base}slides.html" target="_blank" rel="noopener">Slides</a><a class="btn" href="${base}classwork.html" target="_blank" rel="noopener">Classwork</a><a class="btn" href="${base}classwork.docx" download title="Editable classwork for Word or Google Docs">Word</a><a class="btn" href="${base}classwork-digital.docx" download title="Student-only version to type in, for Google Classroom (no drawing needed, no answer key)">Digital</a><a class="btn" href="${base}lesson-plan.html" target="_blank" rel="noopener">Lesson plan</a>${quizBtn(u.n)}`
       : '<span class="soon">Slides, classwork and lesson plan coming soon</span>'}</div></div></article>`;
-}).join('');
+}).join(''); }
+render();
 </script>
 </body></html>
