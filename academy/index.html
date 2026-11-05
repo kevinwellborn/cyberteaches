@@ -277,6 +277,7 @@ h1,h2,h3{font-family:var(--f-display);text-wrap:balance;margin:0;line-height:1.1
     <div class="spacer"></div>
     <a class="btn" href="teacher.html" style="text-decoration:none">Teacher Dashboard</a>
     <a class="btn" href="../apcybersecurity/" style="text-decoration:none">AP Cybersecurity</a>
+    <span id="soundSlot"></span>
     <div id="topRight"></div>
     <div id="account" class="account"></div>
   </header>
@@ -287,7 +288,10 @@ h1,h2,h3{font-family:var(--f-display);text-wrap:balance;margin:0;line-height:1.1
 <script src="course.js?v=8"></script>
 <script src="firebase-config.js"></script>
 <script src="cloud.js?v=8"></script>
+<script src="sound.js?v=1"></script>
 <script>
+const sfx=n=>{ if(window.Sfx) Sfx.play(n) };
+if(window.Sfx) document.getElementById('soundSlot').replaceWith(Sfx.button());
 const ICON = {
   forward:'<svg class="ico" viewBox="0 0 20 20"><path d="M10 2 L17 10 H12 V18 H8 V10 H3Z" fill="currentColor"/></svg>',
   left:'<svg class="ico" viewBox="0 0 20 20"><path d="M15 17 V9 a3 3 0 0 0-3-3 H8 V2 L2 7.5 8 13 V9 h4 v8z" fill="currentColor"/></svg>',
@@ -430,7 +434,7 @@ function buildBoard(level){
   const flyShell=(fx,fy,tx,ty,enemy,done)=>{
     const sp=world.speed||380, s=h('div','sprite shell'+(enemy?' enemy':''),'<i></i>'); s.style.transition='none'; place(s,fx,fy); board.appendChild(s);
     s.offsetWidth; const t=Math.max(.12, sp*0.55/1000); s.style.transition=`left ${t}s linear, top ${t}s linear`; place(s,tx,ty);
-    setTimeout(()=>{ s.remove(); const b=h('div','sprite boom'); place(b,tx,ty); board.appendChild(b); setTimeout(()=>b.remove(),650); done&&done() }, t*1000);
+    setTimeout(()=>{ s.remove(); sfx(enemy?'hit':'boom'); const b=h('div','sprite boom'); place(b,tx,ty); board.appendChild(b); setTimeout(()=>b.remove(),650); done&&done() }, t*1000);
   };
   // The rover fires straight ahead. Returns true when a tank was destroyed.
   world.fire=()=>{
@@ -454,14 +458,14 @@ function buildBoard(level){
   world.enter=()=>{
     const k=world.x+','+world.y;
     if(world.items.has(k)){
-      const t=m.items[k]; world.items.delete(k); itemEls[k].classList.add('got');
+      const t=m.items[k]; world.items.delete(k); itemEls[k].classList.add('got'); sfx('pickup');
       if(t==='charge') world.charges++; if(t==='key') world.hasKey=true; if(t==='coin') world.coins++;
       world.updateHud(t==='charge'?'charges':t==='key'?'key':'coins');
     }
     if(k===m.gate && gateEl) gateEl.classList.add('got');
   };
   world.blast=(x,y)=>{
-    const k=x+','+y; world.blasted.add(k); world.charges--; world.updateHud('charges');
+    const k=x+','+y; world.blasted.add(k); world.charges--; world.updateHud('charges'); sfx('blast');
     const b=h('div','sprite boom'); place(b,x,y); board.appendChild(b);
     setTimeout(()=>paintCell(x,y),120); setTimeout(()=>b.remove(),650);
   };
@@ -519,6 +523,7 @@ function openBoard(){
 
 // ---------- home ----------
 function showHome(){
+  if(window.Sfx) Sfx.music(false);
   $('#topRight').innerHTML='';
   const app=$('#app'); app.innerHTML='';
   const done=doneCount(), total=LEVELS.length;
@@ -576,6 +581,7 @@ const newNode=type=>{ const n={id:'b'+(uid++), type}; if(type==='repeat'){n.n=3;
 function reid(list){ list.forEach(n=>{ n.id='b'+(uid++); if(n.body) reid(n.body); if(n.elseBody) reid(n.elseBody) }); return list }
 
 function showPuzzle(n){
+  if(window.Sfx) Sfx.music(true);
   L=LEVELS[n-1];
   program = L.drive ? [] : reid(JSON.parse(JSON.stringify(programs[n]||[])));
   selKey='root';
@@ -829,15 +835,15 @@ function doAct(a){
   const fail=msg=>({fail:msg}); let note='';
   if(a==='forward'){
     const nx=world.x+DX[world.dir], ny=world.y+DY[world.dir];
-    if(world.blocked(nx,ny)){ world.rover.classList.remove('crash'); world.rover.offsetWidth; world.rover.classList.add('crash');
+    if(world.blocked(nx,ny)){ sfx('crash'); world.rover.classList.remove('crash'); world.rover.offsetWidth; world.rover.classList.add('crash');
       const k=nx+','+ny;
       return fail( k===world.m.gate ? 'The gate is locked. The rover needs to pick up the key first.'
         : world.m.cracks.has(k) ? 'Bump! That cracked wall is still standing. Blast it before driving through.'
         : world.tanks.has(k) ? 'Bump! An enemy tank is in the way. Destroy it before driving there.'
         : 'Bump! The rover ran into a rock. Look at where it stopped and fix that step.') }
-    world.x=nx; world.y=ny; world.place(world.rover,nx,ny); world.enter();
-  } else if(a==='left'){ world.dir=(world.dir+3)%4; world.turns--; world.inner.style.transform='rotate('+(world.turns*90)+'deg)' }
-  else if(a==='right'){ world.dir=(world.dir+1)%4; world.turns++; world.inner.style.transform='rotate('+(world.turns*90)+'deg)' }
+    world.x=nx; world.y=ny; world.place(world.rover,nx,ny); sfx('move'); world.enter();
+  } else if(a==='left'){ sfx('turn'); world.dir=(world.dir+3)%4; world.turns--; world.inner.style.transform='rotate('+(world.turns*90)+'deg)' }
+  else if(a==='right'){ sfx('turn'); world.dir=(world.dir+1)%4; world.turns++; world.inner.style.transform='rotate('+(world.turns*90)+'deg)' }
   else if(a==='blast'){
     const nx=world.x+DX[world.dir], ny=world.y+DY[world.dir];
     if(!world.charges) return fail('Out of charges! Drive over an orange canister to pick one up before blasting.');
@@ -846,12 +852,12 @@ function doAct(a){
   }
   else if(a==='fire'){
     if(world.shells<=0) return fail('Out of shells! Only fire when a tank is in your line of fire.');
-    if(!world.fire()) note = world.shells ? 'Missed! That shell hit a rock. '+world.shells+' shell'+(world.shells===1?'':'s')+' left.' : 'Missed! That was your last shell.';
+    sfx('fire'); if(!world.fire()) note = world.shells ? 'Missed! That shell hit a rock. '+world.shells+' shell'+(world.shells===1?'':'s')+' left.' : 'Missed! That was your last shell.';
   }
   else if(a==='collect'){
     const k=world.x+','+world.y;
     if(!world.gems.has(k)) return fail('There is no crystal under the rover here. Move onto a crystal before collecting.');
-    world.gems.delete(k); world.gemEls[k].classList.add('got');
+    world.gems.delete(k); world.gemEls[k].classList.add('got'); sfx('collect');
   }
   if(won()) return {win:true};
   if(world.tanks.size){
@@ -902,7 +908,8 @@ function stopRun(manual){
 }
 function finish(ok,msg){
   stopRun(); world.over=true;
-  if(!ok){ setFb('bad',msg); return }
+  if(!ok){ sfx('fail'); setFb('bad',msg); return }
+  sfx('win');
   const allCoins = world.m.coins>0 && world.coins===world.m.coins;
   const target = allCoins && L.idealBonus ? L.idealBonus : L.ideal;
   const used=countBlocks(), stars = used<=target ? 3 : used<=target+(L.maxBlocks?Math.ceil((L.maxBlocks-target)/2):3) ? 2 : 1;
