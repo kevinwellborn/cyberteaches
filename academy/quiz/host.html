@@ -27,8 +27,21 @@ Cloud.onChange(c => {
   if(!c.ready) return;
   if(!c.enabled){ app.innerHTML = '<div class="card"><h2>Sign-in is not available</h2><p class="muted">The quiz needs the online class features.</p></div>'; return }
   if(!c.user){ G = null; return signInView() }
-  if(!G) resumeOrSetup();
+  if(!G && !checking) checkTeacher(c);
 });
+// Students who land here (for example from a link the teacher shared) go to the join page instead.
+// A student login, or a Google account that is in a class but owns none, counts as a student.
+let checking = false;
+async function checkTeacher(c){
+  checking = true; app.innerHTML = '<p class="muted">Loading…</p>';
+  let student = Cloud.isStudentLogin(c.user);
+  if(!student && c.profile && c.profile.classCode){
+    try { const own = await Cloud.db.collection('classes').where('teacherUid', '==', c.user.uid).limit(1).get(); student = own.empty } catch(e){ console.error(e) }
+  }
+  checking = false;
+  if(student){ location.replace('./'); return }
+  if(!G) resumeOrSetup();
+}
 
 function signInView(err){
   app.innerHTML = `<div class="card" style="width:min(440px,100%)">
@@ -39,7 +52,8 @@ function signInView(err){
     <label class="label" for="em">Email</label><input id="em" class="textin" type="email" autocomplete="email" style="text-align:left;font-size:18px">
     <label class="label" for="pw">Password</label><input id="pw" class="textin" type="password" autocomplete="current-password" style="text-align:left;font-size:18px">
     <p class="err" id="err" role="alert">${esc(err || '')}</p>
-    <button class="btn" id="eBtn" type="button" style="width:100%;background:var(--qbg-2);color:#fff">Sign in</button></div>`;
+    <button class="btn" id="eBtn" type="button" style="width:100%;background:var(--qbg-2);color:#fff">Sign in</button></div>
+    <a class="btn big" href="./" style="background:var(--o2);color:#fff">I'm a student: join a game</a>`;
   $('#gBtn').onclick = () => Cloud.signIn().catch(e => signInView('Sign-in did not work. Try again.'));
   const go = () => Cloud.signInTeacher($('#em').value, $('#pw').value).catch(() => { $('#err').textContent = 'That email and password did not match.' });
   $('#eBtn').onclick = go; $('#pw').onkeydown = e => { if(e.key === 'Enter') go() };
