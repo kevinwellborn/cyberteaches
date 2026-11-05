@@ -101,6 +101,14 @@ small.rank{display:block;font-size:11px}
 .empty{padding:28px;text-align:center;color:var(--muted)}
 .toolbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:22px 0 8px}
 .toolbar h2{font-size:22px}
+.locks{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:8px}
+.lockbtn{display:flex;align-items:center;gap:10px;border:2px solid var(--line);background:var(--panel);border-radius:12px;padding:8px 10px;font:inherit;color:var(--ink);cursor:pointer;text-align:left}
+.lockbtn:hover{border-color:var(--accent)}
+.lockbtn .lnum{flex:none;width:34px;height:34px;border-radius:9px;display:grid;place-items:center;color:#fff;font-weight:800;font-size:14px}
+.lockbtn .ltitle{flex:1;min-width:0;font-weight:700;font-size:14px;line-height:1.2}
+.lockbtn .lstate{flex:none;font-size:12px;font-weight:700;color:var(--accent)}
+.lockbtn.off{background:var(--panel-2);border-style:dashed}
+.lockbtn.off .ltitle,.lockbtn.off .lstate{color:var(--muted)}
 .note{margin-top:18px;font-size:14px}
 .err{color:var(--bad);font-weight:700}
 .auth{max-width:420px;margin-top:20px}
@@ -234,7 +242,9 @@ function dashboard(){
   });
   if(stopClasses) stopClasses();
   stopClasses=Cloud.watchClasses((list,err)=>{
+    const was=JSON.stringify((classes.find(c=>c.code===current)||{}).locked||[]);
     classes=list.sort((a,b)=>(a.name||'').localeCompare(b.name||''));
+    const now=classes.find(c=>c.code===current); if(now && JSON.stringify(now.locked||[])!==was && $('#locks')) renderClass();
     renderTabs(err);
     if(!current || !classes.find(c=>c.code===current)){ const saved=pick.get(); const first=(classes.find(c=>c.code===saved)||classes[0]); if(first) selectClass(first.code); else $('#classview').innerHTML=`<div class="panel empty" style="margin-top:12px">Create your first class to get a code for your students.</div>` }
   });
@@ -392,6 +402,10 @@ function renderClass(err){
       <div class="stats"><div class="stat"><b>${n}</b><span class="muted">students joined</span></div>
       <div class="stat"><b>${avg.toFixed(1)}</b><span class="muted">puzzles solved on average, of ${LEVELS.length}</span></div>
       ${lessonDone.map(x=>`<div class="stat"><b>${x.done}</b><span class="muted">finished Lesson ${x.u.n}</span><div class="bar"><i style="width:${n?x.done/n*100:0}%;background:${x.u.color}"></i></div></div>`).join('')}</div></section></div>
+    <div class="toolbar"><h2>Lessons open to students</h2><div class="spacer"></div><button class="btn" id="unlockAll">Unlock all</button><button class="btn" id="lockAll">Lock all</button></div>
+    <p class="muted" style="margin:0 0 8px">Tap a lesson to lock or unlock it for this class. Students see a lock and can't open its puzzles. Changes reach students right away. Their stars are kept.</p>
+    <div class="locks" id="locks">${UNITS.map(u=>{ const off=(c.locked||[]).includes(u.n); return `<button class="lockbtn${off?' off':''}" data-unit="${u.n}" aria-pressed="${!off}"><span class="lnum" style="background:${off?'var(--line)':u.color}">L${u.n}</span><span class="ltitle">${esc(u.title)}</span><span class="lstate">${off?'🔒 Locked':'Open'}</span></button>` }).join('')}</div>
+    <p class="err" id="lockErr" role="alert"></p>
     <div class="toolbar"><h2>Progress</h2><div class="spacer"></div><button class="btn" id="csv" ${n?'':'disabled'}>Download CSV</button></div>
     <div class="legend"><span><i class="cell s3">★★★</i> 3 stars</span><span><i class="cell s2">★★</i> 2 stars</span><span><i class="cell s1">★</i> 1 star</span><span><i class="cell s0">·</i> not solved</span><span>Click a lesson to show or hide each puzzle.</span><span><b>Score</b> per lesson out of 100: 3 stars = 100, 2 stars = 90, 1 star = 80 for each puzzle, unsolved = 0</span><span>Updates live as students play.</span></div>
     <div class="tablewrap" id="progressTable">${err?'<div class="empty err">Could not load students. Check that the Firestore rules are published.</div>': n?table():'<div class="empty">No students yet. Share the code or link above.</div>'}</div>
@@ -399,6 +413,13 @@ function renderClass(err){
     <section class="panel lbpanel" id="lbPanel"><h2 class="lbtitle">${esc(c.name||c.code)} leaderboard</h2>${leaderboard()}</section>`:''}`;
   $('#copy').onclick=async()=>{ try{ await navigator.clipboard.writeText(joinLink(c.code)); $('#copy').textContent='Copied' }catch(e){ const r=document.createRange(); r.selectNodeContents($('#jl')); getSelection().removeAllRanges(); getSelection().addRange(r) } };
   $('#csv').onclick=()=>downloadCsv(c);
+  // Writes go straight to Firestore; the class snapshot (with local changes applied at once) redraws the buttons.
+  const FV=firebase.firestore.FieldValue, cref=Cloud.db.collection('classes').doc(c.code);
+  const save=data=>{ $('#lockErr').textContent=''; cref.update(data).catch(e=>{ console.error(e); $('#lockErr').textContent='Could not save. Check your connection and try again.' }) };
+  $('#locks').onclick=e=>{ const b=e.target.closest('.lockbtn'); if(!b) return; const u=+b.dataset.unit, off=b.classList.contains('off');
+    b.classList.toggle('off'); save({locked: off ? FV.arrayRemove(u) : FV.arrayUnion(u)}) };
+  $('#unlockAll').onclick=()=>save({locked: []});
+  $('#lockAll').onclick=()=>save({locked: UNITS.map(u=>u.n)});
   const tw=$('#progressTable'); tw.onclick=e=>{ const b=e.target.closest('.lessonbtn'); if(!b) return; const u=+b.dataset.unit;
     openUnits.has(u)?openUnits.delete(u):openUnits.add(u); const x=tw.scrollLeft; tw.innerHTML=table(); tw.scrollLeft=x;
     const nb=tw.querySelector(`.lessonbtn[data-unit="${u}"]`); if(nb) nb.focus() };
