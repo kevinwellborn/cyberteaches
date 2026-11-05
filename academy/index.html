@@ -62,9 +62,9 @@ h1,h2,h3{font-family:var(--f-display);text-wrap:balance;margin:0;line-height:1.1
 .btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
 .btn.primary:hover{filter:brightness(1.08)}
 .btn:disabled{opacity:.5;cursor:not-allowed}
-.lvl{display:inline-flex;gap:4px;align-items:center;vertical-align:middle;margin-left:6px;background:var(--panel-2);border:1px solid var(--line);border-radius:999px;padding:3px 10px;font-size:12px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;color:var(--accent)}
+.lvl{display:inline-flex;gap:4px;align-items:center;vertical-align:middle;margin-left:6px;background:var(--lv-soft,var(--panel-2));border:1px solid var(--lv,var(--line));border-radius:999px;padding:3px 10px;font-size:12px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;color:var(--lv,var(--accent))}
 .lvlbtn{border:0;background:transparent;font:inherit;color:var(--muted);padding:2px 8px;border-radius:999px;cursor:pointer}
-.lvlbtn.on{background:var(--accent);color:var(--accent-ink)}
+.lvlbtn.on{background:var(--lv,var(--accent));color:var(--lv-ink,var(--accent-ink))}
 .label{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:700}
 
 /* ---------- Home ---------- */
@@ -269,6 +269,12 @@ h1,h2,h3{font-family:var(--f-display);text-wrap:balance;margin:0;line-height:1.1
 }
 @media (max-width:480px){ .unit{grid-template-columns:minmax(0,1fr)} }
 @media (prefers-reduced-motion:reduce){ *{animation:none!important;transition:none!important} }
+/* Level colors (green Easy, yellow Medium, red Hard): the page follows the chosen level. */
+body{border-top:8px solid var(--lv,var(--accent))}
+.unit{border-left:6px solid var(--lv,var(--line))}
+.meter-bar i{background:var(--lv,var(--accent))}
+.hero .btn.primary{background:var(--lv,var(--accent));border-color:var(--lv,var(--accent));color:var(--lv-ink,var(--accent-ink))}
+.hero h1 em{color:var(--lv,var(--accent))}
 </style>
 
 <div class="wrap">
@@ -287,7 +293,7 @@ h1,h2,h3{font-family:var(--f-display);text-wrap:balance;margin:0;line-height:1.1
 </div>
 <div id="modal"></div>
 
-<script src="course.js?v=9"></script>
+<script src="course.js?v=10"></script>
 <script src="firebase-config.js"></script>
 <script src="cloud.js?v=9"></script>
 <script>
@@ -348,6 +354,8 @@ const h = (tag, cls, html)=>{ const e=document.createElement(tag); if(cls) e.cla
 // Difficulty level (Easy / Medium / Hard): each level has its own set of puzzles per lesson. In a class the teacher sets it
 // (classes/{code}.level, or classes/{code}.levels[uid] for one student). Outside a class the student picks it on the home page.
 let curLevel = LEVELS_AVAILABLE.includes(store.get('level',DEFAULT_LEVEL)) ? store.get('level',DEFAULT_LEVEL) : DEFAULT_LEVEL, levelByTeacher=false;
+applyLevelTheme(curLevel);
+if(typeof matchMedia==='function') matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>applyLevelTheme(curLevel));
 const myLevels = unit => levelsOf(curLevel, unit);   // this level's puzzles for one lesson (or all lessons), in play order
 const doneCount = ()=>myLevels().filter(l=>progress[l.n]).length;
 // Lessons the student's teacher has locked for their class (classes/{code}.locked). Empty when not in a class.
@@ -526,6 +534,7 @@ function openBoard(){
 
 // ---------- home ----------
 function showHome(){
+  applyLevelTheme(curLevel);
   $('#topRight').innerHTML='';
   const app=$('#app'); app.innerHTML='';
   const done=doneCount(), total=myLevels().length;
@@ -594,8 +603,9 @@ function showPuzzle(n){
   const mapBtn=h('button','btn','Course map'); mapBtn.onclick=()=>{ location.hash='home' }; top.appendChild(mapBtn);
 
   const app=$('#app'); app.innerHTML='';
+  applyLevelTheme(L.level);
   const head=h('div');
-  head.innerHTML=`<span class="label" style="color:${unit.color}">Lesson ${unit.n}: ${unit.title} · ${LEVEL_NAMES[L.level]}</span>
+  head.innerHTML=`<span class="label" style="color:${unit.color}">Lesson ${unit.n}: ${unit.title}</span><span class="lvl" style="${levelStyle(L.level)};background:var(--cs);border-color:var(--c);color:var(--c)">${LEVEL_NAMES[L.level]}</span>
     <div class="ptitle"><h1>Puzzle ${L.k}. ${L.title}</h1></div><div class="dots"></div>`;
   levelsOf(L.level, L.unit).forEach(l=>{
     const d=h('button','dot'+(progress[l.n]?' done':'')+(l.n===L.n?' cur':''), l.k); d.dataset.n=l.n;
@@ -1052,7 +1062,7 @@ function watchLocks(code){
   const apply=(list, level)=>{
     const next=new Set((list||[]).map(Number)); const sameLocks=next.size===lockedUnits.size && [...next].every(x=>lockedUnits.has(x));
     lockedUnits=next;
-    const was=curLevel; curLevel=LEVELS_AVAILABLE.includes(level)?level:DEFAULT_LEVEL;
+    const was=curLevel; curLevel=LEVELS_AVAILABLE.includes(level)?level:DEFAULT_LEVEL; applyLevelTheme(curLevel);
     const m=location.hash.match(/^#puzzle-(\d+)$/);
     if(curLevel!==was){
       if(m && LEVELS[+m[1]-1].level!==curLevel){ history.replaceState(null,'','#home'); showHome(); showMsg('New level', `<p>Your teacher moved you to the <b>${LEVEL_NAMES[curLevel]}</b> level. Your stars are kept.</p>`); return }
