@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Lesson 8 Lesson Plan · Tank practice · Easy level</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="../../../../favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Atkinson+Hyperlegible:wght@400;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<link rel="stylesheet" href="../../resources.css">
+<link rel="stylesheet" href="../../plan.css">
+</head>
+<body class="lv-easy" style="--lv:#2E9363;--lv-ink:#FFFFFF;--lv-soft:#DDF2E6">
+<div class="lvlrib"><b>Easy level</b> · made for the Easy puzzles · <a href="../../../#easy">all Easy resources</a></div>
+<div class="toolbar">
+  <a class="btn" href="../../">← All lessons</a><span class="label">Teacher resources · Lesson 8 · Easy level</span><span class="spacer"></span>
+  <a class="btn" href="slides.html">Slides</a><a class="btn" href="classwork.html">Classwork</a>
+  <button class="btn primary" onclick="print()">Print lesson plan</button>
+</div>
+
+<article class="page">
+  <header class="head">
+    <div><span class="label">CyberTeaches Academy · Block coding · Grades 6 to 8 · Easy level</span><h1>Lesson 8: Tank practice</h1></div>
+    <div class="meta"><b>Time</b> 50 minutes<br><b>Unit</b> Loops and conditionals<br><b>Puzzles</b> 8.1 to 8.10</div>
+  </header>
+
+  <section class="cols">
+    <div>
+      <h2>Overview</h2>
+      <p>A practice lesson with no new blocks. Students practice aiming: turning to face tanks in different directions, firing at tanks in a row with a repeat, and combining driving, turning and firing.</p>
+      <h2>Learning objectives</h2>
+      <p class="muted">Students will be able to:</p>
+      <ol>
+        <li>Choose the turn (left or right) that faces the rover toward a tank.</li>
+        <li>Use a repeat to fire at several tanks in a row.</li>
+        <li>Combine driving, turning and firing in one program.</li>
+        <li>Use a fire-and-turn pattern inside a repeat.</li>
+      </ol>
+    </div>
+    <div>
+      <h2>Computer science standards</h2>
+      <p class="muted" style="margin-bottom:6px">CSTA K-12 Computer Science Standards (2017)</p>
+      <ul class="std">
+        <li><b>2-AP-10</b> Use flowcharts and/or pseudocode to address complex problems as algorithms.</li>
+        <li><b>2-AP-12</b> Design and iteratively develop programs that combine control structures, including nested loops and compound conditionals.</li>
+        <li><b>2-AP-13</b> Decompose problems and subproblems into parts to facilitate the design, implementation, and review of programs.</li>
+        <li><b>2-AP-17</b> Systematically test and refine programs using a range of test cases.</li>
+      </ul>
+      <h2>English language development standards</h2>
+      <p class="muted" style="margin-bottom:6px">WIDA ELD Standards Framework (2020), grades 6 to 8</p>
+      <ul class="std">
+        <li><b>ELD-SI.6-8</b> Language for Social and Instructional Purposes: follow and give step-by-step directions, and work with a partner to solve a problem.</li>
+        <li><b>ELD-SC.6-8.Explain</b> Language for Science: explain how a program works (interpretive and expressive), using sequence words such as first, next and then.</li>
+      </ul>
+    </div>
+  </section>
+
+  <h2>Vocabulary</h2>
+  <table class="voc">
+    <thead><tr><th>Word</th><th>Student-friendly meaning</th><th>Spanish</th></tr></thead>
+    <tbody>
+      <tr><td><b>fire</b></td><td>shoot the cannon straight ahead</td><td lang="es">disparar</td></tr>
+      <tr><td><b>enemy tank</b></td><td>a tank the rover must stop with its cannon</td><td lang="es">tanque enemigo</td></tr>
+      <tr><td><b>sequence</b></td><td>steps that happen in order, one after another</td><td lang="es">secuencia</td></tr>
+      <tr><td><b>debug</b></td><td>find a mistake and fix it</td><td lang="es">depurar</td></tr>
+      <tr><td><b>pattern</b></td><td>steps that happen again and again</td><td lang="es">patrón</td></tr>
+    </tbody>
+  </table>
+
+  <section class="cols">
+    <div>
+      <h2>Materials</h2>
+      <ul>
+        <li>Projector and the <a href="slides.html">Lesson 8 slides</a></li>
+        <li>Printed <a href="classwork.html">Lesson 8 classwork</a>, one per student (answer key for the teacher)</li>
+        <li>Student devices with a web browser: cyberteaches.com/academy</li>
+        <li>A class on the Teacher Dashboard, with student logins or Google sign-in</li>
+      </ul>
+    </div>
+    <div>
+      <h2>Before class</h2>
+      <ul>
+        <li>Try puzzles 8.1 to 8.10 yourself (the answer key is on the Teacher Dashboard).</li>
+
+      </ul>
+    </div>
+  </section>
+
+  <h2>Lesson procedure</h2>
+  <table class="proc">
+    <thead><tr><th style="width:15%">Time</th><th style="width:22%">Stage</th><th>Teacher and student activity</th></tr></thead>
+    <tbody>
+      <tr><td>5 min</td><td><b>Warm-up</b><br>Point and shoot <span class="sl">Slide 3</span></td><td>"Point and shoot": students turn and point in the directions the teacher calls.</td></tr>
+      <tr><td>10 min</td><td><b>Direct instruction</b><br><span class="sl">Slides 4 to 6</span></td><td>Model aiming: turn until the rover faces the tank, then fire. Show a turn-around (puzzle 8.3) and a drive-then-fire pattern (puzzle 8.7).</td></tr>
+      <tr><td>5 min</td><td><b>Guided practice</b><br>Think, pair, share <span class="sl">Slides 7 to 8</span></td><td>Solve puzzle 8.7 together, then pairs solve puzzle 8.10 before the reveal.</td></tr>
+      <tr><td>12 min</td><td><b>Unplugged practice</b><br>Classwork <span class="sl">Slide 10</span></td><td>Students complete Parts A to C and E in pairs. Part C practices choosing turns.</td></tr>
+      <tr><td>15 min</td><td><b>Independent practice</b><br>Code <span class="sl">Slide 11</span></td><td>Students solve puzzles 8.1 to 8.10. These are short; push for 3 stars.</td></tr>
+      <tr><td>3 min</td><td><b>Closure</b><br>Exit ticket <span class="sl">Slide 12</span></td><td>Exit ticket: rover faces right, tank above. Answer: <span class="code">L X</span>.</td></tr>
+    </tbody>
+  </table>
+
+  <section class="cols">
+    <div>
+      <h2>Assessment</h2>
+      <ul>
+        <li><b>Formative:</b> classwork Parts A to C, observation during coding, and the exit ticket.</li>
+        <li><b>Progress:</b> the Teacher Dashboard shows stars per puzzle and a Lesson 8 score out of 100 (3 stars = 100, 2 stars = 90, 1 star = 80 per puzzle).</li>
+        <li><b>Success criteria:</b> the student solves at least 9 of 10 puzzles and chooses the correct turn direction.</li>
+      </ul>
+      <h2>Common misconceptions</h2>
+      <ul>
+        <li>Using the screen's left/right instead of the rover's.</li>
+        <li>Thinking fire works in every direction at once.</li>
+        <li>Forgetting to turn back after firing in a repeated pattern.</li>
+      </ul>
+    </div>
+    <div>
+      <h2>Differentiation</h2>
+      <ul>
+        <li><b>Support:</b> use a paper arrow students can rotate on the map.</li>
+        <li><b>Extension:</b> 3 stars on all ten puzzles; challenge a partner with a Part D puzzle.</li>
+        <li><b>Accessibility:</b> blocks can be added by tapping or by dragging, and moved with the ▲▼ buttons.</li>
+      </ul>
+      <h2>Supports for English learners</h2>
+      <ul>
+        <li><b>Visuals:</b> post the block pictures and vocabulary on a word wall; point to blocks while you say them.</li>
+        <li><b>Gestures:</b> students stand and turn left or right with the rover before coding turns.</li>
+        <li><b>Partners:</b> pair students to read programs aloud; first-language talk is welcome.</li>
+        <li><b>Sentence frames:</b> “The tank is behind the rover, so it turns ___ two times.” “First the rover ___. Then it fires.” “The shell hits the ___ tank in the line.”</li>
+        <li><b>Classwork Part E</b> uses a word bank, pictures and fill-in sentences.</li>
+      </ul>
+      <h2>Connections</h2>
+      <ul>
+        <li><b>Math:</b> quarter turns and angles (90°, 180°).</li>
+        <li><b>PE:</b> facing and pointing drills.</li>
+      </ul>
+      <h2>Next lesson</h2>
+      <p>Lesson 9, Tank patrols: patrol programs with if tank ahead and repeat until no tanks left.</p>
+    </div>
+  </section>
+  <footer class="pfoot">CyberTeaches Academy · cyberteaches.com/academy · Free to use and adapt for your classes.</footer>
+</article>
+</body></html>

@@ -1,5 +1,8 @@
 /* Printable lesson plan pages. */
 body{padding:24px 16px 60px}
+.lvlrib{margin:-24px -16px 16px}
+.page{border:6px solid var(--lv,transparent)}
+@media print{ .page{border:0} }
 .toolbar{max-width:8.5in;margin:0 auto 16px;display:flex;gap:10px;flex-wrap:wrap;align-items:center}
 .toolbar .spacer{flex:1}
 .btn{border:2px solid var(--line);background:var(--panel);border-radius:10px;padding:8px 14px;font:700 15px var(--f-body);cursor:pointer;color:var(--ink);text-decoration:none}

@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Lesson 6 Slides · Repeat until patterns · Easy level</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="../../../../favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Atkinson+Hyperlegible:wght@400;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<link rel="stylesheet" href="../../resources.css">
+<link rel="stylesheet" href="../../slides.css">
+</head>
+<body class="lv-easy" style="--lv:#2E9363;--lv-ink:#FFFFFF;--lv-soft:#DDF2E6">
+<div class="lvlrib"><b>Easy level</b> · made for the Easy puzzles · <a href="../../../#easy">all Easy resources</a></div>
+<div class="deck" id="deck">
+<section class="slide title-slide">
+  <span class="label" style="font-size:22px">CyberTeaches Academy · Lesson 6 · Easy level</span>
+  <h1 style="margin:18px 0 22px">Repeat until <em>patterns</em></h1>
+  <p style="font-size:32px;max-width:900px">Find the pattern, then let repeat until at flag run it as many times as it takes.</p>
+  <div class="foot"><span>cyberteaches.com/academy</span><span>Press → to start</span></div>
+  <div class="note">A pattern lesson with no new blocks: repeats inside repeat until, and counted parts before it. Plan: warm-up 5 min, slides 15 min, classwork 12 min, coding 15 min, exit ticket 3 min.</div>
+</section>
+
+<section class="slide ">
+  <span class="label kicker">Today we will</span>
+  <h2>Learning goals</h2>
+  <ul class="big" style="font-weight:400;font-size:34px"><li>Put a <b>pattern with turns</b> inside repeat until</li><li>Use a <b>repeat inside repeat until</b></li><li>Mix counting repeats and repeat until in one program</li></ul>
+  <div class="note">Read the goals aloud. Students check them off with the exit ticket at the end.</div>
+</section>
+
+<section class="slide ">
+  <span class="label kicker">Warm-up · 3 minutes</span>
+  <h2>Lap the track</h2>
+  <div class="row"><div class="grow"><p>"Run around the track: long side, turn, short side, turn… <b>until</b> the bell rings."</p><p class="muted">What is one copy of the pattern? What makes it stop?</p></div><div class="box" style="width:420px"><p class="big" style="margin:0 0 8px">Answer</p><p class="reveal" style="margin:0">Pattern: long side, turn, short side, turn. It stops when the bell rings.</p></div></div>
+  <div class="note">Connect a pattern (inside the loop) with a stop signal (the condition).</div>
+</section>
+
+<section class="slide ">
+  <span class="label kicker">Big idea</span>
+  <h2>A repeat inside <em>until</em></h2>
+  <div class="row"><div class="board" data-map="#######|#S....#|#.###.#|#.###.#|#.###.#|#....G#|#######" data-dir="1" style="--cell:50px"></div><div class="grow"><p>Each side is 4 steps, then turn. Go until the flag.</p><div class="reveal"><div class="rep " style="display:inline-block"><div class="head">repeat until at flag</div><div class="inner"><div class="rep " style="display:inline-block"><div class="head">repeat 4 times</div><div class="inner"><span class="blk move">move forward</span></div></div><span class="blk move">turn right</span></div></div></div></div></div>
+  <div class="note">Puzzle 6.1. The counting repeat does one side; repeat until keeps doing sides until the flag.</div>
+</section>
+
+<section class="slide ">
+  <span class="label kicker">Big idea</span>
+  <h2>Count first, <em>then until</em></h2>
+  <div class="row"><div class="board" data-map="######|#S...#|#G...#|######" data-dir="1" style="--cell:64px"></div><div class="grow"><p>Go right, U-turn, then drive back to the flag.</p><div class="prog reveal"><div class="rep " style="display:inline-block"><div class="head">repeat 3 times</div><div class="inner"><span class="blk move">move forward</span></div></div><span class="blk move">turn right</span><span class="blk move">move forward</span><span class="blk move">turn right</span><div class="rep " style="display:inline-block"><div class="head">repeat until at flag</div><div class="inner"><span class="blk move">move forward</span></div></div></div></div></div>
+  <div class="note">Puzzle 6.4. Some parts are counted once; the last part uses repeat until.</div>
+</section>
+
+<section class="slide ">
+  <span class="label kicker">Let's try together · Puzzle 6.1</span>
+  <h2>Crystal pairs</h2>
+  <div class="row">
+      <div class="board" data-map="#S**.**G#" data-dir="1" data-cell="62px"></div>
+      <div class="grow"><p>Two crystals, a gap, two crystals, a gap… What goes inside the loop?</p>
+        <div class="prog reveal" style="font-size:26px"><div class="rep "><div class="head">repeat until at flag</div><div class="inner"><span class="blk move">move forward</span><span class="blk act">collect crystal</span><span class="blk move">move forward</span><span class="blk act">collect crystal</span><span class="blk move">move forward</span></div></div></div>
+        <p class="reveal" style="margin-top:16px"><span class="count">6 blocks</span></p></div></div>
+  <div class="note">Puzzle 6.1: F C F C F. Press → to reveal the answer.</div>
+</section>
+
+<section class="slide ">
+  <span class="label kicker">Think, pair, share · Puzzle 6.6</span>
+  <h2>Square to the flag</h2>
+  <div class="row">
+      <div class="board" data-map="#####|#S**#|#G#*#|#***#|#####" data-dir="1" data-cell="88px"></div>
+      <div class="grow"><p>Drive around the rock, 2 crystals on each side, and stop at the flag.</p>
+        <div class="prog reveal" style="font-size:26px"><div class="rep "><div class="head">repeat until at flag</div><div class="inner"><div class="rep "><div class="head">repeat <span class="num">2</span> times</div><div class="inner"><span class="blk move">move forward</span><span class="blk act">collect crystal</span></div></div><span class="blk move">turn right</span></div></div></div>
+        <p class="reveal" style="margin-top:16px"><span class="count">5 blocks</span></p></div></div>
+  <div class="note">Puzzle 6.6: repeat until at flag [ repeat 2 [F C] R ]. Press → to reveal the answer.</div>
+</section>
+
+<section class="slide ">
+  <span class="label kicker">When it doesn't work</span>
+  <h2>Debugging tips</h2>
+  <ul style="font-size:30px"><li><b>Will it reach the flag?</b> If the steps inside never get there, the loop never stops.</li><li><b>Count, then until.</b> Use a plain repeat for the part you can count.</li><li><b>One step of the pattern</b> goes inside repeat until at flag.</li><li><b>Run, watch, fix.</b> Watch where the rover gets stuck.</li></ul>
+  <div class="note">Ask students to say the pattern in words before building it.</div>
+</section>
+
+<section class="slide ">
+  <span class="label kicker">Classwork · 12 minutes</span>
+  <h2>Unplugged practice</h2>
+  <div class="row"><div class="grow"><p>Use the worksheet. Write programs with letters:</p>
+    <p class="code" style="font-size:28px;line-height:1.5">F = move forward &nbsp; L = turn left &nbsp; R = turn right<br>C = collect crystal</p>
+    <p class="code" style="font-size:26px;margin:0 0 6px">until flag [ F ]</p></div>
+    <div class="box" style="width:400px"><p class="big" style="margin:0 0 8px">Parts</p><p style="margin:0">A. Trace the rover<br>B. Write the program<br>C. Find the pattern<br>D. Design your own</p></div></div>
+  <div class="note">Hand out the Lesson 6 classwork. Students can work in pairs. Part D is a challenge for early finishers. The answer key is on the last page.</div>
+</section>
+
+<section class="slide title-slide">
+  <span class="label" style="font-size:22px">Your turn</span>
+  <h1 style="margin:18px 0 22px">Now <em>code</em> it!</h1>
+  <p style="font-size:34px">Go to <b>cyberteaches.com/academy</b>, sign in, and solve puzzles <b>6.1 to 6.10</b>.</p>
+  <p style="font-size:28px;opacity:.85">Find one copy of the pattern. Count what you can, until the rest.</p>
+  <div class="note">Students sign in with Google or the username and password from the Teacher Dashboard. Watch their stars live on the dashboard and help anyone stuck on the same puzzle.</div>
+</section>
+
+<section class="slide ">
+  <span class="label kicker">Exit ticket</span>
+  <h2>Before you go</h2>
+  <p>What does this program do?</p><div class="box" style="display:inline-block"><span class="code">until flag [ repeat 2 [ F ] R ]</span></div>
+    <p class="reveal" style="margin-top:20px">It drives 2 squares and turns right, again and again, until it reaches the flag (a square path).</p>
+  <div class="note">Collect answers on sticky notes or in your LMS. Reveal the answer with → after students have written theirs.</div>
+</section>
+</div>
+<div class="notes" id="notes"><b>Teacher notes</b><span id="noteText"></span></div>
+<div class="bar"><button id="prev" aria-label="Previous slide">←</button><span id="num" style="color:#fff;font:700 14px var(--f-body);align-self:center;min-width:52px;text-align:center"></span><button id="next" aria-label="Next slide">→</button><button id="nBtn" title="Teacher notes (N)">Notes</button><button id="fBtn" title="Full screen (F)">Full screen</button></div>
+<script src="../../resources.js"></script>
+<script src="../../slides.js"></script>
+</body></html>

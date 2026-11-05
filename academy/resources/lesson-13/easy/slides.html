@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Lesson 13 Slides · If / else challenges · Easy level</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="../../../../favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Atkinson+Hyperlegible:wght@400;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<link rel="stylesheet" href="../../resources.css">
+<link rel="stylesheet" href="../../slides.css">
+</head>
+<body class="lv-easy" style="--lv:#2E9363;--lv-ink:#FFFFFF;--lv-soft:#DDF2E6">
+<div class="lvlrib"><b>Easy level</b> · made for the Easy puzzles · <a href="../../../#easy">all Easy resources</a></div>
+<div class="deck" id="deck">
+<section class="slide title-slide">
+  <span class="label" style="font-size:22px">CyberTeaches Academy · Lesson 13 · Easy level</span>
+  <h1 style="margin:18px 0 22px">If / else <em>challenges</em></h1>
+  <p style="font-size:32px;max-width:900px">Spirals, dead ends, crystals and tanks. Mix your decisions together.</p>
+  <div class="foot"><span>cyberteaches.com/academy</span><span>Press → to start</span></div>
+  <div class="note">The final if / else lesson: mixing decisions, the right-hand rule, and ordering checks. Plan: warm-up 5 min, slides 15 min, classwork 12 min, coding 15 min, exit ticket 3 min.</div>
+</section>
+
+<section class="slide ">
+  <span class="label kicker">Today we will</span>
+  <h2>Learning goals</h2>
+  <ul class="big" style="font-weight:400;font-size:34px"><li>Use the <b>right-hand rule</b> to get past dead ends</li><li>Check the <b>most important thing first</b></li><li>Combine crystal, tank and path checks in one program</li></ul>
+  <div class="note">Read the goals aloud. Students check them off with the exit ticket at the end.</div>
+</section>
+
+<section class="slide ">
+  <span class="label kicker">Warm-up · 3 minutes</span>
+  <h2>Most important first</h2>
+  <div class="row"><div class="grow"><p>You are crossing the street. Which do you check <b>first</b>?</p><p class="big">a) Is my shoe tied? &nbsp; b) Is a car coming?</p></div><div class="box" style="width:420px"><p class="big" style="margin:0 0 8px">Answer</p><p class="reveal" style="margin:0">b) The car! Check the most important thing first.</p></div></div>
+  <div class="note">The order of checks matters. For the rover, a tank is more important than a crystal or a path.</div>
+</section>
+
+<section class="slide ">
+  <span class="label kicker">Big idea</span>
+  <h2>The <em>right-hand rule</em></h2>
+  <div class="row"><div class="board" data-map="########|#S.....#|###.####|###.####|###...G#|########" data-dir="1" style="--cell:52px"></div><div class="grow"><p>Always take a right turn when you can. Else go straight. Else turn left.</p><p class="reveal code" style="font-size:20px">until flag [ if path right [ R F ]<br>else [ if path ahead [ F ] else [ L ] ] ]</p></div></div>
+  <div class="note">Puzzle 13.3. The right-hand rule finds the side road instead of driving into the dead end.</div>
+</section>
+
+<section class="slide ">
+  <span class="label kicker">Big idea</span>
+  <h2>Check the <em>most important</em> thing first</h2>
+  <div class="row"><div class="grow"><p>1. Tank ahead? → fire</p><p>2. Else, crystal here? → collect</p><p>3. Else, path ahead? → move. Else turn.</p><p class="muted">A tank blocks the path, so check it before the path.</p></div></div>
+  <div class="note">This order is used in the final maze (13.10).</div>
+</section>
+
+<section class="slide ">
+  <span class="label kicker">Let's try together · Puzzle 13.1</span>
+  <h2>Spiral in</h2>
+  <div class="row">
+      <div class="board" data-map="######|#S...#|####.#|#.G#.#|#.##.#|#....#|######" data-dir="1" data-cell="62px"></div>
+      <div class="grow"><p>Follow the spiral all the way to the flag in the middle.</p>
+        <div class="prog reveal" style="font-size:26px"><div class="rep "><div class="head">repeat until at flag</div><div class="inner"><div class="rep logic"><div class="head">if path ahead</div><div class="inner"><span class="blk move">move forward</span></div><div class="elsel">else</div><div class="inner"><span class="blk move">turn right</span></div></div></div></div></div>
+        <p class="reveal" style="margin-top:16px"><span class="count">4 blocks</span></p></div></div>
+  <div class="note">Puzzle 13.1: if path ahead [F] else [R], only 4 blocks. Press → to reveal the answer.</div>
+</section>
+
+<section class="slide ">
+  <span class="label kicker">Think, pair, share · Puzzle 13.9</span>
+  <h2>Tanks and crystals</h2>
+  <div class="row">
+      <div class="board" data-map="########|#S.&gt;.*.#|######.#|#G*..&lt;.#|########" data-dir="1" data-cell="70px"></div>
+      <div class="grow"><p>Crystals, tanks and walls. Which checks, in which order?</p>
+        <div class="prog reveal" style="font-size:21px"><div class="rep "><div class="head">repeat until at flag</div><div class="inner"><div class="rep logic"><div class="head">if crystal here</div><div class="inner"><span class="blk act">collect crystal</span></div><div class="elsel">else</div><div class="inner">&nbsp;</div></div><div class="rep logic"><div class="head">if tank ahead</div><div class="inner"><span class="blk act">fire cannon</span></div><div class="elsel">else</div><div class="inner"><div class="rep logic"><div class="head">if path ahead</div><div class="inner"><span class="blk move">move forward</span></div><div class="elsel">else</div><div class="inner"><span class="blk move">turn right</span></div></div></div></div></div></div></div>
+        <p class="reveal" style="margin-top:16px"><span class="count">8 blocks</span></p></div></div>
+  <div class="note">Puzzle 13.9: crystal check, then tank, then path. Press → to reveal the answer.</div>
+</section>
+
+<section class="slide ">
+  <span class="label kicker">When it doesn't work</span>
+  <h2>Debugging tips</h2>
+  <ul style="font-size:30px"><li><b>Read it as a sentence:</b> "If there is a path ahead, move forward, else turn right."</li><li><b>Check at every step.</b> Put the if / else inside repeat until at flag.</li><li><b>Most important first.</b> Check for a tank before you check the path.</li><li><b>Left or right?</b> Paths are checked from the rover's point of view.</li></ul>
+  <div class="note">Celebrate finishing the course! Students can go back for 3 stars on any lesson.</div>
+</section>
+
+<section class="slide ">
+  <span class="label kicker">Classwork · 12 minutes</span>
+  <h2>Unplugged practice</h2>
+  <div class="row"><div class="grow"><p>Use the worksheet. Write programs with letters:</p>
+    <p class="code" style="font-size:28px;line-height:1.5">F = move forward &nbsp; L = turn left &nbsp; R = turn right<br>C = collect crystal<br>X = fire cannon</p>
+    <p class="code" style="font-size:26px;margin:0 0 6px">if path ahead [ F ] else [ R ]</p><p class="code" style="font-size:26px;margin:0 0 6px">until flag [ … ]</p></div>
+    <div class="box" style="width:400px"><p class="big" style="margin:0 0 8px">Parts</p><p style="margin:0">A. Trace the rover<br>B. Write the program<br>C. Order the checks<br>D. Design your own</p></div></div>
+  <div class="note">Hand out the Lesson 13 classwork. Students can work in pairs. Part D is a challenge for early finishers. The answer key is on the last page.</div>
+</section>
+
+<section class="slide title-slide">
+  <span class="label" style="font-size:22px">Your turn</span>
+  <h1 style="margin:18px 0 22px">Now <em>code</em> it!</h1>
+  <p style="font-size:34px">Go to <b>cyberteaches.com/academy</b>, sign in, and solve puzzles <b>13.1 to 13.10</b>.</p>
+  <p style="font-size:28px;opacity:.85">Plan the order of your checks before you build.</p>
+  <div class="note">Students sign in with Google or the username and password from the Teacher Dashboard. Watch their stars live on the dashboard and help anyone stuck on the same puzzle.</div>
+</section>
+
+<section class="slide ">
+  <span class="label kicker">Exit ticket</span>
+  <h2>Before you go</h2>
+  <p>Put these checks in the best order for a road with tanks, crystals and walls: path ahead, tank ahead, crystal here.</p>
+    <p class="reveal" style="margin-top:20px">tank ahead → crystal here → path ahead (most important first)</p>
+  <div class="note">Collect answers on sticky notes or in your LMS. Reveal the answer with → after students have written theirs.</div>
+</section>
+</div>
+<div class="notes" id="notes"><b>Teacher notes</b><span id="noteText"></span></div>
+<div class="bar"><button id="prev" aria-label="Previous slide">←</button><span id="num" style="color:#fff;font:700 14px var(--f-body);align-self:center;min-width:52px;text-align:center"></span><button id="next" aria-label="Next slide">→</button><button id="nBtn" title="Teacher notes (N)">Notes</button><button id="fBtn" title="Full screen (F)">Full screen</button></div>
+<script src="../../resources.js"></script>
+<script src="../../slides.js"></script>
+</body></html>

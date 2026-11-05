@@ -58,6 +58,10 @@ h1,h2,h3{font-family:var(--f-display);margin:0;line-height:1.15;text-wrap:balanc
 .classes{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:8px 0 18px}
 .tab{border:2px solid var(--line);background:var(--panel);border-radius:99px;padding:6px 14px;font-weight:700}
 .tab[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:var(--bg)}
+.tab.archived{opacity:.65;font-style:italic}
+.btn.small{padding:4px 10px;font-size:14px;border-radius:99px}
+.btn.danger{border-color:#c0392b;color:#c0392b}
+.settings{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(280px,1fr))}.settings>div{border:2px solid var(--line);border-radius:12px;padding:12px 14px;background:var(--panel)}.settings p{margin:4px 0 10px;font-size:14px}
 .newclass{display:flex;gap:8px;flex-wrap:wrap}
 .newclass input{border:2px solid var(--line);border-radius:10px;padding:8px 12px;background:var(--panel);min-width:0;width:220px;max-width:100%}
 .top2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.4fr);gap:16px;margin-bottom:16px}
@@ -109,6 +113,15 @@ small.rank{display:block;font-size:11px}
 .lockbtn .lstate{flex:none;font-size:12px;font-weight:700;color:var(--accent)}
 .lockbtn.off{background:var(--panel-2);border-style:dashed}
 .lockbtn.off .ltitle,.lockbtn.off .lstate{color:var(--muted)}
+.levels{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+.lvlbtn{display:flex;flex-direction:column;align-items:flex-start;gap:2px;border:2px solid var(--c,var(--line));background:var(--cs,var(--panel));border-radius:12px;padding:8px 14px;font:inherit;color:var(--ink);cursor:pointer;min-width:150px}
+body{border-top:6px solid var(--lv,var(--accent))}
+.lvtag{display:inline-block;margin-left:8px;vertical-align:middle;border:1px solid var(--c);background:var(--cs);color:var(--c);border-radius:999px;padding:2px 10px;font-size:12px;font-weight:800;letter-spacing:.04em;text-transform:uppercase}
+.keylesson .lvtag{font-size:12px}
+.lvlbtn small{color:var(--muted);font-size:12px}
+.lvlbtn.on{border-color:var(--c,var(--accent));background:var(--c,var(--accent));color:var(--ci,var(--accent-ink))} .lvlbtn.on small{color:inherit;opacity:.85}
+.tstat{font-weight:700;border-radius:999px;padding:2px 10px;font-size:13px;background:var(--panel-2)} .tstat.pending{background:#FFF1C9;color:#7A5200} .tstat.approved{background:#D8F3E4;color:#0B5E3C} .tstat.rejected{background:#FBDAD5;color:#8A1C10}
+.stulvl{display:block;margin-top:4px;font:inherit;font-size:12px;border:1px solid var(--c,var(--line));border-radius:8px;padding:2px 6px;background:var(--cs,var(--panel));color:var(--c,var(--muted));font-weight:700;max-width:170px}
 .note{margin-top:18px;font-size:14px}
 .err{color:var(--bad);font-weight:700}
 .auth{max-width:420px;margin-top:20px}
@@ -150,15 +163,16 @@ small.rank{display:block;font-size:11px}
   </header>
   <main id="app"><p class="muted">Loading…</p></main>
 </div>
-<script src="course.js?v=8"></script>
+<script src="course.js?v=11"></script>
 <script src="firebase-config.js"></script>
-<script src="cloud.js?v=8"></script>
+<script src="cloud.js?v=9"></script>
 <script>
 const $=(s,r=document)=>r.querySelector(s);
 const esc=t=>String(t==null?'':t).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const app=$('#app'), acct=$('#acct');
 const openUnits=new Set();  // lessons expanded in the progress table
-let classes=[], current=null, roster=[], stopRoster=null, stopClasses=null, uid=null;
+let classes=[], showArchived=false, keepArchived=false, current=null, roster=[], stopRoster=null, stopClasses=null, uid=null, tw0=null;
+const LEVEL_HELP={easy:'Small maps, short programs', medium:'Mid-size maps, a step up', hard:'The full challenge'};
 const pick={ get(){ try{ return localStorage.getItem('cyberteaches:teacherClass') }catch(e){ return null } }, set(v){ try{ localStorage.setItem('cyberteaches:teacherClass',v) }catch(e){} } };
 
 function signInView(mode){
@@ -223,8 +237,8 @@ function renderAcct(c){
   const o=document.createElement('button'); o.className='btn'; o.textContent='Sign out'; o.onclick=()=>Cloud.signOut(); acct.appendChild(o);
 }
 
-function dashboard(){
-  app.innerHTML=`<div class="toolbar" style="margin-top:6px"><h2>Your classes</h2></div>
+function dashboard(admin){
+  app.innerHTML=`${admin?'<section id="adminview" class="panel" style="margin-top:6px"></section>':''}<div class="toolbar" style="margin-top:6px"><h2>Your classes</h2></div>
     <div class="classes" id="classes"></div>
     <form class="newclass" id="newclass"><label class="label" for="cname" style="align-self:center">New class</label><input id="cname" placeholder="e.g. Period 3 Coding" maxlength="60" required><button class="btn primary" id="cbtn">Create class</button><span class="err" id="cerr" role="alert"></span></form>
     <div id="classview"></div><section id="loginsview"></section>
@@ -233,6 +247,7 @@ function dashboard(){
     <section id="keyview"><div class="toolbar"><h2>Answer key</h2><div class="spacer"></div><button class="btn" id="keyBtn" aria-expanded="false">Show answers</button></div>
       <p class="muted" style="margin:0">A 3-star solution for every puzzle, for teachers only. Answers stay hidden until you press Show answers, so it is safe to project this page.</p><div id="keybody"></div></section>`;
   $('#keyBtn').onclick=toggleKey;
+  if(admin) adminPanel();
   $('#newclass').addEventListener('submit',async e=>{
     e.preventDefault(); const name=$('#cname').value.trim(); if(!name) return;
     $('#cbtn').disabled=true; $('#cerr').textContent='';
@@ -242,18 +257,30 @@ function dashboard(){
   });
   if(stopClasses) stopClasses();
   stopClasses=Cloud.watchClasses((list,err)=>{
-    const was=JSON.stringify((classes.find(c=>c.code===current)||{}).locked||[]);
+    const snap=c=>JSON.stringify([c.locked||[], c.level||'', c.levels||{}]);
+    const was=snap(classes.find(c=>c.code===current)||{});
     classes=list.sort((a,b)=>(a.name||'').localeCompare(b.name||''));
-    const now=classes.find(c=>c.code===current); if(now && JSON.stringify(now.locked||[])!==was && $('#locks')) renderClass();
+    const now=classes.find(c=>c.code===current); if(now && snap(now)!==was && $('#locks')) renderClass();
     renderTabs(err);
-    if(!current || !classes.find(c=>c.code===current)){ const saved=pick.get(); const first=(classes.find(c=>c.code===saved)||classes[0]); if(first) selectClass(first.code); else $('#classview').innerHTML=`<div class="panel empty" style="margin-top:12px">Create your first class to get a code for your students.</div>` }
+    const cur=classes.find(c=>c.code===current);
+    if(!cur || (cur.archived && !showArchived && !keepArchived)){
+      const saved=pick.get(), ok=c=>(!c.archived||showArchived)&&!c.pending;  // a class still being created is selected by createClass once it is saved
+      const first=(classes.find(c=>c.code===saved&&ok(c))||classes.find(ok));
+      if(first) selectClass(first.code);
+      else { current=null; if(stopRoster) stopRoster(); if(stopLogins) stopLogins(); renderTabs();
+        $('#classview').innerHTML=`<div class="panel empty" style="margin-top:12px">${classes.length?'All of your classes are archived. Open Archived classes above to see them.':'Create your first class to get a code for your students.'}</div>`; const lv=$('#loginsview'); if(lv) lv.innerHTML='' }
+    }
+    keepArchived=false;
   });
 }
 function renderTabs(err){
   const box=$('#classes'); if(!box) return; box.innerHTML='';
   if(err){ box.innerHTML='<span class="err">Could not load classes. Check that the Firestore rules are published.</span>'; return }
   if(!classes.length){ box.innerHTML='<span class="muted">No classes yet.</span>'; return }
-  classes.forEach(c=>{ const b=document.createElement('button'); b.className='tab'; b.textContent=c.name||c.code; b.setAttribute('aria-pressed',String(c.code===current)); b.onclick=()=>selectClass(c.code); box.appendChild(b) });
+  const arch=classes.filter(c=>c.archived), live=classes.filter(c=>!c.archived);
+  if(!live.length && !showArchived) box.insertAdjacentHTML('beforeend','<span class="muted">No active classes.</span>');
+  (showArchived?classes:live).forEach(c=>{ const b=document.createElement('button'); b.className='tab'+(c.archived?' archived':''); b.textContent=(c.name||c.code)+(c.archived?' (archived)':''); b.setAttribute('aria-pressed',String(c.code===current)); b.onclick=()=>selectClass(c.code); box.appendChild(b) });
+  if(arch.length){ const t=document.createElement('button'); t.className='btn small'; t.textContent=showArchived?'Hide archived':`Archived classes (${arch.length})`; t.setAttribute('aria-pressed',String(showArchived)); t.onclick=()=>{ showArchived=!showArchived; renderTabs() }; box.appendChild(t) }
 }
 function selectClass(code){
   current=code; pick.set(code); renderTabs();
@@ -276,20 +303,27 @@ function keyLines(list,ind){
 }
 const keyCount=list=>list.reduce((s,n)=>s+1+keyCount(n.body||[])+keyCount(n.elseBody||[]),0);
 let keyData=null;
-function loadKey(){
-  if(keyData) return Promise.resolve(keyData);
-  return new Promise((ok,fail)=>{ const sc=document.createElement('script'); sc.src='answer-key.js?v=7'; sc.onload=()=>{ try{ keyData=window.decodeAnswerKey(); ok(keyData) }catch(e){ fail(e) } }; sc.onerror=fail; document.head.appendChild(sc) });
+// The answer key file is encrypted. The secret lives in Firestore (config/answerKey), readable by approved teachers only.
+async function loadKey(){
+  if(keyData) return keyData;
+  const cfg=await Cloud.getConfig('answerKey'); if(!cfg||!cfg.secret) throw new Error('no-secret');
+  await new Promise((ok,fail)=>{ if(window.ANSWER_KEY_ENC) return ok(); const sc=document.createElement('script'); sc.src='answer-key.js?v=10'; sc.onload=ok; sc.onerror=fail; document.head.appendChild(sc) });
+  const b64=x=>Uint8Array.from(atob(x),c=>c.charCodeAt(0)), enc=window.ANSWER_KEY_ENC, te=new TextEncoder();
+  const base=await crypto.subtle.importKey('raw',te.encode(cfg.secret),'PBKDF2',false,['deriveKey']);
+  const key=await crypto.subtle.deriveKey({name:'PBKDF2',salt:b64(enc.salt),iterations:100000,hash:'SHA-256'},base,{name:'AES-GCM',length:256},false,['decrypt']);
+  const plain=await crypto.subtle.decrypt({name:'AES-GCM',iv:b64(enc.iv)},key,b64(enc.data));
+  keyData=JSON.parse(new TextDecoder().decode(plain)); return keyData;
 }
 async function toggleKey(){
   const btn=$('#keyBtn'), box=$('#keybody'), open=btn.getAttribute('aria-expanded')==='true';
   if(open){ box.innerHTML=''; btn.textContent='Show answers'; btn.setAttribute('aria-expanded','false'); return }
   btn.disabled=true; box.innerHTML='<p class="muted">Loading…</p>';
-  try{ await loadKey() }catch(e){ console.error(e); box.innerHTML='<p class="err">Could not load the answer key. Check your connection and try again.</p>'; btn.disabled=false; return }
-  box.innerHTML=UNITS.map(u=>`<h3 class="keylesson">Lesson ${u.n}: ${esc(u.title)}</h3><div class="keygrid">${LEVELS.filter(l=>l.unit===u.n).map(l=>{
+  try{ await loadKey() }catch(e){ console.error(e); box.innerHTML=`<p class="err">${e.message==='no-secret'?'The answer key is not set up yet. The site admin needs to save the answer key secret on this page.':'Could not load the answer key. Check your connection and try again.'}</p>`; btn.disabled=false; return }
+  box.innerHTML=UNITS.map(u=>LEVELS_AVAILABLE.map(v=>`<h3 class="keylesson">Lesson ${u.n}: ${esc(u.title)}<span class="lvtag" style="${levelStyle(v)}">${LEVEL_NAMES[v]} level</span></h3><div class="keygrid">${levelsOf(v,u.n).map(l=>{
     const prog=keyData[l.n]||[];
     const body = l.drive ? prog.map((n,i)=>(i+1+'. ').padStart(4,' ')+KEY_DRIVE[n.type]).join('\n') : keyLines(prog,0).join('\n');
     const meta = l.drive ? `Drive mode · ${prog.length} moves (3 stars at ${l.ideal} or fewer)` : `${keyCount(prog)} blocks · goal ${l.ideal}`;
-    return `<article class="keycard"><h3>${u.n}.${l.k} ${esc(l.title)}</h3><div class="meta">${meta}</div><pre>${esc(prog.length?body:'No solution saved yet.')}</pre><a href="./#puzzle-${l.n}" target="_blank" rel="noopener">Open puzzle</a></article>` }).join('')}</div>`).join('')
+    return `<article class="keycard"><h3>${u.n}.${l.k} ${esc(l.title)}</h3><div class="meta">${meta}</div><pre>${esc(prog.length?body:'No solution saved yet.')}</pre><a href="./#puzzle-${l.n}" target="_blank" rel="noopener">Open puzzle</a></article>` }).join('')}</div>`).join('')).join('')
     + '<p class="muted" style="margin-top:14px;font-size:14px">Other correct programs also work. These are one way to reach the block goal.</p>';
   btn.disabled=false; btn.textContent='Hide answers'; btn.setAttribute('aria-expanded','true');
 }
@@ -387,21 +421,28 @@ function ago(ts){
   if(m<1) return 'just now'; if(m<60) return m+' min ago'; if(m<1440) return Math.round(m/60)+' h ago';
   return d.toLocaleDateString(undefined,{month:'short',day:'numeric'});
 }
+// Difficulty: the class has one level (Easy / Medium / Hard); a student can be moved to another level on their own.
+const classLevel=c=>LEVELS_AVAILABLE.includes(c&&c.level)?c.level:DEFAULT_LEVEL;
+const studentLevel=(c,s)=>{ const v=(c&&c.levels||{})[s.uid]; return LEVELS_AVAILABLE.includes(v)?v:classLevel(c) };
 function renderClass(err){
   const view=$('#classview'); if(!view) return;
   const c=classes.find(x=>x.code===current)||{code:current,name:current};
-  const solved=s=>LEVELS.filter(l=>(s.progress||{})[l.n]).length;
+  const solved=s=>levelsOf(studentLevel(c,s)).filter(l=>(s.progress||{})[l.n]).length;
   const n=roster.length, avg=n?roster.reduce((t,s)=>t+solved(s),0)/n:0;
-  const lessonDone=UNITS.map(u=>{ const lv=LEVELS.filter(l=>l.unit===u.n); return {u, done:roster.filter(s=>lv.every(l=>(s.progress||{})[l.n])).length} });
+  const lessonDone=UNITS.map(u=>({u, done:roster.filter(s=>levelsOf(studentLevel(c,s),u.n).every(l=>(s.progress||{})[l.n])).length}));
+  const cl=classLevel(c); applyLevelTheme(cl);
   view.innerHTML=`<div class="top2">
-    <section class="panel"><span class="label">${esc(c.name)} · class code</span><div class="code">${esc(c.code)}</div>
+    <section class="panel"><span class="label">${esc(c.name)} · class code</span><span class="lvtag" style="${levelStyle(cl)}">${LEVEL_NAMES[cl]} level</span><div class="code">${esc(c.code)}</div>
       <p class="muted" style="margin:0 0 8px">Students sign in with Google and enter this code. Or share this link, which fills in the code for them:</p>
       <div class="linkrow"><code id="jl">${esc(joinLink(c.code))}</code><button class="btn" id="copy">Copy link</button></div>
       <p class="muted" style="margin:10px 0 0">No Google accounts for students? <a href="#loginsview">Make student logins</a> with a username and password instead.</p></section>
     <section class="panel"><span class="label">Class summary</span>
       <div class="stats"><div class="stat"><b>${n}</b><span class="muted">students joined</span></div>
-      <div class="stat"><b>${avg.toFixed(1)}</b><span class="muted">puzzles solved on average, of ${LEVELS.length}</span></div>
+      <div class="stat"><b>${avg.toFixed(1)}</b><span class="muted">puzzles solved on average, of ${levelsOf(cl).length}</span></div>
       ${lessonDone.map(x=>`<div class="stat"><b>${x.done}</b><span class="muted">finished Lesson ${x.u.n}</span><div class="bar"><i style="width:${n?x.done/n*100:0}%;background:${x.u.color}"></i></div></div>`).join('')}</div></section></div>
+    <div class="toolbar"><h2>Difficulty level</h2></div>
+    <p class="muted" style="margin:0 0 8px">Every lesson has its own set of 10 puzzles at each level. Pick the level for this class, for example Easy for 6th grade and Hard for 8th. You can move single students to another level in the Progress table. Stars earned at each level are kept.</p>
+    <div class="levels" id="levels" role="group" aria-label="Class difficulty level">${LEVELS_AVAILABLE.map(v=>`<button class="lvlbtn${v===cl?' on':''}" data-level="${v}" aria-pressed="${v===cl}" style="${levelStyle(v)}"><b>${LEVEL_NAMES[v]}</b><small>${LEVEL_HELP[v]}</small></button>`).join('')}</div>
     <div class="toolbar"><h2>Lessons open to students</h2><div class="spacer"></div><button class="btn" id="unlockAll">Unlock all</button><button class="btn" id="lockAll">Lock all</button></div>
     <p class="muted" style="margin:0 0 8px">Tap a lesson to lock or unlock it for this class. Students see a lock and can't open its puzzles. Changes reach students right away. Their stars are kept.</p>
     <div class="locks" id="locks">${UNITS.map(u=>{ const off=(c.locked||[]).includes(u.n); return `<button class="lockbtn${off?' off':''}" data-unit="${u.n}" aria-pressed="${!off}"><span class="lnum" style="background:${off?'var(--line)':u.color}">L${u.n}</span><span class="ltitle">${esc(u.title)}</span><span class="lstate">${off?'🔒 Locked':'Open'}</span></button>` }).join('')}</div>
@@ -410,14 +451,32 @@ function renderClass(err){
     <div class="legend"><span><i class="cell s3">★★★</i> 3 stars</span><span><i class="cell s2">★★</i> 2 stars</span><span><i class="cell s1">★</i> 1 star</span><span><i class="cell s0">·</i> not solved</span><span>Click a lesson to show or hide each puzzle.</span><span><b>Score</b> per lesson out of 100: 3 stars = 100, 2 stars = 90, 1 star = 80 for each puzzle, unsolved = 0</span><span>Updates live as students play.</span></div>
     <div class="tablewrap" id="progressTable">${err?'<div class="empty err">Could not load students. Check that the Firestore rules are published.</div>': n?table():'<div class="empty">No students yet. Share the code or link above.</div>'}</div>
     ${n&&!err?`<div class="toolbar"><h2>Leaderboard</h2><div class="spacer"></div><button class="btn" id="lbFull">Show full screen</button></div>
-    <section class="panel lbpanel" id="lbPanel"><h2 class="lbtitle">${esc(c.name||c.code)} leaderboard</h2>${leaderboard()}</section>`:''}`;
+    <section class="panel lbpanel" id="lbPanel"><h2 class="lbtitle">${esc(c.name||c.code)} leaderboard</h2>${leaderboard()}</section>`:''}
+    <div class="toolbar"><h2>Class settings</h2></div>
+    <div class="settings">
+      <div><b>${c.archived?'Archived class':'Archive this class'}</b><p class="muted">${c.archived?'This class is hidden from your class list. Students can still sign in and play. Unarchive it to bring it back.':'Hides the class from your list at the end of the year. Nothing is deleted and students can still play. You can unarchive it any time.'}</p><button class="btn" id="archiveBtn">${c.archived?'Unarchive':'Archive'}</button></div>
+      <div><b>Delete this class</b><p class="muted">Removes the class, its join code, the roster, the leaderboard and every student login you made for it, for good. Students who signed in with Google keep their own stars.</p><button class="btn danger" id="deleteBtn">Delete class…</button> <span id="delMsg" role="status" class="muted"></span></div>
+    </div>
+    <p class="err" id="setErr" role="alert"></p>`;
   $('#copy').onclick=async()=>{ try{ await navigator.clipboard.writeText(joinLink(c.code)); $('#copy').textContent='Copied' }catch(e){ const r=document.createRange(); r.selectNodeContents($('#jl')); getSelection().removeAllRanges(); getSelection().addRange(r) } };
   $('#csv').onclick=()=>downloadCsv(c);
+  $('#archiveBtn').onclick=async()=>{ $('#setErr').textContent=''; keepArchived=showArchived; try{ await Cloud.archiveClass(c.code,!c.archived) }catch(e){ console.error(e); $('#setErr').textContent='Could not save. Check your connection and try again.' } };
+  $('#deleteBtn').onclick=async()=>{
+    const typed=prompt(`This deletes "${c.name||c.code}" and all of its student logins for good. Type the class name to confirm:`);
+    if(typed===null) return; if(typed.trim().toLowerCase()!==(c.name||c.code).trim().toLowerCase()){ $('#setErr').textContent='The name did not match. Nothing was deleted.'; return }
+    $('#setErr').textContent=''; $('#deleteBtn').disabled=true; $('#archiveBtn').disabled=true;
+    if(stopRoster) stopRoster(); if(stopLogins) stopLogins(); stopRoster=stopLogins=null;
+    try{ await Cloud.deleteClass(c.code, m=>{ const el=$('#delMsg'); if(el) el.textContent=m }); current=null; pick.set('') }
+    catch(e){ console.error(e); const el=$('#setErr'); if(el) el.textContent='Could not delete everything. Try again.'; const d=$('#deleteBtn'); if(d) d.disabled=false; const a=$('#archiveBtn'); if(a) a.disabled=false }
+  };
   // Writes go straight to Firestore; the class snapshot (with local changes applied at once) redraws the buttons.
   const FV=firebase.firestore.FieldValue, cref=Cloud.db.collection('classes').doc(c.code);
   const save=data=>{ $('#lockErr').textContent=''; cref.update(data).catch(e=>{ console.error(e); $('#lockErr').textContent='Could not save. Check your connection and try again.' }) };
   $('#locks').onclick=e=>{ const b=e.target.closest('.lockbtn'); if(!b) return; const u=+b.dataset.unit, off=b.classList.contains('off');
     b.classList.toggle('off'); save({locked: off ? FV.arrayRemove(u) : FV.arrayUnion(u)}) };
+  $('#levels').onclick=e=>{ const b=e.target.closest('.lvlbtn'); if(!b) return; save({level: b.dataset.level}) };
+  tw0=$('#progressTable'); tw0.onchange=e=>{ const sel=e.target.closest('.stulvl'); if(!sel) return;
+    save({['levels.'+sel.dataset.uid]: sel.value ? sel.value : FV.delete()}) };
   $('#unlockAll').onclick=()=>save({locked: []});
   $('#lockAll').onclick=()=>save({locked: UNITS.map(u=>u.n)});
   const tw=$('#progressTable'); tw.onclick=e=>{ const b=e.target.closest('.lessonbtn'); if(!b) return; const u=+b.dataset.unit;
@@ -427,31 +486,36 @@ function renderClass(err){
 }
 // Same ranking students see in the app: by stars, then puzzles solved. Names are first name + last initial so it is safe to project.
 function leaderboard(){
+  const c=classes.find(x=>x.code===current)||{};
   const short=n=>{ const w=String(n||'Student').trim().split(/\s+/); return w.length>1 ? w[0]+' '+w[w.length-1][0]+'.' : w[0] };
-  const rows=roster.map(s=>{ const p=s.progress||{}; return {name:short(s.name), stars:totalStars(p), solved:LEVELS.filter(l=>p[l.n]).length} })
+  const rows=roster.map(s=>{ const p=s.progress||{}; const sl=studentLevel(c,s); return {name:short(s.name), stars:totalStars(p), solved:levelsOf(sl).filter(l=>p[l.n]).length, total:levelsOf(sl).length} })
     .sort((a,b)=>b.stars-a.stars || b.solved-a.solved || a.name.localeCompare(b.name));
   let place=0, prev=null;
   return `<table class="lb"><thead><tr><th>#</th><th class="l">Student</th><th class="l">Rank</th><th>Stars</th><th>Solved</th></tr></thead><tbody>${rows.map((r,i)=>{
     if(r.stars!==prev){ place=i+1; prev=r.stars }
-    return `<tr class="${place<=3&&r.stars?'place'+place:''}"><td><b>${place}</b></td><td class="l"><b>${esc(r.name)}</b></td><td class="l">${rankFor(r.stars).title}</td><td><b>${r.stars}</b> ★</td><td>${r.solved}/${LEVELS.length}</td></tr>` }).join('')}</tbody></table>`;
+    return `<tr class="${place<=3&&r.stars?'place'+place:''}"><td><b>${place}</b></td><td class="l"><b>${esc(r.name)}</b></td><td class="l">${rankFor(r.stars).title}</td><td><b>${r.stars}</b> ★</td><td>${r.solved}/${r.total}</td></tr>` }).join('')}</tbody></table>`;
 }
 function table(){
   // Lessons start collapsed to just their Score (out of 100, see lessonScore in course.js). Clicking a lesson shows its puzzles.
-  const lv=u=>openUnits.has(u.n)?ORDER.filter(l=>l.unit===u.n):[];
+  // Columns show the class level's puzzles; a student on another level gets their own level's score and a note.
+  const c=classes.find(x=>x.code===current)||{}, cl=classLevel(c);
+  const lv=u=>openUnits.has(u.n)?levelsOf(cl,u.n):[];
   const head1=UNITS.map(u=>{ const o=openUnits.has(u.n); return `<th class="lesson" colspan="${lv(u).length+1}" style="background:${u.color}"><button class="lessonbtn" data-unit="${u.n}" aria-expanded="${o}" title="${o?'Hide':'Show'} each puzzle">${o?'▾':'▸'} L${u.n}${o?': '+esc(u.title):''}</button></th>` }).join('');
   const head2=UNITS.map(u=>lv(u).map(l=>`<th title="${esc(l.title)}">${l.unit}.${l.k}</th>`).join('')+`<th class="score" title="Lesson ${u.n}: ${esc(u.title)}. Score out of 100">Score</th>`).join('');
   const rows=roster.map(s=>{
-    const p=s.progress||{}, done=LEVELS.filter(l=>p[l.n]).length, stars=totalStars(p);
-    const cells=UNITS.map(u=>lv(u).map(l=>{ const st=p[l.n]||0; return `<td><span class="cell s${st}" title="${esc(l.title)}: ${st?st+' star'+(st>1?'s':''):'not solved'}">${st?'★'.repeat(st):'·'}</span></td>` }).join('')
-      +`<td class="score"><b>${lessonScore(p,u.n)}</b></td>`).join('');
-    return `<tr><td class="name"><b>${esc(s.name)}</b><small>${esc(s.email||(s.username?'Username: '+s.username:''))}</small></td>${cells}<td><b>${done}</b>/${LEVELS.length}</td><td><b>${stars}</b> ★<small class="muted rank">${rankFor(stars).title}</small></td><td class="muted">${ago(s.updatedAt)}</td></tr>`;
+    const p=s.progress||{}, sl=studentLevel(c,s), other=sl!==cl, done=levelsOf(sl).filter(l=>p[l.n]).length, stars=totalStars(p);
+    const cells=UNITS.map(u=>lv(u).map(l=>{ const st=p[l.n]||0; return other ? '<td><span class="cell s0" title="This student is on another level">–</span></td>' : `<td><span class="cell s${st}" title="${esc(l.title)}: ${st?st+' star'+(st>1?'s':''):'not solved'}">${st?'★'.repeat(st):'·'}</span></td>` }).join('')
+      +`<td class="score"><b>${lessonScore(p,u.n,sl)}</b></td>`).join('');
+    const pick=`<select class="stulvl" data-uid="${esc(s.uid)}" aria-label="Level for ${esc(s.name)}" style="${levelStyle(sl)}"><option value="">Class level (${LEVEL_NAMES[cl]})</option>${LEVELS_AVAILABLE.map(v=>`<option value="${v}"${(c.levels||{})[s.uid]===v?' selected':''}>${LEVEL_NAMES[v]}</option>`).join('')}</select>`;
+    return `<tr><td class="name"><b>${esc(s.name)}</b><small>${esc(s.email||(s.username?'Username: '+s.username:''))}</small>${pick}</td>${cells}<td><b>${done}</b>/${levelsOf(sl).length}</td><td><b>${stars}</b> ★<small class="muted rank">${rankFor(stars).title}</small></td><td class="muted">${ago(s.updatedAt)}</td></tr>`;
   }).join('');
   return `<table><thead><tr><th class="name" rowspan="2">Student</th>${head1}<th rowspan="2">Solved</th><th rowspan="2">Stars and rank</th><th rowspan="2">Last active</th></tr><tr>${head2}</tr></thead><tbody>${rows}</tbody></table>`;
 }
 function downloadCsv(c){
   const q=v=>'"'+String(v==null?'':v).replace(/"/g,'""')+'"';
-  const lines=[['Student','Email or username',...ORDER.map(l=>'L'+l.unit+'.'+l.k+' '+l.title),...UNITS.map(u=>'Lesson '+u.n+' score'),'Solved','Stars','Rank','Last active'].map(q).join(',')];
-  roster.forEach(s=>{ const p=s.progress||{}, stars=totalStars(p); lines.push([s.name,s.email||s.username,...ORDER.map(l=>p[l.n]||0),...UNITS.map(u=>lessonScore(p,u.n)),LEVELS.filter(l=>p[l.n]).length,stars,rankFor(stars).title,s.updatedAt&&s.updatedAt.toDate?s.updatedAt.toDate().toISOString():''].map(q).join(',')) });
+  const cl=classLevel(c), cols=levelsOf(cl);
+  const lines=[['Student','Email or username','Level',...cols.map(l=>'L'+l.unit+'.'+l.k+' '+l.title),...UNITS.map(u=>'Lesson '+u.n+' score'),'Solved','Stars','Rank','Last active'].map(q).join(',')];
+  roster.forEach(s=>{ const p=s.progress||{}, stars=totalStars(p), sl=studentLevel(c,s); lines.push([s.name,s.email||s.username,LEVEL_NAMES[sl],...cols.map(l=>sl===cl?(p[l.n]||0):''),...UNITS.map(u=>lessonScore(p,u.n,sl)),levelsOf(sl).filter(l=>p[l.n]).length,stars,rankFor(stars).title,s.updatedAt&&s.updatedAt.toDate?s.updatedAt.toDate().toISOString():''].map(q).join(',')) });
   const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([lines.join('\n')],{type:'text/csv'})); a.download=(c.name||c.code).replace(/[^a-z0-9]+/gi,'-')+'-progress.csv'; document.body.appendChild(a); a.click(); a.remove();
 }
 
@@ -465,7 +529,71 @@ else Cloud.onChange(c=>{
   uid=u; app.dataset.ready='1';
   if(stopRoster){ stopRoster(); stopRoster=null } if(stopClasses){ stopClasses(); stopClasses=null } if(stopLogins){ stopLogins(); stopLogins=null }
   current=null;
-  if(!u) signInView(); else if(Cloud.isStudentLogin(c.user)) studentAccount(); else dashboard();
+  if(stopStatus){ stopStatus(); stopStatus=null }
+  if(!u) signInView(); else if(Cloud.isStudentLogin(c.user)) studentAccount(); else if(Cloud.isAdmin(c.user)) dashboard(true); else gate(c.user);
 });
+// Teachers need Kevin's approval before they can use the dashboard (teachers/{uid}.status).
+let stopStatus=null, shownStatus=null;
+function gate(user){
+  app.innerHTML='<p class="muted">Checking your access…</p>'; shownStatus=null;
+  stopStatus=Cloud.watchTeacherStatus((t,err)=>{
+    if(err){ app.innerHTML='<section class="hero"><span class="label">For teachers</span><h1 style="margin-top:8px">Could not check your access.</h1><p>Check your internet connection and reload. If this keeps happening, the Firestore rules may not be published yet.</p></section>'; return }
+    const st=t?t.status:'none'; if(st===shownStatus) return; shownStatus=st;
+    if(st==='approved') dashboard(false);
+    else if(st==='pending') waitView(t);
+    else if(st==='rejected') app.innerHTML=`<section class="hero"><span class="label">For teachers</span><h1 style="margin-top:8px">This account was not approved.</h1><p>Teacher access for <b>${esc(user.email)}</b> was declined. If you are a teacher and this is a mistake, email the site admin. Students use the course page, not this one.</p><button class="btn" id="so">Sign out</button></section>`;
+    else requestView(user);
+    const so=$('#so'); if(so) so.onclick=()=>Cloud.signOut();
+  });
+}
+function requestView(user){
+  app.innerHTML=`<section class="hero"><span class="label">For teachers</span><h1 style="margin-top:8px">Ask for teacher access</h1>
+    <p>The Teacher Dashboard is for teachers only. Tell us who you are and the site admin will approve your account, usually within a day. You are signed in as <b>${esc(user.email)}</b>.</p>
+    <form class="panel auth" id="reqForm" novalidate>
+      <label class="label" for="rName">Your name</label><input class="field" id="rName" maxlength="60" autocomplete="name" placeholder="e.g. Ms. Rivera" value="${esc(user.displayName||'')}">
+      <label class="label" for="rSchool">School</label><input class="field" id="rSchool" maxlength="80" autocomplete="organization" placeholder="e.g. Lincoln Middle School">
+      <div class="row"><button class="btn primary" id="reqGo">Send request</button><button type="button" class="linkbtn" id="so">Sign out</button></div>
+      <p id="reqMsg" role="alert" class="err" style="margin:10px 0 0"></p></form></section>`;
+  $('#reqForm').addEventListener('submit',async e=>{ e.preventDefault();
+    const name=$('#rName').value.trim(), school=$('#rSchool').value.trim(), msg=$('#reqMsg');
+    if(!name) return msg.textContent='Type your name.'; if(!school) return msg.textContent='Type your school.';
+    $('#reqGo').disabled=true; msg.textContent='';
+    try{ await Cloud.requestTeacher(name,school) }catch(err){ console.error(err); msg.textContent='Could not send the request. Check your connection and try again.'; $('#reqGo').disabled=false }
+  });
+}
+function waitView(t){
+  app.innerHTML=`<section class="hero"><span class="label">For teachers</span><h1 style="margin-top:8px">Thanks, ${esc(t.name||'')}. Your request is in.</h1>
+    <p>The site admin will approve teacher access for <b>${esc(t.email||'')}</b> (${esc(t.school||'')}). This page updates by itself when that happens, so you can also just come back later.</p>
+    <p class="muted">Meanwhile, the <a href="resources/">teacher resources</a> (slides, classwork and lesson plans) are open to everyone.</p>
+    <button class="btn" id="so">Sign out</button></section>`;
+}
+// ---------- admin: approve teachers, set the answer key secret ----------
+let stopTeachers=null;
+function adminPanel(){
+  const box=$('#adminview'); if(!box) return;
+  box.innerHTML=`<div class="toolbar"><h2>Admin · Teacher access</h2></div>
+    <p class="muted" style="margin:0 0 8px">Teachers who sign in ask for access here. Approve real teachers; reject anyone else. Only approved teachers can create classes and read the answer key.</p>
+    <div id="teacherList"><p class="muted">Loading…</p></div>
+    <h3 style="margin:18px 0 6px">Answer key secret</h3>
+    <p class="muted" style="margin:0 0 8px">The answer key on this page is encrypted. Approved teachers unlock it with this secret. <span id="secretState"></span></p>
+    <form class="row" id="secretForm" style="gap:8px;flex-wrap:wrap"><input class="field" id="secretIn" style="max-width:420px" placeholder="Paste the secret" autocomplete="off"><button class="btn" id="secretGo">Save secret</button><span id="secretMsg" class="muted"></span></form>`;
+  Cloud.getConfig('answerKey').then(c=>{ $('#secretState').textContent=c&&c.secret?'A secret is saved.':'No secret saved yet, so the answer key cannot be opened.' }).catch(()=>{});
+  $('#secretForm').addEventListener('submit',async e=>{ e.preventDefault(); const v=$('#secretIn').value.trim(); if(!v) return;
+    try{ await Cloud.setConfig('answerKey',{secret:v}); keyData=null; $('#secretMsg').textContent='Saved.'; $('#secretState').textContent='A secret is saved.'; $('#secretIn').value='' }catch(err){ console.error(err); $('#secretMsg').textContent='Could not save.' } });
+  if(stopTeachers) stopTeachers();
+  stopTeachers=Cloud.watchTeachers((list,err)=>{
+    const el=$('#teacherList'); if(!el) return;
+    if(err){ el.innerHTML='<p class="err">Could not load teacher requests. Check that the Firestore rules are published.</p>'; return }
+    if(!list.length){ el.innerHTML='<p class="muted">No teacher requests yet.</p>'; return }
+    const order={pending:0,approved:1,rejected:2};
+    list.sort((a,b)=>(order[a.status]??3)-(order[b.status]??3) || (a.name||'').localeCompare(b.name||''));
+    el.innerHTML=`<div class="tablewrap"><table><thead><tr><th class="name">Teacher</th><th>School</th><th>Status</th><th>Asked</th><th></th></tr></thead><tbody>${list.map(t=>`<tr>
+      <td class="name"><b>${esc(t.name)}</b><small>${esc(t.email)}</small></td><td>${esc(t.school)}</td>
+      <td><span class="tstat ${esc(t.status)}">${t.status==='pending'?'Waiting':t.status==='approved'?'Approved':'Rejected'}</span></td><td>${ago(t.requestedAt)}</td>
+      <td style="white-space:nowrap">${t.status!=='approved'?`<button class="btn" data-act="approved" data-uid="${esc(t.uid)}">Approve</button> `:''}${t.status!=='rejected'?`<button class="btn" data-act="rejected" data-uid="${esc(t.uid)}">Reject</button> `:''}<button class="btn" data-act="remove" data-uid="${esc(t.uid)}" title="Delete the request; the teacher can ask again">Remove</button></td></tr>`).join('')}</tbody></table></div>`;
+    el.onclick=async e=>{ const b=e.target.closest('button[data-act]'); if(!b) return; b.disabled=true;
+      try{ if(b.dataset.act==='remove') await Cloud.removeTeacher(b.dataset.uid); else await Cloud.setTeacherStatus(b.dataset.uid,b.dataset.act) }catch(err){ console.error(err); b.disabled=false; alert('Could not save. Try again.') } };
+  });
+}
 </script>
 </body></html>

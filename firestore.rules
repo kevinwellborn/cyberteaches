@@ -7,6 +7,28 @@ service cloud.firestore {
     function teacherOf(code) {
       return get(/databases/$(database)/documents/classes/$(code)).data.teacherUid == request.auth.uid;
     }
+    // Kevin approves teachers. Only approved teachers can create classes or read the answer key.
+    function isAdmin() { return signedIn() && request.auth.token.email == "kevinwellborn714@gmail.com"; }
+    function approvedTeacher() {
+      return isAdmin() || (exists(/databases/$(database)/documents/teachers/$(request.auth.uid))
+        && get(/databases/$(database)/documents/teachers/$(request.auth.uid)).data.status == 'approved');
+    }
+
+    // Teacher access requests. A signed-in person asks once (status pending); the admin approves or rejects.
+    match /teachers/{uid} {
+      allow read: if signedIn() && (request.auth.uid == uid || isAdmin());
+      allow create: if signedIn() && request.auth.uid == uid
+        && request.resource.data.keys().hasOnly(['name', 'email', 'school', 'status', 'requestedAt'])
+        && request.resource.data.status == 'pending'
+        && request.resource.data.name is string && request.resource.data.name.size() <= 60
+        && request.resource.data.school is string && request.resource.data.school.size() <= 80;
+      allow update, delete: if isAdmin();
+    }
+    // Site settings for approved teachers (the secret that unlocks the answer key). Only the admin writes them.
+    match /config/{doc} {
+      allow read: if approvedTeacher();
+      allow write: if isAdmin();
+    }
 
     // A student's own progress. Only that student can read or change it.
     match /users/{uid} {
@@ -18,7 +40,7 @@ service cloud.firestore {
     // Classes are created by teachers. Any signed-in student can look one up by its code to join.
     match /classes/{code} {
       allow read: if signedIn();
-      allow create: if signedIn()
+      allow create: if approvedTeacher()
         && request.resource.data.teacherUid == request.auth.uid
         && code.matches('^[A-Z0-9]{6}$');
       allow update, delete: if signedIn() && resource.data.teacherUid == request.auth.uid;
@@ -40,8 +62,8 @@ service cloud.firestore {
           && exists(/databases/$(database)/documents/classes/$(code))
           && request.resource.data.keys().hasOnly(['name', 'stars', 'solved', 'updatedAt'])
           && request.resource.data.name is string && request.resource.data.name.size() <= 40
-          && request.resource.data.stars is int && request.resource.data.stars >= 0 && request.resource.data.stars <= 600
-          && request.resource.data.solved is int && request.resource.data.solved >= 0 && request.resource.data.solved <= 200;
+          && request.resource.data.stars is int && request.resource.data.stars >= 0 && request.resource.data.stars <= 3000
+          && request.resource.data.solved is int && request.resource.data.solved >= 0 && request.resource.data.solved <= 1000;
         allow delete: if signedIn() && (request.auth.uid == uid || teacherOf(code));
       }
 

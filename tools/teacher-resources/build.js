@@ -1,14 +1,24 @@
 // Builds teacher resources (slides, classwork, lesson plan) for academy lessons from tools/teacher-resources/lessons.js.
 // Run: node tools/teacher-resources/build.js   (writes academy/resources/lesson-N/*.html for every lesson in lessons.js)
-// Lesson 1 is hand-written and not generated. Puzzle maps and answers come from academy/course.js and academy/answer-key.js,
+// Lesson 1 is hand-written and not generated. Puzzle maps and answers come from academy/course.js and the encrypted answer key,
 // and every trace answer and program in the classwork is checked with a small simulator, so the build fails on a wrong answer.
 const fs = require('fs'), path = require('path');
 const ROOT = path.join(__dirname, '..', '..');
 const ctx = {};
-new Function('ctx', fs.readFileSync(path.join(ROOT, 'academy/course.js'), 'utf8') + ';ctx.UNITS=UNITS;ctx.LEVELS=LEVELS;ctx.ORDER=ORDER;')(ctx);
-global.window = {}; require(path.join(ROOT, 'academy/answer-key.js')); const KEY = window.decodeAnswerKey();
-const { UNITS, LEVELS, ORDER } = ctx;
+new Function('ctx', fs.readFileSync(path.join(ROOT, 'academy/course.js'), 'utf8') + ';ctx.UNITS=UNITS;ctx.LEVELS=LEVELS;ctx.ORDER=ORDER;ctx.LEVEL_NAMES=LEVEL_NAMES;ctx.LEVEL_COLORS=LEVEL_COLORS;')(ctx);
+const KEY = require('../answer-key/crypt.js').load();   // needs ANSWER_KEY_SECRET or tools/answer-key/.secret
+const { UNITS, LEVELS, ORDER, LEVEL_NAMES, LEVEL_COLORS } = ctx;
 const LESSONS = require('./lessons.js');
+const EASY = require('./lessons-easy.js'), MEDIUM = require('./lessons-medium.js');
+const OVERRIDES = { easy: EASY, medium: MEDIUM };   // per-level overrides of the shared lesson content
+// Difficulty level being built: 'hard' pages go in lesson-N/, other levels in lesson-N/<level>/ with the same file names.
+let CUR_LEVEL = 'hard';
+const LV = () => CUR_LEVEL === 'hard' ? '' : ` · ${LEVEL_NAMES[CUR_LEVEL]} level`;
+// Every page is tinted in its level's color (green Easy, yellow Medium, red Hard) with a ribbon, so a teacher always knows which level it is for.
+const LVBODY = () => { const c = LEVEL_COLORS[CUR_LEVEL]; return `<body class="lv-${CUR_LEVEL}" style="--lv:${c.main};--lv-ink:${c.ink};--lv-soft:${c.soft}">
+<div class="lvlrib"><b>${LEVEL_NAMES[CUR_LEVEL]} level</b> · made for the ${LEVEL_NAMES[CUR_LEVEL]} puzzles · <a href="../${CUR_LEVEL === 'hard' ? '' : '../'}#${CUR_LEVEL}">all ${LEVEL_NAMES[CUR_LEVEL]} resources</a></div>` };
+// Merge a level's overrides into the shared lesson content (plan and partC merge one level deep).
+const withLevel = (L, o) => !o ? L : { ...L, ...o, plan: { ...L.plan, ...(o.plan || {}) }, partC: { ...L.partC, ...(o.partC || {}) } };
 
 // ---------- programs ----------
 const NAMES = { forward: 'F', left: 'L', right: 'R', collect: 'C', fire: 'X' };
@@ -76,7 +86,7 @@ function simulate(map, dir, prog) {
 // ---------- helpers for page templates ----------
 const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 const board = (map, dir, cell, extra = '') => `<div class="board" data-map="${esc(map.join('|'))}" data-dir="${dir}"${cell ? ` data-cell="${cell}"` : ''}${extra}></div>`;
-const lvl = (u, k) => ORDER.find(l => l.unit === u && l.k === k);
+const lvl = (u, k) => { const l = ORDER.find(l => l.unit === u && l.level === CUR_LEVEL && l.k === k); if (!l) throw new Error(`no ${CUR_LEVEL} puzzle ${u}.${k}`); return l };
 const solOf = l => KEY[l.n];
 const HEAD = (title, css) => `<!doctype html>
 <html lang="en"><head>
@@ -89,7 +99,7 @@ const HEAD = (title, css) => `<!doctype html>
 <link rel="stylesheet" href="../resources.css">
 <link rel="stylesheet" href="../${css}">
 </head>
-<body>
+${LVBODY()}
 `;
 const NOTATION = L => `<span><b>F</b> = move forward</span><span><b>L</b> = turn left</span><span><b>R</b> = turn right</span>${L.notation.includes('C') ? '<span><b>C</b> = collect crystal</span>' : ''}${L.notation.includes('X') ? '<span><b>X</b> = fire cannon</span>' : ''}${L.legend.map(t => `<span><b>${esc(t[0])}</b> = ${esc(t[1])}</span>`).join('')}`;
 
@@ -98,7 +108,7 @@ function slidesPage(L, u) {
   const S = [];
   const add = (kicker, title, body, note, cls = '') => S.push({ kicker, title, body, note, cls });
   S.push({ raw: `<section class="slide title-slide">
-  <span class="label" style="font-size:22px">CyberTeaches Academy · Lesson ${u.n}</span>
+  <span class="label" style="font-size:22px">CyberTeaches Academy · Lesson ${u.n}${LV()}</span>
   <h1 style="margin:18px 0 22px">${L.titleHtml}</h1>
   <p style="font-size:32px;max-width:900px">${L.tagline}</p>
   <div class="foot"><span>cyberteaches.com/academy</span><span>Press → to start</span></div>
@@ -139,7 +149,7 @@ function slidesPage(L, u) {
   ${s.body}
   <div class="note">${s.note}</div>
 </section>`).join('\n\n');
-  return { html: HEAD(`Lesson ${u.n} Slides · ${u.title}`, 'slides.css') + `<div class="deck" id="deck">\n${html}\n</div>
+  return { html: HEAD(`Lesson ${u.n} Slides · ${u.title}${LV()}`, 'slides.css') + `<div class="deck" id="deck">\n${html}\n</div>
 <div class="notes" id="notes"><b>Teacher notes</b><span id="noteText"></span></div>
 <div class="bar"><button id="prev" aria-label="Previous slide">←</button><span id="num" style="color:#fff;font:700 14px var(--f-body);align-self:center;min-width:52px;text-align:center"></span><button id="next" aria-label="Next slide">→</button><button id="nBtn" title="Teacher notes (N)">Notes</button><button id="fBtn" title="Full screen (F)">Full screen</button></div>
 <script src="../resources.js"></script>
@@ -176,7 +186,7 @@ function classworkPage(L, u) {
   rowsC.forEach(r => { if (r.check) { const s = simulate(r.check.map, r.check.dir, r.check.prog); check(s.won, `Lesson ${u.n} part C ${r.q}: answer does not solve ${JSON.stringify(s)}`) } });
   const page1 = `<section class="page">
   <div class="head">
-    <div><span class="label">CyberTeaches Academy · Lesson ${u.n} classwork</span><h1>${esc(u.title)}</h1></div>
+    <div><span class="label">CyberTeaches Academy · Lesson ${u.n} classwork${LV()}</span><h1>${esc(u.title)}</h1></div>
     <div class="name">Name<div></div>Date<div></div></div>
   </div>
   <div class="key-ref">${NOTATION(L)}</div>
@@ -232,7 +242,7 @@ ${rowsC.map(r => `      <tr><td>${r.q}</td><td>${r.a}</td><td class="blank"></td
   ${frames.map(f => `<p><b>${f.q}.</b> <span class="answer">${f.f[1]}</span></p>`).join('\n  ')}`;
   const key = `<section class="page key">
   <div class="head">
-    <div><span class="label">Lesson ${u.n} classwork</span><h1>Answer key</h1></div>
+    <div><span class="label">Lesson ${u.n} classwork${LV()}</span><h1>Answer key</h1></div>
     <span class="teacher-tag">Teacher only</span>
   </div>
   <h2 style="margin-top:0">Lesson timing (50 minutes)</h2>
@@ -254,8 +264,8 @@ ${rowsC.map(r => `      <tr><td>${r.q}</td><td class="answer">${r.key}</td></tr>
   <h2>Exit ticket</h2>
   <p>${L.exit.a}</p>
 </section>`;
-  return HEAD(`Lesson ${u.n} Classwork · ${u.title}`, 'classwork.css') + `<div class="toolbar">
-  <a class="btn" href="../">← All lessons</a><span class="label">Teacher resources · Lesson ${u.n}</span><span class="spacer"></span>
+  return HEAD(`Lesson ${u.n} Classwork · ${u.title}${LV()}`, 'classwork.css') + `<div class="toolbar">
+  <a class="btn" href="../">← All lessons</a><span class="label">Teacher resources · Lesson ${u.n}${LV()}</span><span class="spacer"></span>
   <a class="btn" href="slides.html">Slides</a><a class="btn" href="lesson-plan.html">Lesson plan</a>
   <a class="btn" href="classwork.docx" download>Word (.docx)</a>
   <a class="btn" href="classwork-digital.docx" download title="Student-only version to type in. Upload to Google Drive and assign in Google Classroom with Make a copy for each student.">Google Classroom (digital)</a>
@@ -296,15 +306,15 @@ function procedure(L, u) {
 function planPage(L, u) {
   const next = UNITS.find(x => x.n === u.n + 1);
   const P = L.plan;
-  return HEAD(`Lesson ${u.n} Lesson Plan · ${u.title}`, 'plan.css') + `<div class="toolbar">
-  <a class="btn" href="../">← All lessons</a><span class="label">Teacher resources · Lesson ${u.n}</span><span class="spacer"></span>
+  return HEAD(`Lesson ${u.n} Lesson Plan · ${u.title}${LV()}`, 'plan.css') + `<div class="toolbar">
+  <a class="btn" href="../">← All lessons</a><span class="label">Teacher resources · Lesson ${u.n}${LV()}</span><span class="spacer"></span>
   <a class="btn" href="slides.html">Slides</a><a class="btn" href="classwork.html">Classwork</a>
   <button class="btn primary" onclick="print()">Print lesson plan</button>
 </div>
 
 <article class="page">
   <header class="head">
-    <div><span class="label">CyberTeaches Academy · Block coding · Grades 6 to 8</span><h1>Lesson ${u.n}: ${esc(u.title)}</h1></div>
+    <div><span class="label">CyberTeaches Academy · Block coding · Grades 6 to 8${LV()}</span><h1>Lesson ${u.n}: ${esc(u.title)}</h1></div>
     <div class="meta"><b>Time</b> 50 minutes<br><b>Unit</b> ${L.unitName}<br><b>Puzzles</b> ${u.n}.1 to ${u.n}.10</div>
   </header>
 
@@ -419,18 +429,25 @@ const STANDARDS = {
 
 // ---------- build ----------
 const only = process.argv[2] ? +process.argv[2] : null;
-for (const L of LESSONS) {
-  if (only && L.n !== only) continue;
+// Pages in a level folder (lesson-N/easy/, lesson-N/medium/) link one folder further up to the shared css, js and the lessons index.
+const deeper = html => html.replace(/(href|src)="\.\.\//g, '$1="../../');
+for (const L0 of LESSONS) for (const level of ['hard', 'easy', 'medium']) {
+  if (only && L0.n !== only) continue;
+  CUR_LEVEL = level;
+  const L = level === 'hard' ? L0 : withLevel(L0, OVERRIDES[level][L0.n]);
+  if (level !== 'hard' && !OVERRIDES[level][L0.n]) continue;
   const u = UNITS.find(x => x.n === L.n);
   const sl = L.handSlides ? null : slidesPage(L, u);
   // slide numbers: 1 title, 2 goals, 3 warm-up, then review/concepts, then together puzzles, tips, classwork, code, exit
   const nConcept = (L.review ? 1 : 0) + (L.concepts || []).length;
   SLIDE_IDX = L.handSlides || { warm: 3, instrFrom: 4, instrTo: 3 + nConcept, guidedFrom: 4 + nConcept, guidedTo: 3 + nConcept + L.together.length,
     classwork: sl.count - 2, code: sl.count - 1, exit: sl.count };
-  const dir = path.join(ROOT, 'academy/resources/lesson-' + L.n); fs.mkdirSync(dir, { recursive: true });
-  if (sl) fs.writeFileSync(path.join(dir, 'slides.html'), sl.html);
-  fs.writeFileSync(path.join(dir, 'classwork.html'), classworkPage(L, u));
-  fs.writeFileSync(path.join(dir, 'lesson-plan.html'), planPage(L, u));
-  console.log('Lesson', L.n, 'built:', sl ? sl.count : 'hand-made', 'slides');
+  const base = path.join(ROOT, 'academy/resources/lesson-' + L.n), dir = level === 'hard' ? base : path.join(base, level); fs.mkdirSync(dir, { recursive: true });
+  const fix = level === 'hard' ? (x => x) : deeper;
+  if (sl) fs.writeFileSync(path.join(dir, 'slides.html'), fix(sl.html));
+  else if (level !== 'hard') fs.writeFileSync(path.join(dir, 'slides.html'), deeper(fs.readFileSync(path.join(base, 'slides.html'), 'utf8')).replace(/<body[^>]*>\s*(?:<div class="lvlrib">.*?<\/div>\s*)?/s, LVBODY()));   // hand-made deck, shared by every level (its own ribbon is replaced)
+  fs.writeFileSync(path.join(dir, 'classwork.html'), fix(classworkPage(L, u)));
+  fs.writeFileSync(path.join(dir, 'lesson-plan.html'), fix(planPage(L, u)));
+  console.log('Lesson', L.n, level, 'built:', sl ? sl.count : 'hand-made', 'slides');
 }
 module.exports = { simulate, txt, count };

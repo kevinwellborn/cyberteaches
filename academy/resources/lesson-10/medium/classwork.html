@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Lesson 10 Classwork · Tank missions · Medium level</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="../../../../favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Atkinson+Hyperlegible:wght@400;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<link rel="stylesheet" href="../../resources.css">
+<link rel="stylesheet" href="../../classwork.css">
+</head>
+<body class="lv-medium" style="--lv:#D9A013;--lv-ink:#2A2000;--lv-soft:#FBF0CC">
+<div class="lvlrib"><b>Medium level</b> · made for the Medium puzzles · <a href="../../../#medium">all Medium resources</a></div>
+<div class="toolbar">
+  <a class="btn" href="../../">← All lessons</a><span class="label">Teacher resources · Lesson 10 · Medium level</span><span class="spacer"></span>
+  <a class="btn" href="slides.html">Slides</a><a class="btn" href="lesson-plan.html">Lesson plan</a>
+  <a class="btn" href="classwork.docx" download>Word (.docx)</a>
+  <a class="btn" href="classwork-digital.docx" download title="Student-only version to type in. Upload to Google Drive and assign in Google Classroom with Make a copy for each student.">Google Classroom (digital)</a>
+  <button class="btn" id="pStudents">Print student pages</button>
+  <button class="btn primary" id="pAll">Print with answer key</button>
+</div>
+
+<section class="page">
+  <div class="head">
+    <div><span class="label">CyberTeaches Academy · Lesson 10 classwork · Medium level</span><h1>Tank missions</h1></div>
+    <div class="name">Name<div></div>Date<div></div></div>
+  </div>
+  <div class="key-ref"><span><b>F</b> = move forward</span><span><b>L</b> = turn left</span><span><b>R</b> = turn right</span><span><b>X</b> = fire cannon</span><span><b>if tank [ X ]</b> = if tank ahead, fire</span></div>
+  <h2>Part A · Trace the rover <span class="pts">Follow the program one block at a time.</span></h2>
+  <p class="instr">Draw the rover's path. Cross out each tank it destroys.</p>
+  <div class="q"><span class="num">1</span><div class="task">
+    <div class="board" data-map="#######|###^###|###.###|#&lt;.S.&gt;#|###.###|###v###|#######" data-dir="0"></div>
+    <div class="lines"><p style="margin:0 0 6px">Program: <span class="code">repeat 4 [ X R ]</span></p>
+      <p style="margin:0">How many shells are used? Which way does the rover face at the end?</p><div class="ln"></div><div class="ln"></div></div>
+  </div></div>
+<div class="q"><span class="num">2</span><div class="task">
+    <div class="board" data-map="#######|#S.####|##.&gt;###|###.&gt;##|####.&gt;#|#######" data-dir="1"></div>
+    <div class="lines"><p style="margin:0 0 6px">Program: <span class="code">repeat 3 [ F R F L X ]</span></p>
+      <p style="margin:0">Draw the path down the stairs. How many tanks are destroyed?</p><div class="ln"></div><div class="ln"></div></div>
+  </div></div>
+  <h2>Part B · Write the program <span class="pts">Use the letters above.</span></h2>
+  <p class="instr">Write a program that fits inside the block limit. Use X for fire cannon.</p>
+  <div class="q"><span class="num">3</span><div class="task">
+    <div class="board" data-map="#########|#S......#|#..v.v.v#|#########" data-dir="1"></div>
+    <div class="lines"><p style="margin:0 0 6px">Tanks below every other square. 3 shells. Limit: 10 blocks.</p><div class="ln"></div><div class="ln"></div><p style="margin:6px 0 0">How many blocks? ______ (goal: 6)</p></div>
+  </div></div>
+<div class="q"><span class="num">4</span><div class="task">
+    <div class="board" data-map="#######|#..^^##|#S...##|####.&gt;#|####.&gt;#|#######" data-dir="1"></div>
+    <div class="lines"><p style="margin:0 0 6px">Clear the top road, turn, clear the side road. 4 shells. Limit: 12 blocks.</p><div class="ln"></div><div class="ln"></div><p style="margin:6px 0 0">How many blocks? ______ (goal: 8)</p></div>
+  </div></div>
+</section>
+
+<section class="page">
+  <h2 style="margin-top:0">Part C · Will it fit? <span class="pts">Block limits</span></h2>
+  <p class="instr">Count the blocks. Does the program fit inside the limit? If not, write a shorter program.</p>
+  <table class="pat">
+    <thead><tr><th style="width:4%">#</th><th style="width:46%">Program and limit</th><th>Fits? Shorter program</th><th style="width:15%">Blocks</th></tr></thead>
+    <tbody>
+      <tr><td>5</td><td><span class="code">X X X X X X X X</span> · limit 6</td><td class="blank"></td><td>8</td></tr>
+      <tr><td>6</td><td><span class="code">F L X R F L X R F L X R</span> · limit 9</td><td class="blank"></td><td>12</td></tr>
+      <tr><td>7</td><td><span class="code">repeat 4 [ X R ]</span> · limit 7</td><td class="blank"></td><td>3</td></tr>
+      <tr><td>8</td><td><span class="code">X X X X R X X X X</span> · limit 8</td><td class="blank"></td><td>9</td></tr>
+    </tbody>
+  </table>
+  <h2>Part D · Design your own <span class="pts">Challenge</span></h2>
+  <p class="instr">Draw a rover (with an arrow), rocks (shade the square) and enemy tanks (draw a box with an arrow for its cannon). Write a program that destroys every tank, then swap with a partner.</p>
+  <div class="task">
+    <div class="board blank" data-map="........|........|........|........|........" data-cell="40px"></div>
+    <div class="lines"><p style="margin:0 0 6px">My program:</p><div class="ln"></div><div class="ln"></div><div class="ln"></div>
+      <p style="margin:8px 0 0">Blocks: ______ &nbsp; Partner checked: ______</p></div>
+  </div>
+  <h2>Reflect</h2>
+  <p class="instr" style="margin-bottom:4px">How does a repeat help you stay inside a block limit?</p>
+  <div class="ln"></div><div class="ln"></div>
+</section>
+
+<section class="page">
+  <h2 style="margin-top:0">Part E · Words and pictures <span class="pts">Language practice</span></h2>
+  <p class="instr">Draw a line from each word to its meaning.</p>
+  <div class="match">
+    <ol class="mw"><li><b>limit</b> <span class="es" lang="es">(límite)</span></li><li><b>efficient</b> <span class="es" lang="es">(eficiente)</span></li><li><b>loop</b> <span class="es" lang="es">(bucle)</span></li><li><b>nested loop</b> <span class="es" lang="es">(bucle anidado)</span></li><li><b>enemy tank</b> <span class="es" lang="es">(tanque enemigo)</span></li></ol>
+    <ol class="mm" type="a"><li>a block that repeats the blocks inside it</li><li>a tank the rover must stop with its cannon</li><li>the most you are allowed to use</li><li>a loop inside another loop</li><li>does the job with fewer steps</li></ol>
+  </div>
+  <p class="instr" style="margin-top:14px">Circle the best answer.</p>
+  <div class="mc"><p><b>9.</b> The limit is 6 blocks. Which program fits?</p><div class="opts"><span><b>a)</b> <span class="code">X X X X X X X X</span></span><span><b>b)</b> <span class="code">repeat 8 [ X ]</span></span></div></div>
+  <div class="mc"><p><b>10.</b> You have 4 shells and 4 tanks. How many shells can you miss?</p><div class="opts"><span><b>a)</b> 0</span><span><b>b)</b> 1</span><span><b>c)</b> 2</span></div></div>
+  <p class="instr" style="margin-top:14px">Finish each sentence. Use the word bank.</p>
+  <div class="bank"><b>Word bank:</b> <span>efficient</span><span>if</span><span>six</span></div>
+  <p class="frame"><b>11.</b> The limit is <span class="gap"></span> blocks, so I use a repeat.</p>
+  <p class="frame"><b>12.</b> My program is <span class="gap"></span> because it uses fewer blocks.</p>
+  <p class="frame"><b>13.</b> I fire only <span class="gap"></span> a tank is ahead.</p>
+</section>
+
+<section class="page key">
+  <div class="head">
+    <div><span class="label">Lesson 10 classwork · Medium level</span><h1>Answer key</h1></div>
+    <span class="teacher-tag">Teacher only</span>
+  </div>
+  <h2 style="margin-top:0">Lesson timing (50 minutes)</h2>
+  <div class="plan"><b>5 min</b><span>Warm-up: Packing list (slide 3)</span><b>10 min</b><span>Direct instruction: slides 4 to 6</span><b>5 min</b><span>Guided practice: think, pair, share and debugging tips (slides 7 to 8)</span><b>12 min</b><span>Unplugged practice: this classwork, in pairs. Part D for early finishers</span><b>15 min</b><span>Independent practice: code puzzles 10.1 to 10.10 at cyberteaches.com/academy</span><b>3 min</b><span>Closure: exit ticket (last slide)</span></div>
+  <h2>Part A</h2>
+  <p><b>1.</b> <span class="answer">4 shells, all tanks destroyed. It faces left.</span> Fire up, turn right, fire right, turn, fire down, turn, fire left. The mission is won right after the last shell, so the last turn never runs.</p>
+  <p><b>2.</b> <span class="answer">All 3.</span> Each repeat goes down one step and fires at the tank on that step.</p>
+  <h2>Part B</h2>
+  <p><b>3.</b> <span class="answer code">repeat 3 [ F F R X L ]</span> · 6 blocks</p>
+  <p><b>4.</b> <span class="answer code">F repeat 2 [ repeat 2 [ F L X R ] R ]</span> · 8 blocks</p>
+  <h2>Part C</h2>
+  <table class="pat">
+    <thead><tr><th>#</th><th>Answer</th></tr></thead>
+    <tbody>
+      <tr><td>5</td><td class="answer">No. <span class="code">repeat 8 [ X ]</span>, 2 blocks</td></tr>
+      <tr><td>6</td><td class="answer">No. <span class="code">repeat 3 [ F L X R ]</span>, 5 blocks</td></tr>
+      <tr><td>7</td><td class="answer">Yes, 3 blocks.</td></tr>
+      <tr><td>8</td><td class="answer">No. <span class="code">repeat 2 [ repeat 4 [ X ] R ]</span>, 4 blocks</td></tr>
+    </tbody>
+  </table>
+  <h2>Part E</h2>
+  <p><b>Matching:</b> 1–c, 2–e, 3–a, 4–d, 5–b</p>
+  <p><b>9.</b> <span class="answer">b) repeat 8 [ X ]</span></p>
+  <p><b>10.</b> <span class="answer">a) 0</span></p>
+  <p><b>11.</b> <span class="answer">six</span></p>
+  <p><b>12.</b> <span class="answer">efficient</span></p>
+  <p><b>13.</b> <span class="answer">if</span></p>
+  <h2>Part D and Reflect</h2>
+  <p>Answers vary. Look for a correct start direction, a program a partner can follow, and a program that fits the limit. Reflection: the repeat holds one copy of the pattern, so many actions take only a few blocks.</p>
+  <h2>Exit ticket</h2>
+  <p><span class="code">repeat 8 [ X ]</span> · 2 blocks</p>
+</section>
+
+<script src="../../resources.js"></script>
+<script>
+document.getElementById('pAll').onclick=()=>{ document.body.classList.remove('no-key'); print() };
+document.getElementById('pStudents').onclick=()=>{ document.body.classList.add('no-key'); print(); setTimeout(()=>document.body.classList.remove('no-key'),500) };
+</script>
+</body></html>

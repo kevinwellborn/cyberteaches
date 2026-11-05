@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Lesson 4 Slides · Repeat until · Easy level</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="../../../../favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Atkinson+Hyperlegible:wght@400;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<link rel="stylesheet" href="../../resources.css">
+<link rel="stylesheet" href="../../slides.css">
+</head>
+<body class="lv-easy" style="--lv:#2E9363;--lv-ink:#FFFFFF;--lv-soft:#DDF2E6">
+<div class="lvlrib"><b>Easy level</b> · made for the Easy puzzles · <a href="../../../#easy">all Easy resources</a></div>
+<div class="deck" id="deck">
+<section class="slide title-slide">
+  <span class="label" style="font-size:22px">CyberTeaches Academy · Lesson 4 · Easy level</span>
+  <h1 style="margin:18px 0 22px">Repeat <em>until</em></h1>
+  <p style="font-size:32px;max-width:900px">When you don't know how many times, keep going until the rover reaches the flag.</p>
+  <div class="foot"><span>cyberteaches.com/academy</span><span>Press → to start</span></div>
+  <div class="note">Students learn a loop that repeats until a condition is true (the rover is at the flag). Plan: warm-up 5 min, slides 15 min, classwork 12 min, coding 15 min, exit ticket 3 min.</div>
+</section>
+
+<section class="slide ">
+  <span class="label kicker">Today we will</span>
+  <h2>Learning goals</h2>
+  <ul class="big" style="font-weight:400;font-size:34px"><li>Explain the difference between <b>repeat</b> and <b>repeat until</b></li><li>Use <b>repeat until at flag</b> to reach a flag</li><li>Avoid a loop that never stops</li></ul>
+  <div class="note">Read the goals aloud. Students check them off with the exit ticket at the end.</div>
+</section>
+
+<section class="slide ">
+  <span class="label kicker">Warm-up · 3 minutes</span>
+  <h2>Walk until the wall</h2>
+  <div class="row"><div class="grow"><p>Instruction 1: "Take 6 steps."</p><p>Instruction 2: "Walk <b>until</b> you touch the wall."</p><p class="muted">Which one works from <b>any</b> starting spot?</p></div><div class="box" style="width:420px"><p class="big" style="margin:0 0 8px">Answer</p><p class="reveal" style="margin:0">"Walk until the wall" works from anywhere. You don't need to count.</p></div></div>
+  <div class="note">Ask two students to start at different distances from the wall. "Take 6 steps" only works for one of them. "Walk until you touch the wall" works for both.</div>
+</section>
+
+<section class="slide ">
+  <span class="label kicker">New block</span>
+  <h2>Repeat <em>until at flag</em></h2>
+  <div class="row"><div class="board" data-map="############|#S........G#|############" data-dir="1" style="--cell:46px"></div><div class="grow"><div><div class="rep " style="display:inline-block"><div class="head">repeat until at flag</div><div class="inner"><span class="blk move">move forward</span></div></div></div><p style="margin-top:14px">It keeps repeating and <b>stops by itself</b> at the flag.</p><p class="muted">No counting needed: <span class="count" style="background:var(--accent)">2 blocks</span></p></div></div>
+  <div class="note">Puzzle 4.1. A plain repeat needs a number. Repeat until at flag checks "am I at the flag?" before every repeat.</div>
+</section>
+
+<section class="slide ">
+  <span class="label kicker">Watch out</span>
+  <h2>A loop that <em>never stops</em></h2>
+  <div class="row"><div class="grow"><p>If the blocks inside never get the rover to the flag, it repeats forever.</p><p><div class="rep " style="display:inline-block"><div class="head">repeat until at flag</div><div class="inner"><span class="blk move">turn right</span></div></div></p><p class="muted">Turning on the spot never reaches the flag. This is an <b>infinite loop</b>.</p></div></div>
+  <div class="note">The game stops infinite loops and shows "stuck in a loop". Ask: what is missing? (move forward).</div>
+</section>
+
+<section class="slide ">
+  <span class="label kicker">Big idea</span>
+  <h2>Count, then <em>until</em></h2>
+  <div class="row"><div class="board" data-map="#######|#S....#|#####.#|#####.#|#####G#|#######" data-dir="1" style="--cell:58px"></div><div class="grow"><p>The first part we can count. The last part: just go until the flag.</p><div class="prog reveal"><div class="rep " style="display:inline-block"><div class="head">repeat 4 times</div><div class="inner"><span class="blk move">move forward</span></div></div><span class="blk move">turn right</span><div class="rep " style="display:inline-block"><div class="head">repeat until at flag</div><div class="inner"><span class="blk move">move forward</span></div></div></div></div></div>
+  <div class="note">Puzzle 4.3. Plain repeat and repeat until can be used in the same program.</div>
+</section>
+
+<section class="slide ">
+  <span class="label kicker">Let's try together · Puzzle 4.2</span>
+  <h2>Collect on the way</h2>
+  <div class="row">
+      <div class="board" data-map="#S**G#" data-dir="1" data-cell="93px"></div>
+      <div class="grow"><p>Collect every crystal on the way to the flag.</p>
+        <div class="prog reveal" style="font-size:26px"><div class="rep "><div class="head">repeat until at flag</div><div class="inner"><span class="blk move">move forward</span><span class="blk act">collect crystal</span></div></div></div>
+        <p class="reveal" style="margin-top:16px"><span class="count">3 blocks</span></p></div></div>
+  <div class="note">Puzzle 4.2: repeat until at flag [F C]. Press → to reveal the answer.</div>
+</section>
+
+<section class="slide ">
+  <span class="label kicker">Think, pair, share · Puzzle 4.7</span>
+  <h2>Short stairs</h2>
+  <div class="row">
+      <div class="board" data-map="######|#S.###|##..##|###.G#|######" data-dir="1" data-cell="88px"></div>
+      <div class="grow"><p>Stairs all the way down. What is one step?</p>
+        <div class="prog reveal" style="font-size:26px"><div class="rep "><div class="head">repeat until at flag</div><div class="inner"><span class="blk move">move forward</span><span class="blk move">turn right</span><span class="blk move">move forward</span><span class="blk move">turn left</span></div></div></div>
+        <p class="reveal" style="margin-top:16px"><span class="count">5 blocks</span></p></div></div>
+  <div class="note">Puzzle 4.7: one step is F R F L. Press → to reveal the answer.</div>
+</section>
+
+<section class="slide ">
+  <span class="label kicker">When it doesn't work</span>
+  <h2>Debugging tips</h2>
+  <ul style="font-size:30px"><li><b>Will it reach the flag?</b> If the steps inside never get there, the loop never stops.</li><li><b>Count, then until.</b> Use a plain repeat for the part you can count.</li><li><b>One step of the pattern</b> goes inside repeat until at flag.</li><li><b>Run, watch, fix.</b> Watch where the rover gets stuck.</li></ul>
+  <div class="note">Infinite loops are a normal bug. Celebrate students who find and fix one.</div>
+</section>
+
+<section class="slide ">
+  <span class="label kicker">Classwork · 12 minutes</span>
+  <h2>Unplugged practice</h2>
+  <div class="row"><div class="grow"><p>Use the worksheet. Write programs with letters:</p>
+    <p class="code" style="font-size:28px;line-height:1.5">F = move forward &nbsp; L = turn left &nbsp; R = turn right<br>C = collect crystal</p>
+    <p class="code" style="font-size:26px;margin:0 0 6px">until flag [ F ]</p></div>
+    <div class="box" style="width:400px"><p class="big" style="margin:0 0 8px">Parts</p><p style="margin:0">A. Trace the rover<br>B. Write the program<br>C. Repeat or repeat until?<br>D. Design your own</p></div></div>
+  <div class="note">Hand out the Lesson 4 classwork. Students can work in pairs. Part D is a challenge for early finishers. The answer key is on the last page.</div>
+</section>
+
+<section class="slide title-slide">
+  <span class="label" style="font-size:22px">Your turn</span>
+  <h1 style="margin:18px 0 22px">Now <em>code</em> it!</h1>
+  <p style="font-size:34px">Go to <b>cyberteaches.com/academy</b>, sign in, and solve puzzles <b>4.1 to 4.10</b>.</p>
+  <p style="font-size:28px;opacity:.85">Will your loop reach the flag? Check before you run.</p>
+  <div class="note">Students sign in with Google or the username and password from the Teacher Dashboard. Watch their stars live on the dashboard and help anyone stuck on the same puzzle.</div>
+</section>
+
+<section class="slide ">
+  <span class="label kicker">Exit ticket</span>
+  <h2>Before you go</h2>
+  <p>Why is repeat until at flag better than repeat 3 times when you don't know how far the flag is?</p>
+    <p class="reveal" style="margin-top:20px">It stops by itself at the flag, so it works for any distance. You don't need to count.</p>
+  <div class="note">Collect answers on sticky notes or in your LMS. Reveal the answer with → after students have written theirs.</div>
+</section>
+</div>
+<div class="notes" id="notes"><b>Teacher notes</b><span id="noteText"></span></div>
+<div class="bar"><button id="prev" aria-label="Previous slide">←</button><span id="num" style="color:#fff;font:700 14px var(--f-body);align-self:center;min-width:52px;text-align:center"></span><button id="next" aria-label="Next slide">→</button><button id="nBtn" title="Teacher notes (N)">Notes</button><button id="fBtn" title="Full screen (F)">Full screen</button></div>
+<script src="../../resources.js"></script>
+<script src="../../slides.js"></script>
+</body></html>
