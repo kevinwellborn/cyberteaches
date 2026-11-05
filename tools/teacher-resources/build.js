@@ -1,12 +1,12 @@
 // Builds teacher resources (slides, classwork, lesson plan) for academy lessons from tools/teacher-resources/lessons.js.
 // Run: node tools/teacher-resources/build.js   (writes academy/resources/lesson-N/*.html for every lesson in lessons.js)
-// Lesson 1 is hand-written and not generated. Puzzle maps and answers come from academy/course.js and academy/answer-key.js,
+// Lesson 1 is hand-written and not generated. Puzzle maps and answers come from academy/course.js and the encrypted answer key,
 // and every trace answer and program in the classwork is checked with a small simulator, so the build fails on a wrong answer.
 const fs = require('fs'), path = require('path');
 const ROOT = path.join(__dirname, '..', '..');
 const ctx = {};
 new Function('ctx', fs.readFileSync(path.join(ROOT, 'academy/course.js'), 'utf8') + ';ctx.UNITS=UNITS;ctx.LEVELS=LEVELS;ctx.ORDER=ORDER;ctx.LEVEL_NAMES=LEVEL_NAMES;')(ctx);
-global.window = {}; require(path.join(ROOT, 'academy/answer-key.js')); const KEY = window.decodeAnswerKey();
+const KEY = require('../answer-key/crypt.js').load();   // needs ANSWER_KEY_SECRET or tools/answer-key/.secret
 const { UNITS, LEVELS, ORDER, LEVEL_NAMES } = ctx;
 const LESSONS = require('./lessons.js');
 const EASY = require('./lessons-easy.js');
