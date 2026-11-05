@@ -160,6 +160,8 @@ h1,h2,h3{font-family:var(--f-display);text-wrap:balance;margin:0;line-height:1.1
 .unit.locked{background:transparent;border-style:dashed}
 .unit.locked .unit-num{background:var(--line);color:var(--muted)}
 .unit.locked h2{color:var(--muted)}
+.unit.teacher-locked .unit-num{color:var(--muted)}
+.unit.teacher-locked .stop{opacity:.55;cursor:not-allowed}
 .newtag{margin-left:auto;background:#fff;color:#1C292C;font-size:11px;letter-spacing:.06em;text-transform:uppercase;border-radius:99px;padding:1px 7px}
 .intro-list{text-align:left;display:flex;flex-direction:column;gap:10px;margin:14px 0 18px;padding:0;list-style:none;color:var(--ink)}
 .intro-list li{display:flex;gap:10px}
@@ -341,14 +343,20 @@ let bonus = store.get('bonus', {});         // { levelNumber: true } when every 
 const $ = (s,r=document)=>r.querySelector(s);
 const h = (tag, cls, html)=>{ const e=document.createElement(tag); if(cls) e.className=cls; if(html!=null) e.innerHTML=html; return e };
 const doneCount = ()=>LEVELS.filter(l=>progress[l.n]).length;
-const nextLevel = ()=> (ORDER.find(l=>!progress[l.n]) || ORDER[ORDER.length-1]).n;
+// Lessons the student's teacher has locked for their class (classes/{code}.locked). Empty when not in a class.
+let lockedUnits=new Set(), classStop=null, watchedCode=null;
+const isLocked = unit => lockedUnits.has(unit);
+const nextLevel = ()=> (ORDER.find(l=>!progress[l.n] && !isLocked(l.unit)) || ORDER.find(l=>!isLocked(l.unit)) || ORDER[ORDER.length-1]).n;
+const LOCK_ICO='<svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" style="vertical-align:-2px"><rect x="5" y="10" width="14" height="11" rx="2" fill="currentColor"/><path d="M8 10V7a4 4 0 0 1 8 0v3" stroke="currentColor" stroke-width="2.2" fill="none"/></svg>';
+function lockedMsg(unit){ showMsg('Lesson locked', `<p>${LOCK_ICO} Your teacher has locked <b>Lesson ${unit}</b> for now. Pick a lesson that is open, or ask your teacher.</p>`) }
 
 // ---------- routing ----------
 function route(){
   stopRun();
   const m = location.hash.match(/^#puzzle-(\d+)$/);
   const n = m ? +m[1] : 0;
-  if(n>=1 && n<=LEVELS.length) showPuzzle(n); else showHome();
+  if(n>=1 && n<=LEVELS.length && isLocked(LEVELS[n-1].unit)){ const u=LEVELS[n-1].unit; history.replaceState(null,'','#home'); showHome(); lockedMsg(u) }
+  else if(n>=1 && n<=LEVELS.length) showPuzzle(n); else showHome();
   window.scrollTo(0,0);
 }
 window.addEventListener('hashchange', route);
@@ -530,10 +538,11 @@ function showHome(){
   app.appendChild(rankBar());
   const units=h('section','units');
   UNITS.forEach(u=>{
-    const card=h('article','unit');
+    const lockedU=isLocked(u.n);
+    const card=h('article','unit'+(lockedU?' locked teacher-locked':''));
     const lv=LEVELS.filter(l=>l.unit===u.n);
-    card.innerHTML=`<div class="unit-num" style="background:${u.color}">L${u.n}</div>
-      <div><span class="label">Lesson ${u.n} · ${lv.filter(l=>progress[l.n]).length}/${lv.length} solved</span>
+    card.innerHTML=`<div class="unit-num" style="background:${lockedU?'':u.color}">${lockedU?LOCK_ICO:'L'+u.n}</div>
+      <div><span class="label">Lesson ${u.n} · ${lockedU?'Locked by your teacher':lv.filter(l=>progress[l.n]).length+'/'+lv.length+' solved'}</span>
       <h2 style="margin-top:4px">${u.title}</h2><p class="concept">${u.concept}</p><div class="stops"></div></div>`;
     const stops=$('.stops',card), nx=nextLevel();
     lv.forEach(l=>{
@@ -541,6 +550,7 @@ function showHome(){
       const b=h('button','stop'+(s?' done':'')+(!s&&l.n===nx?' next':''), l.k + (s?`<span class="st">${'★'.repeat(s)}</span>`:'') + (bonus[l.n]?'<span class="cdot" title="All bonus coins"></span>':''));
       b.title=l.title; b.setAttribute('aria-label','Puzzle '+l.k+': '+l.title+(s?' (solved)':''));
       b.onclick=()=>{ location.hash='puzzle-'+l.n };
+      if(lockedU){ b.disabled=true; b.classList.remove('next'); b.setAttribute('aria-label','Puzzle '+l.k+' (locked)') }
       stops.appendChild(b);
     });
     units.appendChild(card);
@@ -1022,7 +1032,18 @@ if(Cloud) Cloud.onChange(c=>{
   if(c.ready && !u && joinParam && !lastUid && !$('#modal').innerHTML) openJoin(joinParam);
   renderAccount();
   const rb=$('.rankbar'); if(rb) rb.replaceWith(rankBar());
+  watchLocks(u && c.profile ? c.profile.classCode : null);
 });
+// Follow the class's locked lessons live, so a teacher's change reaches students right away.
+function watchLocks(code){
+  if(code===watchedCode) return;
+  watchedCode=code||null; if(classStop){ classStop(); classStop=null }
+  const apply=list=>{ const next=new Set((list||[]).map(Number)); const same=next.size===lockedUnits.size && [...next].every(x=>lockedUnits.has(x));
+    lockedUnits=next; if(same) return;
+    const m=location.hash.match(/^#puzzle-(\d+)$/); if(!m || isLocked(LEVELS[+m[1]-1].unit)) route() };
+  if(!code){ apply([]); return }
+  classStop=Cloud.db.collection('classes').doc(code).onSnapshot(s=>apply(s.exists?s.data().locked:[]), e=>console.error(e));
+}
 
 route();
 </script>
