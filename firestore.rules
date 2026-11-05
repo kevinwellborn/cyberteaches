@@ -40,8 +40,8 @@ service cloud.firestore {
           && exists(/databases/$(database)/documents/classes/$(code))
           && request.resource.data.keys().hasOnly(['name', 'stars', 'solved', 'updatedAt'])
           && request.resource.data.name is string && request.resource.data.name.size() <= 40
-          && request.resource.data.stars is int && request.resource.data.stars >= 0 && request.resource.data.stars <= 600
-          && request.resource.data.solved is int && request.resource.data.solved >= 0 && request.resource.data.solved <= 200;
+          && request.resource.data.stars is int && request.resource.data.stars >= 0 && request.resource.data.stars <= 3000
+          && request.resource.data.solved is int && request.resource.data.solved >= 0 && request.resource.data.solved <= 1000;
         allow delete: if signedIn() && (request.auth.uid == uid || teacherOf(code));
       }
 
