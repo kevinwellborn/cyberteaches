@@ -2,6 +2,7 @@
 html,body{height:100%}
 body{overflow:hidden;background:#1C292C}
 .lvlrib{position:fixed;top:0;left:0;right:0;z-index:5}
+.slide{box-shadow:inset 0 0 0 14px var(--lv,transparent)}
 .deck{position:fixed;inset:34px 0 0 0;display:grid;place-items:center}
 /* 16:9 slide scaled to fit the window */
 .slide{display:none;width:1280px;height:720px;background:var(--bg);border-radius:0;padding:64px 80px;position:absolute;left:50%;top:50%;transform-origin:center;font-size:30px;overflow:hidden}
