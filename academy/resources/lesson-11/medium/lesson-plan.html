@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Lesson 11 Lesson Plan · If / else · Medium level</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="../../../../favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Atkinson+Hyperlegible:wght@400;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<link rel="stylesheet" href="../../resources.css">
+<link rel="stylesheet" href="../../plan.css">
+</head>
+<body class="lv-medium" style="--lv:#D9A013;--lv-ink:#2A2000;--lv-soft:#FBF0CC">
+<div class="lvlrib"><b>Medium level</b> · made for the Medium puzzles · <a href="../../../#medium">all Medium resources</a></div>
+<div class="toolbar">
+  <a class="btn" href="../../">← All lessons</a><span class="label">Teacher resources · Lesson 11 · Medium level</span><span class="spacer"></span>
+  <a class="btn" href="slides.html">Slides</a><a class="btn" href="classwork.html">Classwork</a>
+  <button class="btn primary" onclick="print()">Print lesson plan</button>
+</div>
+
+<article class="page">
+  <header class="head">
+    <div><span class="label">CyberTeaches Academy · Block coding · Grades 6 to 8 · Medium level</span><h1>Lesson 11: If / else</h1></div>
+    <div class="meta"><b>Time</b> 50 minutes<br><b>Unit</b> Conditionals<br><b>Puzzles</b> 11.1 to 11.10</div>
+  </header>
+
+  <section class="cols">
+    <div>
+      <h2>Overview</h2>
+      <p>Students learn the if / else block, which checks a condition (path ahead, left, right, crystal here, tank ahead) and chooses between two plans. Placed inside repeat until at flag, one short program can drive roads and mazes it has never seen. Students also nest one if / else inside another.</p>
+      <h2>Learning objectives</h2>
+      <p class="muted">Students will be able to:</p>
+      <ol>
+        <li>Explain how an if / else chooses between two actions.</li>
+        <li>Use if / else inside a repeat-until loop to check at every step.</li>
+        <li>Choose an appropriate condition (path, crystal, tank).</li>
+        <li>Nest an if / else inside another to handle three choices.</li>
+      </ol>
+    </div>
+    <div>
+      <h2>Computer science standards</h2>
+      <p class="muted" style="margin-bottom:6px">CSTA K-12 Computer Science Standards (2017)</p>
+      <ul class="std">
+        <li><b>2-AP-10</b> Use flowcharts and/or pseudocode to address complex problems as algorithms.</li>
+        <li><b>2-AP-12</b> Design and iteratively develop programs that combine control structures, including nested loops and compound conditionals.</li>
+        <li><b>2-AP-17</b> Systematically test and refine programs using a range of test cases.</li>
+        <li><b>2-AP-19</b> Document programs in order to make them easier to follow, test, and debug.</li>
+      </ul>
+      <h2>English language development standards</h2>
+      <p class="muted" style="margin-bottom:6px">WIDA ELD Standards Framework (2020), grades 6 to 8</p>
+      <ul class="std">
+        <li><b>ELD-SI.6-8</b> Language for Social and Instructional Purposes: follow and give step-by-step directions, and work with a partner to solve a problem.</li>
+        <li><b>ELD-SC.6-8.Explain</b> Language for Science: explain cause and effect with if … then sentences ("If there is a wall, then the rover turns").</li>
+        <li><b>ELD-SC.6-8.Argue</b> Language for Science: give a reason for a choice ("I used ___ because ___") and respond to a partner's idea.</li>
+      </ul>
+    </div>
+  </section>
+
+  <h2>Vocabulary</h2>
+  <table class="voc">
+    <thead><tr><th>Word</th><th>Student-friendly meaning</th><th>Spanish</th></tr></thead>
+    <tbody>
+      <tr><td><b>if / else</b></td><td>if yes, do one thing; if no, do another thing</td><td lang="es">si / si no</td></tr>
+      <tr><td><b>condition</b></td><td>a question with a yes or no answer</td><td lang="es">condición</td></tr>
+      <tr><td><b>decision</b></td><td>choosing what to do</td><td lang="es">decisión</td></tr>
+      <tr><td><b>nested if</b></td><td>an if / else inside another if / else</td><td lang="es">condicional anidado</td></tr>
+      <tr><td><b>until</b></td><td>keep going up to the moment something happens</td><td lang="es">hasta que</td></tr>
+    </tbody>
+  </table>
+
+  <section class="cols">
+    <div>
+      <h2>Materials</h2>
+      <ul>
+        <li>Projector and the <a href="slides.html">Lesson 11 slides</a></li>
+        <li>Printed <a href="classwork.html">Lesson 11 classwork</a>, one per student (answer key for the teacher)</li>
+        <li>Student devices with a web browser: cyberteaches.com/academy</li>
+        <li>A class on the Teacher Dashboard, with student logins or Google sign-in</li>
+      </ul>
+    </div>
+    <div>
+      <h2>Before class</h2>
+      <ul>
+        <li>Try puzzles 11.1 to 11.10 yourself (the answer key is on the Teacher Dashboard).</li>
+        <li>Prepare sticky notes for the warm-up.</li>
+      </ul>
+    </div>
+  </section>
+
+  <h2>Lesson procedure</h2>
+  <table class="proc">
+    <thead><tr><th style="width:15%">Time</th><th style="width:22%">Stage</th><th>Teacher and student activity</th></tr></thead>
+    <tbody>
+      <tr><td>5 min</td><td><b>Warm-up</b><br>Choose your path <span class="sl">Slide 3</span></td><td>Students write an everyday if/else sentence ("If it is sunny, we go outside; else we play inside").</td></tr>
+      <tr><td>10 min</td><td><b>Direct instruction</b><br><span class="sl">Slides 4 to 6</span></td><td>Introduce if / else with a road that turns (puzzle 11.1) and show a nested if / else for a road that turns both ways (puzzle 11.2).</td></tr>
+      <tr><td>5 min</td><td><b>Guided practice</b><br>Think, pair, share <span class="sl">Slides 7 to 8</span></td><td>Solve puzzle 11.3 (crystal check) together, then pairs solve puzzle 11.2 before the reveal.</td></tr>
+      <tr><td>12 min</td><td><b>Unplugged practice</b><br>Classwork <span class="sl">Slide 10</span></td><td>Students complete Parts A to C and E in pairs. Part C translates English rules into if / else.</td></tr>
+      <tr><td>15 min</td><td><b>Independent practice</b><br>Code <span class="sl">Slide 11</span></td><td>Students solve puzzles 11.1 to 11.10. Puzzle 11.10 combines tanks, crystals and turns.</td></tr>
+      <tr><td>3 min</td><td><b>Closure</b><br>Exit ticket <span class="sl">Slide 12</span></td><td>Exit ticket: if crystal here, collect, else move forward.</td></tr>
+    </tbody>
+  </table>
+
+  <section class="cols">
+    <div>
+      <h2>Assessment</h2>
+      <ul>
+        <li><b>Formative:</b> classwork Parts A to C, observation during coding, and the exit ticket.</li>
+        <li><b>Progress:</b> the Teacher Dashboard shows stars per puzzle and a Lesson 11 score out of 100 (3 stars = 100, 2 stars = 90, 1 star = 80 per puzzle).</li>
+        <li><b>Success criteria:</b> the student solves at least 7 of 10 puzzles and can read an if / else program aloud correctly.</li>
+      </ul>
+      <h2>Common misconceptions</h2>
+      <ul>
+        <li>Thinking the else part also runs when the condition is true.</li>
+        <li>Putting the if / else outside the loop, so it only checks once.</li>
+        <li>Checking path ahead before tank ahead (a tank blocks the path).</li>
+      </ul>
+    </div>
+    <div>
+      <h2>Differentiation</h2>
+      <ul>
+        <li><b>Support:</b> provide the loop and if / else shell; students choose the condition and actions. Lesson 12 offers easier practice.</li>
+        <li><b>Extension:</b> try puzzle 11.9 (right-hand rule) and 11.10 (grand finale) and explain the order of the checks.</li>
+        <li><b>Accessibility:</b> blocks can be added by tapping or by dragging, and moved with the ▲▼ buttons.</li>
+      </ul>
+      <h2>Supports for English learners</h2>
+      <ul>
+        <li><b>Visuals:</b> post the block pictures and vocabulary on a word wall; point to blocks while you say them.</li>
+        <li><b>Gestures:</b> students stand and turn left or right with the rover before coding turns.</li>
+        <li><b>Partners:</b> pair students to read programs aloud; first-language talk is welcome.</li>
+        <li><b>Sentence frames:</b> “If there is a path ahead, ___ the rover moves forward.” “___, the rover turns right.” “The rover checks the ___ at every step.”</li>
+        <li><b>Classwork Part E</b> uses a word bank, pictures and fill-in sentences.</li>
+      </ul>
+      <h2>Connections</h2>
+      <ul>
+        <li><b>ELA:</b> conditional sentences (if … then … otherwise).</li>
+        <li><b>Science:</b> decision trees and classification keys.</li>
+      </ul>
+      <h2>Next lesson</h2>
+      <p>Lesson 12, If / else practice: easy practice with if / else.</p>
+    </div>
+  </section>
+  <footer class="pfoot">CyberTeaches Academy · cyberteaches.com/academy · Free to use and adapt for your classes.</footer>
+</article>
+</body></html>

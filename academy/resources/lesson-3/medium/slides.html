@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Lesson 3 Slides · Repeat patterns · Medium level</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="../../../../favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Atkinson+Hyperlegible:wght@400;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<link rel="stylesheet" href="../../resources.css">
+<link rel="stylesheet" href="../../slides.css">
+</head>
+<body class="lv-medium" style="--lv:#D9A013;--lv-ink:#2A2000;--lv-soft:#FBF0CC">
+<div class="lvlrib"><b>Medium level</b> · made for the Medium puzzles · <a href="../../../#medium">all Medium resources</a></div>
+<div class="deck" id="deck">
+<section class="slide title-slide">
+  <span class="label" style="font-size:22px">CyberTeaches Academy · Lesson 3 · Medium level</span>
+  <h1 style="margin:18px 0 22px">Repeat <em>patterns</em></h1>
+  <p style="font-size:32px;max-width:900px">Find the pattern, build one copy, then repeat it. Even a repeat inside a repeat.</p>
+  <div class="foot"><span>cyberteaches.com/academy</span><span>Press → to start</span></div>
+  <div class="note">Students find patterns that include turns, and use a repeat inside a repeat. Plan: warm-up 5 min, slides 15 min, classwork 12 min, coding 15 min, exit ticket 3 min.</div>
+</section>
+
+<section class="slide ">
+  <span class="label kicker">Today we will</span>
+  <h2>Learning goals</h2>
+  <ul class="big" style="font-weight:400;font-size:34px"><li>Find a <b>pattern</b> that includes turns</li><li>Build one copy of the pattern and repeat it</li><li>Use a <b>repeat inside a repeat</b> (a nested loop)</li></ul>
+  <div class="note">Read the goals aloud. Students check them off with the exit ticket at the end.</div>
+</section>
+
+<section class="slide ">
+  <span class="label kicker">Warm-up · 3 minutes</span>
+  <h2>What comes next?</h2>
+  <div class="row"><div class="grow"><p class="big">🟥 🟦 🟦 🟥 🟦 🟦 🟥 🟦 <span class="reveal">🟦</span></p><p>What comes next? What is <b>one copy</b> of the pattern?</p><p class="reveal muted">One copy: 🟥 🟦 🟦. It repeats 3 times.</p></div></div>
+  <div class="note">Students find the repeating unit. This is the key skill today: find one copy of the pattern.</div>
+</section>
+
+<section class="slide ">
+  <span class="label kicker">Big idea</span>
+  <h2>Patterns with <em>turns</em></h2>
+  <div class="row"><div class="board" data-map="######|#S.###|##*.##|###*.#|####*#|######" data-dir="1" style="--cell:64px"></div><div class="grow"><p>Each step: move, turn, move, collect, turn back.</p><div class="reveal"><div class="rep " style="display:inline-block"><div class="head">repeat 3 times</div><div class="inner"><span class="blk move">move forward</span><span class="blk move">turn right</span><span class="blk move">move forward</span><span class="blk act">collect crystal</span><span class="blk move">turn left</span></div></div></div></div></div>
+  <div class="note">Puzzle 3.2 (little steps). Trace one step with your finger, then show that the same step happens 3 times.</div>
+</section>
+
+<section class="slide ">
+  <span class="label kicker">New idea</span>
+  <h2>A repeat inside a <em>repeat</em></h2>
+  <div class="row"><div class="board" data-map="#####|#S**#|#*#*#|#***#|#####" data-dir="1" style="--cell:70px"></div><div class="grow"><p>Each side: 2 crystals, then turn right. There are 4 sides.</p><div class="reveal"><div class="rep " style="display:inline-block"><div class="head">repeat 4 times</div><div class="inner"><div class="rep " style="display:inline-block"><div class="head">repeat 2 times</div><div class="inner"><span class="blk move">move forward</span><span class="blk act">collect crystal</span></div></div><span class="blk move">turn right</span></div></div></div><p class="reveal" style="margin-top:12px"><span class="count" style="background:var(--accent)">5 blocks</span></p></div></div>
+  <div class="note">Puzzle 3.4. The inner repeat does one side, the outer repeat does all 4 sides. This is called a nested loop.</div>
+</section>
+
+<section class="slide ">
+  <span class="label kicker">Let's try together · Puzzle 3.1</span>
+  <h2>Crystal, gap</h2>
+  <div class="row">
+      <div class="board" data-map="###|#S#|#*#|#.#|#*#|#.#|#*#|###" data-dir="2" data-cell="55px"></div>
+      <div class="grow"><p>Crystal, gap, crystal, gap. What is one copy of the pattern?</p>
+        <div class="prog reveal" style="font-size:26px"><div class="rep "><div class="head">repeat <span class="num">3</span> times</div><div class="inner"><span class="blk move">move forward</span><span class="blk act">collect crystal</span><span class="blk move">move forward</span></div></div></div>
+        <p class="reveal" style="margin-top:16px"><span class="count">4 blocks</span></p></div></div>
+  <div class="note">Puzzle 3.1: the pattern is F C F. Press → to reveal the answer.</div>
+</section>
+
+<section class="slide ">
+  <span class="label kicker">Think, pair, share · Puzzle 3.4</span>
+  <h2>Small square</h2>
+  <div class="row">
+      <div class="board" data-map="######|#S***#|#*##*#|#*##*#|#****#|######" data-dir="1" data-cell="73px"></div>
+      <div class="grow"><p>Three crystals, turn. Three crystals, turn. How can a repeat go inside a repeat?</p>
+        <div class="prog reveal" style="font-size:26px"><div class="rep "><div class="head">repeat <span class="num">4</span> times</div><div class="inner"><div class="rep "><div class="head">repeat <span class="num">3</span> times</div><div class="inner"><span class="blk move">move forward</span><span class="blk act">collect crystal</span></div></div><span class="blk move">turn right</span></div></div></div>
+        <p class="reveal" style="margin-top:16px"><span class="count">5 blocks</span></p></div></div>
+  <div class="note">Puzzle 3.4: outer repeat 4, inner repeat 3. Press → to reveal the answer.</div>
+</section>
+
+<section class="slide ">
+  <span class="label kicker">When it doesn't work</span>
+  <h2>Debugging tips</h2>
+  <ul style="font-size:30px"><li><b>Count first.</b> Count the crystals or steps before you set the repeat number.</li><li><b>Find one copy</b> of the pattern, build it once, then repeat it.</li><li><b>Inside or outside?</b> Check which blocks are inside the repeat.</li><li><b>Run, watch, fix.</b> Change one thing at a time.</li></ul>
+  <div class="note">Nested loops are the hardest idea so far. Encourage students to say the pattern aloud first.</div>
+</section>
+
+<section class="slide ">
+  <span class="label kicker">Classwork · 12 minutes</span>
+  <h2>Unplugged practice</h2>
+  <div class="row"><div class="grow"><p>Use the worksheet. Write programs with letters:</p>
+    <p class="code" style="font-size:28px;line-height:1.5">F = move forward &nbsp; L = turn left &nbsp; R = turn right<br>C = collect crystal</p>
+    <p class="code" style="font-size:26px;margin:0 0 6px">repeat 2 [ repeat 3 [ F C ] R ]</p></div>
+    <div class="box" style="width:400px"><p class="big" style="margin:0 0 8px">Parts</p><p style="margin:0">A. Trace the rover<br>B. Write the program<br>C. Find one copy<br>D. Design your own</p></div></div>
+  <div class="note">Hand out the Lesson 3 classwork. Students can work in pairs. Part D is a challenge for early finishers. The answer key is on the last page.</div>
+</section>
+
+<section class="slide title-slide">
+  <span class="label" style="font-size:22px">Your turn</span>
+  <h1 style="margin:18px 0 22px">Now <em>code</em> it!</h1>
+  <p style="font-size:34px">Go to <b>cyberteaches.com/academy</b>, sign in, and solve puzzles <b>3.1 to 3.10</b>.</p>
+  <p style="font-size:28px;opacity:.85">Find one copy of the pattern, then repeat it.</p>
+  <div class="note">Students sign in with Google or the username and password from the Teacher Dashboard. Watch their stars live on the dashboard and help anyone stuck on the same puzzle.</div>
+</section>
+
+<section class="slide ">
+  <span class="label kicker">Exit ticket</span>
+  <h2>Before you go</h2>
+  <p>What does this program do? How many blocks is it?</p><div class="box" style="display:inline-block"><span class="code">repeat 4 [ repeat 3 [ F C ] R ]</span></div>
+    <p class="reveal" style="margin-top:20px">The rover drives around a square, 3 crystals on each side · 5 blocks</p>
+  <div class="note">Collect answers on sticky notes or in your LMS. Reveal the answer with → after students have written theirs.</div>
+</section>
+</div>
+<div class="notes" id="notes"><b>Teacher notes</b><span id="noteText"></span></div>
+<div class="bar"><button id="prev" aria-label="Previous slide">←</button><span id="num" style="color:#fff;font:700 14px var(--f-body);align-self:center;min-width:52px;text-align:center"></span><button id="next" aria-label="Next slide">→</button><button id="nBtn" title="Teacher notes (N)">Notes</button><button id="fBtn" title="Full screen (F)">Full screen</button></div>
+<script src="../../resources.js"></script>
+<script src="../../slides.js"></script>
+</body></html>

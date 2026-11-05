@@ -1,15 +1,17 @@
 // Turns each lesson's classwork page into an editable Word document (.docx).
-// Usage: node tools/teacher-resources/classwork-docx.js [lesson]
+// Usage: [LEVEL=easy|medium|hard] node tools/teacher-resources/classwork-docx.js [lesson]
 // Needs the site served on localhost:8123 (python3 -m http.server 8123), Playwright, and pandoc.
-// Writes academy/resources/lesson-N/classwork.docx (editable in Word or Google Docs).
+// Writes academy/resources/lesson-N/classwork.docx (Hard) and lesson-N/easy/ + lesson-N/medium/ classwork.docx (editable in Word or Google Docs).
 const {chromium} = require('playwright'); const fs = require('fs'); const {execFileSync} = require('child_process'); const path = require('path');
 const ROOT = path.join(__dirname, '../..'); const only = process.argv[2] ? +process.argv[2] : null;
 const TMP = fs.mkdtempSync(path.join(require('os').tmpdir(), 'cw-'));
 (async () => {
   const b = await chromium.launch(); const p = await b.newPage({viewport: {width: 1000, height: 1300}, deviceScaleFactor: 2});
-  for (let n = 1; n <= 13; n++) {
+  for (let n = 1; n <= 13; n++) for (const sub of ['', 'easy/', 'medium/']) {   // lesson-N/ is the Hard level, lesson-N/easy/ and lesson-N/medium/ the other levels
     if (only && n !== only) continue;
-    await p.goto('http://localhost:8123/academy/resources/lesson-' + n + '/classwork.html'); await p.waitForTimeout(700);
+    if (process.env.LEVEL && sub !== (process.env.LEVEL === 'hard' ? '' : process.env.LEVEL + '/')) continue;   // LEVEL=medium builds one level only
+    if (sub && !fs.existsSync(path.join(ROOT, `academy/resources/lesson-${n}/${sub}classwork.html`))) continue;
+    await p.goto('http://localhost:8123/academy/resources/lesson-' + n + '/' + sub + 'classwork.html'); await p.waitForTimeout(700);
     // Replace maps and block programs with pictures (outermost ones only).
     const shots = await p.$$('.board, .page .prog, .page .rep, .page .blk');
     for (const el of shots) {
@@ -42,10 +44,10 @@ const TMP = fs.mkdtempSync(path.join(require('os').tmpdir(), 'cw-'));
       document.querySelectorAll('td, th, table').forEach(e => { e.style.removeProperty('width'); e.removeAttribute('width') });
       return [...document.querySelectorAll('section.page')].map(s => s.innerHTML).join('<p>PAGEBREAK</p>');
     });
-    const htmlFile = path.join(TMP, `lesson-${n}.html`);
+    const htmlFile = path.join(TMP, `lesson-${n}-${sub.replace('/', '') || 'hard'}.html`);
     fs.writeFileSync(htmlFile, `<!doctype html><html><head><meta charset="utf-8"></head><body>${html}</body></html>`);
-    execFileSync('python3', [path.join(__dirname, 'docx-finish.py'), htmlFile, path.join(ROOT, `academy/resources/lesson-${n}/classwork.docx`)]);
-    console.log('Lesson', n, 'classwork.docx written');
+    execFileSync('python3', [path.join(__dirname, 'docx-finish.py'), htmlFile, path.join(ROOT, `academy/resources/lesson-${n}/${sub}classwork.docx`)]);
+    console.log('Lesson', n, sub || 'hard', 'classwork.docx written');
   }
   await b.close();
 })().catch(e => { console.error(e); process.exit(1) });
