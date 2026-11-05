@@ -257,6 +257,7 @@ ${rowsC.map(r => `      <tr><td>${r.q}</td><td class="answer">${r.key}</td></tr>
   return HEAD(`Lesson ${u.n} Classwork · ${u.title}`, 'classwork.css') + `<div class="toolbar">
   <a class="btn" href="../">← All lessons</a><span class="label">Teacher resources · Lesson ${u.n}</span><span class="spacer"></span>
   <a class="btn" href="slides.html">Slides</a><a class="btn" href="lesson-plan.html">Lesson plan</a>
+  <a class="btn" href="classwork.docx" download>Word (.docx)</a>
   <button class="btn" id="pStudents">Print student pages</button>
   <button class="btn primary" id="pAll">Print with answer key</button>
 </div>
