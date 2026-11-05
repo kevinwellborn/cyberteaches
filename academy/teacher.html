@@ -114,11 +114,14 @@ small.rank{display:block;font-size:11px}
 .lockbtn.off{background:var(--panel-2);border-style:dashed}
 .lockbtn.off .ltitle,.lockbtn.off .lstate{color:var(--muted)}
 .levels{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
-.lvlbtn{display:flex;flex-direction:column;align-items:flex-start;gap:2px;border:2px solid var(--line);background:var(--panel);border-radius:12px;padding:8px 14px;font:inherit;color:var(--ink);cursor:pointer;min-width:150px}
+.lvlbtn{display:flex;flex-direction:column;align-items:flex-start;gap:2px;border:2px solid var(--c,var(--line));background:var(--cs,var(--panel));border-radius:12px;padding:8px 14px;font:inherit;color:var(--ink);cursor:pointer;min-width:150px}
+body{border-top:6px solid var(--lv,var(--accent))}
+.lvtag{display:inline-block;margin-left:8px;vertical-align:middle;border:1px solid var(--c);background:var(--cs);color:var(--c);border-radius:999px;padding:2px 10px;font-size:12px;font-weight:800;letter-spacing:.04em;text-transform:uppercase}
+.keylesson .lvtag{font-size:12px}
 .lvlbtn small{color:var(--muted);font-size:12px}
-.lvlbtn.on{border-color:var(--accent);background:var(--accent);color:var(--accent-ink)} .lvlbtn.on small{color:inherit;opacity:.85}
+.lvlbtn.on{border-color:var(--c,var(--accent));background:var(--c,var(--accent));color:var(--ci,var(--accent-ink))} .lvlbtn.on small{color:inherit;opacity:.85}
 .tstat{font-weight:700;border-radius:999px;padding:2px 10px;font-size:13px;background:var(--panel-2)} .tstat.pending{background:#FFF1C9;color:#7A5200} .tstat.approved{background:#D8F3E4;color:#0B5E3C} .tstat.rejected{background:#FBDAD5;color:#8A1C10}
-.stulvl{display:block;margin-top:4px;font:inherit;font-size:12px;border:1px solid var(--line);border-radius:8px;padding:2px 6px;background:var(--panel);color:var(--muted);max-width:170px}
+.stulvl{display:block;margin-top:4px;font:inherit;font-size:12px;border:1px solid var(--c,var(--line));border-radius:8px;padding:2px 6px;background:var(--cs,var(--panel));color:var(--c,var(--muted));font-weight:700;max-width:170px}
 .note{margin-top:18px;font-size:14px}
 .err{color:var(--bad);font-weight:700}
 .auth{max-width:420px;margin-top:20px}
@@ -160,7 +163,7 @@ small.rank{display:block;font-size:11px}
   </header>
   <main id="app"><p class="muted">Loading…</p></main>
 </div>
-<script src="course.js?v=9"></script>
+<script src="course.js?v=10"></script>
 <script src="firebase-config.js"></script>
 <script src="cloud.js?v=9"></script>
 <script>
@@ -316,7 +319,7 @@ async function toggleKey(){
   if(open){ box.innerHTML=''; btn.textContent='Show answers'; btn.setAttribute('aria-expanded','false'); return }
   btn.disabled=true; box.innerHTML='<p class="muted">Loading…</p>';
   try{ await loadKey() }catch(e){ console.error(e); box.innerHTML=`<p class="err">${e.message==='no-secret'?'The answer key is not set up yet. The site admin needs to save the answer key secret on this page.':'Could not load the answer key. Check your connection and try again.'}</p>`; btn.disabled=false; return }
-  box.innerHTML=UNITS.map(u=>LEVELS_AVAILABLE.map(v=>`<h3 class="keylesson">Lesson ${u.n}: ${esc(u.title)} · ${LEVEL_NAMES[v]} level</h3><div class="keygrid">${levelsOf(v,u.n).map(l=>{
+  box.innerHTML=UNITS.map(u=>LEVELS_AVAILABLE.map(v=>`<h3 class="keylesson">Lesson ${u.n}: ${esc(u.title)}<span class="lvtag" style="${levelStyle(v)}">${LEVEL_NAMES[v]} level</span></h3><div class="keygrid">${levelsOf(v,u.n).map(l=>{
     const prog=keyData[l.n]||[];
     const body = l.drive ? prog.map((n,i)=>(i+1+'. ').padStart(4,' ')+KEY_DRIVE[n.type]).join('\n') : keyLines(prog,0).join('\n');
     const meta = l.drive ? `Drive mode · ${prog.length} moves (3 stars at ${l.ideal} or fewer)` : `${keyCount(prog)} blocks · goal ${l.ideal}`;
@@ -427,9 +430,9 @@ function renderClass(err){
   const solved=s=>levelsOf(studentLevel(c,s)).filter(l=>(s.progress||{})[l.n]).length;
   const n=roster.length, avg=n?roster.reduce((t,s)=>t+solved(s),0)/n:0;
   const lessonDone=UNITS.map(u=>({u, done:roster.filter(s=>levelsOf(studentLevel(c,s),u.n).every(l=>(s.progress||{})[l.n])).length}));
-  const cl=classLevel(c);
+  const cl=classLevel(c); applyLevelTheme(cl);
   view.innerHTML=`<div class="top2">
-    <section class="panel"><span class="label">${esc(c.name)} · class code</span><div class="code">${esc(c.code)}</div>
+    <section class="panel"><span class="label">${esc(c.name)} · class code</span><span class="lvtag" style="${levelStyle(cl)}">${LEVEL_NAMES[cl]} level</span><div class="code">${esc(c.code)}</div>
       <p class="muted" style="margin:0 0 8px">Students sign in with Google and enter this code. Or share this link, which fills in the code for them:</p>
       <div class="linkrow"><code id="jl">${esc(joinLink(c.code))}</code><button class="btn" id="copy">Copy link</button></div>
       <p class="muted" style="margin:10px 0 0">No Google accounts for students? <a href="#loginsview">Make student logins</a> with a username and password instead.</p></section>
@@ -439,7 +442,7 @@ function renderClass(err){
       ${lessonDone.map(x=>`<div class="stat"><b>${x.done}</b><span class="muted">finished Lesson ${x.u.n}</span><div class="bar"><i style="width:${n?x.done/n*100:0}%;background:${x.u.color}"></i></div></div>`).join('')}</div></section></div>
     <div class="toolbar"><h2>Difficulty level</h2></div>
     <p class="muted" style="margin:0 0 8px">Every lesson has its own set of 10 puzzles at each level. Pick the level for this class, for example Easy for 6th grade and Hard for 8th. You can move single students to another level in the Progress table. Stars earned at each level are kept.</p>
-    <div class="levels" id="levels" role="group" aria-label="Class difficulty level">${LEVELS_AVAILABLE.map(v=>`<button class="lvlbtn${v===cl?' on':''}" data-level="${v}" aria-pressed="${v===cl}"><b>${LEVEL_NAMES[v]}</b><small>${LEVEL_HELP[v]}</small></button>`).join('')}</div>
+    <div class="levels" id="levels" role="group" aria-label="Class difficulty level">${LEVELS_AVAILABLE.map(v=>`<button class="lvlbtn${v===cl?' on':''}" data-level="${v}" aria-pressed="${v===cl}" style="${levelStyle(v)}"><b>${LEVEL_NAMES[v]}</b><small>${LEVEL_HELP[v]}</small></button>`).join('')}</div>
     <div class="toolbar"><h2>Lessons open to students</h2><div class="spacer"></div><button class="btn" id="unlockAll">Unlock all</button><button class="btn" id="lockAll">Lock all</button></div>
     <p class="muted" style="margin:0 0 8px">Tap a lesson to lock or unlock it for this class. Students see a lock and can't open its puzzles. Changes reach students right away. Their stars are kept.</p>
     <div class="locks" id="locks">${UNITS.map(u=>{ const off=(c.locked||[]).includes(u.n); return `<button class="lockbtn${off?' off':''}" data-unit="${u.n}" aria-pressed="${!off}"><span class="lnum" style="background:${off?'var(--line)':u.color}">L${u.n}</span><span class="ltitle">${esc(u.title)}</span><span class="lstate">${off?'🔒 Locked':'Open'}</span></button>` }).join('')}</div>
@@ -503,7 +506,7 @@ function table(){
     const p=s.progress||{}, sl=studentLevel(c,s), other=sl!==cl, done=levelsOf(sl).filter(l=>p[l.n]).length, stars=totalStars(p);
     const cells=UNITS.map(u=>lv(u).map(l=>{ const st=p[l.n]||0; return other ? '<td><span class="cell s0" title="This student is on another level">–</span></td>' : `<td><span class="cell s${st}" title="${esc(l.title)}: ${st?st+' star'+(st>1?'s':''):'not solved'}">${st?'★'.repeat(st):'·'}</span></td>` }).join('')
       +`<td class="score"><b>${lessonScore(p,u.n,sl)}</b></td>`).join('');
-    const pick=`<select class="stulvl" data-uid="${esc(s.uid)}" aria-label="Level for ${esc(s.name)}"><option value="">Class level (${LEVEL_NAMES[cl]})</option>${LEVELS_AVAILABLE.map(v=>`<option value="${v}"${(c.levels||{})[s.uid]===v?' selected':''}>${LEVEL_NAMES[v]}</option>`).join('')}</select>`;
+    const pick=`<select class="stulvl" data-uid="${esc(s.uid)}" aria-label="Level for ${esc(s.name)}" style="${levelStyle(sl)}"><option value="">Class level (${LEVEL_NAMES[cl]})</option>${LEVELS_AVAILABLE.map(v=>`<option value="${v}"${(c.levels||{})[s.uid]===v?' selected':''}>${LEVEL_NAMES[v]}</option>`).join('')}</select>`;
     return `<tr><td class="name"><b>${esc(s.name)}</b><small>${esc(s.email||(s.username?'Username: '+s.username:''))}</small>${pick}</td>${cells}<td><b>${done}</b>/${levelsOf(sl).length}</td><td><b>${stars}</b> ★<small class="muted rank">${rankFor(stars).title}</small></td><td class="muted">${ago(s.updatedAt)}</td></tr>`;
   }).join('');
   return `<table><thead><tr><th class="name" rowspan="2">Student</th>${head1}<th rowspan="2">Solved</th><th rowspan="2">Stars and rank</th><th rowspan="2">Last active</th></tr><tr>${head2}</tr></thead><tbody>${rows}</tbody></table>`;

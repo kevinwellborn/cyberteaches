@@ -1146,6 +1146,22 @@ const LEVELS = [
 // (classes/{code}.level, with per-student overrides in classes/{code}.levels). Puzzles without a level are the Hard set.
 const LEVEL_NAMES = {easy:'Easy', medium:'Medium', hard:'Hard'};
 const LEVEL_ORDER = ['easy','medium','hard'];
+// Level colors: green = Easy, yellow = Medium, red = Hard. Pages set --lv / --lv-ink / --lv-soft from the chosen level.
+const LEVEL_COLORS = {
+  easy:   {main:'#2E9363', ink:'#FFFFFF', soft:'#DDF2E6', dark:{main:'#4CC585', ink:'#07140C', soft:'#1B3A2A'}},
+  medium: {main:'#D9A013', ink:'#2A2000', soft:'#FBF0CC', dark:{main:'#F0BE3C', ink:'#201800', soft:'#3F3410'}},
+  hard:   {main:'#C8402F', ink:'#FFFFFF', soft:'#F9DFDA', dark:{main:'#EF6B5B', ink:'#1A0806', soft:'#45201B'}},
+};
+function levelColor(level){
+  const c = LEVEL_COLORS[level] || LEVEL_COLORS.hard;
+  const dark = typeof matchMedia === 'function' && matchMedia('(prefers-color-scheme: dark)').matches && document.documentElement.dataset.theme !== 'light';
+  return dark ? c.dark : c;
+}
+function applyLevelTheme(level){
+  const c = levelColor(level), r = document.documentElement;
+  r.dataset.level = level; r.style.setProperty('--lv', c.main); r.style.setProperty('--lv-ink', c.ink); r.style.setProperty('--lv-soft', c.soft);
+}
+const levelStyle = level => { const c = levelColor(level); return `--c:${c.main};--ci:${c.ink};--cs:${c.soft}` };
 const DEFAULT_LEVEL = 'hard';
 LEVELS.forEach((l,i)=>{ l.level=l.level||'hard'; l.n=i+1; l.k=LEVELS.slice(0,i).filter(o=>o.unit===l.unit && o.level===l.level).length+1 });  // k: puzzle number inside its lesson and level
 const ORDER = [...LEVELS].sort((a,b)=>a.unit-b.unit || LEVEL_ORDER.indexOf(a.level)-LEVEL_ORDER.indexOf(b.level) || a.k-b.k);

@@ -33,7 +33,11 @@
 .lvlbar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:0 0 14px}
 .lvlpick{display:inline-flex;gap:4px;background:var(--panel-2);border:1px solid var(--line);border-radius:999px;padding:3px}
 .lvlpick button{border:0;background:transparent;font:inherit;font-weight:800;color:var(--muted);padding:6px 16px;border-radius:999px;cursor:pointer}
-.lvlpick button.on{background:var(--accent);color:#fff}
+.lvlpick button.on{background:var(--lv,var(--accent));color:var(--lv-ink,#fff)}
+body{border-top:6px solid var(--lv,var(--accent))}
+.card{border-left:6px solid var(--lv,var(--line))}
+.card .btn.primary{background:var(--lv,var(--accent));border-color:var(--lv,var(--accent));color:var(--lv-ink,#fff)}
+#lvlnote{color:var(--lv,var(--muted));font-weight:700}
 .muted{color:var(--muted);font-size:14px}
 .soon{font-size:13px;color:var(--muted);font-weight:700}
 </style>
@@ -62,7 +66,7 @@
   <div class="lvlbar"><span class="label">Difficulty level</span><div class="lvlpick" id="lvlpick" role="group" aria-label="Difficulty level"></div><span class="muted" id="lvlnote"></span></div>
   <div class="grid" id="grid"></div>
 </div>
-<script src="../course.js?v=9"></script>
+<script src="../course.js?v=10"></script>
 <script src="../quiz/questions.js?v=3"></script>
 <script>
 // Lessons whose slides and classwork exist in resources/lesson-N/. Add a lesson number here when its files are ready.
@@ -79,7 +83,7 @@ function renderLevels(){
   document.getElementById('lvlnote').textContent = LEVEL_NOTE[level];
 }
 document.getElementById('lvlpick').onclick = e => { const b = e.target.closest('button'); if(!b) return; level = b.dataset.level; history.replaceState(null, '', '#'+level); render() };
-function render(){ renderLevels();
+function render(){ applyLevelTheme(level); renderLevels();
 document.getElementById('grid').innerHTML = UNITS.map(u=>{
   const ok = READY.includes(u.n), base = 'lesson-'+u.n+'/' + (level==='hard' ? '' : level+'/');
   return `<article class="card"><div class="num" style="background:${u.color}">L${u.n}</div><div>
