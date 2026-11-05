@@ -5,14 +5,17 @@
 const fs = require('fs'), path = require('path');
 const ROOT = path.join(__dirname, '..', '..');
 const ctx = {};
-new Function('ctx', fs.readFileSync(path.join(ROOT, 'academy/course.js'), 'utf8') + ';ctx.UNITS=UNITS;ctx.LEVELS=LEVELS;ctx.ORDER=ORDER;ctx.LEVEL_NAMES=LEVEL_NAMES;')(ctx);
+new Function('ctx', fs.readFileSync(path.join(ROOT, 'academy/course.js'), 'utf8') + ';ctx.UNITS=UNITS;ctx.LEVELS=LEVELS;ctx.ORDER=ORDER;ctx.LEVEL_NAMES=LEVEL_NAMES;ctx.LEVEL_COLORS=LEVEL_COLORS;')(ctx);
 const KEY = require('../answer-key/crypt.js').load();   // needs ANSWER_KEY_SECRET or tools/answer-key/.secret
-const { UNITS, LEVELS, ORDER, LEVEL_NAMES } = ctx;
+const { UNITS, LEVELS, ORDER, LEVEL_NAMES, LEVEL_COLORS } = ctx;
 const LESSONS = require('./lessons.js');
 const EASY = require('./lessons-easy.js');
 // Difficulty level being built: 'hard' pages go in lesson-N/, other levels in lesson-N/<level>/ with the same file names.
 let CUR_LEVEL = 'hard';
 const LV = () => CUR_LEVEL === 'hard' ? '' : ` · ${LEVEL_NAMES[CUR_LEVEL]} level`;
+// Every page is tinted in its level's color (green Easy, yellow Medium, red Hard) with a ribbon, so a teacher always knows which level it is for.
+const LVBODY = () => { const c = LEVEL_COLORS[CUR_LEVEL]; return `<body class="lv-${CUR_LEVEL}" style="--lv:${c.main};--lv-ink:${c.ink};--lv-soft:${c.soft}">
+<div class="lvlrib"><b>${LEVEL_NAMES[CUR_LEVEL]} level</b> · made for the ${LEVEL_NAMES[CUR_LEVEL]} puzzles · <a href="../${CUR_LEVEL === 'hard' ? '' : '../'}#${CUR_LEVEL}">all ${LEVEL_NAMES[CUR_LEVEL]} resources</a></div>` };
 // Merge a level's overrides into the shared lesson content (plan and partC merge one level deep).
 const withLevel = (L, o) => !o ? L : { ...L, ...o, plan: { ...L.plan, ...(o.plan || {}) }, partC: { ...L.partC, ...(o.partC || {}) } };
 
@@ -95,7 +98,7 @@ const HEAD = (title, css) => `<!doctype html>
 <link rel="stylesheet" href="../resources.css">
 <link rel="stylesheet" href="../${css}">
 </head>
-<body>
+${LVBODY()}
 `;
 const NOTATION = L => `<span><b>F</b> = move forward</span><span><b>L</b> = turn left</span><span><b>R</b> = turn right</span>${L.notation.includes('C') ? '<span><b>C</b> = collect crystal</span>' : ''}${L.notation.includes('X') ? '<span><b>X</b> = fire cannon</span>' : ''}${L.legend.map(t => `<span><b>${esc(t[0])}</b> = ${esc(t[1])}</span>`).join('')}`;
 
@@ -441,7 +444,7 @@ for (const L0 of LESSONS) for (const level of ['hard', 'easy']) {
   const base = path.join(ROOT, 'academy/resources/lesson-' + L.n), dir = level === 'hard' ? base : path.join(base, level); fs.mkdirSync(dir, { recursive: true });
   const fix = level === 'hard' ? (x => x) : deeper;
   if (sl) fs.writeFileSync(path.join(dir, 'slides.html'), fix(sl.html));
-  else if (level !== 'hard') fs.writeFileSync(path.join(dir, 'slides.html'), deeper(fs.readFileSync(path.join(base, 'slides.html'), 'utf8')));   // hand-made deck, shared by every level
+  else if (level !== 'hard') fs.writeFileSync(path.join(dir, 'slides.html'), deeper(fs.readFileSync(path.join(base, 'slides.html'), 'utf8')).replace(/<body[^>]*>/, LVBODY()));   // hand-made deck, shared by every level
   fs.writeFileSync(path.join(dir, 'classwork.html'), fix(classworkPage(L, u)));
   fs.writeFileSync(path.join(dir, 'lesson-plan.html'), fix(planPage(L, u)));
   console.log('Lesson', L.n, level, 'built:', sl ? sl.count : 'hand-made', 'slides');

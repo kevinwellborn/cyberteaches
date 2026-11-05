@@ -1,7 +1,8 @@
 /* Shared slides styles for teacher resources (extracted from Lesson 1). */
 html,body{height:100%}
 body{overflow:hidden;background:#1C292C}
-.deck{position:fixed;inset:0;display:grid;place-items:center}
+.lvlrib{position:fixed;top:0;left:0;right:0;z-index:5}
+.deck{position:fixed;inset:34px 0 0 0;display:grid;place-items:center}
 /* 16:9 slide scaled to fit the window */
 .slide{display:none;width:1280px;height:720px;background:var(--bg);border-radius:0;padding:64px 80px;position:absolute;left:50%;top:50%;transform-origin:center;font-size:30px;overflow:hidden}
 .slide.on{display:flex;flex-direction:column}
