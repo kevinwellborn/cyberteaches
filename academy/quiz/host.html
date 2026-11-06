@@ -6,21 +6,23 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Atkinson+Hyperlegible:wght@400;700&family=JetBrains+Mono:wght@400;600;800&display=swap">
 <link rel="stylesheet" href="../resources/resources.css">
-<link rel="stylesheet" href="quiz.css?v=3">
+<link rel="stylesheet" href="quiz.css?v=4">
 </head><body>
 <div class="wrap">
-  <div class="top"><a class="brand" href="../teacher.html">CyberTeaches · Quiz Battle</a><div class="spacer"></div><span id="status" class="pill" hidden></span><button class="btn ghost" id="fsBtn" type="button">Full screen</button></div>
+  <div class="top"><a class="brand" href="../teacher.html">CyberTeaches · Quiz Battle</a><div class="spacer"></div><span id="status" class="pill" hidden></span><button class="btn ghost" id="sndBtn" type="button" title="Turn music and sound on or off"></button><button class="btn ghost" id="fsBtn" type="button">Full screen</button></div>
   <main id="app" class="center"><p class="muted">Loading…</p></main>
 </div>
 <script src="../firebase-config.js"></script>
 <script src="../cloud.js?v=9"></script>
 <script src="../resources/resources.js"></script>
 <script src="questions.js?v=3"></script>
-<script src="quiz.js?v=2"></script>
+<script src="quiz.js?v=3"></script>
+<script src="music.js?v=1"></script>
 <script>
 const app = $('#app');
 let G = null;          // current game: {pin, lesson, set, quiz (latest doc), players: [], unsub: []}
-let timer = null, answersUnsub = null;
+let timer = null, answersUnsub = null, stopShow = null, lastCount = 0;
+const SND = QuizSound.init({key: 'quiz.host.muted'}); SND.button($('#sndBtn'), 'Music');
 $('#fsBtn').onclick = () => { const d = document.documentElement; document.fullscreenElement ? document.exitFullscreen() : (d.requestFullscreen || (() => {})).call(d) };
 
 Cloud.onChange(c => {
@@ -97,16 +99,16 @@ async function createGame(lesson, btn){
   }
 }
 
-function stopAll(){ clearInterval(timer); timer = null; if(answersUnsub){ answersUnsub(); answersUnsub = null } if(G) G.unsub.forEach(u => u()); }
+function stopAll(){ if(stopShow){ stopShow(); stopShow = null } SND.track(null); clearInterval(timer); timer = null; if(answersUnsub){ answersUnsub(); answersUnsub = null } if(G) G.unsub.forEach(u => u()); }
 
 function startWatching(pin, lesson){
   stopAll();
-  G = {pin, lesson, set: QUIZZES[lesson], quiz: null, players: [], unsub: [], shown: null};
+  G = {pin, lesson, set: QUIZZES[lesson], quiz: null, players: [], unsub: [], shown: null}; lastCount = 0;
   G.unsub.push(quizRef(pin).collection('players').onSnapshot(s => {
     G.players = s.docs.map(d => ({uid: d.id, ...d.data()}));
     if(G.quiz && G.quiz.state === 'lobby') lobbyNames();
     if(G.quiz && G.quiz.state === 'question') answerCount();
-    if(G.quiz && ['reveal', 'board', 'end'].includes(G.quiz.state)) render();
+    if(G.quiz && ['reveal', 'board'].includes(G.quiz.state)) render();
   }, e => console.error(e)));
   G.unsub.push(quizRef(pin).onSnapshot(s => {
     if(!s.exists){ setupView('That game has ended.'); return }
@@ -119,6 +121,8 @@ function startWatching(pin, lesson){
 
 function render(){
   const s = G.quiz.state;
+  if(stopShow && s !== 'end'){ stopShow(); stopShow = null }
+  SND.track(s === 'lobby' || s === 'board' ? 'lobby' : s === 'question' ? 'question' : null);
   if(s === 'lobby') lobbyView();
   else if(s === 'question') questionView();
   else if(s === 'reveal') revealView();
@@ -144,6 +148,7 @@ function lobbyNames(){
   const box = $('#names'); if(!box) return;
   box.innerHTML = G.players.map(p => `<span data-uid="${esc(p.uid)}" style="cursor:pointer" title="Remove">${esc(p.name)}</span>`).join('');
   box.querySelectorAll('span').forEach(el => el.onclick = () => quizRef(G.pin).collection('players').doc(el.dataset.uid).delete().catch(console.error));
+  if(G.players.length > lastCount) SND.play('join'); lastCount = G.players.length;
   $('#pc').textContent = G.players.length; $('#startBtn').disabled = !G.players.length;
 }
 async function cancelGame(){
@@ -174,7 +179,9 @@ function questionView(){
   const tick = () => { const left = Math.max(0, end - Date.now());
     $('#tmn').textContent = Math.ceil(left / 1000); $('#tm').style.setProperty('--p', (left / (Q.time * 1000) * 100) + '%');
     if(left <= 0) reveal(i) };
-  timer = setInterval(tick, 200); tick();
+  let lastSec = null;
+  const tick2 = () => { tick(); const sec = Math.ceil(Math.max(0, end - Date.now()) / 1000); if(sec !== lastSec && sec > 0 && sec <= 5) SND.play('tick'); lastSec = sec };
+  timer = setInterval(tick2, 200); tick2();
   if(answersUnsub) answersUnsub();
   G.answers = [];
   answersUnsub = quizRef(G.pin).collection('answers').where('q', '==', i).onSnapshot(s => {
@@ -215,14 +222,16 @@ function revealView(){
   clearInterval(timer); if(answersUnsub){ answersUnsub(); answersUnsub = null }
   const i = G.quiz.q, Q = G.set.questions[i];
   const tally = [0, 0, 0, 0]; G.players.forEach(p => { if(p.last && p.last.q === i && p.last.choice >= 0) tally[p.last.choice]++ });
-  const right = tally[Q.a], total = G.players.length;
+  const right = tally[Q.a], total = G.players.length, last = i >= G.set.questions.length - 1;
+  if(G.gong !== i){ G.gong = i; SND.play('gong') }
   app.className = ''; app.style.flex = '1';
   app.innerHTML = `<div class="qhead"><div class="qtext">${esc(Q.q)}</div></div>
     <div class="pic">${Q.pic ? `<div class="picwrap">${Q.pic}</div>` : ''}</div>
     <div class="opts">${Q.opts.map((o, k) => optButton(k, o, 'div', k === Q.a ? 'right' : 'dim', `<span class="tally">${tally[k]}</span>`)).join('')}</div>
-    <div class="bar"><span class="pill" style="align-self:center">${right} of ${total} correct</span><div style="flex:1"></div><button class="btn big" id="nextBtn" type="button">Next</button></div>`;
+    <div class="bar"><span class="pill" style="align-self:center">${right} of ${total} correct</span><div style="flex:1"></div><button class="btn big" id="nextBtn" type="button">${last ? 'See the winners' : 'Next'}</button></div>`;
   drawBoards(app);
-  $('#nextBtn').onclick = () => quizRef(G.pin).update({state: 'board'}).catch(console.error);
+  // After the last question the game goes straight to the winners podium (no leaderboard).
+  $('#nextBtn').onclick = () => quizRef(G.pin).update({state: last ? 'end' : 'board'}).catch(console.error);
 }
 
 // ---------- scoreboard ----------
@@ -238,19 +247,18 @@ function boardView(){
   $('#nextBtn').onclick = () => last ? quizRef(G.pin).update({state: 'end'}).catch(console.error) : goQuestion(i + 1);
 }
 
-// ---------- podium ----------
+// ---------- winners podium ----------
 function endView(){
   try { sessionStorage.removeItem('quizPin') } catch(e){}
   app.className = 'center'; app.style.flex = '';
-  const r = ranked(), step = (p, k) => p ? `<div class="step p${k}"><span class="who">${esc(p.name)}</span><span class="pts">${p.score || 0} pts</span><div class="block">${k}</div></div>` : '';
-  app.innerHTML = `<h1 style="font-size:52px">Winners</h1>
-    <div class="podium">${step(r[1], 2)}${step(r[0], 1)}${step(r[2], 3)}</div>
-    <div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-top:10px">
-      <button class="btn ghost" id="allBtn" type="button">Full results</button>
+  const r = ranked();
+  app.innerHTML = `<h1 style="font-size:clamp(36px,5vw,56px)" id="wTitle">And the winners are…</h1>
+    <div id="pod" style="width:100%;display:flex;justify-content:center"></div>
+    <div id="after" style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-top:10px;visibility:hidden">
       <button class="btn ghost" id="csvBtn" type="button">Download results (CSV)</button>
-      <button class="btn" id="newBtn" type="button">New game</button></div>
-    <div class="board-list" id="all" hidden>${r.map((p, k) => `<div class="row"><span class="rk">${k + 1}</span><span class="nm">${esc(p.name)}</span><span class="sc">${p.score || 0}</span></div>`).join('')}</div>`;
-  $('#allBtn').onclick = () => { $('#all').hidden = !$('#all').hidden };
+      <button class="btn" id="newBtn" type="button">New game</button></div>`;
+  if(stopShow) stopShow();
+  stopShow = podium($('#pod'), r, {sound: SND, done(){ $('#wTitle').textContent = 'Winners!'; $('#after').style.visibility = '' }});
   $('#newBtn').onclick = () => { $('#status').hidden = true; setupView() };
   $('#csvBtn').onclick = () => {
     const rows = [['Rank', 'Name', 'Score']].concat(r.map((p, k) => [k + 1, p.name, p.score || 0]));

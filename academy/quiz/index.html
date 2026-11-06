@@ -6,21 +6,24 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Atkinson+Hyperlegible:wght@400;700&family=JetBrains+Mono:wght@400;600;800&display=swap">
 <link rel="stylesheet" href="../resources/resources.css">
-<link rel="stylesheet" href="quiz.css?v=3">
+<link rel="stylesheet" href="quiz.css?v=4">
 </head><body>
 <div class="wrap" style="max-width:640px">
-  <div class="top"><a class="brand" href="../">CyberTeaches · Quiz Battle</a></div>
+  <div class="top"><a class="brand" href="../">CyberTeaches · Quiz Battle</a><div class="spacer"></div><button class="btn ghost" id="sndBtn" type="button" style="font-size:15px;padding:8px 14px"></button></div>
   <main id="app" class="center"><p class="muted">Loading…</p></main>
 </div>
 <script src="../firebase-config.js"></script>
 <script src="../cloud.js?v=9"></script>
 <script src="../resources/resources.js"></script>
 <script src="questions.js?v=3"></script>
-<script src="quiz.js?v=2"></script>
+<script src="quiz.js?v=3"></script>
+<script src="music.js?v=1"></script>
 <script>
 const app = $('#app');
 let S = null;           // {pin, set, quiz, me, unsub: [], answered: {}}
 const params = new URLSearchParams(location.search);
+const SND = QuizSound.init({key: 'quiz.student.muted', defaultMuted: true}); SND.button($('#sndBtn'), 'Sound');
+let stopShow = null;
 
 Cloud.onChange(c => {
   if(!c.ready) return;
@@ -83,14 +86,14 @@ async function join(){
   } catch(e){ console.error(e); err.textContent = 'Could not join. Check your internet connection and try again.' }
 }
 
-function leave(){ if(S){ S.unsub.forEach(u => u()); S = null } }
+function leave(){ if(stopShow){ stopShow(); stopShow = null } SND.track(null); if(S){ S.unsub.forEach(u => u()); S = null } }
 
 function watch(pin, set){
   leave();
   S = {pin, set, quiz: null, me: null, unsub: [], answered: {}, shown: null};
   S.unsub.push(quizRef(pin).onSnapshot(s => {
     if(!s.exists){ leave(); pinView('The game has ended.'); return }
-    S.quiz = s.data(); render();
+    S.quiz = s.data({serverTimestamps: 'estimate'}); render();
   }, e => console.error(e)));
   S.unsub.push(quizRef(pin).collection('players').doc(Cloud.user.uid).onSnapshot(s => {
     if(!s.exists){ if(S.me){ leave(); pinView('You were removed from the game.') } return }
@@ -108,33 +111,52 @@ function render(){
   app.className = 'center'; app.style.flex = '';
   if(st === 'lobby'){
     app.innerHTML = meBar() + `<h1 style="font-size:40px">You're in!</h1><p class="muted" style="font-size:20px">Look for your name on the big screen. The game starts soon.</p>`;
-  } else if(st === 'question'){
-    const Q = S.set.questions[q];
-    if(S.late === q){
-      app.innerHTML = meBar() + `<p class="result bad">Too late</p><p class="muted">Time ran out before your answer arrived.</p>`; return }
-    if(S.answered[q] != null){
-      app.innerHTML = meBar() + `<div class="opt o${S.answered[q]}" style="width:140px;height:140px;justify-content:center;padding:0">${SHAPES[S.answered[q]].replace('class="shape"', 'class="shape" style="width:80px;height:80px"')}</div>
-        <h2 style="font-size:32px">Answer locked</h2><p class="muted">Waiting for everyone…</p>`;
-      return;
+  } else if(st === 'question' || st === 'reveal'){
+    // The question and all four answers stay on the student's screen: while answering, after the answer
+    // is locked in, and when the right answer is shown.
+    const Q = S.set.questions[q], mine = S.answered[q], L = S.me.last && S.me.last.q === q ? S.me.last : null;
+    const open = st === 'question' && mine == null && S.late !== q;
+    let banner = '';
+    if(st === 'reveal'){
+      banner = L && L.correct ? `<div class="sbanner good">Correct! +${L.pts}${(S.me.streak || 0) > 1 ? `<small>🔥 ${S.me.streak} in a row</small>` : ''}</div>`
+        : L && L.choice >= 0 ? `<div class="sbanner bad">Not quite<small>The right answer has a check mark.</small></div>`
+        : `<div class="sbanner bad">Time's up<small>The right answer has a check mark.</small></div>`;
+      if(S.sounded !== q){ S.sounded = q; SND.play(L && L.correct ? 'correct' : 'wrong') }
+    } else if(S.late === q) banner = `<div class="sbanner bad">Too late<small>Time ran out before your answer arrived.</small></div>`;
+    else if(mine != null) banner = `<div class="sbanner wait">Answer locked. Waiting for everyone…</div>`;
+    let tm = '';
+    if(st === 'question' && S.quiz.startedAt){
+      const total = (S.quiz.time || Q.time) * 1000, left = Math.max(0, S.quiz.startedAt.toMillis() + total - Date.now());
+      tm = `<div class="stimer"><i style="--from:${(left / total).toFixed(3)};animation-duration:${left}ms"></i></div>`;
     }
+    const pick = st === 'reveal' && L ? L.choice : mine;
+    const cls = k => (st === 'reveal' ? (k === Q.a ? 'right' : 'dim') : (mine != null && k !== mine ? 'dim' : '')) + (pick === k ? ' mine' : '');
     app.className = ''; app.style.flex = '1'; app.style.display = 'flex'; app.style.flexDirection = 'column';
-    app.innerHTML = meBar() + `<div class="stq">${q + 1}. ${esc(Q.q)}</div>${Q.pic ? `<div class="pic" style="flex:none;min-height:0">${Q.pic}</div>` : ''}
-      <div class="sopts">${Q.opts.map((o, k) => optButton(k, o, 'button')).join('')}</div>`;
+    app.innerHTML = meBar() + banner + tm + `<div class="stq">${q + 1}. ${esc(Q.q)}</div>${Q.pic ? `<div class="pic" style="flex:none;min-height:0">${Q.pic}</div>` : ''}
+      <div class="sopts${open ? '' : ' locked'}">${Q.opts.map((o, k) => optButton(k, o, open ? 'button' : 'div', cls(k))).join('')}</div>`;
     drawBoards(app);
-    app.querySelectorAll('button.opt').forEach(b => b.onclick = () => answer(q, +b.dataset.i));
-  } else if(st === 'reveal' || st === 'board'){
+    if(open) app.querySelectorAll('button.opt').forEach(b => b.onclick = () => answer(q, +b.dataset.i));
+  } else if(st === 'board'){
     const L = S.me.last && S.me.last.q === q ? S.me.last : null;
     app.innerHTML = meBar() + (L && L.correct
-      ? `<p class="result good">Correct!</p><p class="big-num">+${L.pts}</p>${(S.me.streak || 0) > 1 ? `<p class="pill">🔥 ${S.me.streak} in a row</p>` : ''}`
-      : L && L.choice >= 0 ? `<p class="result bad">Not quite</p><p class="muted" style="font-size:20px">Look at the big screen to see the right answer.</p>`
-      : `<p class="result bad">Time's up</p><p class="muted" style="font-size:20px">Be quick on the next one!</p>`)
+      ? `<p class="result good">Correct!</p><p class="big-num">+${L.pts}</p>`
+      : `<p class="result bad">${L && L.choice >= 0 ? 'Not quite' : "Time's up"}</p><p class="muted" style="font-size:20px">Be quick on the next one!</p>`)
       + `<p style="font-size:22px" id="rank"></p>`;
     showRank();
   } else if(st === 'end'){
-    app.innerHTML = meBar() + `<h1 style="font-size:40px">Game over</h1><p class="big-num">${S.me.score || 0}</p><p style="font-size:22px" id="rank"></p>
+    // Winners podium on the student's screen too, then the student's own place.
+    app.innerHTML = meBar() + `<h1 style="font-size:34px" id="wTitle">And the winners are…</h1><div id="pod" style="width:100%;display:flex;justify-content:center"></div>
+      <p style="font-size:22px;visibility:hidden" id="rank"></p>
       <button class="btn" id="againBtn" type="button">Join another game</button>`;
-    showRank();
     $('#againBtn').onclick = () => { leave(); pinView() };
+    quizRef(S.pin).collection('players').get().then(s => {
+      if(!S || !$('#pod')) return;
+      const r = s.docs.map(d => ({uid: d.id, ...d.data()})).sort((a, b) => (b.score || 0) - (a.score || 0));
+      const rank = 1 + r.filter(p => (p.score || 0) > (S.me.score || 0)).length;
+      $('#rank').innerHTML = `You placed <b>${ordinal(rank)}</b> of ${r.length} with <b>${S.me.score || 0}</b> points`;
+      if(stopShow) stopShow();
+      stopShow = podium($('#pod'), r, {sound: SND, me: Cloud.user.uid, done(){ const t = $('#wTitle'), k = $('#rank'); if(t) t.textContent = 'Winners!'; if(k) k.style.visibility = '' }});
+    }).catch(e => console.error(e));
   }
 }
 async function showRank(){
@@ -142,7 +164,7 @@ async function showRank(){
     const s = await quizRef(S.pin).collection('players').get();
     const scores = s.docs.map(d => d.data().score || 0), mine = S.me.score || 0;
     const rank = 1 + scores.filter(v => v > mine).length, el = $('#rank');
-    if(el) el.innerHTML = `You are <b>${rank === 1 ? '1st' : rank === 2 ? '2nd' : rank === 3 ? '3rd' : rank + 'th'}</b> of ${scores.length}`;
+    if(el) el.innerHTML = `You are <b>${ordinal(rank)}</b> of ${scores.length}`;
   } catch(e){ console.error(e) }
 }
 async function answer(q, choice){
