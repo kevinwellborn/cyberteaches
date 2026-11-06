@@ -93,6 +93,7 @@ h1,h2,h3{font-family:var(--f-display);text-wrap:balance;margin:0;line-height:1.1
 .lb td.n{text-align:right} .lb th.n{text-align:right}
 .lb tr.me td{background:var(--accent-soft);font-weight:700}
 .lb small{display:block;color:var(--muted);font-weight:400}
+.insig{vertical-align:-0.2em;margin-right:2px}
 .lbwrap{max-height:55vh;overflow:auto}
 .unit{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:22px;display:grid;grid-template-columns:auto minmax(0,1fr);gap:18px;align-items:start}
 .unit-num{font-family:var(--f-display);font-weight:800;font-size:15px;width:52px;height:52px;border-radius:14px;display:grid;place-items:center;color:#fff}
@@ -293,7 +294,7 @@ body{border-top:8px solid var(--lv,var(--accent))}
 </div>
 <div id="modal"></div>
 
-<script src="course.js?v=11"></script>
+<script src="course.js?v=12"></script>
 <script src="firebase-config.js"></script>
 <script src="cloud.js?v=9"></script>
 <script>
@@ -505,7 +506,7 @@ function rankBar(){
   const stars=totalStars(progress), r=rankFor(stars), bar=h('section','rankbar');
   const toNext = r.next ? `${r.next[0]-stars} more star${r.next[0]-stars===1?'':'s'} to ${r.next[1]}` : 'Top rank. Amazing work!';
   const pct = r.next ? (stars-r.min)/(r.next[0]-r.min)*100 : 100;
-  bar.innerHTML=`${badgeSvg(r)}<div class="rk"><span class="label">Your rank · ${stars} star${stars===1?'':'s'}</span><h2>${r.title}</h2>
+  bar.innerHTML=`${badgeSvg(r)}<div class="rk"><span class="label">Your rank · ${stars} star${stars===1?'':'s'}</span><h2>${insigniaSvg(r.i,26)} ${r.title}</h2>
     <div class="meter-bar" title="${toNext}"><i style="width:${pct}%"></i></div><span class="label" style="text-transform:none;letter-spacing:0">${toNext}</span></div>`;
   const p=Cloud&&Cloud.user&&Cloud.profile||{};
   if(Cloud&&Cloud.user&&p.classCode){ const b=h('button','btn primary','Class leaderboard'); b.onclick=openBoard; bar.appendChild(b) }
@@ -527,7 +528,7 @@ function openBoard(){
     let place=0, prev=null;
     box.innerHTML=`<table class="lb"><thead><tr><th>#</th><th>Student</th><th class="n">Stars</th><th class="n">Solved</th></tr></thead><tbody>${rows.map((r,i)=>{
       if(r.stars!==prev){ place=i+1; prev=r.stars }
-      return `<tr class="${r.uid===me?'me':''}"><td>${place}</td><td>${esc(r.uid===me?'You':r.name)}<small>${rankFor(r.stars).title}</small></td><td class="n">${r.stars} ★</td><td class="n">${r.solved}</td></tr>` }).join('')}</tbody></table>`;
+      return `<tr class="${r.uid===me?'me':''}"><td>${place}</td><td>${esc(r.uid===me?'You':r.name)}<small>${insigniaSvg(rankFor(r.stars).i,18)} ${rankFor(r.stars).title}</small></td><td class="n">${r.stars} ★</td><td class="n">${r.solved}</td></tr>` }).join('')}</tbody></table>`;
     const mineRow=$('tr.me',box); if(mineRow) mineRow.scrollIntoView({block:'nearest'});
   });
 }

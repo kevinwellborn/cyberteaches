@@ -88,6 +88,9 @@ td.name small{color:var(--muted)}
 .s0{color:var(--line)}
 th.score,td.score{background:var(--panel-2);border-right:2px solid var(--line)}
 small.rank{display:block;font-size:11px}
+.insig{vertical-align:-0.25em;margin-right:2px}
+.lb td.rank{white-space:nowrap}
+.lbpanel:fullscreen .lb td.rank .insig{width:34px;height:34px}
 .lbpanel{max-width:760px}
 .lessonbtn{all:unset;cursor:pointer;color:#fff;font-weight:700;letter-spacing:.06em;white-space:nowrap;padding:2px 4px;border-radius:6px}
 .lessonbtn:hover{text-decoration:underline}
@@ -163,7 +166,7 @@ body{border-top:6px solid var(--lv,var(--accent))}
   </header>
   <main id="app"><p class="muted">Loading…</p></main>
 </div>
-<script src="course.js?v=11"></script>
+<script src="course.js?v=12"></script>
 <script src="firebase-config.js"></script>
 <script src="cloud.js?v=9"></script>
 <script>
@@ -493,7 +496,7 @@ function leaderboard(){
   let place=0, prev=null;
   return `<table class="lb"><thead><tr><th>#</th><th class="l">Student</th><th class="l">Rank</th><th>Stars</th><th>Solved</th></tr></thead><tbody>${rows.map((r,i)=>{
     if(r.stars!==prev){ place=i+1; prev=r.stars }
-    return `<tr class="${place<=3&&r.stars?'place'+place:''}"><td><b>${place}</b></td><td class="l"><b>${esc(r.name)}</b></td><td class="l">${rankFor(r.stars).title}</td><td><b>${r.stars}</b> ★</td><td>${r.solved}/${r.total}</td></tr>` }).join('')}</tbody></table>`;
+    return `<tr class="${place<=3&&r.stars?'place'+place:''}"><td><b>${place}</b></td><td class="l"><b>${esc(r.name)}</b></td><td class="l rank">${insigniaSvg(rankFor(r.stars).i)} ${rankFor(r.stars).title}</td><td><b>${r.stars}</b> ★</td><td>${r.solved}/${r.total}</td></tr>` }).join('')}</tbody></table>`;
 }
 function table(){
   // Lessons start collapsed to just their Score (out of 100, see lessonScore in course.js). Clicking a lesson shows its puzzles.
@@ -507,7 +510,7 @@ function table(){
     const cells=UNITS.map(u=>lv(u).map(l=>{ const st=p[l.n]||0; return other ? '<td><span class="cell s0" title="This student is on another level">–</span></td>' : `<td><span class="cell s${st}" title="${esc(l.title)}: ${st?st+' star'+(st>1?'s':''):'not solved'}">${st?'★'.repeat(st):'·'}</span></td>` }).join('')
       +`<td class="score"><b>${lessonScore(p,u.n,sl)}</b></td>`).join('');
     const pick=`<select class="stulvl" data-uid="${esc(s.uid)}" aria-label="Level for ${esc(s.name)}" style="${levelStyle(sl)}"><option value="">Class level (${LEVEL_NAMES[cl]})</option>${LEVELS_AVAILABLE.map(v=>`<option value="${v}"${(c.levels||{})[s.uid]===v?' selected':''}>${LEVEL_NAMES[v]}</option>`).join('')}</select>`;
-    return `<tr><td class="name"><b>${esc(s.name)}</b><small>${esc(s.email||(s.username?'Username: '+s.username:''))}</small>${pick}</td>${cells}<td><b>${done}</b>/${levelsOf(sl).length}</td><td><b>${stars}</b> ★<small class="muted rank">${rankFor(stars).title}</small></td><td class="muted">${ago(s.updatedAt)}</td></tr>`;
+    return `<tr><td class="name"><b>${esc(s.name)}</b><small>${esc(s.email||(s.username?'Username: '+s.username:''))}</small>${pick}</td>${cells}<td><b>${done}</b>/${levelsOf(sl).length}</td><td><b>${stars}</b> ★<small class="muted rank">${insigniaSvg(rankFor(stars).i,16)} ${rankFor(stars).title}</small></td><td class="muted">${ago(s.updatedAt)}</td></tr>`;
   }).join('');
   return `<table><thead><tr><th class="name" rowspan="2">Student</th>${head1}<th rowspan="2">Solved</th><th rowspan="2">Stars and rank</th><th rowspan="2">Last active</th></tr><tr>${head2}</tr></thead><tbody>${rows}</tbody></table>`;
 }
