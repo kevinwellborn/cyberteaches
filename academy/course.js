@@ -1693,6 +1693,23 @@ const levelsOf = (level, unit) => ORDER.filter(l=>l.level===level && (unit==null
 // Ranks: students are promoted as they earn stars (3 per puzzle). Shared by the student site and the teacher dashboard.
 const RANKS = [[0,'Recruit'],[10,'Private'],[30,'Corporal'],[60,'Sergeant'],[100,'Staff Sergeant'],[150,'Lieutenant'],
   [200,'Captain'],[260,'Major'],[320,'Colonel'],[380,'General']];
+// Army-style insignia for each rank, as an inline SVG (height follows font-size via the .insig class):
+// Recruit plain disc · Private 1 chevron · Corporal 2 · Sergeant 3 · Staff Sergeant 3 + rocker · Lieutenant 1 bar ·
+// Captain 2 bars · Major gold oak leaf · Colonel silver eagle · General 4 stars.
+function insigniaSvg(i, size=22){
+  const gold='#C9971A', silver='#9AA3AD', chev=(n,rocker)=>{ let d=''; for(let k=0;k<n;k++){ const y=12+k*7; d+=`<path d="M8 ${y+7} 20 ${y} 32 ${y+7}" fill="none" stroke="${gold}" stroke-width="3.5" stroke-linejoin="round"/>` }
+    if(rocker) d+=`<path d="M9 36q11 7 22 0" fill="none" stroke="${gold}" stroke-width="3.5" stroke-linecap="round"/>`; return d };
+  const bar=n=> n===1 ? `<rect x="14" y="8" width="12" height="24" rx="2" fill="${gold}"/>` : `<rect x="8" y="8" width="10" height="24" rx="2" fill="${silver}"/><rect x="22" y="8" width="10" height="24" rx="2" fill="${silver}"/>`;
+  const star=(x,y,r=5)=>{ let pts=[]; for(let k=0;k<10;k++){ const a=-Math.PI/2+k*Math.PI/5, rr=k%2?r*0.45:r; pts.push((x+rr*Math.cos(a)).toFixed(1)+','+(y+rr*Math.sin(a)).toFixed(1)) } return `<polygon points="${pts.join(' ')}" fill="${silver}"/>` };
+  const art=[
+    `<circle cx="20" cy="20" r="9" fill="none" stroke="${silver}" stroke-width="3"/>`,
+    chev(1), chev(2), chev(3), chev(3,true), bar(1), bar(2),
+    `<path d="M20 5c7 3 11 9 10 17-1 6-5 10-10 12-5-2-9-6-10-12-1-8 3-14 10-17z" fill="${gold}"/><path d="M20 10v22M20 18l-5-4M20 18l5-4M20 25l-5-3M20 25l5-3" stroke="#7A5A08" stroke-width="1.5" fill="none" stroke-linecap="round"/>`,
+    `<path d="M20 9c-2 4-6 6-11 6 2 4 5 6 9 7-1 3-2 5-2 8l4-3 4 3c0-3-1-5-2-8 4-1 7-3 9-7-5 0-9-2-11-6z" fill="${silver}"/><circle cx="20" cy="8" r="2.5" fill="${silver}"/>`,
+    star(11,11,8)+star(29,11,8)+star(11,29,8)+star(29,29,8),
+  ];
+  return `<svg class="insig" viewBox="0 0 40 40" width="${size}" height="${size}" aria-hidden="true">${art[Math.max(0,Math.min(i,art.length-1))]}</svg>`;
+}
 const totalStars = progress => LEVELS.reduce((s,l)=>s+((progress||{})[l.n]||0),0);
 function rankFor(stars){
   let i=0; while(i+1<RANKS.length && stars>=RANKS[i+1][0]) i++;
