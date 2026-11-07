@@ -162,8 +162,9 @@ function renderResults(){
     h+='<p>'+q.stem+'</p>';
     q.opts.forEach(function(o,i){var c="opt";if(L[i]===q.ans)c+=" correct";else if(st.ans[q.id]===L[i])c+=" wrong";h+='<div class="'+c+'"><span class="let">'+L[i]+'</span><span>'+esc(o)+'</span></div>';});
     h+='<div class="expl"><b>Answer: '+q.ans+'.</b> '+q.expl+'</div><div class="meta">LO '+q.lo+' &middot; Skill '+q.skill+' &middot; '+reviewText(q.lo)+'</div></div>';});
-  h+='</div><div class="row noprint"><button class="btn secondary" onclick="window.print()">Print this report</button><button class="btn" id="restart">Start over</button></div></div>';
+  h+='</div><div data-ct-signup="networking-exam-report"></div><div class="row noprint"><button class="btn secondary" onclick="window.print()">Print this report</button><button class="btn" id="restart">Start over</button></div></div>';
   app.innerHTML=h;
+  if(window.CTSignup)CTSignup.mount();
   function upd(){if(practice)return;var n=[].filter.call(app.querySelectorAll(".pt"),function(x){return x.checked;}).length;
     document.getElementById("frqScore").textContent=n+" / "+frqMax;
     document.getElementById("composite").textContent=Math.round(70*c/qs.length+30*n/frqMax)+" / 100";}
