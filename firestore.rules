@@ -30,6 +30,21 @@ service cloud.firestore {
       allow write: if isAdmin();
     }
 
+    // Opt-in email list (signup.js). Anyone may add themselves, signed in or not, but only with consent and the 13+ box
+    // ticked, the server's time, and nothing extra. Nobody but the admin can read, change, or delete the list.
+    match /emailOptIns/{id} {
+      allow create: if request.resource.data.keys().hasOnly(['email', 'source', 'page', 'consent', 'age13', 'consentText', 'uid', 'createdAt'])
+        && request.resource.data.email is string && request.resource.data.email.size() <= 254
+        && request.resource.data.email.matches('^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$')
+        && request.resource.data.source is string && request.resource.data.source.matches('^[a-z0-9-]{1,40}$')
+        && request.resource.data.page is string && request.resource.data.page.size() <= 200
+        && request.resource.data.consent == true && request.resource.data.age13 == true
+        && request.resource.data.consentText is string && request.resource.data.consentText.size() <= 300
+        && (request.resource.data.uid == null || (signedIn() && request.resource.data.uid == request.auth.uid))
+        && request.resource.data.createdAt == request.time;
+      allow read, update, delete: if isAdmin();
+    }
+
     // A student's own progress. Only that student can read or change it.
     match /users/{uid} {
       allow read, write: if signedIn() && request.auth.uid == uid;
