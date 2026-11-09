@@ -4,7 +4,7 @@
   --accent:#0F7B78; --accent-ink:#FFFFFF; --accent-soft:#D6EEEA;
   --sand:#E8D9B8; --sand-2:#E1D0AA; --rock:#8C7F69; --rock-2:#6F6453;
   --rover:#F2A93B; --enemy:#B54A3A; --enemy-2:#8E3326; --flag:#D9443C; --wheel:#2E3A3D; --eye:#1C292C; --gem:#2BB3C9; --gem-hi:#8FE3EF;
-  --b-move:#2F6FDE; --b-act:#C2417A; --b-loop:#D97E16; --b-logic:#2E9363;
+  --b-move:#2F6FDE; --b-act:#C2417A; --b-loop:#D97E16; --b-logic:#2E9363; --b-var:#7A4BD6;
   --f-display:"Bricolage Grotesque","Trebuchet MS",system-ui,sans-serif;
   --f-body:"Atkinson Hyperlegible","Segoe UI",system-ui,sans-serif;
   --f-mono:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;
@@ -32,7 +32,7 @@ h1,h2,h3{font-family:var(--f-display);margin:0;line-height:1.1}
 
 /* code blocks */
 .blk{display:inline-flex;align-items:center;gap:.4em;color:#fff;font-weight:700;border-radius:.5em;padding:.3em .7em;margin:.15em 0;font-size:.95em;box-shadow:0 3px 0 rgba(0,0,0,.18);white-space:nowrap}
-.blk.move{background:var(--b-move)} .blk.act{background:var(--b-act)} .blk.loop{background:var(--b-loop)} .blk.logic{background:var(--b-logic)}
+.blk.move{background:var(--b-move)} .blk.act{background:var(--b-act)} .blk.loop{background:var(--b-loop)} .blk.logic{background:var(--b-logic)} .blk.var{background:var(--b-var)}
 .rep.logic{background:var(--b-logic)} .rep.ifb{background:var(--b-logic)} .rep .elsel{padding:.3em .3em .2em}
 .prog{display:flex;flex-direction:column;align-items:flex-start;gap:.25em}
 .rep{background:var(--b-loop);border-radius:.6em;padding:.35em .45em .45em;color:#fff;font-weight:700;box-shadow:0 3px 0 rgba(0,0,0,.18)}

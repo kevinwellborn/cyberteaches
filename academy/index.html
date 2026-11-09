@@ -1,16 +1,16 @@
 <!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>CyberTeaches Academy: Free Block Coding for Middle School</title>
-<meta name="description" content="Free block-coding course for middle school: program a rover through puzzles and tank battles to learn sequences, loops, and conditionals. Teachers can create classes and student logins.">
+<meta name="description" content="Free block-coding course for middle school: program a rover through puzzles and tank battles to learn sequences, loops, conditionals and variables. Teachers can create classes and student logins.">
 <link rel="canonical" href="https://cyberteaches.com/academy/">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="CyberTeaches">
 <meta property="og:title" content="CyberTeaches Academy: Free Block Coding for Middle School">
-<meta property="og:description" content="Free block-coding course for middle school: program a rover through puzzles and tank battles to learn sequences, loops, and conditionals. Teachers can create classes and student logins.">
+<meta property="og:description" content="Free block-coding course for middle school: program a rover through puzzles and tank battles to learn sequences, loops, conditionals and variables. Teachers can create classes and student logins.">
 <meta property="og:url" content="https://cyberteaches.com/academy/">
 <meta property="og:image" content="https://cyberteaches.com/yt-banner.jpg">
 <meta name="twitter:card" content="summary_large_image">
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": "Course", "name": "CyberTeaches Academy block coding", "alternateName": "Rover coding", "description": "Free block-coding course for middle school: program a rover through puzzles and tank battles to learn sequences, loops, and conditionals. Teachers can create classes and student logins.", "url": "https://cyberteaches.com/academy/", "provider": {"@type": "Organization", "name": "CyberTeaches", "url": "https://cyberteaches.com/"}, "inLanguage": "en", "isAccessibleForFree": true, "educationalLevel": "Middle school", "teaches": ["Sequences", "Loops", "Conditionals"], "offers": {"@type": "Offer", "category": "Free", "price": 0, "priceCurrency": "USD"}, "hasCourseInstance": {"@type": "CourseInstance", "courseMode": "Online", "courseWorkload": "PT40H"}}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "Course", "name": "CyberTeaches Academy block coding", "alternateName": "Rover coding", "description": "Free block-coding course for middle school: program a rover through puzzles and tank battles to learn sequences, loops, conditionals and variables. Teachers can create classes and student logins.", "url": "https://cyberteaches.com/academy/", "provider": {"@type": "Organization", "name": "CyberTeaches", "url": "https://cyberteaches.com/"}, "inLanguage": "en", "isAccessibleForFree": true, "educationalLevel": "Middle school", "teaches": ["Sequences", "Loops", "Conditionals", "Variables"], "offers": {"@type": "Offer", "category": "Free", "price": 0, "priceCurrency": "USD"}, "hasCourseInstance": {"@type": "CourseInstance", "courseMode": "Online", "courseWorkload": "PT40H"}}</script>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Atkinson+Hyperlegible:wght@400;700&family=JetBrains+Mono:wght@400;600&display=swap">
@@ -22,7 +22,7 @@
   --accent:#0F7B78; --accent-ink:#FFFFFF; --accent-soft:#D6EEEA;
   --sand:#E8D9B8; --sand-2:#E1D0AA; --rock:#8C7F69; --rock-2:#6F6453;
   --rover:#F2A93B; --wheel:#2E3A3D; --eye:#1C292C; --gem:#2BB3C9; --gem-hi:#8FE3EF; --flag:#D9443C;
-  --b-move:#2F6FDE; --b-act:#C2417A; --b-loop:#D97E16; --b-logic:#2E9363;
+  --b-move:#2F6FDE; --b-act:#C2417A; --b-loop:#D97E16; --b-logic:#2E9363; --b-var:#7A4BD6;
   --good:#2E9363; --bad:#C8402F; --coin:#E9B21B; --coin-edge:#9A6F06; --crack:#A99A80; --enemy:#B54A3A; --enemy-2:#8E3326;
   --f-display:"Bricolage Grotesque", "Trebuchet MS", system-ui, sans-serif;
   --f-body:"Atkinson Hyperlegible", "Segoe UI", system-ui, sans-serif;
@@ -33,7 +33,7 @@
   --accent:#3FC1B8; --accent-ink:#0B1A1A; --accent-soft:#1D3A38;
   --sand:#4A4232; --sand-2:#433B2C; --rock:#26221C; --rock-2:#1A1713;
   --rover:#F5B24E; --wheel:#0E1415; --eye:#0E1415; --gem:#45C9DD; --gem-hi:#A6EEF7; --flag:#EF5B50;
-  --b-move:#4B86EC; --b-act:#D85A92; --b-loop:#E39232; --b-logic:#3BA877;
+  --b-move:#4B86EC; --b-act:#D85A92; --b-loop:#E39232; --b-logic:#3BA877; --b-var:#9A72EA;
   --good:#4CC28A; --bad:#EF6B57; --coin:#F2C14A; --coin-edge:#7A5604; --crack:#3D362B; --enemy:#D0604C; --enemy-2:#A9442F; color-scheme:dark }
 }
 :root[data-theme="dark"]{
@@ -41,7 +41,7 @@
   --accent:#3FC1B8; --accent-ink:#0B1A1A; --accent-soft:#1D3A38;
   --sand:#4A4232; --sand-2:#433B2C; --rock:#26221C; --rock-2:#1A1713;
   --rover:#F5B24E; --wheel:#0E1415; --eye:#0E1415; --gem:#45C9DD; --gem-hi:#A6EEF7; --flag:#EF5B50;
-  --b-move:#4B86EC; --b-act:#D85A92; --b-loop:#E39232; --b-logic:#3BA877;
+  --b-move:#4B86EC; --b-act:#D85A92; --b-loop:#E39232; --b-logic:#3BA877; --b-var:#9A72EA;
   --good:#4CC28A; --bad:#EF6B57; --coin:#F2C14A; --coin-edge:#7A5604; --crack:#3D362B; --enemy:#D0604C; --enemy-2:#A9442F; color-scheme:dark
 }
 *{box-sizing:border-box}
@@ -221,7 +221,8 @@ h1,h2,h3{font-family:var(--f-display);text-wrap:balance;margin:0;line-height:1.1
 .block .row{display:flex;align-items:center;gap:8px;padding:8px 10px;min-height:42px}
 .block .ico{width:18px;height:18px;flex:none}
 .block select{background:rgba(255,255,255,.92);color:#1C292C;border:0;border-radius:6px;padding:2px 4px;font-weight:700}
-.b-move{background:var(--b-move)} .b-act{background:var(--b-act)} .b-loop{background:var(--b-loop)} .b-logic{background:var(--b-logic)}
+.b-move{background:var(--b-move)} .b-act{background:var(--b-act)} .b-loop{background:var(--b-loop)} .b-logic{background:var(--b-logic)} .b-var{background:var(--b-var)}
+.chip.var{background:var(--b-var);color:#fff;border-color:transparent} .chip.var b{font-family:'JetBrains Mono',monospace;font-weight:600;font-size:15px}
 .pal{border:0;text-align:left;width:100%;padding:0;box-shadow:0 3px 0 rgba(0,0,0,.18);transition:transform .1s}
 .pal:hover{transform:translateX(3px)}
 .pal:active{transform:translateY(2px);box-shadow:none}
@@ -295,7 +296,7 @@ body{border-top:8px solid var(--lv,var(--accent))}
 </div>
 <div id="modal"></div>
 
-<script src="course.js?v=12"></script>
+<script src="course.js?v=13"></script>
 <script src="firebase-config.js"></script>
 <script src="cloud.js?v=9"></script>
 <script src="sound.js?v=1"></script>
@@ -314,6 +315,10 @@ const ICON = {
   fire:'<svg class="ico" viewBox="0 0 20 20"><circle cx="10" cy="10" r="6" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="10" cy="10" r="2" fill="currentColor"/><path d="M10 1v4M10 15v4M1 10h4M15 10h4" stroke="currentColor" stroke-width="2"/></svg>'
 };
 ICON.iftank=ICON.ifelse; ICON.untilclear=ICON.repeat;
+ICON.set='<svg class="ico" viewBox="0 0 20 20"><rect x="2" y="4" width="16" height="12" rx="2.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M6 10h8M11 7l3 3-3 3" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/></svg>';
+ICON.change='<svg class="ico" viewBox="0 0 20 20"><rect x="2" y="4" width="16" height="12" rx="2.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M10 7v6M7 10h6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>';
+ICON.repeatvar=ICON.repeat;
+const VAR_SVG='<svg viewBox="0 0 24 24" aria-label="variable"><rect x="2.5" y="5" width="19" height="14" rx="3" fill="rgba(255,255,255,.18)" stroke="#fff" stroke-width="1.8"/><text x="12" y="16.2" text-anchor="middle" font-size="10.5" font-weight="800" fill="#fff" font-family="Atkinson Hyperlegible,sans-serif">x</text></svg>';
 const ROVER_SVG = '<svg viewBox="0 0 40 40" aria-label="rover"><rect x="6" y="9" width="7" height="23" rx="3.5" fill="var(--wheel)"/><rect x="27" y="9" width="7" height="23" rx="3.5" fill="var(--wheel)"/><rect x="10.5" y="10" width="19" height="22" rx="5.5" fill="var(--rover)" stroke="var(--wheel)" stroke-width="1.5"/><circle cx="20" cy="16" r="4.4" fill="#fff"/><circle cx="20" cy="15" r="2.2" fill="var(--eye)"/><path d="M20 2.5 25 8.5H15z" fill="var(--rover)" stroke="var(--wheel)" stroke-width="1.5" stroke-linejoin="round"/></svg>';
 const GEM_SVG = '<svg viewBox="0 0 24 24" aria-label="crystal"><path d="M12 2 L20 9 L12 22 L4 9Z" fill="var(--gem)"/><path d="M12 2 L15.5 9 L12 22 L8.5 9Z" fill="var(--gem-hi)"/></svg>';
 const FLAG_SVG = '<svg viewBox="0 0 24 24" aria-label="flag"><rect x="5" y="2" width="2.2" height="20" rx="1" fill="var(--wheel)"/><path d="M7 3h12l-3 4.5 3 4.5H7z" fill="var(--flag)"/><ellipse cx="6" cy="22" rx="4" ry="1.3" fill="var(--rock-2)" opacity=".5"/></svg>';
@@ -339,8 +344,12 @@ const BLOCKS = {
   ifelse:{cls:'b-logic', label:'if … else', container:true},
   fire:{cls:'b-act', label:'fire cannon', text:'fireCannon();'},
   iftank:{cls:'b-logic', label:'if tank ahead', container:true},
-  untilclear:{cls:'b-loop', label:'repeat until no tanks left', container:true}
+  untilclear:{cls:'b-loop', label:'repeat until no tanks left', container:true},
+  set:{cls:'b-var', label:'set steps to …'},
+  change:{cls:'b-var', label:'change steps by …'},
+  repeatvar:{cls:'b-loop', label:'repeat steps times', container:true}
 };
+const CHANGE_BY=[1,2,3,-1,-2,-3];
 const DRIVE_KEYS = {ArrowUp:'forward', w:'forward', W:'forward', ArrowLeft:'left', a:'left', A:'left', ArrowRight:'right', d:'right', D:'right', ' ':'fire', f:'fire', F:'fire'};
 
 
@@ -418,19 +427,22 @@ function buildBoard(level){
 
   // inventory bar, only for levels that use charges, keys or coins
   let hud=null;
-  const usesKit = level.blocks.includes('blast') || m.gate || m.coins || armed;
+  const usesVar = level.blocks.includes('set');
+  const usesKit = level.blocks.includes('blast') || m.gate || m.coins || armed || usesVar;
   if(usesKit){
     hud=h('div','hud');
-    hud.innerHTML=(armed?`<span class="chip" data-k="shells">${SHELL_SVG}<span></span></span>`:'')
+    hud.innerHTML=(usesVar?`<span class="chip var" data-k="steps" title="The variable steps">${VAR_SVG}<b></b></span>`:'')
+      +(armed?`<span class="chip" data-k="shells">${SHELL_SVG}<span></span></span>`:'')
       +(m.tankCount?`<span class="chip" data-k="tanks">${ENEMY_SVG}<span></span></span>`:'')
       +(level.blocks.includes('blast')?`<span class="chip" data-k="charges">${CHARGE_SVG}<span></span></span>`:'')
       +(m.gate?`<span class="chip" data-k="key">${KEY_SVG}<span></span></span>`:'')
       +(m.coins?`<span class="chip" data-k="coins">${COIN_SVG}<span></span></span>`:'');
   }
-  const world={m, board, hud, gemEls, rover, inner, place, x:0,y:0,dir:0,turns:0,gems:new Set(), blasted:new Set(), items:new Set(), charges:0, hasKey:false, coins:0, tanks:new Map(), shells:0, over:false};
+  const world={m, board, hud, gemEls, rover, inner, place, x:0,y:0,dir:0,turns:0,vars:{steps:0},gems:new Set(), blasted:new Set(), items:new Set(), charges:0, hasKey:false, coins:0, tanks:new Map(), shells:0, over:false};
   world.updateHud=(bump)=>{
     if(!hud) return;
     const set=(k,txt,off)=>{ const c=hud.querySelector(`[data-k="${k}"]`); if(!c) return; c.lastElementChild.textContent=txt; c.classList.toggle('off',!!off); if(bump===k){ c.classList.remove('bump'); c.offsetWidth; c.classList.add('bump') } };
+    set('steps', 'steps = '+world.vars.steps, false);
     set('charges', world.charges+' charge'+(world.charges===1?'':'s'), !world.charges);
     set('key', world.hasKey?'Key found':'No key', !world.hasKey);
     set('coins', world.coins+' of '+m.coins+' coins', !world.coins);
@@ -486,7 +498,7 @@ function buildBoard(level){
     setTimeout(()=>paintCell(x,y),120); setTimeout(()=>b.remove(),650);
   };
   world.reset=()=>{
-    world.x=m.start.x; world.y=m.start.y; world.dir=level.dir; world.turns=level.dir; world.gems=new Set(m.gems);
+    world.x=m.start.x; world.y=m.start.y; world.dir=level.dir; world.turns=level.dir; world.gems=new Set(m.gems); world.vars={steps:0};
     world.blasted=new Set(); world.items=new Set(Object.keys(m.items)); world.charges=level.charges||0; world.hasKey=false; world.coins=0;
     world.tanks=new Map(Object.entries(m.tanks).map(([k,d])=>[k,{dir:d,alert:false}])); world.shells=level.shells!=null?level.shells:m.tankCount; world.over=false;
     Object.values(tankEls).forEach(e=>e.classList.remove('dead','spotted'));
@@ -597,7 +609,7 @@ function showHome(){
 
 // ---------- puzzle ----------
 let L, world, program, selKey, runTimer=null, running=false, uid=1, dragId=null, dragNew=null;
-const newNode=type=>{ const n={id:'b'+(uid++), type}; if(type==='repeat'){n.n=3;n.body=[]} if(type==='until'||type==='iftank'||type==='untilclear') n.body=[]; if(type==='ifelse'){n.cond='ahead';n.body=[];n.elseBody=[]} return n };
+const newNode=type=>{ const n={id:'b'+(uid++), type}; if(type==='repeat'){n.n=3;n.body=[]} if(type==='until'||type==='iftank'||type==='untilclear'||type==='repeatvar') n.body=[]; if(type==='set') n.n=1; if(type==='change') n.d=1; if(type==='ifelse'){n.cond='ahead';n.body=[];n.elseBody=[]} return n };
 function reid(list){ list.forEach(n=>{ n.id='b'+(uid++); if(n.body) reid(n.body); if(n.elseBody) reid(n.elseBody) }); return list }
 
 function showPuzzle(n){
@@ -653,7 +665,7 @@ function showPuzzle(n){
   const list=h('div','shelf-list');
   L.blocks.forEach(t=>{
     const B=BLOCKS[t];
-    const lbl = t==='repeat'?'repeat 3 times': t==='ifelse'?'if … else': B.label;
+    const lbl = t==='repeat'?'repeat 3 times': t==='ifelse'?'if … else': t==='set'?'set steps to 1': t==='change'?'change steps by +1': B.label;
     const isNew=UNITS[L.unit-1].newBlocks.includes(t);
     const b=h('button','block pal '+B.cls, `<div class="row">${ICON[t]}<span>${lbl}</span>${isNew?'<span class="newtag">New</span>':''}</div>`);
     b.draggable=true;
@@ -778,6 +790,14 @@ function renderBlock(n){
     row.appendChild(h('span',null,'repeat'));
     const s=h('select'); s.setAttribute('aria-label','times'); for(let i=2;i<=10;i++) s.appendChild(new Option(i,i,false,i===n.n));
     s.onchange=()=>{ n.n=+s.value; changed() }; s.onclick=e=>e.stopPropagation(); row.appendChild(s); row.appendChild(h('span',null,'times'));
+  } else if(n.type==='set'){
+    row.appendChild(h('span',null,'set steps to'));
+    const s=h('select'); s.setAttribute('aria-label','value'); for(let i=0;i<=10;i++) s.appendChild(new Option(i,i,false,i===n.n));
+    s.onchange=()=>{ n.n=+s.value; changed() }; s.onclick=e=>e.stopPropagation(); row.appendChild(s);
+  } else if(n.type==='change'){
+    row.appendChild(h('span',null,'change steps by'));
+    const s=h('select'); s.setAttribute('aria-label','amount'); CHANGE_BY.forEach(v=>s.appendChild(new Option((v>0?'+':'')+v,v,false,v===n.d)));
+    s.onchange=()=>{ n.d=+s.value; changed() }; s.onclick=e=>e.stopPropagation(); row.appendChild(s);
   } else if(n.type==='ifelse'){
     row.appendChild(h('span',null,'if'));
     const s=h('select'); s.setAttribute('aria-label','direction'); [['ahead','path ahead'],['left','path to the left'],['right','path to the right'],...(L.blocks.includes('collect')?[['crystal','crystal here']]:[]),...(L.blocks.includes('blast')?[['cracked','cracked wall ahead']]:[]),...(L.blocks.includes('fire')?[['tank','tank ahead']]:[])].forEach(([v,t])=>s.appendChild(new Option(t,v,false,v===n.cond)));
@@ -814,17 +834,21 @@ function renderProgram(){
   const c=countBlocks();
   $('#count').textContent=c+' block'+(c===1?'':'s')+(L.maxBlocks?' of '+L.maxBlocks+' max':'')+' · goal '+L.ideal; $('#count').classList.toggle('full',!!L.maxBlocks&&c>=L.maxBlocks);
   let where='the main program';
-  if(selKey!=='root'){ const [id,which]=selKey.split(':'); const n=findNode(id); if(n) where = n.type==='repeat'?'inside “repeat”': n.type==='until'?'inside “repeat until at flag”': n.type==='iftank'?'inside “if tank ahead”': n.type==='untilclear'?'inside “repeat until no tanks left”': which==='elseBody'?'the “else” part':'the “if” part' }
+  if(selKey!=='root'){ const [id,which]=selKey.split(':'); const n=findNode(id); if(n) where = n.type==='repeat'?'inside “repeat”': n.type==='until'?'inside “repeat until at flag”': n.type==='iftank'?'inside “if tank ahead”': n.type==='untilclear'?'inside “repeat until no tanks left”': n.type==='repeatvar'?'inside “repeat steps times”': which==='elseBody'?'the “else” part':'the “if” part' }
   $('#target').innerHTML='New blocks go into <b>'+where+'</b>.'+(selKey!=='root'?' Tap the grey area to go back to the main program.':'');
   renderCode();
 }
 function renderCode(){
   const c=$('#code'); if(!c||c.hidden) return;
   const cond={ahead:'isPathAhead()',left:'isPathLeft()',right:'isPathRight()',crystal:'isCrystalHere()',cracked:'isCrackedWallAhead()',tank:'isTankAhead()'};
+  let seen=false;
   const lines=(list,ind)=>list.flatMap(n=>{
     const p='  '.repeat(ind);
     if(n.type==='repeat') return [p+`for (let i = 0; i < ${n.n}; i++) {`,...lines(n.body,ind+1),p+'}'];
     if(n.type==='until') return [p+'while (notAtFlag()) {',...lines(n.body,ind+1),p+'}'];
+    if(n.type==='set') return [p+(seen?'steps = ':'let steps = ')+n.n+';'].map(l=>(seen=true,l));
+    if(n.type==='change') return [p+'steps = steps '+(n.d<0?'- '+(-n.d):'+ '+n.d)+';'];
+    if(n.type==='repeatvar') return [p+'for (let i = 0; i < steps; i++) {',...lines(n.body,ind+1),p+'}'];
     if(n.type==='iftank') return [p+'if (isTankAhead()) {',...lines(n.body,ind+1),p+'}'];
     if(n.type==='untilclear') return [p+'while (tanksLeft() > 0) {',...lines(n.body,ind+1),p+'}'];
     if(n.type==='ifelse') return [p+`if (${cond[n.cond]}) {`,...lines(n.body,ind+1),p+'} else {',...lines(n.elseBody,ind+1),p+'}'];
@@ -844,6 +868,9 @@ function* exec(list, ctx){
     if(n.type==='repeat'){ for(let i=0;i<n.n;i++){ guard(ctx); yield {id:n.id, act:'mark'}; yield* exec(n.body,ctx) } }
     else if(n.type==='until'){ while(!atFlag()){ guard(ctx); yield {id:n.id, act:'mark'}; yield* exec(n.body,ctx) } }
     else if(n.type==='untilclear'){ while(world.tanks.size){ guard(ctx); yield {id:n.id, act:'mark'}; yield* exec(n.body,ctx) } }
+    else if(n.type==='repeatvar'){ const k=world.vars.steps; for(let i=0;i<k;i++){ guard(ctx); yield {id:n.id, act:'mark'}; yield* exec(n.body,ctx) } }
+    else if(n.type==='set'){ world.vars.steps=n.n; yield {id:n.id, act:'var'} }
+    else if(n.type==='change'){ world.vars.steps=Math.max(0,Math.min(99,world.vars.steps+n.d)); yield {id:n.id, act:'var'} }
     else if(n.type==='iftank'){ guard(ctx); yield {id:n.id, act:'mark'}; if(world.tankAhead()) yield* exec(n.body,ctx) }
     else if(n.type==='ifelse'){ guard(ctx); yield {id:n.id, act:'mark'}; const ok= n.cond==='crystal' ? world.gems.has(world.x+','+world.y) : n.cond==='cracked' ? crackedAhead() : n.cond==='tank' ? world.tankAhead() : pathOpen({ahead:0,left:-1,right:1}[n.cond]); yield* exec(ok?n.body:n.elseBody, ctx) }
     else yield {id:n.id, act:n.type};
@@ -905,6 +932,7 @@ function run(){
     if(r.done) return endCheck();
     const st=r.value; const el=document.querySelector(`.wb[data-id="${st.id}"]`); if(el) el.classList.add('running');
     if(st.act==='mark'){ runTimer=setTimeout(tick, delay*0.35); return }
+    if(st.act==='var'){ world.updateHud('steps'); sfx('click'); runTimer=setTimeout(tick, delay*0.7); return }
     if(++steps>300) return finish(false,'That program ran for too long. Try a shorter one.');
     const res=doAct(st.act);
     if(res.fail) return finish(false,res.fail);

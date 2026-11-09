@@ -166,7 +166,7 @@ body{border-top:6px solid var(--lv,var(--accent))}
   </header>
   <main id="app"><p class="muted">Loading…</p></main>
 </div>
-<script src="course.js?v=12"></script>
+<script src="course.js?v=13"></script>
 <script src="firebase-config.js"></script>
 <script src="cloud.js?v=9"></script>
 <script>
@@ -294,12 +294,14 @@ function selectClass(code){
 }
 
 // ---------- answer key (teachers only; answer-key.js is loaded after sign-in) ----------
-const KEY_LABEL={forward:'move forward',left:'turn left',right:'turn right',collect:'collect crystal',fire:'fire cannon',blast:'blast wall ahead',until:'repeat until at flag',untilclear:'repeat until no tanks left',iftank:'if tank ahead'};
+const KEY_LABEL={forward:'move forward',left:'turn left',right:'turn right',collect:'collect crystal',fire:'fire cannon',blast:'blast wall ahead',until:'repeat until at flag',untilclear:'repeat until no tanks left',iftank:'if tank ahead',repeatvar:'repeat steps times'};
 const KEY_COND={ahead:'path ahead',left:'path to the left',right:'path to the right',crystal:'crystal here',cracked:'cracked wall ahead',tank:'tank ahead'};
 const KEY_DRIVE={forward:'↑ forward',left:'← turn left',right:'→ turn right',fire:'Space fire'};
 function keyLines(list,ind){
   return list.flatMap(n=>{ const p='   '.repeat(ind);
     if(n.type==='repeat') return [p+'repeat '+n.n+' times',...keyLines(n.body,ind+1)];
+    if(n.type==='set') return [p+'set steps to '+n.n];
+    if(n.type==='change') return [p+'change steps by '+(n.d>0?'+':'')+n.d];
     if(n.type==='ifelse') return [p+'if '+KEY_COND[n.cond],...keyLines(n.body,ind+1),p+'else',...(n.elseBody.length?keyLines(n.elseBody,ind+1):[p+'   (nothing)'])];
     if(n.body) return [p+KEY_LABEL[n.type],...keyLines(n.body,ind+1)];
     return [p+KEY_LABEL[n.type]] });
@@ -310,7 +312,7 @@ let keyData=null;
 async function loadKey(){
   if(keyData) return keyData;
   const cfg=await Cloud.getConfig('answerKey'); if(!cfg||!cfg.secret) throw new Error('no-secret');
-  await new Promise((ok,fail)=>{ if(window.ANSWER_KEY_ENC) return ok(); const sc=document.createElement('script'); sc.src='answer-key.js?v=10'; sc.onload=ok; sc.onerror=fail; document.head.appendChild(sc) });
+  await new Promise((ok,fail)=>{ if(window.ANSWER_KEY_ENC) return ok(); const sc=document.createElement('script'); sc.src='answer-key.js?v=11'; sc.onload=ok; sc.onerror=fail; document.head.appendChild(sc) });
   const b64=x=>Uint8Array.from(atob(x),c=>c.charCodeAt(0)), enc=window.ANSWER_KEY_ENC, te=new TextEncoder();
   const base=await crypto.subtle.importKey('raw',te.encode(cfg.secret),'PBKDF2',false,['deriveKey']);
   const key=await crypto.subtle.deriveKey({name:'PBKDF2',salt:b64(enc.salt),iterations:100000,hash:'SHA-256'},base,{name:'AES-GCM',length:256},false,['decrypt']);

@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Lesson 14 Slides · Variables</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="../../../favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Atkinson+Hyperlegible:wght@400;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<link rel="stylesheet" href="../resources.css">
+<link rel="stylesheet" href="../slides.css">
+</head>
+<body class="lv-hard" style="--lv:#C8402F;--lv-ink:#FFFFFF;--lv-soft:#F9DFDA">
+<div class="lvlrib"><b>Hard level</b> · made for the Hard puzzles · <a href="../#hard">all Hard resources</a></div>
+<div class="deck" id="deck">
+<section class="slide title-slide">
+  <span class="label" style="font-size:22px">CyberTeaches Academy · Lesson 14</span>
+  <h1 style="margin:18px 0 22px"><em>Variables</em></h1>
+  <p style="font-size:32px;max-width:900px">A box with a name. Put a number in it, change it, and let the rover count with it.</p>
+  <div class="foot"><span>cyberteaches.com/academy</span><span>Press → to start</span></div>
+  <div class="note">Lesson 14 introduces variables with one named number, steps. Plan: warm-up 5 min, slides 15 min, classwork 12 min, coding 15 min, exit ticket 3 min.</div>
+</section>
+
+<section class="slide ">
+  <span class="label kicker">Today we will</span>
+  <h2>Learning goals</h2>
+  <ul class="big" style="font-weight:400;font-size:34px"><li>Explain that a <b>variable</b> is a named box that holds a number</li><li>Use <b>set steps to</b> and <b>change steps by</b></li><li>Use <b>repeat steps times</b> so every lap of a loop can be a different length</li></ul>
+  <div class="note">Read the goals aloud. Students check them off with the exit ticket at the end.</div>
+</section>
+
+<section class="slide ">
+  <span class="label kicker">Warm-up · 3 minutes</span>
+  <h2>The counting box</h2>
+  <div class="row"><div class="grow"><p>On the board: <span class="code">steps = 1</span></p><p class="big">Each round: clap <b>steps</b> times, then add 1 to the box.</p><p>How many claps in round 4? What is in the box after round 4?</p></div><div class="box" style="width:420px"><p class="big" style="margin:0 0 8px">Answer</p><p class="reveal" style="margin:0">Round 4 = 4 claps. After round 4 the box holds <b>5</b>.</p></div></div>
+  <div class="note">Do it as a class: clap once, change the box to 2, clap twice, and so on. The box is a variable: it has a name (steps) and a number inside that changes.</div>
+</section>
+
+<section class="slide ">
+  <span class="label kicker">Big idea</span>
+  <h2>A <em>variable</em> is a named box</h2>
+  <div class="row"><div class="box" style="width:360px;text-align:center"><p class="muted" style="margin:0">the box is called</p><p class="big" style="margin:0;font-size:44px">steps</p><p class="code" style="font-size:40px;margin:8px 0 0">3</p></div><div class="grow"><p><span class="blk var">set steps to <span class="num">3</span></span> puts a number in the box.</p><p><span class="blk var">change steps by <span class="num">+1</span></span> adds 1 to it. <span class="blk var">change steps by <span class="num">-1</span></span> takes 1 away.</p><p class="muted">The purple box above the rover's map shows what is inside.</p></div></div>
+  <div class="note">Hold up a real box with a sticky note "steps" and number cards. Set = replace the card. Change = add or take away.</div>
+</section>
+
+<section class="slide ">
+  <span class="label kicker">New block</span>
+  <h2><em>repeat steps times</em></h2>
+  <div class="row"><div class="board" data-map="########|#S....G#|########" data-dir="1" style="--cell:60px"></div><div class="grow"><p>Repeats the blocks inside as many times as the number in the box.</p><div class="prog"><span class="blk var">set steps to <span class="num">5</span></span><div class="rep " style="display:inline-block"><div class="head">repeat <span class="num">steps</span> times</div><div class="inner"><span class="blk move">move forward</span></div></div></div><p class="reveal" style="margin-top:14px"><span class="count">3 blocks</span> The rover moves 5 squares, because steps = 5.</p></div></div>
+  <div class="note">Puzzle 14.1. Ask: what if we set steps to 4? (The rover stops one square short.)</div>
+</section>
+
+<section class="slide ">
+  <span class="label kicker">Big idea</span>
+  <h2>Change the box <em>inside</em> the loop</h2>
+  <div class="row"><div class="board" data-map="######|###S.#|####.#|#G...#|######" data-dir="1" style="--cell:60px"></div><div class="grow"><p>1 square, turn, 2 squares, turn, 3 squares. Every lap is one square longer.</p><div class="prog reveal"><span class="blk var">set steps to <span class="num">1</span></span><div class="rep " style="display:inline-block"><div class="head">repeat <span class="num">3</span> times</div><div class="inner"><div class="rep " style="display:inline-block"><div class="head">repeat <span class="num">steps</span> times</div><div class="inner"><span class="blk move">move forward</span></div></div><span class="blk move">turn right</span><span class="blk var">change steps by <span class="num">+1</span></span></div></div></div><p class="reveal" style="margin-top:14px"><span class="count">6 blocks</span> Without a variable this takes 9 blocks.</p></div></div>
+  <div class="note">Walk through the loop with the box on the board: steps is 1, then 2, then 3. The variable changes, so the same blocks do something different each lap.</div>
+</section>
+
+<section class="slide ">
+  <span class="label kicker">Let's try together · Puzzle 14.2</span>
+  <h2>Two roads</h2>
+  <div class="row">
+      <div class="board" data-map="######|#S...#|####.#|####.#|####.#|####.#|####G#|######" data-dir="1" data-cell="55px"></div>
+      <div class="grow"><p>Drive 3, turn right, drive 5. Can you do it without setting the box twice?</p>
+        <div class="prog reveal" style="font-size:21px"><span class="blk var">set steps to <span class="num">3</span></span><div class="rep "><div class="head">repeat <span class="num">steps</span> times</div><div class="inner"><span class="blk move">move forward</span></div></div><span class="blk move">turn right</span><span class="blk var">change steps by <span class="num">+2</span></span><div class="rep "><div class="head">repeat <span class="num">steps</span> times</div><div class="inner"><span class="blk move">move forward</span></div></div></div>
+        <p class="reveal" style="margin-top:16px"><span class="count">7 blocks</span></p></div></div>
+  <div class="note">Puzzle 14.2: set steps to 3 … change steps by +2 … repeat steps times. Change is cheaper than counting again. Press → to reveal the answer.</div>
+</section>
+
+<section class="slide ">
+  <span class="label kicker">Think, pair, share · Puzzle 14.4</span>
+  <h2>Spiral in</h2>
+  <div class="row">
+      <div class="board" data-map="#########|#S......#|#######.#|###...#.#|###.#G#.#|###.###.#|###.....#|#########" data-dir="1" data-cell="55px"></div>
+      <div class="grow"><p>This spiral gets shorter every lap. What changes in the program?</p>
+        <div class="prog reveal" style="font-size:26px"><span class="blk var">set steps to <span class="num">6</span></span><div class="rep "><div class="head">repeat <span class="num">6</span> times</div><div class="inner"><div class="rep "><div class="head">repeat <span class="num">steps</span> times</div><div class="inner"><span class="blk move">move forward</span></div></div><span class="blk move">turn right</span><span class="blk var">change steps by <span class="num">-1</span></span></div></div></div>
+        <p class="reveal" style="margin-top:16px"><span class="count">6 blocks</span></p></div></div>
+  <div class="note">Puzzle 14.4: start at 6 and change steps by -1 each lap. Press → to reveal the answer.</div>
+</section>
+
+<section class="slide ">
+  <span class="label kicker">When it doesn't work</span>
+  <h2>Debugging tips</h2>
+  <ul style="font-size:30px"><li><b>Set it first.</b> An empty box holds 0, and repeat 0 times does nothing.</li><li><b>Set or change?</b> Set replaces the number. Change adds to it or takes from it.</li><li><b>Inside the loop.</b> The change block goes inside the repeat, so every lap is different.</li><li><b>Watch the box.</b> The purple box shows steps while the rover runs. Say the number for each lap.</li></ul>
+  <div class="note">Most bugs are a wrong starting value or a change block outside the loop. Have students say the value of steps out loud for each lap.</div>
+</section>
+
+<section class="slide ">
+  <span class="label kicker">Classwork · 12 minutes</span>
+  <h2>Unplugged practice</h2>
+  <div class="row"><div class="grow"><p>Use the worksheet. Write programs with letters:</p>
+    <p class="code" style="font-size:28px;line-height:1.5">F = move forward &nbsp; L = turn left &nbsp; R = turn right<br>C = collect crystal<br>X = fire cannon</p>
+    <p class="code" style="font-size:26px;margin:0 0 6px">set 3</p><p class="code" style="font-size:26px;margin:0 0 6px">change +1</p><p class="code" style="font-size:26px;margin:0 0 6px">repeat steps [ F ]</p></div>
+    <div class="box" style="width:400px"><p class="big" style="margin:0 0 8px">Parts</p><p style="margin:0">A. Trace the rover<br>B. Write the program<br>C. What is in the box?<br>D. Design your own</p></div></div>
+  <div class="note">Hand out the Lesson 14 classwork. Students can work in pairs. Part D is a challenge for early finishers. The answer key is on the last page.</div>
+</section>
+
+<section class="slide title-slide">
+  <span class="label" style="font-size:22px">Your turn</span>
+  <h1 style="margin:18px 0 22px">Now <em>code</em> it!</h1>
+  <p style="font-size:34px">Go to <b>cyberteaches.com/academy</b>, sign in, and solve puzzles <b>14.1 to 14.10</b>.</p>
+  <p style="font-size:28px;opacity:.85">Watch the steps box while the rover runs. If a lap is the wrong length, check your set and change blocks.</p>
+  <div class="note">Students sign in with Google or the username and password from the Teacher Dashboard. Watch their stars live on the dashboard and help anyone stuck on the same puzzle.</div>
+</section>
+
+<section class="slide ">
+  <span class="label kicker">Exit ticket</span>
+  <h2>Before you go</h2>
+  <p>The box holds 3. The program runs: change steps by +2, then repeat steps times [ F ]. How many squares does the rover move?</p>
+    <p class="reveal" style="margin-top:20px">5 squares (3 + 2 = 5).</p>
+  <div class="note">Collect answers on sticky notes or in your LMS. Reveal the answer with → after students have written theirs.</div>
+</section>
+</div>
+<div class="notes" id="notes"><b>Teacher notes</b><span id="noteText"></span></div>
+<div class="bar"><button id="prev" aria-label="Previous slide">←</button><span id="num" style="color:#fff;font:700 14px var(--f-body);align-self:center;min-width:52px;text-align:center"></span><button id="next" aria-label="Next slide">→</button><button id="nBtn" title="Teacher notes (N)">Notes</button><button id="fBtn" title="Full screen (F)">Full screen</button></div>
+<script src="../resources.js"></script>
+<script src="../slides.js"></script>
+</body></html>

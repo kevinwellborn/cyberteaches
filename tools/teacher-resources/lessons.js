@@ -5,11 +5,23 @@ const B = t => ({ type: t });
 const F = B('forward'), L = B('left'), R = B('right'), C = B('collect'), X = B('fire');
 const Rp = (n, body) => ({ type: 'repeat', n, body }), U = body => ({ type: 'until', body }), UC = body => ({ type: 'untilclear', body });
 const IT = body => ({ type: 'iftank', body }), IE = (cond, body, elseBody = []) => ({ type: 'ifelse', cond, body, elseBody });
+// Variables (Lesson 14): Sv(n) set steps to n; Ch(d) change steps by d; RV([...]) repeat steps times.
+const Sv = n => ({ type: 'set', n }), Ch = d => ({ type: 'change', d }), RV = body => ({ type: 'repeatvar', body });
+const S1 = Sv(1), S2 = Sv(2), S3 = Sv(3), S5 = Sv(5), RVF = RV([F]);
 const TURN = IE('left', [L], [R]);
 const b = (cls, label) => `<span class="blk ${cls}">${label}</span>`;
 const fwd = b('move', 'move forward'), tl = b('move', 'turn left'), tr = b('move', 'turn right'), col = b('act', 'collect crystal'), fire = b('act', 'fire cannon');
 const rep = (head, inner, cls = '') => `<div class="rep ${cls}" style="display:inline-block"><div class="head">${head}</div><div class="inner">${inner}</div></div>`;
 const cnt = n => `<span class="count">${n} blocks</span>`;
+const vb = (label, n) => `<span class="blk var">${label} <span class="num">${n}</span></span>`;
+const set3 = vb('set steps to', 3), chg1 = vb('change steps by', '+1'), chgm1 = vb('change steps by', '-1');
+// Renders a program as block pictures (same markup as build.js blocks()).
+const blocksOf = p => p.map(n => {
+  if (n.type === 'forward') return fwd; if (n.type === 'left') return tl; if (n.type === 'right') return tr; if (n.type === 'collect') return col; if (n.type === 'fire') return fire;
+  if (n.type === 'set') return vb('set steps to', n.n); if (n.type === 'change') return vb('change steps by', (n.d > 0 ? '+' : '') + n.d);
+  if (n.type === 'repeat') return rep(`repeat <span class="num">${n.n}</span> times`, blocksOf(n.body));
+  if (n.type === 'repeatvar') return rep('repeat <span class="num">steps</span> times', blocksOf(n.body));
+  throw new Error('blocksOf: ' + n.type) }).join('');
 const cntA = n => `<span class="count" style="background:var(--accent)">${n} blocks</span>`;
 const code = s => `<span class="code">${s}</span>`;
 const bd = (rows, dir, cell = 64) => `<div class="board" data-map="${rows.join('|')}" data-dir="${dir}" style="--cell:${cell}px"></div>`;
@@ -42,25 +54,32 @@ const V = {
   decision: ['decision', 'choosing what to do', 'decisión'],
   nestedIf: ['nested if', 'an if / else inside another if / else', 'condicional anidado'],
   algorithm: ['algorithm', 'a plan of steps to solve a problem', 'algoritmo'],
+  variable: ['variable', 'a named box that holds a number', 'variable'],
+  value: ['value', 'the number inside the box', 'valor'],
+  setv: ['set', 'put a number in the box', 'asignar'],
+  changev: ['change by', 'add to or take away from the number in the box', 'cambiar'],
 };
 const TIPS = {
   repeat: ['<b>Count first.</b> Count the crystals or steps before you set the repeat number.', '<b>Find one copy</b> of the pattern, build it once, then repeat it.', '<b>Inside or outside?</b> Check which blocks are inside the repeat.', '<b>Run, watch, fix.</b> Change one thing at a time.'],
   until: ['<b>Will it reach the flag?</b> If the steps inside never get there, the loop never stops.', '<b>Count, then until.</b> Use a plain repeat for the part you can count.', '<b>One step of the pattern</b> goes inside repeat until at flag.', '<b>Run, watch, fix.</b> Watch where the rover gets stuck.'],
   tank: ['<b>Face it first.</b> The shell flies the way the rover faces.', '<b>Shells are limited.</b> Only fire when a tank is in your line of fire.', '<b>Red ! means danger.</b> Fire or move out of the tank\'s line on your next move.', '<b>Run, watch, fix.</b> Count tanks and shells before you run.'],
   ifelse: ['<b>Read it as a sentence:</b> "If there is a path ahead, move forward, else turn right."', '<b>Check at every step.</b> Put the if / else inside repeat until at flag.', '<b>Most important first.</b> Check for a tank before you check the path.', '<b>Left or right?</b> Paths are checked from the rover\'s point of view.'],
+  variable: ['<b>Set it first.</b> An empty box holds 0, and repeat 0 times does nothing.', '<b>Set or change?</b> Set replaces the number. Change adds to it or takes from it.', '<b>Inside the loop.</b> The change block goes inside the repeat, so every lap is different.', '<b>Watch the box.</b> The purple box shows steps while the rover runs. Say the number for each lap.'],
 };
 const DESIGN = {
   repeat: 'Draw a rover (with an arrow for the way it faces), some rocks (shade the square) and crystals (◆). Write the shortest program you can with a repeat, then swap with a partner and check each other\'s work.',
   until: 'Draw a rover (with an arrow for the way it faces), rocks (shade the square), crystals (◆) and a flag (⚑). Write a program that uses repeat until at flag, then swap with a partner.',
   tank: 'Draw a rover (with an arrow), rocks (shade the square) and enemy tanks (draw a box with an arrow for its cannon). Write a program that destroys every tank, then swap with a partner.',
   ifelse: 'Draw a winding road from the rover to a flag (⚑), with rocks around it. Write one program with if / else that drives the whole road, then swap with a partner and test it.',
+  variable: 'Draw a spiral or stairs where every lap is a different length, with a flag (⚑) at the end. Write one program with set, change and repeat steps that drives it, then swap with a partner and trace the box together.',
 };
-const STD = { repeat: ['2-AP-10', '2-AP-12', '2-AP-13', '2-AP-17'], tank: ['2-AP-10', '2-AP-12', '2-AP-13', '2-AP-17'], ifelse: ['2-AP-10', '2-AP-12', '2-AP-17', '2-AP-19'] };
+const STD = { repeat: ['2-AP-10', '2-AP-12', '2-AP-13', '2-AP-17'], tank: ['2-AP-10', '2-AP-12', '2-AP-13', '2-AP-17'], ifelse: ['2-AP-10', '2-AP-12', '2-AP-17', '2-AP-19'], variable: ['2-AP-11', '2-AP-12', '2-AP-13', '2-AP-17'] };
 const LEG = {
   until: [['until flag [ F ]', 'repeat until at flag']],
   tank: [['X', 'fire cannon']],
   patrol: [['if tank [ X ]', 'if tank ahead, fire'], ['until no tanks [ … ]', 'repeat until no tanks left']],
   ifelse: [['if path ahead [ F ] else [ R ]', 'if / else'], ['until flag [ … ]', 'repeat until at flag']],
+  variable: [['set 3', 'set steps to 3'], ['change +1', 'change steps by +1'], ['repeat steps [ F ]', 'repeat steps times']],
 };
 const CODE_NOTE = 'Students sign in with Google or the username and password from the Teacher Dashboard. Watch their stars live on the dashboard and help anyone stuck on the same puzzle.';
 
@@ -780,6 +799,61 @@ module.exports = [
     misconceptions: ['Checking path ahead before tank ahead, so the rover turns away from a tank it should fire at.', 'Forgetting to move forward after turning right in the right-hand rule.', 'Building a long list of moves instead of one decision loop.'],
     support: 'provide a flowchart of the checks to follow; reuse programs from Lesson 12.', extension: '3 stars on 13.7, 13.8 and 13.10; write a program that solves two different mazes.',
     connections: ['<b>Careers:</b> robot vacuums and self-driving cars use ordered decisions and sensors.', '<b>ELA:</b> sequencing and priority words (first, then, otherwise).'],
+    next: 'a named box called steps that holds a number, so one short program can draw spirals and stairs.',
+  },
+},
+
+// ===== Lesson 14: Variables =====
+{
+  n: 14, unitName: 'Variables', notation: 'CX', legend: LEG.variable,
+  titleHtml: '<em>Variables</em>', tagline: 'A box with a name. Put a number in it, change it, and let the rover count with it.',
+  goals: ['Explain that a <b>variable</b> is a named box that holds a number', 'Use <b>set steps to</b> and <b>change steps by</b>', 'Use <b>repeat steps times</b> so every lap of a loop can be a different length'],
+  warmup: { time: '3 minutes', title: 'The counting box', body: `<div class="row"><div class="grow"><p>On the board: <span class="code">steps = 1</span></p><p class="big">Each round: clap <b>steps</b> times, then add 1 to the box.</p><p>How many claps in round 4? What is in the box after round 4?</p></div><div class="box" style="width:420px"><p class="big" style="margin:0 0 8px">Answer</p><p class="reveal" style="margin:0">Round 4 = 4 claps. After round 4 the box holds <b>5</b>.</p></div></div>`, note: 'Do it as a class: clap once, change the box to 2, clap twice, and so on. The box is a variable: it has a name (steps) and a number inside that changes.' },
+  concepts: [
+    { kicker: 'Big idea', title: 'A <em>variable</em> is a named box', body: `<div class="row"><div class="box" style="width:360px;text-align:center"><p class="muted" style="margin:0">the box is called</p><p class="big" style="margin:0;font-size:44px">steps</p><p class="code" style="font-size:40px;margin:8px 0 0">3</p></div><div class="grow"><p>${set3} puts a number in the box.</p><p>${chg1} adds 1 to it. ${chgm1} takes 1 away.</p><p class="muted">The purple box above the rover's map shows what is inside.</p></div></div>`, note: 'Hold up a real box with a sticky note "steps" and number cards. Set = replace the card. Change = add or take away.' },
+    { kicker: 'New block', title: '<em>repeat steps times</em>', body: `<div class="row">${bd(['########', '#S....G#', '########'], 1, 60)}<div class="grow"><p>Repeats the blocks inside as many times as the number in the box.</p><div class="prog">${blocksOf([S5, RVF])}</div><p class="reveal" style="margin-top:14px">${cnt(3)} The rover moves 5 squares, because steps = 5.</p></div></div>`, note: 'Puzzle 14.1. Ask: what if we set steps to 4? (The rover stops one square short.)' },
+    { kicker: 'Big idea', title: 'Change the box <em>inside</em> the loop', body: `<div class="row">${bd(['######', '###S.#', '####.#', '#G...#', '######'], 1, 60)}<div class="grow"><p>1 square, turn, 2 squares, turn, 3 squares. Every lap is one square longer.</p><div class="prog reveal">${blocksOf([S1, Rp(3, [RVF, R, Ch(1)])])}</div><p class="reveal" style="margin-top:14px">${cnt(6)} Without a variable this takes 9 blocks.</p></div></div>`, note: 'Walk through the loop with the box on the board: steps is 1, then 2, then 3. The variable changes, so the same blocks do something different each lap.' },
+  ],
+  together: [{ k: 2, ask: 'Drive 3, turn right, drive 5. Can you do it without setting the box twice?', note: 'Puzzle 14.2: set steps to 3 … change steps by +2 … repeat steps times. Change is cheaper than counting again.' }, { k: 4, ask: 'This spiral gets shorter every lap. What changes in the program?', note: 'Puzzle 14.4: start at 6 and change steps by -1 each lap.' }],
+  tips: TIPS.variable, codeTip: 'Watch the steps box while the rover runs. If a lap is the wrong length, check your set and change blocks.',
+  exit: { q: 'The box holds 3. The program runs: change steps by +2, then repeat steps times [ F ]. How many squares does the rover move?', a: '5 squares (3 + 2 = 5).' },
+  notes: { title: 'Lesson 14 introduces variables with one named number, steps. Plan: warm-up 5 min, slides 15 min, classwork 12 min, coding 15 min, exit ticket 3 min.', tips: 'Most bugs are a wrong starting value or a change block outside the loop. Have students say the value of steps out loud for each lap.', code: CODE_NOTE },
+  trace: [
+    { map: ['##########', '#S......G#', '##########'], dir: 1, prog: [S3, RVF, Ch(1), RVF], q: 'How many squares does the rover move in all? What is in the box at the end?', answer: '7 squares; the box holds 4.', why: 'The first loop moves 3 squares. Change makes the box 4, so the second loop moves 4 more squares: 3 + 4 = 7.', expect: { atFlag: true, steps: 4 } },
+    { map: ['######', '#S..##', '###.##', '###.##', '###G##', '######'], dir: 1, prog: [S2, Rp(2, [RVF, R, Ch(1)])], q: 'What is in the box on each lap? Mark where the rover stops.', lines: 1, answer: 'Lap 1: 2. Lap 2: 3. It stops on the flag.', why: 'It moves 2, turns right, then moves 3 down to the flag. The program stops as soon as the rover reaches the flag, so the box still holds 3.', expect: { atFlag: true, steps: 3 } },
+  ],
+  writeInstr: 'Use set, change and repeat steps. Write the number you put in the box.',
+  write: [{ k: 3, q: 'Write the spiral program. Each lap is one square longer.' }, { k: 7, q: 'Write a program for the growing stairs.' }],
+  partC: { title: 'What is in the box?', pts: 'Trace the variable', instr: 'Read each program. Write how many squares the rover moves in all, and what is in the box at the end.', colA: 'Program', colB: 'Squares moved · box at the end',
+    rows: [
+      { a: code('set 4 · repeat steps [ F ]'), key: '4 squares · box = 4' },
+      { a: code('set 2 · change +3 · repeat steps [ F ]'), key: '5 squares · box = 5' },
+      { a: code('set 1 · repeat 3 [ repeat steps [ F ] R change +1 ]'), key: '1 + 2 + 3 = 6 squares · box = 4' },
+      { a: code('set 5 · repeat 2 [ repeat steps [ F ] L change -2 ]'), key: '5 + 3 = 8 squares · box = 1' },
+    ] },
+  design: DESIGN.variable,
+  reflect: { q: 'When is a variable better than a plain repeat number?', look: 'a growing or shrinking pattern', key: 'when the number changes while the program runs, such as a spiral or stairs that get longer each lap; a plain repeat always uses the same number.' },
+  vocab: [V.variable, V.value, V.setv, V.changev, V.loop],
+  ell: { eld: [ELD.SI, ELD.MA, ELD.SC],
+    frames: [['A variable is a named ____ that holds a number.', 'box'], ['set steps to 3 puts the number ____ in the box.', '3'], ['change steps by +1 makes the number ____.', 'bigger']],
+    choices: [
+      { text: 'The box holds 2. After change steps by +1, what is in the box?', opts: ['1', '2', '3'], a: 2 },
+      { text: 'Which block repeats as many times as the number in the box?', opts: ['repeat 3 times', 'repeat steps times', 'repeat until at flag'], a: 1 },
+    ] },
+  plan: {
+    overview: 'Students meet their first <b>variable</b>: a named box called steps that holds a number. They set it, change it, and use repeat steps times so that each lap of a loop can be a different length. One short program then draws spirals, stairs and growing crystal rows that would otherwise need many blocks.',
+    objectives: ['Explain that a variable is a named box that stores a number that can change.', 'Use set steps to and change steps by to control a value.', 'Use repeat steps times to make a loop run a changing number of times.', 'Trace a program and say what is in the variable at each step.'],
+    standards: STD.variable, before: ['Bring a small box, a sticky note that says "steps" and number cards 0 to 9 for the demonstration.'],
+    warmup: '"The counting box": clap steps times, add 1 to the box, repeat. Students predict round 4 and the final value.',
+    direct: 'Define variable, set and change with the real box. Show repeat steps times on puzzle 14.1, then the spiral (puzzle 14.3): change the box inside the loop and every lap grows.',
+    guided: 'Solve puzzle 14.2 together (set 3, change +2), then pairs predict the change block for the shrinking spiral (puzzle 14.4) before the reveal. Review the tips.',
+    classwork: 'Students complete Parts A to C and E in pairs. Part C traces the value of the variable by hand.',
+    code: 'Students solve puzzles 14.1 to 14.10: counting, spirals in and out, stairs, crystal spirals and tank patrols with a growing sweep.',
+    closure: 'Exit ticket: the box holds 3, change +2, repeat steps times [ F ] → 5 squares.',
+    success: 'the student solves at least 7 of 10 puzzles and can say what is in the steps box after each lap of a loop.',
+    misconceptions: ['Thinking set and change are the same (set replaces the number, change adds to it).', 'Putting change steps by outside the loop, so every lap is the same length.', 'Forgetting to set a starting value, so the box holds 0 and the loop does nothing.', 'Using the plain repeat number when the laps are different lengths.'],
+    support: 'give a "box card" where students write the value of steps after each lap before they run the program.', extension: '3 stars on 14.9 and 14.10; write a program that draws a spiral with change steps by +2.',
+    connections: ['<b>Math:</b> variables in algebra (x) and growing patterns (1, 2, 3, …).', '<b>Everyday life:</b> a scoreboard, a step counter and a bank balance are all variables.'],
     next: 'Congratulations! Students have finished the course. More lessons (Destroy walls) are coming soon. Students can return to any lesson for 3 stars.',
   },
 },

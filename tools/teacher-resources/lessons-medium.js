@@ -131,4 +131,14 @@ module.exports = {
     extension: 'try puzzle 13.8 (right turns and crystals) and 13.10 (final maze) and explain every check to a partner.',
   },
 },
+14: {
+  together: [{ k: 3, ask: 'Drive 2, turn left, drive 4. Can you do it without setting the box twice?', note: 'Puzzle 14.3: set steps to 2 … change steps by +2 … repeat steps times.' }, { k: 6, ask: 'This spiral gets shorter every lap. What changes in the program?', note: 'Puzzle 14.6: start at 4 and change steps by -1 each lap.' }],
+  write: [{ k: 5, q: 'Write the spiral program. Each lap is one square longer.' }, { k: 8, q: 'The rover faces down. Write a program for the growing stairs.' }],
+  plan: {
+    direct: 'Define variable, set and change with the real box. Show repeat steps times on puzzle 14.1, then the left spiral (14.4): change the box inside the loop and every lap grows.',
+    guided: 'Solve puzzle 14.3 together (set 2, change +2), then pairs predict the change block for the shrinking spiral (puzzle 14.6) before the reveal. Review the tips.',
+    code: 'Students solve puzzles 14.1 to 14.10: counting, spirals that turn left and right, stairs, crystal spirals and tank patrols with a growing sweep.',
+    extension: '3 stars on 14.9 and 14.10; write a program that draws a spiral with change steps by +2.',
+  },
+},
 };
