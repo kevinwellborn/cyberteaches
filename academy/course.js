@@ -68,7 +68,13 @@ const UNITS = [
    concept:'Mix decisions together: spirals, dead ends, crystals and tanks, solved with if / else inside if / else.',
    intro:['Still no new blocks, just bigger decisions.',
           'Check the most important thing first. For example, check for a tank before you move.',
-          'Use an if / else inside another if / else when there are more than two choices.']}
+          'Use an if / else inside another if / else when there are more than two choices.']},
+  {n:14, title:'Variables', color:'var(--b-var)', newBlocks:['set','change','repeatvar'], video:'',
+   concept:'A variable is a box with a name that holds a number. Put a number in the box, change it as the program runs, and use it to decide how many times to repeat, so one short program can draw spirals, stairs and growing patterns.',
+   intro:['A <b>variable</b> is a named box that holds a number. Ours is called <b>steps</b>. The box on the board shows what is inside it.',
+          '<b>set steps to</b> puts a number in the box. <b>change steps by</b> adds to it or takes away from it.',
+          '<b>repeat steps times</b> repeats the blocks inside as many times as the number in the box. Change the box inside a loop and every lap is a different length.',
+          'You can still use the blocks from earlier lessons, like repeat and collect crystal.']}
 ];
 const UPCOMING = [
   {title:'Destroy walls', blurb:'Blast cracked walls, collect charges, and find keys to locked gates.'}
@@ -82,6 +88,7 @@ const L1 = ['forward','left','right','collect','repeat'];
 const L2 = ['forward','left','right','collect','repeat','until'];
 const L3 = ['forward','left','right','fire','repeat'];
 const L4 = ['forward','left','right','until','ifelse'];
+const L5 = ['forward','left','right','repeat','set','change','repeatvar'];
 const LEVELS = [
   {unit:1, title:'Pick it up', dir:1, ideal:3, blocks:L1,
    goal:'Drive onto the crystal and collect it.',
@@ -1660,7 +1667,12 @@ const LEVELS = [
   {unit:13, level:'medium', title:'Final maze', dir:1, ideal:10, blocks:[...L4,'fire','collect'],
    goal:'Everything at once: a tank, crystals and a twisting road.',
    hint:'Nested if / else: tank ahead → fire; else crystal here → collect; else path ahead → forward; else path left → turn left, else turn right.',
-   map:['########','#S.#####','##*#####','##..>###','####*###','####.G##','########']}
+   map:['########','#S.#####','##*#####','##..>###','####*###','####.G##','########']},
+  // ---- Lesson 14: Variables (sample) ----
+  {unit:14, title:'Spiral out', dir:1, ideal:6, blocks:L5,
+   goal:'Drive the spiral to the flag: 1 square, turn, 2 squares, turn, 3 squares… each lap is one square longer.',
+   hint:'Set steps to 1. Then repeat 6 times: repeat steps times (move forward), turn right, change steps by +1.',
+   map:['########','#......#','#.####.#','#.#S.#.#','#.##.#.#','#....#.#','######.#','######G#','########']}
 ];
 // New puzzles always go at the END of LEVELS, even when they belong to an earlier lesson: n is the puzzle's saved id
 // (progress, programs and the answer key are stored by n), so it must never change. ORDER is the play order, by lesson.
