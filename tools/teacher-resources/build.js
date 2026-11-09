@@ -323,7 +323,7 @@ function planPage(L, u) {
 
 <article class="page">
   <header class="head">
-    <div><span class="label">CyberTeaches Academy · Block coding · Grades 6 to 8${LV()}</span><h1>Lesson ${u.n}: ${esc(u.title)}</h1></div>
+    <div><span class="label">CyberTeaches Academy · Block coding · Grades 6 to 12${LV()}</span><h1>Lesson ${u.n}: ${esc(u.title)}</h1></div>
     <div class="meta"><b>Time</b> 50 minutes<br><b>Unit</b> ${L.unitName}<br><b>Puzzles</b> ${u.n}.1 to ${u.n}.10</div>
   </header>
 
@@ -344,7 +344,7 @@ ${P.objectives.map(o => `        <li>${o}</li>`).join('\n')}
 ${P.standards.map(c => `        <li><b>${c}</b> ${STANDARDS[c]}</li>`).join('\n')}
       </ul>
       <h2>English language development standards</h2>
-      <p class="muted" style="margin-bottom:6px">WIDA ELD Standards Framework (2020), grades 6 to 8</p>
+      <p class="muted" style="margin-bottom:6px">WIDA ELD Standards Framework (2020), grades 6 to 8 band; the matching 9 to 12 standards apply in high school</p>
       <ul class="std">
 ${L.ell.eld.map(([c, t]) => `        <li><b>${c}</b> ${t}</li>`).join('\n')}
       </ul>
