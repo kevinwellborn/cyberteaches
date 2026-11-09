@@ -68,7 +68,7 @@ html{border:12px solid var(--lv,var(--accent));min-height:100vh}
     <div><b>2. Practice</b>Print the classwork. "Print student pages" leaves out the answer key.</div>
     <div><b>3. Code</b>Students solve the lesson's 10 puzzles. Watch their stars live on the Teacher Dashboard.</div>
   </div>
-  <div class="lvlbar"><span class="label">Difficulty level</span><div class="lvlpick" id="lvlpick" role="group" aria-label="Difficulty level"></div><span class="muted" id="lvlnote"></span></div>
+  <div class="lvlbar"><span class="label">Difficulty level · different levels for different grades or experience</span><div class="lvlpick" id="lvlpick" role="group" aria-label="Difficulty level"></div><span class="muted" id="lvlnote"></span></div>
   <div class="grid" id="grid"></div>
 </div>
 <script src="../course.js?v=13"></script>
@@ -81,7 +81,7 @@ const quizBtn = n => window.QUIZZES && QUIZZES[n]
   ? `<a class="btn quiz" href="../quiz/host.html?lesson=${n}" target="_blank" rel="noopener">⚡ Quiz Battle</a>`
   : '<span class="btn off" title="Coming soon">⚡ Quiz Battle · soon</span>';
 // Difficulty level: each level has its own puzzles, so its own classwork, slides and lesson plan (lesson-N/ is Hard, lesson-N/easy/ is Easy).
-const LEVEL_NOTE = {easy:'Smaller maps and shorter programs. A guide: grades 6 to 7, or any class of new coders. Set the level for your class on the Teacher Dashboard.', medium:'Mid-size maps and programs, between Easy and Hard. A guide: grades 8 to 9. Set the level for your class on the Teacher Dashboard.', hard:'The full challenge. A guide: grades 10 to 12, or students with some coding experience. Set the level for your class on the Teacher Dashboard.'};
+const LEVEL_NOTE = {easy:'Smaller maps and shorter programs. Set the level for your class on the Teacher Dashboard.', medium:'Mid-size maps and programs, between Easy and Hard. Set the level for your class on the Teacher Dashboard.', hard:'The full challenge. Set the level for your class on the Teacher Dashboard.'};
 let level = LEVELS_AVAILABLE.includes(location.hash.slice(1)) ? location.hash.slice(1) : DEFAULT_LEVEL;
 function renderLevels(){
   document.getElementById('lvlpick').innerHTML = LEVELS_AVAILABLE.map(v=>`<button class="${v===level?'on':''}" data-level="${v}" aria-pressed="${v===level}">${LEVEL_NAMES[v]}</button>`).join('');
