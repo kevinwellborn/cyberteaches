@@ -323,7 +323,7 @@ function planPage(L, u) {
 
 <article class="page">
   <header class="head">
-    <div><span class="label">CyberTeaches Academy · Block coding · Grades 6 to 12${LV()}</span><h1>Lesson ${u.n}: ${esc(u.title)}</h1></div>
+    <div><span class="label">CyberTeaches Academy · Block coding · Every level${LV()}</span><h1>Lesson ${u.n}: ${esc(u.title)}</h1></div>
     <div class="meta"><b>Time</b> 50 minutes<br><b>Unit</b> ${L.unitName}<br><b>Puzzles</b> ${u.n}.1 to ${u.n}.10</div>
   </header>
 
