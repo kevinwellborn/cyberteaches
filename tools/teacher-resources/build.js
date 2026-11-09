@@ -24,12 +24,16 @@ const withLevel = (L, o) => !o ? L : { ...L, ...o, plan: { ...L.plan, ...(o.plan
 const NAMES = { forward: 'F', left: 'L', right: 'R', collect: 'C', fire: 'X' };
 const COND = { ahead: 'path ahead', left: 'path left', right: 'path right', crystal: 'crystal here', tank: 'tank ahead' };
 const LABEL = { forward: ['move', 'move forward'], left: ['move', 'turn left'], right: ['move', 'turn right'], collect: ['act', 'collect crystal'], fire: ['act', 'fire cannon'] };
+const signed = d => (d > 0 ? '+' : '') + d;
 function txt(p) {
   return p.map(n => {
     if (NAMES[n.type]) return NAMES[n.type];
     if (n.type === 'repeat') return `repeat ${n.n} [ ${txt(n.body)} ]`;
     if (n.type === 'until') return `until flag [ ${txt(n.body)} ]`;
     if (n.type === 'untilclear') return `until no tanks [ ${txt(n.body)} ]`;
+    if (n.type === 'set') return `set ${n.n}`;
+    if (n.type === 'change') return `change ${signed(n.d)}`;
+    if (n.type === 'repeatvar') return `repeat steps [ ${txt(n.body)} ]`;
     if (n.type === 'iftank') return `if tank [ ${txt(n.body)} ]`;
     if (n.type === 'ifelse') return `if ${COND[n.cond]} [ ${txt(n.body)} ]` + (n.elseBody && n.elseBody.length ? ` else [ ${txt(n.elseBody)} ]` : '');
     throw new Error('unknown block ' + n.type);
@@ -43,6 +47,9 @@ function blocks(p) {
     if (n.type === 'repeat') return box('', `repeat <span class="num">${n.n}</span> times`, n.body);
     if (n.type === 'until') return box('', 'repeat until at flag', n.body);
     if (n.type === 'untilclear') return box('', 'repeat until no tanks left', n.body);
+    if (n.type === 'set') return `<span class="blk var">set steps to <span class="num">${n.n}</span></span>`;
+    if (n.type === 'change') return `<span class="blk var">change steps by <span class="num">${signed(n.d)}</span></span>`;
+    if (n.type === 'repeatvar') return box('', 'repeat <span class="num">steps</span> times', n.body);
     if (n.type === 'iftank') return box('logic', 'if tank ahead', n.body);
     if (n.type === 'ifelse') return box('logic', `if ${COND[n.cond]}`, n.body, `<div class="elsel">else</div><div class="inner">${blocks(n.elseBody || []) || '&nbsp;'}</div>`);
   }).join('');
@@ -54,7 +61,7 @@ function simulate(map, dir, prog) {
   const g = map.map(r => [...r]); let x, y; const gems = new Set(), tanks = new Map(); let goal = null;
   g.forEach((r, yy) => r.forEach((c, xx) => { const k = xx + ',' + yy;
     if (c === 'S') { x = xx; y = yy } if (c === '*') gems.add(k); if (c === 'G') goal = k; if (c in TD) tanks.set(k, TD[c]); }));
-  let fail = null, steps = 0, collected = 0, destroyed = 0;
+  let fail = null, steps = 0, collected = 0, destroyed = 0, v = 0;   // v: the variable steps
   const rock = (a, b) => !g[b] || g[b][a] === undefined || g[b][a] === '#';
   const blocked = (a, b) => rock(a, b) || tanks.has(a + ',' + b);
   const atFlag = () => goal === x + ',' + y;
@@ -73,6 +80,8 @@ function simulate(map, dir, prog) {
   }
   function run(p) { for (const n of p) {
     if (n.type === 'repeat') { for (let i = 0; i < n.n; i++) run(n.body) }
+    else if (n.type === 'repeatvar') { const k = v; for (let i = 0; i < k; i++) run(n.body) }
+    else if (n.type === 'set') v = n.n; else if (n.type === 'change') v = Math.max(0, v + n.d);
     else if (n.type === 'until') { while (!atFlag()) { if (++steps > 2000) { fail = 'stuck in a loop'; throw new Stop } run(n.body) } }
     else if (n.type === 'untilclear') { while (tanks.size) { if (++steps > 2000) { fail = 'stuck in a loop'; throw new Stop } run(n.body) } }
     else if (n.type === 'iftank') { if (ahead()) run(n.body) }
@@ -80,7 +89,7 @@ function simulate(map, dir, prog) {
     else act(n.type);
   } }
   try { run(prog) } catch (e) { if (!(e instanceof Stop)) throw e }
-  return { x, y, dir, fail, won: !fail && won(), collected, left: gems.size, destroyed, tanksLeft: tanks.size, atFlag: atFlag() };
+  return { x, y, dir, fail, won: !fail && won(), collected, left: gems.size, destroyed, tanksLeft: tanks.size, atFlag: atFlag(), steps: v };
 }
 
 // ---------- helpers for page templates ----------

@@ -209,4 +209,14 @@ module.exports = {
     guided: 'Solve puzzle 13.1 (spiral) together, then pairs plan the checks for puzzle 13.9 before the reveal.',
   },
 },
+14: {
+  together: [{ k: 3, ask: 'Drive 2, turn right, drive 3. Can you do it without setting the box twice?', note: 'Puzzle 14.3: set steps to 2 … change steps by +1 … repeat steps times.' }, { k: 6, ask: 'This spiral gets shorter every lap. What changes in the program?', note: 'Puzzle 14.6: start at 3 and change steps by -1 each lap.' }],
+  write: [{ k: 4, q: 'Write the little spiral program. Each lap is one square longer.' }, { k: 8, q: 'Write a program for the growing stairs.' }],
+  plan: {
+    direct: 'Define variable, set and change with the real box. Show repeat steps times on puzzle 14.1 and the crystal count (14.2), then the little spiral (14.4): change the box inside the loop and every lap grows.',
+    guided: 'Solve puzzle 14.3 together (set 2, change +1), then pairs predict the change block for the shrinking spiral (puzzle 14.6) before the reveal. Review the tips.',
+    code: 'Students solve puzzles 14.1 to 14.10: counting, crystals, small spirals, stairs and tank patrols with a growing sweep.',
+    extension: '3 stars on 14.9 and 14.10; write a program that draws a spiral with change steps by +2.',
+  },
+},
 };

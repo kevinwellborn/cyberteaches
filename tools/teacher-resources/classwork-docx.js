@@ -7,7 +7,7 @@ const ROOT = path.join(__dirname, '../..'); const only = process.argv[2] ? +proc
 const TMP = fs.mkdtempSync(path.join(require('os').tmpdir(), 'cw-'));
 (async () => {
   const b = await chromium.launch(); const p = await b.newPage({viewport: {width: 1000, height: 1300}, deviceScaleFactor: 2});
-  for (let n = 1; n <= 13; n++) for (const sub of ['', 'easy/', 'medium/']) {   // lesson-N/ is the Hard level, lesson-N/easy/ and lesson-N/medium/ the other levels
+  for (let n = 1; n <= 14; n++) for (const sub of ['', 'easy/', 'medium/']) {   // lesson-N/ is the Hard level, lesson-N/easy/ and lesson-N/medium/ the other levels
     if (only && n !== only) continue;
     if (process.env.LEVEL && sub !== (process.env.LEVEL === 'hard' ? '' : process.env.LEVEL + '/')) continue;   // LEVEL=medium builds one level only
     if (sub && !fs.existsSync(path.join(ROOT, `academy/resources/lesson-${n}/${sub}classwork.html`))) continue;
