@@ -446,7 +446,7 @@ function renderClass(err){
       <div class="stat"><b>${avg.toFixed(1)}</b><span class="muted">puzzles solved on average, of ${levelsOf(cl).length}</span></div>
       ${lessonDone.map(x=>`<div class="stat"><b>${x.done}</b><span class="muted">finished Lesson ${x.u.n}</span><div class="bar"><i style="width:${n?x.done/n*100:0}%;background:${x.u.color}"></i></div></div>`).join('')}</div></section></div>
     <div class="toolbar"><h2>Difficulty level</h2></div>
-    <p class="muted" style="margin:0 0 8px">Every lesson has its own set of 10 puzzles at each level. Pick the level for this class, for example Easy for 6th grade and Hard for 8th. You can move single students to another level in the Progress table. Stars earned at each level are kept.</p>
+    <p class="muted" style="margin:0 0 8px">Every lesson has its own set of 10 puzzles at each level. Pick the level for this class, for example Easy for new coders and Hard for students with some experience. You can move single students to another level in the Progress table. Stars earned at each level are kept.</p>
     <div class="levels" id="levels" role="group" aria-label="Class difficulty level">${LEVELS_AVAILABLE.map(v=>`<button class="lvlbtn${v===cl?' on':''}" data-level="${v}" aria-pressed="${v===cl}" style="${levelStyle(v)}"><b>${LEVEL_NAMES[v]}</b><small>${LEVEL_HELP[v]}</small></button>`).join('')}</div>
     <div class="toolbar"><h2>Lessons open to students</h2><div class="spacer"></div><button class="btn" id="unlockAll">Unlock all</button><button class="btn" id="lockAll">Lock all</button></div>
     <p class="muted" style="margin:0 0 8px">Tap a lesson to lock or unlock it for this class. Students see a lock and can't open its puzzles. Changes reach students right away. Their stars are kept.</p>
@@ -556,7 +556,7 @@ function requestView(user){
     <p>The Teacher Dashboard is for teachers only. Tell us who you are and the site admin will approve your account, usually within a day. You are signed in as <b>${esc(user.email)}</b>.</p>
     <form class="panel auth" id="reqForm" novalidate>
       <label class="label" for="rName">Your name</label><input class="field" id="rName" maxlength="60" autocomplete="name" placeholder="e.g. Ms. Rivera" value="${esc(user.displayName||'')}">
-      <label class="label" for="rSchool">School</label><input class="field" id="rSchool" maxlength="80" autocomplete="organization" placeholder="e.g. Lincoln Middle School">
+      <label class="label" for="rSchool">School</label><input class="field" id="rSchool" maxlength="80" autocomplete="organization" placeholder="e.g. Lincoln High School">
       <div class="row"><button class="btn primary" id="reqGo">Send request</button><button type="button" class="linkbtn" id="so">Sign out</button></div>
       <p id="reqMsg" role="alert" class="err" style="margin:10px 0 0"></p></form></section>`;
   $('#reqForm').addEventListener('submit',async e=>{ e.preventDefault();

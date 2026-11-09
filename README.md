@@ -9,7 +9,7 @@ and small ad spots (edit `CT_ADS` in `index.html`).
 | `apcybersecurity/` | AP Cybersecurity (high school) |
 | `apcsp/` | AP Computer Science Principles (high school) |
 | `networking/` | AP Networking (companion site for the book: labs, practice exams, syllabus, teacher keys) |
-| `academy/` | CyberTeaches Academy block coding (grades 6 to 8) |
+| `academy/` | CyberTeaches Academy block coding (grades 6 to 12) |
 
 Old links keep working: `ap-cyber/` and `teacher.html` redirect, and the hub forwards `?class=CODE` join links
 and `#puzzle-N` links to `academy/`.
@@ -29,7 +29,7 @@ editable sample syllabus, and a teacher area with lab keys, exam keys, and print
 noindex and blocked in `robots.txt`. `apnetworking/` redirects to it. The pages are built from source files kept with the
 book project (exam JSON and page fragments), so edit there and copy the built folder in.
 
-## CyberTeaches Academy (grades 6 to 8)
+## CyberTeaches Academy (grades 6 to 12)
 
 A self-paced, block-based coding course. Students guide a rover through lessons that each unlock one new block:
 
