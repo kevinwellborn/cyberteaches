@@ -385,7 +385,7 @@ if(typeof matchMedia==='function') matchMedia('(prefers-color-scheme: dark)').ad
 const myLevels = unit => levelsOf(curLevel, unit);   // this level's puzzles for one lesson (or all lessons), in play order
 const doneCount = ()=>myLevels().filter(l=>progress[l.n]).length;
 // Lessons the student's teacher has locked for their class (classes/{code}.locked). Empty when not in a class.
-let lockedUnits=new Set(), classStop=null, watchedCode=null;
+let lockedUnits=new Set(), classStop=null, watchedCode=null, teacherStop=null;   // teacherStop: watcher that frees the level tabs for approved teachers
 const isLocked = unit => lockedUnits.has(unit);
 const nextLevel = ()=>{ const o=myLevels(); return (o.find(l=>!progress[l.n] && !isLocked(l.unit)) || o.find(l=>!isLocked(l.unit)) || o[o.length-1]).n };
 const LOCK_ICO='<svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" style="vertical-align:-2px"><rect x="5" y="10" width="14" height="11" rx="2" fill="currentColor"/><path d="M8 10V7a4 4 0 0 1 8 0v3" stroke="currentColor" stroke-width="2.2" fill="none"/></svg>';
@@ -1108,7 +1108,12 @@ if(Cloud) Cloud.onChange(c=>{
   if(c.ready && !u && joinParam && !lastUid && !$('#modal').innerHTML) openJoin(joinParam);
   renderAccount();
   const rb=$('.rankbar'); if(rb) rb.replaceWith(rankBar());
-  watchLocks(u && c.profile ? c.profile.classCode : null);
+  // Approved teachers (and the admin) always get every level tab, even if they joined a class to try it as a student.
+  const code = u && c.profile ? c.profile.classCode : null;
+  if(u && code && !Cloud.isStudentLogin(u)){
+    if(teacherStop) teacherStop();
+    teacherStop = Cloud.isAdmin(u) ? (watchLocks(null), null) : Cloud.watchTeacherStatus(t => watchLocks(t && t.status==='approved' ? null : code));
+  } else { if(teacherStop){ teacherStop(); teacherStop=null } watchLocks(code) }
 });
 // Follow the class's locked lessons and difficulty level live, so a teacher's change reaches students right away.
 function watchLocks(code){
