@@ -175,7 +175,7 @@ const esc=t=>String(t==null?'':t).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;'
 const app=$('#app'), acct=$('#acct');
 const openUnits=new Set();  // lessons expanded in the progress table
 let classes=[], showArchived=false, keepArchived=false, current=null, roster=[], stopRoster=null, stopClasses=null, uid=null, tw0=null;
-const LEVEL_HELP={easy:'Small maps, short programs', medium:'Mid-size maps, a step up', hard:'The full challenge'};
+const LEVEL_HELP={easy:'Grades 6 to 7 · small maps', medium:'Grades 8 to 9 · a step up', hard:'Grades 10 to 12 · full challenge'};
 const pick={ get(){ try{ return localStorage.getItem('cyberteaches:teacherClass') }catch(e){ return null } }, set(v){ try{ localStorage.setItem('cyberteaches:teacherClass',v) }catch(e){} } };
 
 function signInView(mode){
@@ -446,7 +446,7 @@ function renderClass(err){
       <div class="stat"><b>${avg.toFixed(1)}</b><span class="muted">puzzles solved on average, of ${levelsOf(cl).length}</span></div>
       ${lessonDone.map(x=>`<div class="stat"><b>${x.done}</b><span class="muted">finished Lesson ${x.u.n}</span><div class="bar"><i style="width:${n?x.done/n*100:0}%;background:${x.u.color}"></i></div></div>`).join('')}</div></section></div>
     <div class="toolbar"><h2>Difficulty level</h2></div>
-    <p class="muted" style="margin:0 0 8px">Every lesson has its own set of 10 puzzles at each level. Pick the level for this class, for example Easy for new coders and Hard for students with some experience. You can move single students to another level in the Progress table. Stars earned at each level are kept.</p>
+    <p class="muted" style="margin:0 0 8px">Every lesson has its own set of 10 puzzles at each level. Pick the level for this class, as a guide: Easy for grades 6 to 7, Medium for grades 8 to 9, Hard for grades 10 to 12. Any class of new coders can start on Easy. You can move single students to another level in the Progress table. Stars earned at each level are kept.</p>
     <div class="levels" id="levels" role="group" aria-label="Class difficulty level">${LEVELS_AVAILABLE.map(v=>`<button class="lvlbtn${v===cl?' on':''}" data-level="${v}" aria-pressed="${v===cl}" style="${levelStyle(v)}"><b>${LEVEL_NAMES[v]}</b><small>${LEVEL_HELP[v]}</small></button>`).join('')}</div>
     <div class="toolbar"><h2>Lessons open to students</h2><div class="spacer"></div><button class="btn" id="unlockAll">Unlock all</button><button class="btn" id="lockAll">Lock all</button></div>
     <p class="muted" style="margin:0 0 8px">Tap a lesson to lock or unlock it for this class. Students see a lock and can't open its puzzles. Changes reach students right away. Their stars are kept.</p>
