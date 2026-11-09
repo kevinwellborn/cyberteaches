@@ -194,6 +194,7 @@ input[type=range]{width:100%;accent-color:var(--accent)}
     <nav class="nav" aria-label="Main">
       <a href="#/" data-nav="home">Big Ideas</a>
       <a href="#/labs" data-nav="labs">Labs</a>
+      <a href="exam/">Practice exam</a>
       <a href="#/book" data-nav="book" id="bookNav" hidden>The Book</a>
       <a href="#" id="videoNav" target="_blank" rel="noopener" hidden>Videos</a>
       <a href="../">All courses</a>
@@ -282,6 +283,7 @@ input[type=range]{width:100%;accent-color:var(--accent)}
           <div class="row" style="margin-bottom:18px">
             <a class="btn primary" href="#/topic/${next.id}">${d ? 'Continue' : 'Start'} with ${next.id} ${esc(next.title)}</a>
             <a class="btn" href="#/labs">Try a lab</a>
+            <a class="btn" href="exam/">Take the practice exam</a>
           </div>
           <div class="meter"><span class="label">${d} of ${ALL.length} topics complete</span><div class="meter-bar"><i style="width:${Math.round(d / ALL.length * 100)}%"></i></div></div>
         </div>

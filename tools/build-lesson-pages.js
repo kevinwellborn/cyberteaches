@@ -94,7 +94,7 @@ function breadcrumbs(items) {
     itemListElement: items.map(([name, item], i) => ({ '@type': 'ListItem', position: i + 1, name, item })) };
 }
 
-const sitemap = ['', 'apcybersecurity/', 'apcsp/', 'securityplus/', 'networking/', 'networking/exam-1/', 'networking/exam-2/', 'networking/lab-1/', 'networking/lab-2/', 'networking/lab-3/', 'networking/lab-4/', 'networking/syllabus/', 'networking/updates/', 'academy/'];
+const sitemap = ['', 'apcybersecurity/', 'apcsp/', 'apcsp/exam/', 'securityplus/', 'networking/', 'networking/exam-1/', 'networking/exam-2/', 'networking/lab-1/', 'networking/lab-2/', 'networking/lab-3/', 'networking/lab-4/', 'networking/syllabus/', 'networking/updates/', 'academy/'];
 
 for (const course of COURSES) {
   const w = load(course);

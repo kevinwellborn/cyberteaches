@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AP CSP Practice Exam Booklet | CyberTeaches</title>
+<meta name="description" content="Printable AP Computer Science Principles practice exam booklet: answer sheet, reference sheet, 70 original multiple-choice questions, and written response section.">
+<link rel="canonical" href="https://cyberteaches.com/apcsp/exam/booklet.html">
+<link rel="icon" type="image/png" href="../../favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Atkinson+Hyperlegible:wght@400;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<link rel="stylesheet" href="exam.css?v=2">
+<style>
+.page{--panel:#fff;--panel-2:#F2F4F2;--ink:#111;--muted:#555;--line:#BFC5BF;--accent-soft:#E4E8E4;--info-soft:#EEF2F7;
+  color:var(--ink);background:#fff;width:100%;max-width:8.5in;min-height:11in;margin:18px auto;padding:.65in .7in .5in;
+  box-shadow:0 2px 14px rgba(0,0,0,.18);display:flex;flex-direction:column;font-size:15.5px;line-height:1.45}
+.page .body{flex:1}
+.page .foot{display:flex;justify-content:space-between;align-items:flex-end;font-size:12px;color:#444;margin-top:18px;gap:12px}
+.page .goon{font-weight:700;font-size:13px;letter-spacing:.02em}
+.page h1{font-size:30px} .page h2{font-size:21px;margin-top:6px}
+.page .q{margin:0 0 26px;break-inside:avoid}
+.page .q .qn{font-weight:700;float:left;width:34px}
+.page .q .qb{margin-left:34px}
+.page .q p{margin:0 0 8px}
+.page ol.ch{list-style:none;padding:0;margin:8px 0 0}
+.page ol.ch li{display:flex;gap:8px;margin:5px 0;break-inside:avoid}
+.page ol.ch.grid2{display:grid;grid-template-columns:1fr 1fr;gap:6px 18px}
+.page ol.ch .l{flex:none;font-weight:700;width:30px}
+.page pre.code{font-size:13px;padding:8px 12px;background:#fff;border-color:#999}
+.page .blocks{font-size:12.5px}
+.page .b-body{background:#fff}
+.glance{display:grid;grid-template-columns:170px 1fr;gap:26px;margin-top:20px}
+.glance aside{border-right:3px solid #111;padding-right:16px;font-size:14px}
+.glance aside b{display:block;margin-top:10px;font-size:15px}
+.cover-title{border-bottom:4px solid #111;padding-bottom:10px;margin-bottom:6px}
+.sheet{width:100%;border-collapse:collapse;font-size:14px}
+.sheet td,.sheet th{border:1px solid #777;padding:3px 8px;height:24px}
+.sheet th{background:#EEE}
+.lines{border-bottom:1px solid #999;height:28px}
+.toolbar{max-width:8.5in;margin:10px auto 0}
+.setbox{border:1.5px solid #111;padding:12px 14px;margin-bottom:18px;break-inside:avoid}
+.ref h4{margin:12px 0 4px;font-size:15px;border-bottom:2px solid #111}
+.ref table{font-size:12.5px} .ref td{padding:4px 8px}
+.ref pre.code{font-size:12px;background:transparent}
+.keytbl td,.keytbl th{padding:4px 8px;font-size:13px}
+@media (max-width:700px){.page{padding:22px 16px;min-height:0}.page [style*="grid-template-columns"]{grid-template-columns:1fr!important}.page .ref td:first-child{width:auto}.page table{table-layout:fixed}.page pre.code{white-space:pre-wrap;word-break:break-word}.glance{grid-template-columns:1fr}.glance aside{border-right:0;border-bottom:3px solid #111;padding:0 0 10px}.page ol.ch.grid2{grid-template-columns:1fr}}
+@media print{
+  @page{size:letter;margin:0}
+  body{padding:0;background:#fff} .wrap{max-width:none}
+  .toolbar,.topbar,footer.site{display:none!important}
+  .page{box-shadow:none;margin:0;max-width:none;width:8.5in;height:11in;min-height:0;overflow:hidden;break-after:page}
+}
+</style>
+</head><body>
+<div class="wrap">
+<header class="topbar">
+  <a class="brand" href="../"><img class="logo" src="../../logo.png" alt="" width="36" height="36">AP CSP</a>
+  <span class="spacer"></span>
+  <nav class="nav" aria-label="Main"><a href="../#/">Big Ideas</a><a href="./">Practice exam</a><a href="../../">All courses</a></nav>
+</header>
+<div class="toolbar row"><button class="btn primary" onclick="window.print()">Print or save as PDF</button><a class="btn" href="./">Take it online instead</a><span class="muted small" id="keyNote"></span></div>
+<div id="book"></div>
+<footer class="site">AP is a trademark registered by the College Board, which is not affiliated with, and does not endorse, this site. All questions, passages, and programs in this booklet are original CyberTeaches material; the people, apps, and places in them are fictional.</footer>
+</div>
+<script src="common.js?v=1"></script>
+<script src="data.js?v=1"></script>
+<script>
+(function(){
+var E=window.CSP_EXAM,X=window.CSP,esc=X.esc,L="ABCD",pageNo=0,out=[];
+var showKey=/[?&]key=1/.test(location.search);
+document.getElementById("keyNote").innerHTML=showKey?'Answer key included at the end. <a href="booklet.html">Student version</a>':'Teachers: <a href="booklet.html?key=1">include the answer key</a>';
+function page(body,opts){opts=opts||{};pageNo++;
+  out.push('<section class="page"'+(opts.id?' id="'+opts.id+'"':'')+'><div class="body">'+body+'</div><div class="foot"><span>'+(opts.noNum?'':'CyberTeaches AP CSP Practice Exam 1 &middot; '+pageNo)+'</span><span class="goon">'+(opts.foot||'')+'</span></div></section>');}
+var GO="GO ON TO THE NEXT PAGE.";
+/* cover */
+page('<div class="cover-title"><div class="eyebrow" style="color:#444">CyberTeaches practice exam</div><h1>AP Computer Science Principles<br>Practice Exam 1</h1><h2>Section I: Multiple Choice</h2></div>'+
+'<p><b>DO NOT OPEN THIS BOOKLET UNTIL YOU ARE TOLD TO DO SO.</b></p>'+
+'<div class="glance"><aside><div class="eyebrow" style="color:#111">At a glance</div><b>Total time</b>2 hours<b>Number of questions</b>70<b>Percent of total score</b>70%<b>Writing instrument</b>Pencil<b>Electronic devices</b>None allowed</aside>'+
+'<div><h2>Instructions</h2><p>This booklet contains 70 multiple-choice questions. A programming reference sheet comes before the questions. Use it whenever you need to check how a programming instruction works.</p>'+
+'<p>Mark all of your answers on the answer sheet. You may write in this booklet for notes and scratch work, but only the answer sheet is scored.</p>'+
+'<p>For questions <b>1 through 62</b>, choose the <b>single best answer</b>.</p><p>For questions <b>131 through 138</b>, choose the <b>two best answers</b>.</p>'+
+'<p>Work as quickly as you can without losing accuracy. If a question is taking too long, move on and come back to it if you have time.</p>'+
+'<p>Your score is the number of questions you answer correctly. Points are not taken away for wrong answers or blank questions, so answer every question. If you are not sure, rule out as many choices as you can and pick the best remaining answer.</p></div></div>',{noNum:true});
+/* answer sheet */
+function sheetCol(a,b){var h='<table class="sheet"><tr><th>No.</th><th>Answer</th></tr>';for(var i=a;i<=b;i++)h+='<tr><td>'+i+'</td><td></td></tr>';return h+'</table>';}
+page('<p style="text-align:right">Name: ______________________________</p><h1 style="text-align:center">Answer Sheet</h1><p style="text-align:center">Questions 1–62: one answer each. Questions 131–138: two answers each.</p>'+
+'<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px">'+sheetCol(1,24)+sheetCol(25,48)+'<div>'+sheetCol(49,62)+'<div style="height:14px"></div>'+sheetCol(131,138)+'</div></div>');
+/* reference: one page per group of sections */
+var R=X.REF.replace(/^<div class="ref">/,'').replace(/<\/div>$/,''), cuts=['<h4>Selection</h4>','<h4>Lists</h4>','<h4>Procedures</h4>'], chunks=[], rest=R;
+cuts.forEach(function(c){var i=rest.indexOf(c);chunks.push(rest.slice(0,i));rest=rest.slice(i);});chunks.push(rest);
+chunks.forEach(function(c,i){page((i===0?'<h2 style="text-align:center">Programming Reference Sheet</h2>':'<p class="small muted" style="text-align:center">Programming Reference Sheet (continued)</p>')+'<div class="ref">'+c+'</div>',{id:i===0?"reference":"",foot:i===chunks.length-1?GO:""});});
+/* questions */
+function weight(q){var w=1.1;if(q.code)w+=q.code.split("\n").length/9;if(q.robot)w+=1.6;
+  q.opts.forEach(function(o){w+=typeof o==="string"?(o.length>70?0.35:0.18):o.code.split("\n").length/(q.block?9:13);});
+  w+=q.stem.length/700;return w;}
+function qHTML(q){
+  var h='<div class="q"><div class="qn">'+q.id+'.</div><div class="qb"><p>'+q.stem+'</p>';
+  if(q.robot)h+='<div class="fig">'+X.robot(q.robot)+'</div>';
+  if(q.code)h+=X.code(q.code,q.block);
+  if(q.stemAfter)h+='<p>'+q.stemAfter+'</p>';
+  var codeOpts=typeof q.opts[0]!=="string";
+  h+='<ol class="ch'+(codeOpts?' grid2':'')+'">';
+  q.opts.forEach(function(o,i){h+='<li><span class="l">('+L[i]+')</span><span>'+(typeof o==="string"?esc(o):X.code(o.code,q.block))+'</span></li>';});
+  return h+'</ol></div></div>';}
+var MAXW=7.5, buf="", bw=0, seenSet={};
+function flush(foot){if(buf){page(buf,{foot:foot||GO});buf="";bw=0;}}
+var qs=E.questions;
+qs.forEach(function(q,i){
+  if(q.id===131){flush();buf='<div class="box b" style="margin-bottom:18px"><b>Directions:</b> Each of the remaining questions has <b>two</b> correct answers. Mark both of them on the answer sheet. A question earns credit only when both correct answers are marked.</div>';bw=0.8;}
+  var pre="";
+  if(q.set&&!seenSet[q.set]){seenSet[q.set]=1;var ids=qs.filter(function(x){return x.set===q.set;}).map(function(x){return x.id;});
+    flush();pre='<div class="setbox"><b>Questions '+ids[0]+'–'+ids[ids.length-1]+' refer to the information below.</b>'+E.sets[q.set].html+'</div>';bw=q.set==="RIDE"?3.2:2.4;}
+  var w=weight(q);
+  if(bw+w>MAXW&&buf)flush();
+  buf+=pre+qHTML(q);bw+=w;
+});
+buf+='<p style="text-align:center;font-weight:700;margin-top:30px">END OF SECTION I</p><p style="text-align:center">IF YOU FINISH BEFORE TIME IS CALLED, YOU MAY CHECK YOUR WORK ON THIS SECTION.</p>';
+flush(" ");
+/* section II */
+var W=E.wr;
+page('<div class="cover-title"><div class="eyebrow" style="color:#444">CyberTeaches practice exam</div><h1>AP Computer Science Principles<br>Practice Exam 1</h1><h2>Section II: Written Response</h2></div>'+
+'<div class="glance"><aside><div class="eyebrow" style="color:#111">At a glance</div><b>Total time</b>1 hour<b>Number of questions</b>2 (4 prompts)<b>Writing instrument</b>Pen or pencil<b>Electronic devices</b>None allowed</aside><div><h2>Instructions</h2>'+W.intro+
+'<p>Answer every prompt in complete sentences in the space provided. Refer to specific parts of the code, such as a variable, a condition, or a line, in each answer.</p></div></div>',{foot:GO});
+var ppr='<h2>Personalized Project Reference (sample program): '+esc(W.title)+'</h2>';
+ppr+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:4px 18px">';W.ppr.forEach(function(p){ppr+='<div><p style="margin:10px 0 2px"><b>'+p[0]+' part ('+p[1]+'):</b> '+esc(p[2])+'</p>'+X.code(p[3],false)+'</div>';});ppr+='</div>';
+page(ppr,{foot:GO});
+function lines(n){var h="";for(var i=0;i<n;i++)h+='<div class="lines"></div>';return h;}
+W.parts.forEach(function(p,i){page('<p class="muted small">Use the sample program on the previous page.</p><h2>'+p.q+': '+p.label+'</h2><p>'+p.prompt+'</p>'+lines(17),{foot:i<W.parts.length-1?GO:"END OF EXAM"});});
+/* key */
+if(showKey){
+  var k='<h2>Answer Key: Section I</h2><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px">';
+  [qs.slice(0,24),qs.slice(24,48),qs.slice(48)].forEach(function(col){k+='<table class="sheet keytbl"><tr><th>No.</th><th>Ans.</th><th>Topic</th></tr>'+col.map(function(q){return '<tr><td>'+q.id+'</td><td><b>'+q.ans.split("").join(", ")+'</b></td><td>'+q.topic+'</td></tr>';}).join("")+'</table>';});
+  page(k+'</div><p class="small" style="margin-top:14px">Explanations for every question are in the online score report at cyberteaches.com/apcsp/exam/.</p>');
+  W.parts.forEach(function(p){page('<h2>Scoring: '+p.q+' ('+p.label+')</h2><p><b>Scoring guideline (1 point):</b> '+p.rubric+'</p><p><b>Sample response that earns the point:</b></p><div class="box g">'+esc(p.sample)+'</div>');});
+}
+document.getElementById("book").innerHTML=out.join("");
+})();
+</script>
+</body></html>
