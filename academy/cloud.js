@@ -28,7 +28,7 @@
       db.settings({experimentalForceLongPolling: true, experimentalAutoDetectLongPolling: false, merge: true});
       Cloud.db = db;
       auth.onAuthStateChanged(async u => {
-        Cloud.user = u; Cloud.profile = null;
+        Cloud.user = u; Cloud.profile = null; savedStars = savedProgs = null; clearTimeout(progTimer);
         if(u){
           // Retry a slow or dropped network before treating the student as not in a class.
           for(let i = 0; i < 3 && !Cloud.profile; i++){
@@ -140,15 +140,31 @@
   });
 
   // Saves to the student's own record, and copies stars to their class roster for the teacher.
-  Cloud.save = async ({progress, bonus, programs}) => {
+  // The free Firebase plan allows 20,000 writes a day for the whole site, so: nothing is written when nothing
+  // changed, the roster and leaderboard are written only when stars change, and program edits alone
+  // (every block dragged) are saved to the student's record at most once a minute.
+  let savedStars = null, savedProgs = null, progTimer = null, lastProgSave = 0;
+  const starsKey = (progress, bonus) => JSON.stringify([progress || {}, bonus || {}]);
+  Cloud.save = async ({progress, bonus, programs}, force) => {
     if(!Cloud.user) return;
+    const uid = Cloud.user.uid, sk = starsKey(progress, bonus);
+    if(savedStars === null && Cloud.profile){ savedStars = starsKey(Cloud.profile.progress, Cloud.profile.bonus); savedProgs = Cloud.profile.programs || '{}' }
+    const starsChanged = force || sk !== savedStars, progsChanged = programs !== savedProgs;
+    if(!starsChanged && !progsChanged) return;
+    if(!starsChanged){
+      const wait = 60000 - (Date.now() - lastProgSave);
+      if(wait > 0){ clearTimeout(progTimer); progTimer = setTimeout(() => Cloud.save({progress, bonus, programs}).catch(e => console.error(e)), wait); return }
+    }
+    clearTimeout(progTimer); lastProgSave = Date.now();
     const base = who();
-    await db.collection('users').doc(Cloud.user.uid).set({...base, progress, bonus, programs}, {merge: true});
+    await db.collection('users').doc(uid).set({...base, progress, bonus, programs}, {merge: true});
+    savedProgs = programs;
     const code = Cloud.profile && Cloud.profile.classCode;
-    if(code){
-      await db.collection('classes').doc(code).collection('students').doc(Cloud.user.uid).set({...base, progress, bonus}, {merge: true});
+    if(starsChanged && code){
+      await db.collection('classes').doc(code).collection('students').doc(uid).set({...base, progress, bonus}, {merge: true});
       await Cloud.saveBoard(code, progress).catch(e => console.error('Could not update the leaderboard', e));
     }
+    if(starsChanged) savedStars = sk;
     Cloud.profile = {...Cloud.profile, progress, bonus, programs};
   };
 
@@ -172,7 +188,7 @@
     await db.collection('users').doc(Cloud.user.uid).set({classCode: cls.code, className: cls.name || cls.code}, {merge: true});
     Cloud.profile = {...Cloud.profile, classCode: cls.code, className: cls.name || cls.code};
     rememberClass(Cloud.user.uid, Cloud.profile);
-    await Cloud.save(data);
+    await Cloud.save(data, true);
     emit();
   };
 

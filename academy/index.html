@@ -310,7 +310,7 @@ body{border-top:8px solid var(--lv,var(--accent))}
 
 <script src="course.js?v=13"></script>
 <script src="firebase-config.js"></script>
-<script src="cloud.js?v=13"></script>
+<script src="cloud.js?v=14"></script>
 <script src="sound.js?v=1"></script>
 <script>
 const sfx=n=>{ if(window.Sfx) Sfx.play(n) };
@@ -1137,10 +1137,11 @@ function watchLocks(code){
     apply(d.locked, (d.levels||{})[Cloud.user&&Cloud.user.uid] || d.level || DEFAULT_LEVEL) };
   const live=ref.onSnapshot(s=>fromData(s.exists?s.data():{}), e=>console.error(e));
   // School filters can stall the live stream, so also ask the server with a plain HTTPS request
-  // right away, every 20 seconds, and whenever the tab comes back into view.
+  // right away, every 3 minutes, and whenever the tab comes back into view (kept rare: the free plan
+  // allows 50,000 reads a day for the whole site).
   const poll=()=>{ if(!document.hidden && Cloud.user) Cloud.restGet('classes/'+code).then(fromData).catch(e=>console.error(e)) };
   poll();
-  const timer=setInterval(poll, 20000);
+  const timer=setInterval(poll, 180000);
   document.addEventListener('visibilitychange', poll); window.addEventListener('focus', poll);
   classStop=()=>{ live(); clearInterval(timer); document.removeEventListener('visibilitychange', poll); window.removeEventListener('focus', poll) };
 }
