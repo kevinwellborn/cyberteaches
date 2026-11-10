@@ -1132,8 +1132,16 @@ function watchLocks(code){
     if(!m || isLocked(LEVELS[+m[1]-1].unit)) route() };
   if(!code){ levelByTeacher=false; apply([], store.get('level',DEFAULT_LEVEL)); return }
   levelByTeacher=true;
-  classStop=Cloud.db.collection('classes').doc(code).onSnapshot(s=>{ const d=s.exists?s.data():{};
-    apply(d.locked, (d.levels||{})[Cloud.user&&Cloud.user.uid] || d.level || DEFAULT_LEVEL) }, e=>console.error(e));
+  const ref=Cloud.db.collection('classes').doc(code);
+  const fromDoc=s=>{ if(watchedCode!==code) return; const d=s.exists?s.data():{};
+    apply(d.locked, (d.levels||{})[Cloud.user&&Cloud.user.uid] || d.level || DEFAULT_LEVEL) };
+  const live=ref.onSnapshot(fromDoc, e=>console.error(e));
+  // School filters can stall the live stream after the first answer, so also ask the server again
+  // every 20 seconds and whenever the tab comes back into view.
+  const poll=()=>{ if(!document.hidden) ref.get({source:'server'}).then(fromDoc).catch(()=>{}) };
+  const timer=setInterval(poll, 20000);
+  document.addEventListener('visibilitychange', poll); window.addEventListener('focus', poll);
+  classStop=()=>{ live(); clearInterval(timer); document.removeEventListener('visibilitychange', poll); window.removeEventListener('focus', poll) };
 }
 
 route();

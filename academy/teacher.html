@@ -476,7 +476,13 @@ function renderClass(err){
   };
   // Writes go straight to Firestore; the class snapshot (with local changes applied at once) redraws the buttons.
   const FV=firebase.firestore.FieldValue, cref=Cloud.db.collection('classes').doc(c.code);
-  const save=data=>{ $('#lockErr').textContent=''; cref.update(data).catch(e=>{ console.error(e); $('#lockErr').textContent='Could not save. Check your connection and try again.' }) };
+  // The buttons change at once, but the change only reaches students once the server confirms it, so say which.
+  let saves=0;
+  const save=data=>{ const n=++saves, el=()=>$('#lockErr'), say=(t,ok)=>{ const e=el(); if(e && n===saves){ e.textContent=t; e.style.color=ok?'#0B5E3C':'' } };
+    say('Saving…',true);
+    const slow=setTimeout(()=>say('Still saving… Your network may be slowing this down. Keep this page open until it says Saved.'),8000);
+    cref.update(data).then(()=>{ clearTimeout(slow); say('Saved ✓ Students will see the change within about 20 seconds.',true) })
+      .catch(e=>{ clearTimeout(slow); console.error(e); say('Could not save. Check your connection and try again.') }) };
   $('#locks').onclick=e=>{ const b=e.target.closest('.lockbtn'); if(!b) return; const u=+b.dataset.unit, off=b.classList.contains('off');
     b.classList.toggle('off'); save({locked: off ? FV.arrayRemove(u) : FV.arrayUnion(u)}) };
   $('#levels').onclick=e=>{ const b=e.target.closest('.lvlbtn'); if(!b) return; save({level: b.dataset.level}) };
