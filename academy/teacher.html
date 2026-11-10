@@ -484,7 +484,15 @@ function renderClass(err){
     save({['levels.'+sel.dataset.uid]: sel.value ? sel.value : FV.delete()}) };
   $('#unlockAll').onclick=()=>save({locked: []});
   $('#lockAll').onclick=()=>save({locked: UNITS.map(u=>u.n)});
-  const tw=$('#progressTable'); tw.onclick=e=>{ const b=e.target.closest('.lessonbtn'); if(!b) return; const u=+b.dataset.unit;
+  const tw=$('#progressTable'); tw.onclick=e=>{
+    const rm=e.target.closest('.rmstu');
+    if(rm){ const st=roster.find(x=>x.uid===rm.dataset.uid); if(!st) return;
+      if(!confirm('Remove '+(st.name||'this student')+' from '+(c.name||c.code)+'?\n\nUse this when a student joined the wrong class. Their stars are kept in their own account. If they are still in this class, they will show up again the next time they play.')) return;
+      rm.disabled=true;
+      Promise.all([cref.collection('students').doc(st.uid).delete(), cref.collection('board').doc(st.uid).delete().catch(()=>{})])
+        .catch(err=>{ console.error(err); rm.disabled=false; alert('Could not remove. Check your connection and try again.') });
+      return }
+    const b=e.target.closest('.lessonbtn'); if(!b) return; const u=+b.dataset.unit;
     openUnits.has(u)?openUnits.delete(u):openUnits.add(u); const x=tw.scrollLeft; tw.innerHTML=table(); tw.scrollLeft=x;
     const nb=tw.querySelector(`.lessonbtn[data-unit="${u}"]`); if(nb) nb.focus() };
   const fs=$('#lbFull'); if(fs) fs.onclick=()=>{ const el=$('#lbPanel'); (el.requestFullscreen||el.webkitRequestFullscreen||(()=>{})).call(el) };
@@ -512,7 +520,7 @@ function table(){
     const cells=UNITS.map(u=>lv(u).map(l=>{ const st=p[l.n]||0; return other ? '<td><span class="cell s0" title="This student is on another level">–</span></td>' : `<td><span class="cell s${st}" title="${esc(l.title)}: ${st?st+' star'+(st>1?'s':''):'not solved'}">${st?'★'.repeat(st):'·'}</span></td>` }).join('')
       +`<td class="score"><b>${lessonScore(p,u.n,sl)}</b></td>`).join('');
     const pick=`<select class="stulvl" data-uid="${esc(s.uid)}" aria-label="Level for ${esc(s.name)}" style="${levelStyle(sl)}"><option value="">Class level (${LEVEL_NAMES[cl]})</option>${LEVELS_AVAILABLE.map(v=>`<option value="${v}"${(c.levels||{})[s.uid]===v?' selected':''}>${LEVEL_NAMES[v]}</option>`).join('')}</select>`;
-    return `<tr><td class="name"><b>${esc(s.name)}</b><small>${esc(s.email||(s.username?'Username: '+s.username:''))}</small>${pick}</td>${cells}<td><b>${done}</b>/${levelsOf(sl).length}</td><td><b>${stars}</b> ★<small class="muted rank">${insigniaSvg(rankFor(stars).i,16)} ${rankFor(stars).title}</small></td><td class="muted">${ago(s.updatedAt)}</td></tr>`;
+    return `<tr><td class="name"><b>${esc(s.name)}</b><small>${esc(s.email||(s.username?'Username: '+s.username:''))}</small>${pick} <button class="btn sm rmstu" data-uid="${esc(s.uid)}" title="Take this student off this class list">Remove</button></td>${cells}<td><b>${done}</b>/${levelsOf(sl).length}</td><td><b>${stars}</b> ★<small class="muted rank">${insigniaSvg(rankFor(stars).i,16)} ${rankFor(stars).title}</small></td><td class="muted">${ago(s.updatedAt)}</td></tr>`;
   }).join('');
   return `<table><thead><tr><th class="name" rowspan="2">Student</th>${head1}<th rowspan="2">Solved</th><th rowspan="2">Stars and rank</th><th rowspan="2">Last active</th></tr><tr>${head2}</tr></thead><tbody>${rows}</tbody></table>`;
 }
