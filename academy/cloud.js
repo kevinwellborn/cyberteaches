@@ -80,12 +80,12 @@
     : 'arrayValue' in v ? (v.arrayValue.values || []).map(fromVal)
     : 'mapValue' in v ? fromFields(v.mapValue.fields) : 'timestampValue' in v ? v.timestampValue : null;
   const fromFields = f => Object.fromEntries(Object.entries(f || {}).map(([k, v]) => [k, fromVal(v)]));
-  const restBase = () => `https://firestore.googleapis.com/v1/projects/${cfg.projectId}/databases/(default)/documents/`;
+  const restBase = () => `https://firestore.googleapis.com/v1/projects/${cfg.projectId}/databases/(default)/documents`;
   const restCall = async (method, path, query, body) => {
     const token = await Cloud.user.getIdToken();
     const ctl = new AbortController(), t = setTimeout(() => ctl.abort(), 20000);
     try {
-      const r = await fetch(restBase() + path + (query ? '?' + query : ''), {method, signal: ctl.signal,
+      const r = await fetch(restBase() + (path[0] === ':' ? '' : '/') + path + (query ? '?' + query : ''), {method, signal: ctl.signal,
         headers: {Authorization: 'Bearer ' + token, 'Content-Type': 'application/json'}, body: body ? JSON.stringify(body) : undefined});
       const j = await r.json().catch(() => ({}));
       if(!r.ok) throw Object.assign(new Error((j.error && j.error.message) || ('HTTP ' + r.status)), {status: r.status});
@@ -100,8 +100,12 @@
     const body = {};
     Object.entries(fields).forEach(([k, v]) => { if(v === undefined) return; const parts = k.split('.'); let o = body;
       parts.slice(0, -1).forEach(p => { o[p] = o[p] || {}; o = o[p] }); o[parts[parts.length - 1]] = v });
-    const query = Object.keys(fields).map(k => 'updateMask.fieldPaths=' + encodeURIComponent(quote(k))).join('&') + '&currentDocument.exists=true';
-    return restCall('PATCH', path, query, {fields: Object.fromEntries(Object.entries(body).map(([k, v]) => [k, toVal(v)]))});
+    // A POST to :commit (like the SDK's own requests) rather than PATCH, which some web filters refuse.
+    return restCall('POST', ':commit', '', {writes: [{
+      update: {name: `projects/${cfg.projectId}/databases/(default)/documents/${path}`,
+        fields: Object.fromEntries(Object.entries(body).map(([k, v]) => [k, toVal(v)]))},
+      updateMask: {fieldPaths: Object.keys(fields).map(quote)},
+      currentDocument: {exists: true}}]});
   };
 
   // Teacher accounts with an email and password, for teachers who don't use Google.

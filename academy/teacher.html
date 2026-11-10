@@ -168,7 +168,7 @@ body{border-top:6px solid var(--lv,var(--accent))}
 </div>
 <script src="course.js?v=13"></script>
 <script src="firebase-config.js"></script>
-<script src="cloud.js?v=12"></script>
+<script src="cloud.js?v=13"></script>
 <script>
 const $=(s,r=document)=>r.querySelector(s);
 const esc=t=>String(t==null?'':t).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -478,13 +478,15 @@ function renderClass(err){
   const FV=firebase.firestore.FieldValue, cref=Cloud.db.collection('classes').doc(c.code);
   let saves=0;
   // Each change goes two ways: the Firestore SDK (redraws this page at once) and a plain HTTPS request (rest),
-  // which gets through school filters that stall the SDK. The status line follows the HTTPS request.
-  const save=(data, rest)=>{ const n=++saves, say=(t,ok)=>{ const e=$('#lockErr'); if(e && n===saves){ e.textContent=t; e.style.color=ok?'#0B5E3C':'' } };
+  // which gets through some school filters that stall the SDK. Whichever the server confirms first counts.
+  const save=(data, rest)=>{ const n=++saves; let done=false;
+    const say=(t,ok)=>{ const e=$('#lockErr'); if(e && n===saves){ e.textContent=t; e.style.color=ok?'#0B5E3C':'' } };
+    const ok=()=>{ if(done) return; done=true; clearTimeout(slow); say('Saved ✓ Students will see the change within about 20 seconds.',true) };
     say('Saving…',true);
-    cref.update(data).catch(e=>console.error(e));
-    const slow=setTimeout(()=>say('Still saving… Your network may be slowing this down. Keep this page open until it says Saved.'),8000);
-    Cloud.restUpdate('classes/'+c.code, rest||data).then(()=>{ clearTimeout(slow); say('Saved ✓ Students will see the change within about 20 seconds.',true) })
-      .catch(e=>{ clearTimeout(slow); console.error(e); say('Could not save. Check your connection and try again.') }) };
+    const slow=setTimeout(()=>{ if(!done) say('Still saving… Your network may be slowing this down. Keep this page open until it says Saved.') },8000);
+    cref.update(data).then(ok, e=>{ console.error(e); if(!done) say('Could not save ('+(e.code||e.message)+'). Try again.') });
+    Cloud.restUpdate('classes/'+c.code, rest||data).then(ok, e=>{ console.error(e);
+      if(!done){ clearTimeout(slow); say('Not saved yet ('+(e.status?e.status+' ':'')+(e.message||e.name||'network error')+'). Still trying… keep this page open.') } }) };
   const lockedNow=()=>[...document.querySelectorAll('#locks .lockbtn.off')].map(b=>+b.dataset.unit);
   $('#locks').onclick=e=>{ const b=e.target.closest('.lockbtn'); if(!b) return; const u=+b.dataset.unit, off=b.classList.contains('off');
     b.classList.toggle('off'); save({locked: off ? FV.arrayRemove(u) : FV.arrayUnion(u)}, {locked: lockedNow()}) };
