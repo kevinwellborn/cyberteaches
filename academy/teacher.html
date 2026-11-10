@@ -168,7 +168,7 @@ body{border-top:6px solid var(--lv,var(--accent))}
 </div>
 <script src="course.js?v=13"></script>
 <script src="firebase-config.js"></script>
-<script src="cloud.js?v=13"></script>
+<script src="cloud.js?v=14"></script>
 <script>
 const $=(s,r=document)=>r.querySelector(s);
 const esc=t=>String(t==null?'':t).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -481,7 +481,7 @@ function renderClass(err){
   // which gets through some school filters that stall the SDK. Whichever the server confirms first counts.
   const save=(data, rest)=>{ const n=++saves; let done=false;
     const say=(t,ok)=>{ const e=$('#lockErr'); if(e && n===saves){ e.textContent=t; e.style.color=ok?'#0B5E3C':'' } };
-    const ok=()=>{ if(done) return; done=true; clearTimeout(slow); say('Saved ✓ Students will see the change within about 20 seconds.',true) };
+    const ok=()=>{ if(done) return; done=true; clearTimeout(slow); say('Saved ✓ Students will see it when they reload or within a few minutes.',true) };
     say('Saving…',true);
     const slow=setTimeout(()=>{ if(!done) say('Still saving… Your network may be slowing this down. Keep this page open until it says Saved.') },8000);
     cref.update(data).then(ok, e=>{ console.error(e); if(!done) say('Could not save ('+(e.code||e.message)+'). Try again.') });
