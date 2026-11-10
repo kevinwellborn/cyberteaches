@@ -310,7 +310,7 @@ body{border-top:8px solid var(--lv,var(--accent))}
 
 <script src="course.js?v=13"></script>
 <script src="firebase-config.js"></script>
-<script src="cloud.js?v=11"></script>
+<script src="cloud.js?v=12"></script>
 <script src="sound.js?v=1"></script>
 <script>
 const sfx=n=>{ if(window.Sfx) Sfx.play(n) };
@@ -1133,12 +1133,13 @@ function watchLocks(code){
   if(!code){ levelByTeacher=false; apply([], store.get('level',DEFAULT_LEVEL)); return }
   levelByTeacher=true;
   const ref=Cloud.db.collection('classes').doc(code);
-  const fromDoc=s=>{ if(watchedCode!==code) return; const d=s.exists?s.data():{};
+  const fromData=d=>{ if(watchedCode!==code) return; d=d||{};
     apply(d.locked, (d.levels||{})[Cloud.user&&Cloud.user.uid] || d.level || DEFAULT_LEVEL) };
-  const live=ref.onSnapshot(fromDoc, e=>console.error(e));
-  // School filters can stall the live stream after the first answer, so also ask the server again
-  // every 20 seconds and whenever the tab comes back into view.
-  const poll=()=>{ if(!document.hidden) ref.get({source:'server'}).then(fromDoc).catch(()=>{}) };
+  const live=ref.onSnapshot(s=>fromData(s.exists?s.data():{}), e=>console.error(e));
+  // School filters can stall the live stream, so also ask the server with a plain HTTPS request
+  // right away, every 20 seconds, and whenever the tab comes back into view.
+  const poll=()=>{ if(!document.hidden && Cloud.user) Cloud.restGet('classes/'+code).then(fromData).catch(e=>console.error(e)) };
+  poll();
   const timer=setInterval(poll, 20000);
   document.addEventListener('visibilitychange', poll); window.addEventListener('focus', poll);
   classStop=()=>{ live(); clearInterval(timer); document.removeEventListener('visibilitychange', poll); window.removeEventListener('focus', poll) };

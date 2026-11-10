@@ -168,7 +168,7 @@ body{border-top:6px solid var(--lv,var(--accent))}
 </div>
 <script src="course.js?v=13"></script>
 <script src="firebase-config.js"></script>
-<script src="cloud.js?v=11"></script>
+<script src="cloud.js?v=12"></script>
 <script>
 const $=(s,r=document)=>r.querySelector(s);
 const esc=t=>String(t==null?'':t).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -476,18 +476,21 @@ function renderClass(err){
   };
   // Writes go straight to Firestore; the class snapshot (with local changes applied at once) redraws the buttons.
   const FV=firebase.firestore.FieldValue, cref=Cloud.db.collection('classes').doc(c.code);
-  // The buttons change at once, but the change only reaches students once the server confirms it, so say which.
   let saves=0;
-  const save=data=>{ const n=++saves, el=()=>$('#lockErr'), say=(t,ok)=>{ const e=el(); if(e && n===saves){ e.textContent=t; e.style.color=ok?'#0B5E3C':'' } };
+  // Each change goes two ways: the Firestore SDK (redraws this page at once) and a plain HTTPS request (rest),
+  // which gets through school filters that stall the SDK. The status line follows the HTTPS request.
+  const save=(data, rest)=>{ const n=++saves, say=(t,ok)=>{ const e=$('#lockErr'); if(e && n===saves){ e.textContent=t; e.style.color=ok?'#0B5E3C':'' } };
     say('Saving…',true);
+    cref.update(data).catch(e=>console.error(e));
     const slow=setTimeout(()=>say('Still saving… Your network may be slowing this down. Keep this page open until it says Saved.'),8000);
-    cref.update(data).then(()=>{ clearTimeout(slow); say('Saved ✓ Students will see the change within about 20 seconds.',true) })
+    Cloud.restUpdate('classes/'+c.code, rest||data).then(()=>{ clearTimeout(slow); say('Saved ✓ Students will see the change within about 20 seconds.',true) })
       .catch(e=>{ clearTimeout(slow); console.error(e); say('Could not save. Check your connection and try again.') }) };
+  const lockedNow=()=>[...document.querySelectorAll('#locks .lockbtn.off')].map(b=>+b.dataset.unit);
   $('#locks').onclick=e=>{ const b=e.target.closest('.lockbtn'); if(!b) return; const u=+b.dataset.unit, off=b.classList.contains('off');
-    b.classList.toggle('off'); save({locked: off ? FV.arrayRemove(u) : FV.arrayUnion(u)}) };
+    b.classList.toggle('off'); save({locked: off ? FV.arrayRemove(u) : FV.arrayUnion(u)}, {locked: lockedNow()}) };
   $('#levels').onclick=e=>{ const b=e.target.closest('.lvlbtn'); if(!b) return; save({level: b.dataset.level}) };
-  tw0=$('#progressTable'); tw0.onchange=e=>{ const sel=e.target.closest('.stulvl'); if(!sel) return;
-    save({['levels.'+sel.dataset.uid]: sel.value ? sel.value : FV.delete()}) };
+  tw0=$('#progressTable'); tw0.onchange=e=>{ const sel=e.target.closest('.stulvl'); if(!sel) return; const k='levels.'+sel.dataset.uid;
+    save({[k]: sel.value ? sel.value : FV.delete()}, {[k]: sel.value || undefined}) };
   $('#unlockAll').onclick=()=>save({locked: []});
   $('#lockAll').onclick=()=>save({locked: UNITS.map(u=>u.n)});
   const tw=$('#progressTable'); tw.onclick=e=>{

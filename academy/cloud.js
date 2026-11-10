@@ -66,6 +66,44 @@
   Cloud.signInStudent = (code, username, password) =>
     auth.signInWithEmailAndPassword(loginEmail(code, username.trim()), password);
 
+  // Plain HTTPS calls to Firestore's REST API. School filters that hold back the SDK's connection
+  // let these ordinary requests through, so lesson locks and levels still save and arrive.
+  // Security rules apply exactly as for the SDK.
+  const toVal = v => v === null || v === undefined ? {nullValue: null}
+    : typeof v === 'boolean' ? {booleanValue: v}
+    : typeof v === 'number' ? (Number.isInteger(v) ? {integerValue: String(v)} : {doubleValue: v})
+    : typeof v === 'string' ? {stringValue: v}
+    : Array.isArray(v) ? {arrayValue: {values: v.map(toVal)}}
+    : {mapValue: {fields: Object.fromEntries(Object.entries(v).map(([k, x]) => [k, toVal(x)]))}};
+  const fromVal = v => 'integerValue' in v ? Number(v.integerValue) : 'doubleValue' in v ? v.doubleValue
+    : 'stringValue' in v ? v.stringValue : 'booleanValue' in v ? v.booleanValue
+    : 'arrayValue' in v ? (v.arrayValue.values || []).map(fromVal)
+    : 'mapValue' in v ? fromFields(v.mapValue.fields) : 'timestampValue' in v ? v.timestampValue : null;
+  const fromFields = f => Object.fromEntries(Object.entries(f || {}).map(([k, v]) => [k, fromVal(v)]));
+  const restBase = () => `https://firestore.googleapis.com/v1/projects/${cfg.projectId}/databases/(default)/documents/`;
+  const restCall = async (method, path, query, body) => {
+    const token = await Cloud.user.getIdToken();
+    const ctl = new AbortController(), t = setTimeout(() => ctl.abort(), 20000);
+    try {
+      const r = await fetch(restBase() + path + (query ? '?' + query : ''), {method, signal: ctl.signal,
+        headers: {Authorization: 'Bearer ' + token, 'Content-Type': 'application/json'}, body: body ? JSON.stringify(body) : undefined});
+      const j = await r.json().catch(() => ({}));
+      if(!r.ok) throw Object.assign(new Error((j.error && j.error.message) || ('HTTP ' + r.status)), {status: r.status});
+      return j;
+    } finally { clearTimeout(t) }
+  };
+  // Read one document: resolves to its data, or null when it doesn't exist.
+  Cloud.restGet = (path) => restCall('GET', path).then(j => fromFields(j.fields)).catch(e => { if(e.status === 404) return null; throw e });
+  // Change some fields of an existing document. fields: {'a': 1, 'map.key': 'x'}; a value of undefined deletes that field.
+  Cloud.restUpdate = (path, fields) => {
+    const quote = k => k.split('.').map(s => /^[A-Za-z_][A-Za-z_0-9]*$/.test(s) ? s : '`' + s.replace(/[`\\]/g, '\\$&') + '`').join('.');
+    const body = {};
+    Object.entries(fields).forEach(([k, v]) => { if(v === undefined) return; const parts = k.split('.'); let o = body;
+      parts.slice(0, -1).forEach(p => { o[p] = o[p] || {}; o = o[p] }); o[parts[parts.length - 1]] = v });
+    const query = Object.keys(fields).map(k => 'updateMask.fieldPaths=' + encodeURIComponent(quote(k))).join('&') + '&currentDocument.exists=true';
+    return restCall('PATCH', path, query, {fields: Object.fromEntries(Object.entries(body).map(([k, v]) => [k, toVal(v)]))});
+  };
+
   // Teacher accounts with an email and password, for teachers who don't use Google.
   Cloud.signInTeacher = (email, password) => auth.signInWithEmailAndPassword(email.trim(), password);
   Cloud.createTeacher = async (name, email, password) => {
