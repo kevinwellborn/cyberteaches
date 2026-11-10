@@ -19,12 +19,20 @@
     .then(() => {
       firebase.initializeApp(cfg);
       auth = firebase.auth(); db = firebase.firestore();
+      // School web filters (e.g. Cisco Umbrella) can hold back Firestore's streaming connection, so logins hang,
+      // the class can't be read (students get asked to join again) and live lock changes never arrive.
+      // Plain long polling gets through those filters.
+      db.settings({experimentalForceLongPolling: true, experimentalAutoDetectLongPolling: false, merge: true});
       Cloud.db = db;
       auth.onAuthStateChanged(async u => {
         Cloud.user = u; Cloud.profile = null;
         if(u){
-          try { const snap = await db.collection('users').doc(u.uid).get(); Cloud.profile = snap.exists ? snap.data() : {} }
-          catch(e){ console.error(e); Cloud.profile = {} }
+          // Retry a slow or dropped network before treating the student as not in a class.
+          for(let i = 0; i < 3 && !Cloud.profile; i++){
+            try { const snap = await db.collection('users').doc(u.uid).get(); Cloud.profile = snap.exists ? snap.data() : {} }
+            catch(e){ console.error(e); if(i < 2) await new Promise(r => setTimeout(r, 1500 * (i + 1))) }
+          }
+          if(!Cloud.profile) Cloud.profile = {};
         }
         Cloud.ready = true; emit();
       });
@@ -129,7 +137,7 @@
   const sideApp = () => {
     if(!side){
       const app = firebase.initializeApp(cfg, 'student-setup');
-      side = {auth: app.auth(), db: app.firestore()};
+      side = {auth: app.auth(), db: app.firestore()}; side.db.settings({experimentalForceLongPolling: true, experimentalAutoDetectLongPolling: false, merge: true});
       side.ready = side.auth.setPersistence(firebase.auth.Auth.Persistence.NONE);
     }
     return side.ready.then(() => side);
