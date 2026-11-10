@@ -310,7 +310,7 @@ body{border-top:8px solid var(--lv,var(--accent))}
 
 <script src="course.js?v=13"></script>
 <script src="firebase-config.js"></script>
-<script src="cloud.js?v=10"></script>
+<script src="cloud.js?v=11"></script>
 <script src="sound.js?v=1"></script>
 <script>
 const sfx=n=>{ if(window.Sfx) Sfx.play(n) };
@@ -1102,7 +1102,7 @@ if(Cloud) Cloud.onChange(c=>{
     try{ Object.entries(JSON.parse(p.programs||'{}')).forEach(([n,prog])=>{ if(!programs[n]||!programs[n].length) programs[n]=prog }) }catch(e){}
     store.set('owner',u.uid); store.set('progress',progress); store.set('bonus',bonus); store.set('programs',programs);
     if(!location.hash.startsWith('#puzzle-')) showHome();
-    if(joinParam && p.classCode!==joinParam && !Cloud.isStudentLogin(u)) openJoin(joinParam);
+    if(joinParam && p.classCode!==joinParam && !Cloud.isStudentLogin(u) && !(c.profileFailed && p.classCode)) openJoin(joinParam);
   }
   if(!u && lastUid){ lastUid=null; store.clear(); progress={}; bonus={}; programs={}; route() }
   if(c.ready && !u && joinParam && !lastUid && !$('#modal').innerHTML) openJoin(joinParam);

@@ -11,6 +11,9 @@
 
   const SDK = 'https://www.gstatic.com/firebasejs/10.12.2/';
   const load = src => new Promise((res, rej) => { const s = document.createElement('script'); s.src = src; s.onload = res; s.onerror = rej; document.head.appendChild(s) });
+  const classKey = uid => 'ct-class-' + uid;
+  const rememberClass = (uid, p) => { try { localStorage.setItem(classKey(uid), JSON.stringify({classCode: p.classCode, className: p.className || p.classCode})) } catch(e){} };
+  const recallClass = uid => { try { return JSON.parse(localStorage.getItem(classKey(uid))) || {} } catch(e){ return {} } };
   const emit = () => listeners.forEach(fn => { try { fn(Cloud) } catch(e){ console.error(e) } });
   let auth, db;
 
@@ -32,7 +35,11 @@
             try { const snap = await db.collection('users').doc(u.uid).get(); Cloud.profile = snap.exists ? snap.data() : {} }
             catch(e){ console.error(e); if(i < 2) await new Promise(r => setTimeout(r, 1500 * (i + 1))) }
           }
-          if(!Cloud.profile) Cloud.profile = {};
+          // Remember the class in this browser, so a student who already joined is never asked again
+          // just because the network was too slow to read their account.
+          Cloud.profileFailed = !Cloud.profile;
+          if(Cloud.profile && Cloud.profile.classCode) rememberClass(u.uid, Cloud.profile);
+          if(!Cloud.profile) Cloud.profile = {...recallClass(u.uid)};
         }
         Cloud.ready = true; emit();
       });
@@ -122,6 +129,7 @@
   Cloud.joinClass = async (cls, data) => {
     await db.collection('users').doc(Cloud.user.uid).set({classCode: cls.code, className: cls.name || cls.code}, {merge: true});
     Cloud.profile = {...Cloud.profile, classCode: cls.code, className: cls.name || cls.code};
+    rememberClass(Cloud.user.uid, Cloud.profile);
     await Cloud.save(data);
     emit();
   };
