@@ -1,4 +1,4 @@
-// Duel: two classmates get the same brand-new puzzle and 4 minutes. Fewest blocks wins; a faster time breaks a tie.
+// Duel: two classmates get the same brand-new puzzle and 2 minutes. Fewest blocks wins; a faster time breaks a tie.
 // Each player stakes 1 Duel trophy and the winner takes both. If nobody solves it, stakes go back.
 // Duel trophies are separate from lesson stars, because stars feed the teacher's grade.
 //   trophies = 3 to start + 1 for every 10 lesson stars + duel winnings (net) + free trophies (1 a day when at 0)
@@ -6,8 +6,8 @@
 //   classes/{code}/duels/{id}      one duel: players, seed (the puzzle), results r, done, stake, settled
 //   classes/{code}/duelBoard/{uid} a student's net trophies, free trophies, wins, losses, ties
 // This file only defines functions; academy/index.html calls them (it owns the board, blocks and interpreter).
-const DUEL_SECONDS = 240, DUEL_START = 3, DUEL_STARS_PER = 10;
-const DUEL_CUTOFF = 255;        // the rules accept results until startedAt + 255 s (a little grace for slow networks)
+const DUEL_SECONDS = 120, DUEL_START = 3, DUEL_STARS_PER = 10;
+const DUEL_CUTOFF = 135;        // wait this long after the start before reading the final result (2 min + grace for slow networks; the rules cap it at 255 s)
 const DUEL_STALE = 100000;      // a waiting duel not refreshed for this long is treated as abandoned
 const TROPHY = '🏆';
 
@@ -107,7 +107,7 @@ async function showDuel(){
     <h1>⚔ Duel a classmate</h1>
     <div class="duel-tro"><span class="duel-big">${TROPHY} ${t}</span><span>Duel trophies<small>${me.row.wins||0} won · ${me.row.losses||0} lost · ${me.row.ties||0} tied</small></span></div>
     <ul class="intro-list">
-      <li><span>You and a classmate get the <b>same new puzzle</b> and <b>4 minutes</b>.</span></li>
+      <li><span>You and a classmate get the <b>same new puzzle</b> and <b>2 minutes</b>.</span></li>
       <li><span>Each of you puts in <b>1 trophy</b>. The program with the <b>fewest blocks</b> wins both. Same number of blocks? The faster one wins.</span></li>
       <li><span>Solved it? Keep improving until time runs out, or press <b>I'm done</b>. If nobody solves it, you both get your trophy back.</span></li>
       <li><span>Earn more trophies in the lessons: <b>+1 for every ${DUEL_STARS_PER} stars</b>. Duel trophies never change your stars or grade.</span></li>
@@ -239,7 +239,7 @@ function duelBench(d){
   applyLevelTheme(P.level);
   const head=h('div','duel-head');
   head.innerHTML=`<div><span class="label">⚔ Duel · ${LEVEL_NAMES[P.level]} · 1 ${TROPHY} each</span><h1 style="font-size:clamp(24px,3.4vw,34px)">Fewest blocks wins</h1><p class="duel-opp" id="duelOpp">Waiting for your opponent…</p></div>
-    <div class="duel-clock" id="duelClock" aria-label="Time left">4:00</div>`;
+    <div class="duel-clock" id="duelClock" aria-label="Time left">2:00</div>`;
   app.appendChild(head);
   const bench=h('div','bench'); bench.id='duelBench';
   const bp=h('section','pane'); const pm=parseMap(P);
