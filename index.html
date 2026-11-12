@@ -23,7 +23,7 @@
 :root{
   --bg:#EEF1EC; --panel:#FFFFFF; --panel-2:#F6F8F4; --ink:#1C292C; --muted:#5C6B6B; --line:#D5DCD4;
   --accent:#0F7B78; --accent-ink:#FFFFFF; --accent-soft:#D6EEEA; --term:#13201F; --term-ink:#B9F5DA; --yt:#D93025;
-  --c-cyber:#0F7B78; --c-csp:#2F6FDE; --c-sec:#C2417A; --c-net:#D97E16; --c-acad:#7A4FD0;
+  --c-cyber:#0F7B78; --c-csp:#2F6FDE; --c-sec:#C2417A; --c-net:#D97E16; --c-acad:#7A4FD0; --c-award:#A8741A;
   --f-display:"Bricolage Grotesque", "Trebuchet MS", system-ui, sans-serif;
   --f-body:"Atkinson Hyperlegible", "Segoe UI", system-ui, sans-serif;
   --f-mono:"JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
@@ -31,12 +31,12 @@
 @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
   --bg:#141B1C; --panel:#1C2526; --panel-2:#222D2E; --ink:#E6EEEC; --muted:#9AABA9; --line:#33403F;
   --accent:#3FC1B8; --accent-ink:#0B1A1A; --accent-soft:#1D3A38; --term:#0C1213; --term-ink:#9FEBC8; --yt:#F2665B;
-  --c-cyber:#2FA8A1; --c-csp:#4B86EC; --c-sec:#D85A92; --c-net:#E39232; --c-acad:#9473E0; color-scheme:dark }
+  --c-cyber:#2FA8A1; --c-csp:#4B86EC; --c-sec:#D85A92; --c-net:#E39232; --c-acad:#9473E0; --c-award:#DDA93F; color-scheme:dark }
 }
 :root[data-theme="dark"]{
   --bg:#141B1C; --panel:#1C2526; --panel-2:#222D2E; --ink:#E6EEEC; --muted:#9AABA9; --line:#33403F;
   --accent:#3FC1B8; --accent-ink:#0B1A1A; --accent-soft:#1D3A38; --term:#0C1213; --term-ink:#9FEBC8; --yt:#F2665B;
-  --c-cyber:#2FA8A1; --c-csp:#4B86EC; --c-sec:#D85A92; --c-net:#E39232; --c-acad:#9473E0; color-scheme:dark
+  --c-cyber:#2FA8A1; --c-csp:#4B86EC; --c-sec:#D85A92; --c-net:#E39232; --c-acad:#9473E0; --c-award:#DDA93F; color-scheme:dark
 }
 *{box-sizing:border-box}
 html,body{background:var(--bg)}
@@ -87,6 +87,8 @@ a.course:hover{border-color:var(--c)}
 .chip{font-size:13px;padding:2px 9px;border-radius:7px;background:var(--panel-2);border:1px solid var(--line)}
 .course .go{font-weight:700;color:var(--c)}
 .course.soon{opacity:.85}
+.course .app-head{display:flex;align-items:center;gap:14px}
+.course .app-icon{width:56px;height:56px;border-radius:13px;flex:none;box-shadow:0 1px 3px rgba(0,0,0,.18)}
 
 .band{display:grid;grid-template-columns:auto minmax(0,1fr);gap:26px;align-items:center;border-radius:18px;padding:26px;margin-top:34px}
 .band.book{background:var(--accent-soft)}
@@ -197,6 +199,13 @@ img.cover,img.ad-art{padding:0;background:none;object-fit:cover}
         <p>Block-coding puzzles for middle and high school. Guide a rover with loops and conditions, then program it to win tank battles.</p>
         <div class="meta"><span class="chip">Grades 6 to 12</span><span class="chip">Class sign-in</span><span class="chip">Teacher dashboard</span></div>
         <span class="go">Start coding →</span>
+      </a>
+      <a class="course" style="--c:var(--c-award)" href="award-tracker/">
+        <div class="top"><span class="code">/award-tracker</span><span class="status">New</span></div>
+        <div class="app-head"><img class="app-icon" src="award-tracker-icon.png" alt="" width="56" height="56"><h3>Congressional Award Tracker</h3></div>
+        <p>Log your Congressional Award hours, see how close you are to each Certificate and Medal, and share your progress with your Advisor.</p>
+        <div class="meta"><span class="chip">Web + iPhone app</span><span class="chip">Advisor sharing</span><span class="chip">Free</span></div>
+        <span class="go">Open the tracker →</span>
       </a>
       <div data-ad="card"></div>
     </div>
