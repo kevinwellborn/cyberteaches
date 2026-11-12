@@ -289,6 +289,22 @@ body{border-top:8px solid var(--lv,var(--accent))}
 .meter-bar i{background:var(--lv,var(--accent))}
 .hero .btn.primary{background:var(--lv,var(--accent));border-color:var(--lv,var(--accent));color:var(--lv-ink,var(--accent-ink))}
 .hero h1 em{color:var(--lv,var(--accent))}
+/* ---------- Duel ---------- */
+.duel-lobby{max-width:640px;margin:24px auto;background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:24px}
+.duel-lobby h1{font-size:clamp(26px,4vw,38px);margin:6px 0 12px}
+.duel-tro{display:flex;align-items:center;gap:14px;background:var(--accent-soft);border-radius:14px;padding:12px 16px}
+.duel-tro span{display:flex;flex-direction:column;font-weight:700}
+.duel-tro small{font-weight:400;color:var(--muted)}
+.duel-big{font-family:var(--f-display);font-size:34px!important;font-weight:800;flex-direction:row!important}
+.duel-note{background:var(--panel-2);border-radius:10px;padding:10px 12px;color:var(--muted)}
+.duel-spin{width:46px;height:46px;border-radius:50%;border:5px solid var(--line);border-top-color:var(--accent);animation:spin 1s linear infinite;margin:10px 0}
+@keyframes spin{to{transform:rotate(360deg)}}
+.duel-head{display:flex;gap:16px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.duel-opp{margin:6px 0 0;color:var(--muted)}
+.duel-clock{font-family:var(--f-mono);font-size:clamp(34px,6vw,52px);font-weight:600;background:var(--panel);border:3px solid var(--accent);border-radius:16px;padding:4px 18px;font-variant-numeric:tabular-nums}
+.duel-clock.low{border-color:var(--bad);color:var(--bad)}
+.duel-best{margin-top:10px;font-size:15px}
+#duelBench.frozen .shelf,#duelBench.frozen #ws,#duelBench.frozen #runBtn,#duelBench.frozen #clearBtn{opacity:.5;pointer-events:none}
 </style>
 
 <div class="wrap">
@@ -310,8 +326,9 @@ body{border-top:8px solid var(--lv,var(--accent))}
 
 <script src="course.js?v=13"></script>
 <script src="firebase-config.js"></script>
-<script src="cloud.js?v=14"></script>
+<script src="cloud.js?v=15"></script>
 <script src="sound.js?v=1"></script>
+<script src="duel.js?v=1"></script>
 <script>
 const sfx=n=>{ if(window.Sfx) Sfx.play(n) };
 if(window.Sfx) document.getElementById('soundSlot').replaceWith(Sfx.button());
@@ -401,6 +418,8 @@ function signInMsg(unit){ showMsg('Sign in to unlock', `<p>${LOCK_ICO} <b>Lesson
 // ---------- routing ----------
 function route(){
   stopRun();
+  if(location.hash==='#duel'){ showDuel(); window.scrollTo(0,0); return }
+  leaveDuelPage();
   const m = location.hash.match(/^#puzzle-(\d+)$/);
   const n = m ? +m[1] : 0;
   // Until sign-in has been checked, don't bounce a signed-in student away from a puzzle link.
@@ -588,6 +607,7 @@ function showHome(){
       <div class="hero-actions">
         <button class="btn primary" id="go">${done? (done===total?'Replay the course':'Continue with puzzle '+(l=>l.unit+'.'+l.k)(LEVELS[nextLevel()-1])) : 'Start puzzle 1'}</button>
         <a class="btn" href="quiz/" title="Join a live class quiz with the game PIN from your teacher">⚡ Join Quiz Battle</a>
+        ${Cloud&&Cloud.user&&Cloud.profile&&Cloud.profile.classCode?'<a class="btn" href="#duel" title="Race a classmate on the same puzzle: fewest blocks wins">⚔ Duel</a>':''}
         <div class="meter"><span class="label">${done} of ${total} puzzles solved</span><div class="meter-bar"><i style="width:${done/total*100}%"></i></div></div>
       </div></div><div class="hero-art"></div>`;
   app.appendChild(hero);
@@ -775,7 +795,7 @@ function contains(node,id){ if(node.id===id) return true; return [...(node.body|
 function countBlocks(list=program){ return list.reduce((s,n)=>s+1+countBlocks(n.body||[])+countBlocks(n.elseBody||[]),0) }
 // Puzzles with maxBlocks only let the program grow to that many blocks, so students have to use repeat.
 function atLimit(){ if(!L.maxBlocks || countBlocks()<L.maxBlocks) return false; setFb('bad',`Block limit reached: this mission allows ${L.maxBlocks} blocks. Look for steps that happen again and again, and put them in a repeat.`); return true }
-function changed(){ programs[L.n]=program; store.set('programs',programs); renderProgram() }
+function changed(){ if(!L.duel){ programs[L.n]=program; store.set('programs',programs) } renderProgram() }
 
 function clearDrop(){ document.querySelectorAll('.over,.drop-before,.drop-after').forEach(e=>e.classList.remove('over','drop-before','drop-after')) }
 // Which container (and which part of it) holds this list. null for the main program.
@@ -863,7 +883,7 @@ function renderProgram(){
   const ws=$('#ws'); if(!ws) return; ws.innerHTML='';
   ws.appendChild(renderSlot(program,'root',false));
   const c=countBlocks();
-  $('#count').textContent=c+' block'+(c===1?'':'s')+(L.maxBlocks?' of '+L.maxBlocks+' max':'')+' · goal '+L.ideal; $('#count').classList.toggle('full',!!L.maxBlocks&&c>=L.maxBlocks);
+  $('#count').textContent=c+' block'+(c===1?'':'s')+(L.duel?'':(L.maxBlocks?' of '+L.maxBlocks+' max':'')+' · goal '+L.ideal); $('#count').classList.toggle('full',!!L.maxBlocks&&c>=L.maxBlocks);
   let where='the main program';
   if(selKey!=='root'){ const [id,which]=selKey.split(':'); const n=findNode(id); if(n) where = n.type==='repeat'?'inside “repeat”': n.type==='until'?'inside “repeat until at flag”': n.type==='iftank'?'inside “if tank ahead”': n.type==='untilclear'?'inside “repeat until no tanks left”': n.type==='repeatvar'?'inside “repeat steps times”': which==='elseBody'?'the “else” part':'the “if” part' }
   $('#target').innerHTML='New blocks go into <b>'+where+'</b>.'+(selKey!=='root'?' Tap the grey area to go back to the main program.':'');
@@ -990,6 +1010,7 @@ function finish(ok,msg){
   stopRun(); world.over=true;
   if(!ok){ sfx('fail'); setFb('bad',msg); return }
   sfx('win');
+  if(L.duel){ duelSolved(countBlocks()); return }   // duels count blocks, not stars (see duel.js)
   const allCoins = world.m.coins>0 && world.coins===world.m.coins;
   const target = allCoins && L.idealBonus ? L.idealBonus : L.ideal;
   const used=countBlocks(), stars = used<=target ? 3 : used<=target+(L.maxBlocks?Math.ceil((L.maxBlocks-target)/2):3) ? 2 : 1;
@@ -1113,12 +1134,13 @@ if(Cloud) Cloud.onChange(c=>{
     Object.entries(p.bonus||{}).forEach(([n,v])=>{ if(v) bonus[n]=true });
     try{ Object.entries(JSON.parse(p.programs||'{}')).forEach(([n,prog])=>{ if(!programs[n]||!programs[n].length) programs[n]=prog }) }catch(e){}
     store.set('owner',u.uid); store.set('progress',progress); store.set('bonus',bonus); store.set('programs',programs);
-    if(!location.hash.startsWith('#puzzle-')) showHome();
+    if(location.hash==='#duel') showDuel(); else if(!location.hash.startsWith('#puzzle-')) showHome();
     if(joinParam && p.classCode!==joinParam && !Cloud.isStudentLogin(u) && !(c.profileFailed && p.classCode)) openJoin(joinParam);
   }
   if(!u && lastUid){ lastUid=null; store.clear(); progress={}; bonus={}; programs={}; route() }
   // Open the puzzle link once sign-in is known, or show the home page with locks for visitors.
   if(c.ready && authWaiting && (!u || c.profile)) route();
+  else if(c.ready && location.hash==='#duel' && !u && !$('.duel-lobby h1')) showDuel();
   else if(c.ready && !u && !lastUid && !/^#puzzle-/.test(location.hash) && $('.units')) showHome();
   if(c.ready && !u && joinParam && !lastUid && !$('#modal').innerHTML) openJoin(joinParam);
   renderAccount();
@@ -1141,10 +1163,10 @@ function watchLocks(code){
     const m=location.hash.match(/^#puzzle-(\d+)$/);
     if(curLevel!==was){
       if(m && LEVELS[+m[1]-1].level!==curLevel){ history.replaceState(null,'','#home'); showHome(); showMsg('New level', `<p>Your teacher moved you to the <b>${LEVEL_NAMES[curLevel]}</b> level. Your stars are kept.</p>`); return }
-      if(!m) showHome();
+      if(!m && location.hash!=='#duel') showHome();
     }
     if(sameLocks) return;
-    if(!m || isLocked(LEVELS[+m[1]-1].unit)) route() };
+    if(m ? isLocked(LEVELS[+m[1]-1].unit) : location.hash!=='#duel') route() };
   if(!code){ levelByTeacher=false; apply([], store.get('level',DEFAULT_LEVEL)); return }
   levelByTeacher=true;
   const ref=Cloud.db.collection('classes').doc(code);

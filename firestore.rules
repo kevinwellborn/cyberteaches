@@ -67,6 +67,120 @@ service cloud.firestore {
         allow delete: if signedIn() && (request.auth.uid == uid || teacherOf(code));
       }
 
+      // ---- Duels (academy/duel.js): two classmates, same puzzle, 4 minutes, fewest blocks wins 1 trophy. ----
+      // The teacher turns them on with classes/{code}.duels == true.
+      function classMember() {
+        return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.get('classCode', '') == code;
+      }
+      function duelsOn() {
+        return get(/databases/$(database)/documents/classes/$(code)).data.get('duels', false) == true;
+      }
+      match /duels/{id} {
+        function changed() { return request.resource.data.diff(resource.data).affectedKeys(); }
+        // A map field where only my own key changed (or nothing did).
+        function onlyMine(f) {
+          return request.resource.data[f].diff(resource.data[f]).affectedKeys().hasOnly([request.auth.uid]);
+        }
+        function same(f) { return request.resource.data[f] == resource.data[f]; }
+        function mineNow(f) { return request.resource.data[f].get(request.auth.uid, null); }
+        function mineBefore(f) { return resource.data[f].get(request.auth.uid, null); }
+        function inTime() { return request.time < resource.data.startedAt + duration.value(255, 's'); }
+        function goodName(m) { return m[request.auth.uid] is string && m[request.auth.uid].size() <= 40; }
+        function goodResult(v) {
+          return v is map && v.keys().hasOnly(['blocks', 'ms']) && v.blocks is int && v.blocks >= 1 && v.blocks <= 200
+            && v.ms is int && v.ms >= 0 && v.ms <= 260000;
+        }
+        allow read: if signedIn() && (classMember() || teacherOf(code));
+        // Start waiting for an opponent.
+        allow create: if signedIn() && classMember() && duelsOn()
+          && request.resource.data.keys().hasOnly(['level', 'seed', 'state', 'players', 'names', 'createdAt', 'r', 'done', 'stake', 'settled'])
+          && request.resource.data.state == 'waiting'
+          && request.resource.data.players == [request.auth.uid]
+          && request.resource.data.level in ['easy', 'medium', 'hard']
+          && request.resource.data.seed is int
+          && request.resource.data.createdAt == request.time
+          && request.resource.data.names.keys().hasOnly([request.auth.uid]) && goodName(request.resource.data.names)
+          && request.resource.data.r == {} && request.resource.data.done == {}
+          && request.resource.data.stake == {} && request.resource.data.settled == {};
+        // The waiting player keeps the duel fresh.
+        allow update: if signedIn() && resource.data.state == 'waiting' && resource.data.players[0] == request.auth.uid
+          && changed().hasOnly(['createdAt']) && request.resource.data.createdAt == request.time;
+        // A classmate joins: the duel starts now and the joiner stakes 1 trophy (with the duelBoard write in the same transaction).
+        allow update: if signedIn() && classMember() && duelsOn()
+          && resource.data.state == 'waiting' && resource.data.players.size() == 1
+          && resource.data.players[0] != request.auth.uid
+          && changed().hasOnly(['players', 'state', 'startedAt', 'names', 'stake'])
+          && request.resource.data.players == resource.data.players.concat([request.auth.uid])
+          && request.resource.data.state == 'playing' && request.resource.data.startedAt == request.time
+          && onlyMine('names') && goodName(request.resource.data.names)
+          && onlyMine('stake') && mineNow('stake') == true;
+        // Playing: each player changes only their own result, done flag, stake and settled flag.
+        allow update: if signedIn() && resource.data.state == 'playing' && request.auth.uid in resource.data.players
+          && changed().hasOnly(['r', 'done', 'stake', 'settled'])
+          && onlyMine('r') && onlyMine('done') && onlyMine('stake') && onlyMine('settled')
+          && (same('r') || (inTime() && mineBefore('done') == null && goodResult(mineNow('r'))))
+          && (same('done') || mineNow('done') == true)
+          && (same('stake') || (mineNow('stake') == true && mineBefore('stake') == null && inTime()))
+          && (same('settled') || (mineNow('settled') == true && mineBefore('settled') == null && mineBefore('stake') == true));
+        allow delete: if signedIn() && (teacherOf(code)
+          || (resource.data.state == 'waiting' && (resource.data.players[0] == request.auth.uid
+                || (classMember() && request.time > resource.data.createdAt + duration.value(100, 's'))))
+          || (resource.data.state == 'playing' && request.auth.uid in resource.data.players
+                && resource.data.settled.size() == resource.data.players.size()));
+      }
+
+      // Duel trophies. Shown trophies = 3 + 1 per 10 lesson stars (board/{uid}.stars) + net + free.
+      // Each change is tied to one step of one duel, so a trophy can only move when a duel really happened.
+      match /duelBoard/{uid} {
+        function duelPath() { return /databases/$(database)/documents/classes/$(code)/duels/$(request.resource.data.lastDuel); }
+        function boardStars() {
+          return exists(/databases/$(database)/documents/classes/$(code)/board/$(uid))
+            ? get(/databases/$(database)/documents/classes/$(code)/board/$(uid)).data.stars : 0;
+        }
+        function trophies(d) { return 3 + math.floor(boardStars() / 10) + d.net + d.free; }
+        function n() { return request.resource.data; }
+        function o() { return resource.data; }
+        function keysOk() {
+          return n().keys().hasOnly(['name', 'net', 'free', 'played', 'wins', 'losses', 'ties', 'lastDuel', 'lastFree', 'updatedAt'])
+            && n().name is string && n().name.size() <= 40 && n().updatedAt == request.time
+            && n().net is int && n().free is int && n().played is int && n().wins is int && n().losses is int && n().ties is int
+            && n().lastDuel is string;
+        }
+        function recordSame() {
+          return n().played == o().played && n().wins == o().wins && n().losses == o().losses && n().ties == o().ties;
+        }
+        // Put in 1 trophy for a duel that just started (needs at least 1 trophy).
+        function stakeStep() {
+          return n().net == o().net - 1 && n().free == o().free && recordSame() && trophies(o()) >= 1
+            && getAfter(duelPath()).data.stake.get(uid, false) == true
+            && get(duelPath()).data.stake.get(uid, false) != true;
+        }
+        // After the duel: win +2 (both stakes), tie +1 (stake back), loss +0.
+        function settleStep() {
+          return n().free == o().free && n().played == o().played + 1
+            && n().wins >= o().wins && n().losses >= o().losses && n().ties >= o().ties
+            && n().wins + n().losses + n().ties == o().wins + o().losses + o().ties + 1
+            && n().net - o().net == (n().wins - o().wins) * 2 + (n().ties - o().ties)
+            && getAfter(duelPath()).data.settled.get(uid, false) == true
+            && get(duelPath()).data.settled.get(uid, false) != true;
+        }
+        // Out of trophies: 1 free trophy, at most once every 20 hours.
+        function freeStep() {
+          return n().free == o().free + 1 && n().net == o().net && recordSame() && n().lastDuel == o().lastDuel
+            && trophies(o()) <= 0 && n().lastFree == request.time
+            && (!('lastFree' in o()) || request.time > o().lastFree + duration.value(20, 'h'));
+        }
+        allow read: if signedIn() && (teacherOf(code) || classMember());
+        allow create: if signedIn() && request.auth.uid == uid && classMember() && keysOk()
+          && n().net == 0 && n().free == 0 && n().played == 0 && n().wins == 0 && n().losses == 0 && n().ties == 0
+          && n().lastDuel == '' && !('lastFree' in n());
+        allow update: if signedIn() && request.auth.uid == uid && keysOk()
+          && (!('lastFree' in o()) || n().get('lastFree', null) == o().lastFree || freeStep())
+          && (stakeStep() || settleStep() || freeStep());
+        // The teacher can reset the Duel scoreboard.
+        allow delete: if signedIn() && teacherOf(code);
+      }
+
       // Student logins the teacher made (name, username, password). Only the class's teacher can see or change them.
       match /logins/{uid} {
         allow read, write: if signedIn() && teacherOf(code);
