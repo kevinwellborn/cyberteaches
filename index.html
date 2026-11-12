@@ -89,6 +89,11 @@ a.course:hover{border-color:var(--c)}
 .course.soon{opacity:.85}
 .course .app-head{display:flex;align-items:center;gap:14px}
 .course .app-icon{width:56px;height:56px;border-radius:13px;flex:none;box-shadow:0 1px 3px rgba(0,0,0,.18)}
+div.course:hover{border-color:var(--c)}
+.course .links{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.course a.go{text-decoration:none}
+.course a.go:hover{text-decoration:underline}
+.btn.store{background:var(--ink);border-color:var(--ink);color:var(--panel);padding:7px 14px;font-size:15px}
 
 .band{display:grid;grid-template-columns:auto minmax(0,1fr);gap:26px;align-items:center;border-radius:18px;padding:26px;margin-top:34px}
 .band.book{background:var(--accent-soft)}
@@ -200,13 +205,16 @@ img.cover,img.ad-art{padding:0;background:none;object-fit:cover}
         <div class="meta"><span class="chip">Grades 6 to 12</span><span class="chip">Class sign-in</span><span class="chip">Teacher dashboard</span></div>
         <span class="go">Start coding →</span>
       </a>
-      <a class="course" style="--c:var(--c-award)" href="award-tracker/">
+      <div class="course" style="--c:var(--c-award)">
         <div class="top"><span class="code">/award-tracker</span><span class="status">New</span></div>
         <div class="app-head"><img class="app-icon" src="award-tracker-icon.png" alt="" width="56" height="56"><h3>Congressional Award Tracker</h3></div>
         <p>Log your Congressional Award hours, see how close you are to each Certificate and Medal, and share your progress with your Advisor.</p>
         <div class="meta"><span class="chip">Web + iPhone app</span><span class="chip">Advisor sharing</span><span class="chip">Free</span></div>
-        <span class="go">Open the tracker →</span>
-      </a>
+        <div class="links">
+          <a class="go" href="award-tracker/">Open the tracker →</a>
+          <a class="btn store" href="https://apps.apple.com/us/app/congressional-award-tracker/id6828575876" target="_blank" rel="noopener" aria-label="Get Congressional Award Tracker on the App Store">Get the iPhone app</a>
+        </div>
+      </div>
       <div data-ad="card"></div>
     </div>
   </section>
