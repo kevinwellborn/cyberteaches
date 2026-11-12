@@ -110,5 +110,40 @@ service cloud.firestore {
         allow delete: if signedIn() && isHost();
       }
     }
+
+    // ---- Congressional Award Tracker (cyberteaches.com/award-tracker) ----
+    // A student's record: only the student can change it. The student and the Advisors they listed
+    // (signed in with that email, and the email verified) can read it. Nobody else can, including the admin.
+    function verifiedEmail() {
+      return signedIn() && request.auth.token.email_verified == true && request.auth.token.email is string;
+    }
+    function advisorOf(data) {
+      return verifiedEmail() && data.get('advisorEmails', []).hasAny([request.auth.token.email.lower()]);
+    }
+    match /awardTrackers/{uid} {
+      allow read: if signedIn() && (request.auth.uid == uid || advisorOf(resource.data));
+      allow create, update: if signedIn() && request.auth.uid == uid
+        && request.resource.data.keys().hasOnly(['profile', 'advisorEmails', 'ownerEmail', 'updatedAt'])
+        && request.resource.data.profile is map && request.resource.data.profile.size() <= 10
+        && request.resource.data.advisorEmails is list && request.resource.data.advisorEmails.size() <= 10;
+      allow delete: if signedIn() && request.auth.uid == uid;
+
+      match /entries/{id} {
+        allow read: if signedIn() && (request.auth.uid == uid
+          || advisorOf(get(/databases/$(database)/documents/awardTrackers/$(uid)).data));
+        allow create, update: if signedIn() && request.auth.uid == uid
+          && id.size() <= 64 && request.resource.data.size() <= 16;
+        allow delete: if signedIn() && request.auth.uid == uid;
+      }
+    }
+    // Lets an Advisor find the students who shared with them. Each student writes only their own row.
+    match /advisorLinks/{email}/students/{uid} {
+      allow read: if verifiedEmail() && request.auth.token.email.lower() == email;
+      allow create, update: if signedIn() && request.auth.uid == uid
+        && request.resource.data.keys().hasOnly(['studentName', 'addedAt'])
+        && request.resource.data.studentName is string && request.resource.data.studentName.size() <= 80;
+      allow delete: if signedIn() && (request.auth.uid == uid
+        || (verifiedEmail() && request.auth.token.email.lower() == email));
+    }
   }
 }
