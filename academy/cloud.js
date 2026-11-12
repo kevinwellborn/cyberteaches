@@ -254,7 +254,7 @@
       catch(e){ console.error(e); await d.ref.delete() }
     }
     if(onStep) onStep('Removing the roster…');
-    for(const sub of ['students', 'board']){
+    for(const sub of ['students', 'board', 'duelBoard', 'duels']){
       const s = await ref.collection(sub).get();
       await Promise.all(s.docs.map(d => d.ref.delete()));
     }
