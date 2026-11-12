@@ -386,16 +386,27 @@ const myLevels = unit => levelsOf(curLevel, unit);   // this level's puzzles for
 const doneCount = ()=>myLevels().filter(l=>progress[l.n]).length;
 // Lessons the student's teacher has locked for their class (classes/{code}.locked). Empty when not in a class.
 let lockedUnits=new Set(), classStop=null, watchedCode=null, teacherStop=null;   // teacherStop: watcher that frees the level tabs for approved teachers
-const isLocked = unit => lockedUnits.has(unit);
+// Visitors who are not signed in can try Lesson 1 only; every other lesson needs a Google or student login.
+const FREE_UNIT = 1;
+const guestLocked = unit => !!Cloud && !Cloud.user && unit !== FREE_UNIT;
+const isLocked = unit => lockedUnits.has(unit) || guestLocked(unit);
 const nextLevel = ()=>{ const o=myLevels(); return (o.find(l=>!progress[l.n] && !isLocked(l.unit)) || o.find(l=>!isLocked(l.unit)) || o[o.length-1]).n };
 const LOCK_ICO='<svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" style="vertical-align:-2px"><rect x="5" y="10" width="14" height="11" rx="2" fill="currentColor"/><path d="M8 10V7a4 4 0 0 1 8 0v3" stroke="currentColor" stroke-width="2.2" fill="none"/></svg>';
-function lockedMsg(unit){ showMsg('Lesson locked', `<p>${LOCK_ICO} Your teacher has locked <b>Lesson ${unit}</b> for now. Pick a lesson that is open, or ask your teacher.</p>`) }
+function lockedMsg(unit){ if(guestLocked(unit)) return signInMsg(unit); showMsg('Lesson locked', `<p>${LOCK_ICO} Your teacher has locked <b>Lesson ${unit}</b> for now. Pick a lesson that is open, or ask your teacher.</p>`) }
+
+let authWaiting=false;   // a puzzle link opened before sign-in was checked
+function signInMsg(unit){ showMsg('Sign in to unlock', `<p>${LOCK_ICO} <b>Lesson ${unit}</b> and the other lessons open when you sign in with your school Google account or the student login from your teacher, then join your class.</p><p>Lesson 1 is free to try without signing in.</p>`,
+  [['Not now',false],['Sign in',true,()=>{ openSignIn(joinParam); return false }]]) }
 
 // ---------- routing ----------
 function route(){
   stopRun();
   const m = location.hash.match(/^#puzzle-(\d+)$/);
   const n = m ? +m[1] : 0;
+  // Until sign-in has been checked, don't bounce a signed-in student away from a puzzle link.
+  const waitAuth = Cloud && !Cloud.ready && guestLocked(n>=1 && n<=LEVELS.length ? LEVELS[n-1].unit : FREE_UNIT) && !lockedUnits.has(n>=1 && n<=LEVELS.length ? LEVELS[n-1].unit : 0);
+  authWaiting = !!(waitAuth && n>=1);
+  if(authWaiting){ showHome(); window.scrollTo(0,0); return }
   if(n>=1 && n<=LEVELS.length && isLocked(LEVELS[n-1].unit)){ const u=LEVELS[n-1].unit; history.replaceState(null,'','#home'); showHome(); lockedMsg(u) }
   else if(n>=1 && n<=LEVELS.length) showPuzzle(n); else showHome();
   window.scrollTo(0,0);
@@ -595,11 +606,11 @@ function showHome(){
   app.appendChild(rankBar());
   const units=h('section','units');
   UNITS.forEach(u=>{
-    const lockedU=isLocked(u.n);
+    const lockedU=isLocked(u.n), guestU=guestLocked(u.n);
     const card=h('article','unit'+(lockedU?' locked teacher-locked':''));
     const lv=myLevels(u.n);
     card.innerHTML=`<div class="unit-num" style="background:${lockedU?'':u.color}">${lockedU?LOCK_ICO:'L'+u.n}</div>
-      <div><span class="label">Lesson ${u.n} · ${lockedU?'Locked by your teacher':lv.filter(l=>progress[l.n]).length+'/'+lv.length+' solved'}</span>
+      <div><span class="label">Lesson ${u.n} · ${guestU?'Sign in to unlock':lockedU?'Locked by your teacher':lv.filter(l=>progress[l.n]).length+'/'+lv.length+' solved'}</span>
       <h2 style="margin-top:4px">${u.title}</h2><p class="concept">${u.concept}</p><div class="stops"></div></div>`;
     const stops=$('.stops',card), nx=nextLevel();
     lv.forEach(l=>{
@@ -610,6 +621,7 @@ function showHome(){
       if(lockedU){ b.disabled=true; b.classList.remove('next'); b.setAttribute('aria-label','Puzzle '+l.k+' (locked)') }
       stops.appendChild(b);
     });
+    if(guestU){ card.style.cursor='pointer'; card.title='Sign in to unlock'; card.onclick=()=>signInMsg(u.n) }
     units.appendChild(card);
   });
   UPCOMING.forEach((u,i)=>{
@@ -1105,6 +1117,9 @@ if(Cloud) Cloud.onChange(c=>{
     if(joinParam && p.classCode!==joinParam && !Cloud.isStudentLogin(u) && !(c.profileFailed && p.classCode)) openJoin(joinParam);
   }
   if(!u && lastUid){ lastUid=null; store.clear(); progress={}; bonus={}; programs={}; route() }
+  // Open the puzzle link once sign-in is known, or show the home page with locks for visitors.
+  if(c.ready && authWaiting && (!u || c.profile)) route();
+  else if(c.ready && !u && !lastUid && !/^#puzzle-/.test(location.hash) && $('.units')) showHome();
   if(c.ready && !u && joinParam && !lastUid && !$('#modal').innerHTML) openJoin(joinParam);
   renderAccount();
   const rb=$('.rankbar'); if(rb) rb.replaceWith(rankBar());
