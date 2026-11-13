@@ -53,14 +53,18 @@ service cloud.firestore {
         allow delete: if signedIn() && (request.auth.uid == uid || teacherOf(code));
       }
 
-      // Leaderboard: a short name, total stars and puzzles solved. Students in the class (and its teacher) can read it;
+      // Leaderboard: a short name, total stars, puzzles solved and today's starting total. Students in the class (and its teacher) can read it;
       // each student writes only their own row.
       match /board/{uid} {
         allow read: if signedIn() && (teacherOf(code)
           || get(/databases/$(database)/documents/users/$(request.auth.uid)).data.get('classCode', '') == code);
         allow create, update: if signedIn() && request.auth.uid == uid
           && exists(/databases/$(database)/documents/classes/$(code))
-          && request.resource.data.keys().hasOnly(['name', 'stars', 'solved', 'updatedAt'])
+          && request.resource.data.keys().hasOnly(['name', 'stars', 'solved', 'updatedAt', 'day', 'dayBase'])
+          // Today's stars = stars - dayBase on the date in day (YYYY-MM-DD). Both are optional for older rows.
+          && (!('day' in request.resource.data) || (request.resource.data.day is string && request.resource.data.day.size() <= 10))
+          && (!('dayBase' in request.resource.data) || (request.resource.data.dayBase is int && request.resource.data.dayBase >= 0
+                && request.resource.data.dayBase <= request.resource.data.stars))
           && request.resource.data.name is string && request.resource.data.name.size() <= 40
           && request.resource.data.stars is int && request.resource.data.stars >= 0 && request.resource.data.stars <= 3000
           && request.resource.data.solved is int && request.resource.data.solved >= 0 && request.resource.data.solved <= 1000;

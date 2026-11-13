@@ -96,6 +96,7 @@ small.rank{display:block;font-size:11px}
 .lessonbtn:hover{text-decoration:underline}
 .lessonbtn:focus-visible{outline:2px solid #fff;outline-offset:2px}
 .lbtitle{font-size:20px;margin-bottom:8px}
+.lbtabs{display:flex;gap:6px;margin:0 0 10px}
 .lb td.l,.lb th.l{text-align:left}
 .lb tr.place1 td:first-child b{color:var(--coin,#C9971A)}
 .lb tr.place1 td,.lb tr.place2 td,.lb tr.place3 td{background:var(--panel-2)}
@@ -168,13 +169,13 @@ body{border-top:6px solid var(--lv,var(--accent))}
 </div>
 <script src="course.js?v=13"></script>
 <script src="firebase-config.js"></script>
-<script src="cloud.js?v=15"></script>
+<script src="cloud.js?v=16"></script>
 <script>
 const $=(s,r=document)=>r.querySelector(s);
 const esc=t=>String(t==null?'':t).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const app=$('#app'), acct=$('#acct');
 const openUnits=new Set();  // lessons expanded in the progress table
-let classes=[], showArchived=false, keepArchived=false, current=null, roster=[], stopRoster=null, stopClasses=null, uid=null, tw0=null, duelRows=[], stopDuel=null;
+let classes=[], showArchived=false, keepArchived=false, current=null, roster=[], stopRoster=null, stopClasses=null, uid=null, tw0=null, duelRows=[], stopDuel=null, boardRows=[], stopBoard=null, lbTab='all';
 const LEVEL_HELP={easy:'Small maps, short programs', medium:'Mid-size maps, a step up', hard:'The full challenge'};
 const pick={ get(){ try{ return localStorage.getItem('cyberteaches:teacherClass') }catch(e){ return null } }, set(v){ try{ localStorage.setItem('cyberteaches:teacherClass',v) }catch(e){} } };
 
@@ -290,6 +291,8 @@ function selectClass(code){
   if(stopRoster) stopRoster();
   roster=[]; renderClass();
   stopRoster=Cloud.watchRoster(code,(list,err)=>{ roster=list.sort((a,b)=>(a.name||'').localeCompare(b.name||'')); renderClass(err) });
+  if(stopBoard) stopBoard(); boardRows=[];
+  stopBoard=Cloud.watchBoard(code,(rows)=>{ if(current!==code) return; boardRows=rows||[]; const b=$('#lbBox'); if(b&&lbTab==='today') b.innerHTML=leaderboard() });
   if(stopDuel) stopDuel(); duelRows=[];
   stopDuel=Cloud.db.collection('classes').doc(code).collection('duelBoard').onSnapshot(s=>{ if(current!==code) return; duelRows=s.docs.map(d=>({uid:d.id, ...d.data()})); const b=$('#duelBox'); if(b) b.innerHTML=duelTable() }, e=>console.error(e));
   renderLogins();
@@ -458,7 +461,9 @@ function renderClass(err){
     <div class="legend"><span><i class="cell s3">★★★</i> 3 stars</span><span><i class="cell s2">★★</i> 2 stars</span><span><i class="cell s1">★</i> 1 star</span><span><i class="cell s0">·</i> not solved</span><span>Click a lesson to show or hide each puzzle.</span><span><b>Score</b> per lesson out of 100: 3 stars = 100, 2 stars = 90, 1 star = 80 for each puzzle, unsolved = 0</span><span>Updates live as students play.</span></div>
     <div class="tablewrap" id="progressTable">${err?'<div class="empty err">Could not load students. Check that the Firestore rules are published.</div>': n?table():'<div class="empty">No students yet. Share the code or link above.</div>'}</div>
     ${n&&!err?`<div class="toolbar"><h2>Leaderboard</h2><div class="spacer"></div><button class="btn" id="lbFull">Show full screen</button></div>
-    <section class="panel lbpanel" id="lbPanel"><h2 class="lbtitle">${esc(c.name||c.code)} leaderboard</h2>${leaderboard()}</section>`:''}
+    <section class="panel lbpanel" id="lbPanel"><h2 class="lbtitle">${esc(c.name||c.code)} leaderboard</h2>
+    <div class="lbtabs" role="tablist"><button class="tab" role="tab" data-tab="all" aria-pressed="${lbTab==='all'}">All time</button><button class="tab" role="tab" data-tab="today" aria-pressed="${lbTab==='today'}">⭐ Today</button></div>
+    <div id="lbBox">${leaderboard()}</div></section>`:''}
     <div class="toolbar"><h2>Duels</h2><span class="lvtag" style="--c:${c.duels?'#2E9363':'#5C6B6B'};--cs:transparent">${c.duels?'On':'Off'}</span><div class="spacer"></div><button class="btn${c.duels?'':' primary'}" id="duelToggle">${c.duels?'Turn Duels off':'Turn Duels on'}</button>${n&&!err?'<button class="btn" id="duelFull">Show full screen</button>':''}</div>
     <p class="muted" style="margin:0 0 8px">Two students get the same new puzzle and 2 minutes. The program with the fewest blocks wins; a faster time breaks a tie. Each player puts in 1 Duel trophy and the winner takes both; if nobody solves it, both get theirs back. Everyone starts with 3 trophies and gets 1 more for every 10 lesson stars. A student at 0 gets 1 free trophy the next day. Duel trophies never change stars, scores or the CSV.</p>
     <section class="panel lbpanel" id="duelPanel"><h2 class="lbtitle">${esc(c.name||c.code)} Duel scoreboard</h2><div id="duelBox">${duelTable()}</div>
@@ -518,12 +523,25 @@ function renderClass(err){
     if(!confirm('Reset the Duel scoreboard for '+(c.name||c.code)+'?\n\nEvery student goes back to 3 trophies plus 1 for every 10 lesson stars, with no wins or losses. Stars and scores are not changed.')) return;
     try{ for(const sub of ['duelBoard','duels']){ const s=await cref.collection(sub).get(); await Promise.all(s.docs.map(d=>d.ref.delete())) } }
     catch(e){ console.error(e); alert('Could not reset everything. Check your connection and try again.') } };
+  const lbt=$('#lbPanel .lbtabs'); if(lbt) lbt.onclick=e=>{ const b=e.target.closest('[data-tab]'); if(!b) return; lbTab=b.dataset.tab;
+    lbt.querySelectorAll('[data-tab]').forEach(x=>x.setAttribute('aria-pressed',String(x.dataset.tab===lbTab))); $('#lbBox').innerHTML=leaderboard() };
   const fs=$('#lbFull'); if(fs) fs.onclick=()=>{ const el=$('#lbPanel'); (el.requestFullscreen||el.webkitRequestFullscreen||(()=>{})).call(el) };
 }
 // Same ranking students see in the app: by stars, then puzzles solved. Names are first name + last initial so it is safe to project.
 function leaderboard(){
   const c=classes.find(x=>x.code===current)||{};
   const short=n=>{ const w=String(n||'Student').trim().split(/\s+/); return w.length>1 ? w[0]+' '+w[w.length-1][0]+'.' : w[0] };
+  if(lbTab==='today'){
+    // Stars earned today (each student's leaderboard row keeps today's starting total). Updates live.
+    const today=Cloud.today(), inClass=new Set(roster.map(s=>s.uid));
+    const rows=boardRows.filter(r=>inClass.has(r.uid) && r.day===today).map(r=>({name:r.name||'Student', today:Math.max(0,(r.stars||0)-(r.dayBase||0))}))
+      .filter(r=>r.today>0).sort((a,b)=>b.today-a.today || a.name.localeCompare(b.name));
+    if(!rows.length) return '<p class="muted" style="margin:8px 0">No stars earned yet today. The board fills in live as students solve puzzles, and starts again at 0 tomorrow.</p>';
+    let place=0, prev=null;
+    return `<table class="lb"><thead><tr><th>#</th><th class="l">Student</th><th>Stars today</th></tr></thead><tbody>${rows.map((r,i)=>{
+      if(r.today!==prev){ place=i+1; prev=r.today }
+      return `<tr class="${place<=3?'place'+place:''}"><td><b>${place===1?'👑':place}</b></td><td class="l"><b>${esc(r.name)}</b></td><td><b>+${r.today}</b> ★</td></tr>` }).join('')}</tbody></table>`;
+  }
   const rows=roster.map(s=>{ const p=s.progress||{}; const sl=studentLevel(c,s); return {name:short(s.name), stars:totalStars(p), solved:levelsOf(sl).filter(l=>p[l.n]).length, total:levelsOf(sl).length} })
     .sort((a,b)=>b.stars-a.stars || b.solved-a.solved || a.name.localeCompare(b.name));
   let place=0, prev=null;
@@ -577,7 +595,7 @@ else Cloud.onChange(c=>{
   const u=c.user?c.user.uid:null;
   if(u===uid && app.dataset.ready) return;
   uid=u; app.dataset.ready='1';
-  if(stopRoster){ stopRoster(); stopRoster=null } if(stopDuel){ stopDuel(); stopDuel=null } if(stopClasses){ stopClasses(); stopClasses=null } if(stopLogins){ stopLogins(); stopLogins=null }
+  if(stopRoster){ stopRoster(); stopRoster=null } if(stopDuel){ stopDuel(); stopDuel=null } if(stopBoard){ stopBoard(); stopBoard=null } if(stopClasses){ stopClasses(); stopClasses=null } if(stopLogins){ stopLogins(); stopLogins=null }
   current=null;
   if(stopStatus){ stopStatus(); stopStatus=null }
   if(!u) signInView(); else if(Cloud.isStudentLogin(c.user)) studentAccount(); else if(Cloud.isAdmin(c.user)) dashboard(true); else gate(c.user);

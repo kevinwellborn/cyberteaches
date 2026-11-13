@@ -162,7 +162,7 @@
     const code = Cloud.profile && Cloud.profile.classCode;
     if(starsChanged && code){
       await db.collection('classes').doc(code).collection('students').doc(uid).set({...base, progress, bonus}, {merge: true});
-      await Cloud.saveBoard(code, progress).catch(e => console.error('Could not update the leaderboard', e));
+      await Cloud.saveBoard(code, progress, (Cloud.profile || {}).progress).catch(e => console.error('Could not update the leaderboard', e));
     }
     if(starsChanged) savedStars = sk;
     Cloud.profile = {...Cloud.profile, progress, bonus, programs};
@@ -170,10 +170,23 @@
 
   // Class leaderboard: classmates can read each other's first name, last initial, stars and puzzles solved, nothing else.
   const shortName = n => { const w = String(n || 'Student').trim().split(/\s+/); return (w.length > 1 ? w[0] + ' ' + w[w.length-1][0] + '.' : w[0]).slice(0, 40) };
-  Cloud.saveBoard = (code, progress) => {
-    const vals = Object.values(progress || {}).map(Number).filter(v => v > 0);
-    return db.collection('classes').doc(code).collection('board').doc(Cloud.user.uid).set({
-      name: shortName(who().name), stars: vals.reduce((a, b) => a + b, 0), solved: vals.length,
+  // Today's stars: the row keeps the date (the computer's own day) and the star total it had before the first save that day
+  // (dayBase), so stars earned today = stars - dayBase. That needs no extra writes.
+  const starSum = p => Object.values(p || {}).map(Number).filter(v => v > 0).reduce((a, b) => a + b, 0);
+  Cloud.today = () => { const d = new Date(); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0') };
+  let boardDay = null;   // {key: code/uid, day, dayBase} from the leaderboard row, read once per visit
+  Cloud.saveBoard = async (code, progress, before) => {
+    const uid = Cloud.user.uid, ref = db.collection('classes').doc(code).collection('board').doc(uid), key = code + '/' + uid;
+    const vals = Object.values(progress || {}).map(Number).filter(v => v > 0), stars = vals.reduce((a, b) => a + b, 0);
+    if(!boardDay || boardDay.key !== key){
+      boardDay = {key};
+      try { const s = await ref.get(); if(s.exists){ boardDay.day = s.data().day; boardDay.dayBase = s.data().dayBase } } catch(e){ console.error(e) }
+    }
+    const day = Cloud.today();
+    if(boardDay.day !== day || !(boardDay.dayBase >= 0)){ boardDay.day = day; boardDay.dayBase = Math.min(stars, starSum(before)) }
+    const dayBase = Math.min(stars, boardDay.dayBase);
+    return ref.set({
+      name: shortName(who().name), stars, solved: vals.length, day, dayBase,
       updatedAt: firebase.firestore.FieldValue.serverTimestamp()
     });
   };
