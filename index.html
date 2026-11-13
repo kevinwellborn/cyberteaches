@@ -17,274 +17,297 @@
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="icon" type="image/png" href="favicon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Atkinson+Hyperlegible:wght@400;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap">
 <style>
-/* Layout: brand hero with teacher intro, a grid of course cards (live vs coming soon), then book and channel bands */
+/* Layout: announcement bar, sticky header, navy hero with a product screenshot, stats strip,
+   course cards (Academy featured), For teachers, books row, YouTube call to action, footer. */
 :root{
-  --bg:#EEF1EC; --panel:#FFFFFF; --panel-2:#F6F8F4; --ink:#1C292C; --muted:#5C6B6B; --line:#D5DCD4;
-  --accent:#0F7B78; --accent-ink:#FFFFFF; --accent-soft:#D6EEEA; --term:#13201F; --term-ink:#B9F5DA; --yt:#D93025;
+  --navy:#0B1B2E; --navy-2:#13294A; --ink:#0F1E2E; --ink-2:#33475B; --muted:#5A6B7D; --line:#E3E8EF;
+  --bg:#F7F9FC; --panel:#FFFFFF; --panel-2:#F0F3F7; --teal:#0F7B78; --teal-ink:#FFFFFF; --teal-soft:#E3F4F2;
+  --header:rgba(255,255,255,.92);
   --c-cyber:#0F7B78; --c-csp:#2F6FDE; --c-sec:#C2417A; --c-net:#D97E16; --c-acad:#7A4FD0; --c-award:#A8741A;
-  --f-display:"Bricolage Grotesque", "Trebuchet MS", system-ui, sans-serif;
-  --f-body:"Atkinson Hyperlegible", "Segoe UI", system-ui, sans-serif;
-  --f-mono:"JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
+  --easy:#1F9D55; --med:#E0A800; --hard:#D2412F;
+  --f-h:"Plus Jakarta Sans","Segoe UI",system-ui,sans-serif; --f-b:"Inter","Segoe UI",system-ui,sans-serif;
+  --r:14px; --shadow:0 1px 2px rgba(15,30,46,.06),0 8px 24px rgba(15,30,46,.06);
+  --shadow-up:0 2px 4px rgba(15,30,46,.06),0 18px 40px rgba(15,30,46,.10);
 }
 @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
-  --bg:#141B1C; --panel:#1C2526; --panel-2:#222D2E; --ink:#E6EEEC; --muted:#9AABA9; --line:#33403F;
-  --accent:#3FC1B8; --accent-ink:#0B1A1A; --accent-soft:#1D3A38; --term:#0C1213; --term-ink:#9FEBC8; --yt:#F2665B;
-  --c-cyber:#2FA8A1; --c-csp:#4B86EC; --c-sec:#D85A92; --c-net:#E39232; --c-acad:#9473E0; --c-award:#DDA93F; color-scheme:dark }
+  --ink:#E8EEF5; --ink-2:#C3CFDD; --muted:#93A4B8; --line:#24364D; --bg:#0A1524; --panel:#111F33; --panel-2:#18293F;
+  --teal:#2BB5AE; --teal-ink:#06201F; --teal-soft:#123A3B; --header:rgba(10,21,36,.9);
+  --c-cyber:#2FA8A1; --c-csp:#5B93F0; --c-sec:#DD6A9D; --c-net:#E39232; --c-acad:#A084E8; --c-award:#DDA93F;
+  --shadow:0 1px 2px rgba(0,0,0,.3); --shadow-up:0 12px 30px rgba(0,0,0,.45); color-scheme:dark }
 }
 :root[data-theme="dark"]{
-  --bg:#141B1C; --panel:#1C2526; --panel-2:#222D2E; --ink:#E6EEEC; --muted:#9AABA9; --line:#33403F;
-  --accent:#3FC1B8; --accent-ink:#0B1A1A; --accent-soft:#1D3A38; --term:#0C1213; --term-ink:#9FEBC8; --yt:#F2665B;
-  --c-cyber:#2FA8A1; --c-csp:#4B86EC; --c-sec:#D85A92; --c-net:#E39232; --c-acad:#9473E0; --c-award:#DDA93F; color-scheme:dark
+  --ink:#E8EEF5; --ink-2:#C3CFDD; --muted:#93A4B8; --line:#24364D; --bg:#0A1524; --panel:#111F33; --panel-2:#18293F;
+  --teal:#2BB5AE; --teal-ink:#06201F; --teal-soft:#123A3B; --header:rgba(10,21,36,.9);
+  --c-cyber:#2FA8A1; --c-csp:#5B93F0; --c-sec:#DD6A9D; --c-net:#E39232; --c-acad:#A084E8; --c-award:#DDA93F;
+  --shadow:0 1px 2px rgba(0,0,0,.3); --shadow-up:0 12px 30px rgba(0,0,0,.45); color-scheme:dark
 }
 *{box-sizing:border-box}
-html,body{background:var(--bg)}
-body{margin:0;color:var(--ink);font-family:var(--f-body);font-size:17px;line-height:1.55;
-  padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px));padding-block:0 40px}
-a{color:var(--accent)}
-:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
-h1,h2,h3{font-family:var(--f-display);text-wrap:balance;margin:0;line-height:1.12}
-.wrap{max-width:1100px;margin:0 auto}
-.topbar{display:flex;align-items:center;gap:14px;padding-block:16px;flex-wrap:wrap}
-.brand{display:flex;align-items:center;gap:10px;font-family:var(--f-display);font-weight:800;font-size:22px;text-decoration:none;color:var(--ink)}
-.brand svg{width:34px;height:34px}
-.brand .logo{width:36px;height:36px;flex:none;border-radius:9px;background:#fff;padding:2px;box-shadow:0 0 0 1px var(--line)}
-.spacer{flex:1}
-.nav{display:flex;gap:4px;flex-wrap:wrap}
-.nav a{font-weight:700;text-decoration:none;padding:6px 10px;border-radius:8px;color:var(--ink)}
-.nav a:hover{background:var(--accent-soft)}
-.nav a.teach{background:var(--accent);color:var(--accent-ink)}
-.nav a.teach:hover{background:var(--accent);opacity:.9}
-.btn{border:2px solid var(--line);background:var(--panel);border-radius:10px;padding:9px 16px;font-weight:700;display:inline-flex;align-items:center;gap:8px;text-decoration:none;color:var(--ink)}
-.btn:hover{border-color:var(--accent)}
-.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
-.btn.yt{background:var(--yt);border-color:var(--yt);color:#fff}
-.label{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:700}
-.muted{color:var(--muted)}
-.row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+html{scroll-behavior:smooth;scroll-padding-top:84px}
+html,body{margin:0;background:var(--bg)}
+body{font-family:var(--f-b);color:var(--ink);font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased}
+h1,h2,h3{font-family:var(--f-h);margin:0;line-height:1.15;letter-spacing:-.02em;text-wrap:balance}
+a{color:inherit;text-decoration:none}
+img{max-width:100%}
+:focus-visible{outline:3px solid var(--teal);outline-offset:2px;border-radius:6px}
+.wrap{max-width:1160px;margin:0 auto;padding-left:max(24px, env(safe-area-inset-left, 0px));padding-right:max(24px, env(safe-area-inset-right, 0px))}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;font-weight:600;font-size:15px;padding:12px 20px;border-radius:10px;border:1px solid transparent;white-space:nowrap}
+.btn.primary{background:var(--teal);color:var(--teal-ink)} .btn.primary:hover{filter:brightness(.92)}
+.btn.ghost{border-color:rgba(255,255,255,.28);color:#fff} .btn.ghost:hover{background:rgba(255,255,255,.08)}
+.btn.line{border-color:var(--line);background:var(--panel)} .btn.line:hover{border-color:var(--teal)}
+.btn.sm{padding:8px 14px;font-size:14px}
+.eyebrow{font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--teal)}
 
-.hero{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:32px;align-items:center;padding-block:24px 40px}
-.hero h1{font-size:clamp(34px,5.4vw,58px);font-weight:800;letter-spacing:-.02em}
-.hero h1 em{font-style:normal;color:var(--accent)}
-.hero p{font-size:19px;color:var(--muted);max-width:52ch;margin:16px 0 22px}
-.terminal{background:var(--term);color:var(--term-ink);border-radius:16px;padding:20px 22px;font-family:var(--f-mono);font-size:14px;line-height:1.75;min-width:0;overflow:hidden}
-.terminal .dim{opacity:.6}
+.announce{background:var(--navy);color:#C9D6E6;font-size:14px;text-align:center;padding:8px 16px}
+.announce a{color:#fff;font-weight:600;text-decoration:underline;text-underline-offset:3px}
+header.site{position:sticky;top:0;z-index:5;background:var(--header);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.bar{display:flex;align-items:center;gap:28px;min-height:68px}
+.brand{display:flex;align-items:center;gap:10px;font-family:var(--f-h);font-weight:800;font-size:20px;letter-spacing:-.02em}
+.brand img{width:34px;height:34px;border-radius:8px;background:#fff}
+.nav{display:flex;gap:4px;flex:1}
+.nav a{font-weight:500;font-size:15px;color:var(--ink-2);padding:8px 12px;border-radius:8px;white-space:nowrap}
+.nav a:hover{background:var(--panel-2);color:var(--ink)}
 
-.section-head{display:flex;justify-content:space-between;align-items:end;gap:12px;flex-wrap:wrap;margin:8px 0 16px}
-.section-head h2{font-size:30px}
-.courses{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px}
-.course{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:22px;display:flex;flex-direction:column;gap:10px;text-decoration:none;color:var(--ink);position:relative;overflow:hidden}
-.course::before{content:"";position:absolute;inset:0 0 auto 0;height:6px;background:var(--c)}
-a.course:hover{border-color:var(--c)}
-.course .top{display:flex;justify-content:space-between;align-items:center;gap:10px}
-.course .code{font-family:var(--f-mono);font-weight:600;font-size:13px;color:var(--c)}
-.status{font-size:12px;font-weight:700;padding:2px 10px;border-radius:99px;background:var(--accent-soft);color:var(--ink)}
-.status.soon{background:var(--panel-2);color:var(--muted);border:1px solid var(--line)}
-.course h3{font-size:23px}
-.course p{margin:0;color:var(--muted);font-size:16px}
-.course .meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:auto;padding-top:6px}
-.chip{font-size:13px;padding:2px 9px;border-radius:7px;background:var(--panel-2);border:1px solid var(--line)}
-.course .go{font-weight:700;color:var(--c)}
-.course.soon{opacity:.85}
-.course .app-head{display:flex;align-items:center;gap:14px}
-.course .app-icon{width:56px;height:56px;border-radius:13px;flex:none;box-shadow:0 1px 3px rgba(0,0,0,.18)}
-div.course:hover{border-color:var(--c)}
-.course .links{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
-.course a.go{text-decoration:none}
-.course a.go:hover{text-decoration:underline}
-.btn.store{background:var(--ink);border-color:var(--ink);color:var(--panel);padding:7px 14px;font-size:15px}
+.hero{background:radial-gradient(1200px 500px at 85% -10%, #1C4D7A 0%, transparent 60%),linear-gradient(180deg,#0B1B2E,#13294A);color:#fff;overflow:hidden}
+.hero .wrap{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);gap:56px;align-items:center;padding-top:72px;padding-bottom:84px}
+.pill{display:inline-flex;gap:8px;align-items:center;font-size:13px;font-weight:600;color:#BFE9E5;background:rgba(20,163,158,.14);border:1px solid rgba(20,163,158,.35);padding:5px 12px;border-radius:99px}
+.pill i{width:7px;height:7px;border-radius:50%;background:#3FD6CC}
+.hero h1{font-size:clamp(34px,5vw,56px);font-weight:800;margin:20px 0 18px}
+.hero h1 em{font-style:normal;background:linear-gradient(90deg,#4FE0D5,#7FB6FF);-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero p{font-size:18px;color:#B8C7D9;max-width:50ch;margin:0 0 28px}
+.hero .btn.primary{background:#14918D;color:#fff}
+.ctas{display:flex;gap:12px;flex-wrap:wrap}
+.trust{display:flex;gap:10px 22px;flex-wrap:wrap;margin-top:32px;font-size:14px;color:#9FB2C8}
+.trust b{color:#fff;font-weight:600}
+.trust span::before{content:"✓ ";color:#3FD6CC;font-weight:700}
+.frame{display:block;background:#fff;border-radius:14px;box-shadow:0 30px 80px rgba(0,0,0,.45);overflow:hidden;transform:perspective(1600px) rotateY(-6deg) rotateX(2deg);transition:transform .25s}
+.frame:hover{transform:perspective(1600px) rotateY(-2deg) rotateX(1deg)}
+.frame .chrome{height:34px;background:#EEF2F6;display:flex;align-items:center;gap:7px;padding:0 14px}
+.frame .chrome i{width:11px;height:11px;border-radius:50%;background:#D5DCE4}
+.frame .chrome .url{margin-left:12px;flex:1;height:20px;border-radius:6px;background:#fff;font-size:11px;color:#7A8899;display:flex;align-items:center;padding-left:10px}
+.frame img{display:block;width:100%;height:auto}
 
-.band{display:grid;grid-template-columns:auto minmax(0,1fr);gap:26px;align-items:center;border-radius:18px;padding:26px;margin-top:34px}
-.band.book{background:var(--accent-soft)}
-.band.channel{background:var(--term);color:var(--term-ink)}
-.band.channel .muted{color:var(--term-ink);opacity:.75}
-.band h2{font-size:28px;margin:6px 0 8px}
-.cover{width:150px;height:auto;border-radius:8px;background:var(--accent);color:var(--accent-ink);display:grid;place-items:center;text-align:center;padding:12px;font-family:var(--f-display);font-weight:800;font-size:17px;line-height:1.2;box-shadow:0 8px 22px rgba(0,0,0,.2)}
-.cover small{display:block;font-family:var(--f-body);font-weight:400;font-size:12px;margin-top:8px;opacity:.85}
-.play{width:110px;height:110px;border-radius:50%;background:var(--yt);display:grid;place-items:center}
-.play svg{width:44px;height:44px;margin-left:6px}
-/* Ad spots: quiet, labeled, same card language as the page. Content comes from CT_ADS below. */
-.ad{position:relative;border:1px dashed var(--line);border-radius:14px;background:var(--panel);color:var(--ink);text-decoration:none;display:flex;align-items:center;gap:16px}
-a.ad:hover{border-color:var(--accent)}
-.ad .ad-tag{position:absolute;top:8px;right:12px;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
-.ad .ad-art{flex:none;border-radius:8px;background:var(--accent);color:var(--accent-ink);display:grid;place-items:center;font-family:var(--f-display);font-weight:800;text-align:center;line-height:1.15}
-.ad .ad-text{min-width:0}
-.ad b{font-family:var(--f-display);font-size:18px;display:block}
-.ad .ad-cta{font-weight:700;color:var(--accent);white-space:nowrap}
-.ad-strip{padding:14px 18px;margin:28px 0 0}
-.ad-strip .ad-art{width:48px;height:64px;font-size:10px;padding:4px}
-.ad-strip .ad-text{flex:1}
-.ad-card{flex-direction:column;align-items:flex-start;padding:22px;gap:10px}
-.ad-card .ad-art{width:84px;height:112px;font-size:12px;padding:8px}
-img.cover,img.ad-art{padding:0;background:none;object-fit:cover}
-@media (max-width:560px){ .ad-strip{flex-wrap:wrap} }
-.foot{margin-top:40px;color:var(--muted);font-size:14px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;border-top:1px solid var(--line);padding-top:16px}
-@media (max-width:820px){ .hero{grid-template-columns:1fr} }
-@media (max-width:560px){ .band{grid-template-columns:1fr} .cover{width:120px} .play{width:80px;height:80px} }
-.yt-banner{position:relative;display:block;text-decoration:none;margin:12px 0 4px;border-radius:14px;overflow:hidden;box-shadow:0 4px 14px rgba(0,0,0,.12)}
-.yt-banner img{display:block;width:100%;height:auto}
-.yt-banner .yt-cta{position:absolute;right:12px;bottom:10px;display:inline-flex;align-items:center;gap:6px;background:#E02F2F;color:#fff;font-weight:700;font-size:14px;padding:6px 12px;border-radius:99px;text-decoration:none;box-shadow:0 2px 8px rgba(0,0,0,.25)}
-.yt-banner:hover .yt-cta,.yt-banner:focus-visible .yt-cta{background:#C21F1F}
-@media (max-width:560px){ .yt-banner .yt-cta{position:static;display:flex;justify-content:center;border-radius:0;box-shadow:none;font-size:13px;padding:7px} }
+.stats{background:var(--panel);border-bottom:1px solid var(--line)}
+.stats .wrap{display:grid;grid-template-columns:repeat(4,1fr);gap:24px;padding-top:28px;padding-bottom:28px}
+.stat b{display:block;font-family:var(--f-h);font-size:30px;font-weight:800;line-height:1.2}
+.stat span{color:var(--muted);font-size:14px}
+
+section.block{padding:84px 0}
+.head{margin-bottom:36px}
+.head h2,.teach h2{font-size:clamp(28px,3.4vw,38px);margin-top:8px}
+.head p{color:var(--muted);max-width:56ch;margin:10px 0 0}
+
+.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:26px;display:flex;flex-direction:column;gap:12px;box-shadow:var(--shadow);transition:transform .15s,box-shadow .15s,border-color .15s}
+a.card:hover,.card.wide:hover{transform:translateY(-3px);box-shadow:var(--shadow-up);border-color:color-mix(in srgb,var(--c) 45%,var(--line))}
+.icon{width:46px;height:46px;border-radius:12px;display:grid;place-items:center;background:color-mix(in srgb,var(--c) 14%,var(--panel));color:var(--c);flex:none}
+.icon svg{width:24px;height:24px}
+.card .tag{font-size:12px;font-weight:600;color:var(--muted)}
+.card h3{font-size:20px}
+.card p{margin:0;color:var(--muted);font-size:15px}
+.card .facts{display:flex;gap:6px 16px;flex-wrap:wrap;font-size:13px;color:var(--ink-2);margin-top:auto;padding-top:14px;border-top:1px solid var(--line)}
+.card .facts b{font-weight:700;color:var(--ink)}
+.card .go{font-weight:600;color:var(--c);font-size:15px}
+.card.feature{grid-column:span 2;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:26px;background:linear-gradient(135deg,color-mix(in srgb,var(--c) 9%,var(--panel)),var(--panel) 60%)}
+.card.feature .col{display:flex;flex-direction:column;gap:12px}
+.card.feature img{width:100%;height:auto;border-radius:10px;border:1px solid var(--line);align-self:center}
+.levels{display:flex;gap:8px;flex-wrap:wrap}
+.lv{font-size:12px;font-weight:700;padding:3px 10px;border-radius:99px;color:#fff}
+.card.wide{grid-column:span 3;flex-direction:row;align-items:center;gap:20px;padding:20px 26px}
+.card.wide .text{flex:1;min-width:0}
+.card.wide .icon{background:none}
+.card.wide .icon img{width:46px;height:46px;border-radius:12px;display:block}
+.card.wide .links{display:flex;gap:18px;align-items:center;flex-wrap:wrap}
+.card.wide a.go:hover{text-decoration:underline}
+
+.teach{background:var(--panel);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.teach .wrap{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:56px;align-items:center}
+.feat{display:grid;gap:22px;margin:28px 0 30px}
+.feat > div{display:grid;grid-template-columns:40px 1fr;gap:14px}
+.feat .ic{width:40px;height:40px;border-radius:10px;background:var(--teal-soft);color:var(--teal);display:grid;place-items:center}
+.feat .ic svg{width:21px;height:21px}
+.feat h3{font-size:17px;margin-bottom:2px;letter-spacing:-.01em}
+.feat p{margin:0;color:var(--muted);font-size:15px}
+.shot{border-radius:14px;border:1px solid var(--line);box-shadow:var(--shadow);overflow:hidden;background:#fff}
+.shot img{display:block;width:100%;height:auto}
+
+.books{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}
+.book{display:grid;grid-template-columns:96px minmax(0,1fr);gap:18px;align-items:center;background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:18px;box-shadow:var(--shadow);transition:transform .15s,box-shadow .15s}
+.book:hover{transform:translateY(-3px);box-shadow:var(--shadow-up)}
+.book img{width:96px;height:auto;border-radius:6px;box-shadow:0 6px 16px rgba(0,0,0,.18)}
+.book h3{font-size:16px;line-height:1.3;letter-spacing:-.01em}
+.book p{margin:4px 0 10px;color:var(--muted);font-size:14px}
+.book .go{font-weight:600;color:var(--teal);font-size:14px}
+
+.cta{background:linear-gradient(120deg,#0F7B78,#0B5E8A);color:#fff;border-radius:20px;padding:44px;display:flex;justify-content:space-between;align-items:center;gap:24px;flex-wrap:wrap}
+.cta h2{font-size:30px}
+.cta p{margin:8px 0 0;color:#D5F1EE}
+.cta .btn{background:#fff;color:#0F1E2E}
+.cta .btn svg{color:#D93025}
+footer.site{background:#0B1B2E;color:#9FB2C8;margin-top:84px;font-size:14px}
+footer .cols{display:grid;grid-template-columns:1.5fr repeat(4,1fr);gap:32px;padding:56px 0 36px}
+footer h2{color:#fff;font-family:var(--f-h);font-size:14px;letter-spacing:0;margin:0 0 12px}
+footer ul{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+footer a:hover{color:#fff}
+footer .brand{color:#fff}
+footer .legal{border-top:1px solid rgba(255,255,255,.1);padding:18px 0 28px;display:flex;justify-content:space-between;gap:8px 16px;flex-wrap:wrap;font-size:13px}
+
+@media (max-width:900px){
+  .bar{flex-wrap:wrap;gap:0 12px;justify-content:space-between;padding-top:10px}
+  .brand{font-size:18px}
+  .nav{order:3;flex:0 0 100%;overflow-x:auto;margin:4px -8px 0;padding-bottom:6px;scrollbar-width:none}
+  .nav::-webkit-scrollbar{display:none}
+  .nav a{padding:8px 10px}
+  .hero .wrap,.teach .wrap{grid-template-columns:minmax(0,1fr);gap:40px}
+  .hero .wrap{padding-top:44px;padding-bottom:56px}
+  .frame,.frame:hover{transform:none}
+  .stats .wrap{grid-template-columns:repeat(2,1fr)}
+  .grid,.books{grid-template-columns:minmax(0,1fr)}
+  .card.feature{grid-column:auto;grid-template-columns:minmax(0,1fr)}
+  .card.wide{grid-column:auto;flex-wrap:wrap}
+  .card.wide .text{flex-basis:60%}
+  footer .cols{grid-template-columns:1fr 1fr}
+  footer .cols > div:first-child{grid-column:span 2}
+  section.block{padding:56px 0}
+  .wrap{padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px))}
+  .cta{padding:28px}
+  footer.site{margin-top:56px}
+}
+@media (prefers-reduced-motion: reduce){ html{scroll-behavior:auto} .card,.book,.frame{transition:none} }
 </style>
 </head><body>
-<div class="wrap">
-  <a class="yt-banner" href="https://www.youtube.com/@cyberteaches?sub_confirmation=1" target="_blank" rel="noopener" aria-label="Subscribe to CyberTeaches on YouTube">
-    <img src="yt-banner.jpg" alt="CyberTeaches: cybersecurity made easy, fun and short lessons. Kevin Wellborn's AP CSP, AP Cybersecurity, and Security+ study guides." width="1328" height="288">
-    <span class="yt-cta"><svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path d="M6 4l14 8-14 8z" fill="#fff"/></svg>Subscribe on YouTube</span>
-  </a>
-  <header class="topbar">
-    <a class="brand" href="./">
-      <img class="logo" src="logo.png" alt="" width="36" height="36">
-      CyberTeaches
-    </a>
-    <span class="spacer"></span>
-    <nav class="nav" aria-label="Main">
-      <a href="#courses">Courses</a>
-      <a href="#book">Book</a>
-      <a href="https://www.youtube.com/@cyberteaches" target="_blank" rel="noopener">YouTube</a>
-      <a class="teach" href="academy/teacher.html">Teacher Dashboard</a>
-    </nav>
-  </header>
 
-  <section class="hero">
-    <div>
-      <h1>Computer science and cybersecurity, <em>taught clearly.</em></h1>
-      <p>Free AP Cybersecurity, AP Computer Science Principles (AP CSP), and CompTIA Security+ courses from a computer science teacher, with video lessons, practice quizzes, and hands-on labs. Pick a course to start.</p>
-      <div class="row">
-        <a class="btn primary" href="#courses">Browse courses</a>
-        <a class="btn yt" href="https://www.youtube.com/@cyberteaches" target="_blank" rel="noopener">▶ Watch on YouTube</a>
-      </div>
-    </div>
-    <div class="terminal" aria-hidden="true">
-      <div><span class="dim">$</span> ls courses/</div>
-      <div>apcybersecurity/ &nbsp;apcsp/ &nbsp;securityplus/</div>
-      <div>networking/ &nbsp;&nbsp;academy/</div>
-      <div><span class="dim">$</span> cd apcybersecurity &amp;&amp; ./start</div>
-      <div>5 units · 24 topics · 11 labs</div>
-      <div class="dim">loading 1.1 understanding social engineering…</div>
-    </div>
-  </section>
+<div class="announce">New in the Academy: Duel mode and daily leaderboards. <a href="academy/">Try it now</a></div>
 
-  <section id="courses">
-    <div class="section-head"><div><span class="label">Courses</span><h2>Choose your course</h2></div></div>
-    <div class="courses">
-      <a class="course" style="--c:var(--c-cyber)" href="apcybersecurity/">
-        <div class="top"><span class="code">/apcybersecurity</span><span class="status">Open now</span></div>
-        <h3>AP Cybersecurity</h3>
-        <p>All 5 College Board units: social engineering, physical security, networks, devices, and cryptography.</p>
-        <div class="meta"><span class="chip">24 lessons</span><span class="chip">11 labs</span><span class="chip">Videos</span><span class="chip">Companion book</span></div>
-        <span class="go">Start the course →</span>
-      </a>
-      <a class="course" style="--c:var(--c-csp)" href="apcsp/">
-        <div class="top"><span class="code">/apcsp</span><span class="status">Open now</span></div>
-        <h3>AP Computer Science Principles</h3>
-        <p>All 5 Big Ideas: creative development, data, algorithms and programming, networks, and the impact of computing.</p>
-        <div class="meta"><span class="chip">35 lessons</span><span class="chip">10 labs</span><span class="chip">140 AP-style questions</span><span class="chip">Companion book</span></div>
-        <span class="go">Start the course →</span>
-      </a>
-      <a class="course" style="--c:var(--c-sec)" href="securityplus/">
-        <div class="top"><span class="code">/securityplus</span><span class="status">Open now</span></div>
-        <h3>CompTIA Security+ (SY0-801)</h3>
-        <p>Prep for the new SY0-801 exam, domain by domain, including the new AI and zero trust topics.</p>
-        <div class="meta"><span class="chip">27 lessons</span><span class="chip">11 labs</span><span class="chip">116 exam-style questions</span><span class="chip">Companion book</span></div>
-        <span class="go">Start the course →</span>
-      </a>
-      <a class="course" style="--c:var(--c-net)" href="networking/">
-        <div class="top"><span class="code">/networking</span><span class="status">Open now</span></div>
-        <h3>AP Networking</h3>
-        <p>How networks connect devices and move data, from cables and Wi-Fi to IP addresses, routing, and troubleshooting.</p>
-        <div class="meta"><span class="chip">4 labs</span><span class="chip">2 practice exams</span><span class="chip">Sample syllabus</span><span class="chip">Companion book</span></div>
-        <span class="go">Start the course →</span>
-      </a>
-      <a class="course" style="--c:var(--c-acad)" href="academy/">
-        <div class="top"><span class="code">/academy</span><span class="status">Open now</span></div>
+<header class="site"><div class="wrap bar">
+  <a class="brand" href="./"><img src="logo.png" alt="" width="34" height="34">CyberTeaches</a>
+  <nav class="nav" aria-label="Main">
+    <a href="#courses">Courses</a>
+    <a href="academy/">Academy</a>
+    <a href="#teachers">For teachers</a>
+    <a href="#book">Books</a>
+    <a href="https://www.youtube.com/@cyberteaches" target="_blank" rel="noopener">YouTube</a>
+  </nav>
+  <a class="btn primary sm" href="academy/teacher.html">Teacher Dashboard</a>
+</div></header>
+
+<main>
+<section class="hero"><div class="wrap">
+  <div>
+    <span class="pill"><i></i>Free for students and teachers</span>
+    <h1>Computer science and cybersecurity, <em>taught clearly.</em></h1>
+    <p>Free AP Cybersecurity, AP Computer Science Principles (AP CSP), CompTIA Security+ and AP Networking courses, plus a block-coding Academy for middle and high school, from a computer science teacher.</p>
+    <div class="ctas"><a class="btn primary" href="#courses">Browse courses</a><a class="btn ghost" href="#teachers">I'm a teacher →</a></div>
+    <div class="trust"><span><b>100% free</b> lessons</span><span>Follows the <b>College Board</b> units</span><span>Grades <b>6 to 12</b></span></div>
+  </div>
+  <a class="frame" href="academy/" aria-label="Open CyberTeaches Academy"><span class="chrome" aria-hidden="true"><i></i><i></i><i></i><span class="url">cyberteaches.com/academy</span></span><img src="img/home/academy-puzzle.png" alt="A rover coding puzzle in CyberTeaches Academy: drag blocks like move forward and repeat to collect crystals" width="1400" height="536"></a>
+</div></section>
+
+<div class="stats"><div class="wrap">
+  <div class="stat"><b>5</b><span>Free courses</span></div>
+  <div class="stat"><b>420</b><span>Coding puzzles in 3 levels</span></div>
+  <div class="stat"><b>300+</b><span>Practice and exam questions</span></div>
+  <div class="stat"><b>36</b><span>Hands-on labs</span></div>
+</div></div>
+
+<section class="block" id="courses"><div class="wrap">
+  <div class="head"><span class="eyebrow">Courses</span><h2>Choose your course</h2><p>Every course has short lessons, quick checks and hands-on labs. Sign in to save your progress.</p></div>
+  <div class="grid">
+    <a class="card feature" style="--c:var(--c-acad)" href="academy/">
+      <div class="col">
+        <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="7" width="18" height="12" rx="3"/><circle cx="9" cy="13" r="1.5"/><circle cx="15" cy="13" r="1.5"/><path d="M12 7V3"/></svg></div>
+        <span class="tag">Grades 6 to 12 · Class sign-in</span>
         <h3>CyberTeaches Academy</h3>
-        <p>Block-coding puzzles for middle and high school. Guide a rover with loops and conditions, then program it to win tank battles.</p>
-        <div class="meta"><span class="chip">Grades 6 to 12</span><span class="chip">Class sign-in</span><span class="chip">Teacher dashboard</span></div>
+        <p>Block-coding puzzles for middle and high school. Guide a rover with loops, conditions and variables, then program it to win tank battles.</p>
+        <div class="levels" aria-label="Three levels"><span class="lv" style="background:var(--easy)">Easy</span><span class="lv" style="background:var(--med);color:#3A2B00">Medium</span><span class="lv" style="background:var(--hard)">Hard</span></div>
+        <div class="facts"><span><b>14</b> lessons</span><span><b>420</b> puzzles</span><span>Teacher dashboard</span></div>
         <span class="go">Start coding →</span>
-      </a>
-      <div class="course" style="--c:var(--c-award)">
-        <div class="top"><span class="code">/award-tracker</span><span class="status">New</span></div>
-        <div class="app-head"><img class="app-icon" src="award-tracker-icon.png" alt="" width="56" height="56"><h3>Congressional Award Tracker</h3></div>
-        <p>Log your Congressional Award hours, see how close you are to each Certificate and Medal, and share your progress with your Advisor.</p>
-        <div class="meta"><span class="chip">Web + iPhone app</span><span class="chip">Advisor sharing</span><span class="chip">Free</span></div>
-        <div class="links">
-          <a class="go" href="award-tracker/">Open the tracker →</a>
-          <a class="btn store" href="https://apps.apple.com/us/app/congressional-award-tracker/id6828575876" target="_blank" rel="noopener" aria-label="Get Congressional Award Tracker on the App Store">Get the iPhone app</a>
-        </div>
       </div>
-      <div data-ad="card"></div>
+      <img src="img/home/academy-puzzle.png" alt="" width="1400" height="536" loading="lazy">
+    </a>
+    <a class="card" style="--c:var(--c-cyber)" href="apcybersecurity/">
+      <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M9 12l2 2 4-4"/></svg></div>
+      <span class="tag">AP course · 5 units</span><h3>AP Cybersecurity</h3>
+      <p>All 5 College Board units: social engineering, physical security, networks, devices, and cryptography.</p>
+      <div class="facts"><span><b>24</b> lessons</span><span><b>11</b> labs</span><span>Videos</span></div>
+      <span class="go">Start the course →</span>
+    </a>
+    <a class="card" style="--c:var(--c-csp)" href="apcsp/">
+      <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 7l-5 5 5 5M16 7l5 5-5 5"/></svg></div>
+      <span class="tag">AP course · 5 Big Ideas</span><h3>AP Computer Science Principles</h3>
+      <p>Creative development, data, algorithms and programming, networks, and the impact of computing.</p>
+      <div class="facts"><span><b>35</b> lessons</span><span><b>10</b> labs</span><span><b>140</b> AP-style questions</span></div>
+      <span class="go">Start the course →</span>
+    </a>
+    <a class="card" style="--c:var(--c-sec)" href="securityplus/">
+      <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 018 0v4"/></svg></div>
+      <span class="tag">Certification · SY0-801</span><h3>CompTIA Security+ (SY0-801)</h3>
+      <p>Prep for the new SY0-801 exam, domain by domain, including the new AI and zero trust topics.</p>
+      <div class="facts"><span><b>27</b> lessons</span><span><b>11</b> labs</span><span><b>116</b> exam-style questions</span></div>
+      <span class="go">Start the course →</span>
+    </a>
+    <a class="card" style="--c:var(--c-net)" href="networking/">
+      <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="5" r="2"/><circle cx="5" cy="19" r="2"/><circle cx="19" cy="19" r="2"/><path d="M12 7v5M12 12l-6 5.5M12 12l6 5.5"/></svg></div>
+      <span class="tag">AP course</span><h3>AP Networking</h3>
+      <p>How networks connect devices and move data, from cables and Wi-Fi to IP addresses, routing, and troubleshooting.</p>
+      <div class="facts"><span><b>4</b> labs</span><span><b>2</b> practice exams</span><span>Sample syllabus</span></div>
+      <span class="go">Start the course →</span>
+    </a>
+    <div class="card wide" style="--c:var(--c-award)">
+      <div class="icon"><img src="award-tracker-icon.png" alt="" width="46" height="46"></div>
+      <div class="text">
+        <span class="tag">Free app · Web and iPhone</span>
+        <h3>Congressional Award Tracker</h3>
+        <p>Log your Congressional Award hours, see how close you are to each Certificate and Medal, and share your progress with your Advisor.</p>
+      </div>
+      <div class="links">
+        <a class="go" href="award-tracker/">Open the tracker →</a>
+        <a class="btn line sm" href="https://apps.apple.com/us/app/congressional-award-tracker/id6828575876" target="_blank" rel="noopener" aria-label="Get Congressional Award Tracker on the App Store">Get the iPhone app</a>
+      </div>
     </div>
-  </section>
+  </div>
+</div></section>
 
-  <div data-ad="strip"></div>
-
-  <section class="band book" id="book">
-    <img class="cover" src="book-cover.jpg" alt="Cover of Kevin Wellborn&#39;s AP® Cybersecurity Course Text & Study Guide">
-    <div>
-      <span class="label">The book</span>
-      <h2>Kevin Wellborn's AP® Cybersecurity Course Text & Study Guide</h2>
-      <p class="muted" style="margin:0 0 16px;max-width:60ch">Course text and study guide that follows all 5 units and 24 lessons of the course. Use it alongside the free lessons for extra examples and practice.</p>
-      <div class="row"><a class="btn primary" href="https://www.amazon.com/dp/B0HMFKHXQ3" target="_blank" rel="noopener">Get it on Amazon</a><a class="btn" href="apcybersecurity/">See the free course</a></div>
+<section class="block teach" id="teachers"><div class="wrap">
+  <div>
+    <span class="eyebrow">For teachers</span>
+    <h2>Everything you need to run the class</h2>
+    <div class="feat">
+      <div><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M5 20V10M12 20V4M19 20v-7"/></svg></span><div><h3>Live Teacher Dashboard</h3><p>See every student's score for each lesson, class leaderboards and ranks. Lock lessons and set a level for each class or student.</p></div></div>
+      <div><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h9l4 4v14H6z"/><path d="M14 3v5h5M9 13h7M9 17h7"/></svg></span><div><h3>Ready-made lesson materials</h3><p>Slides, classwork, digital classwork for Google Classroom, and lesson plans with CSTA and WIDA standards for every Academy lesson.</p></div></div>
+      <div><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2L4 14h7l-1 8 9-12h-7z"/></svg></span><div><h3>Quiz Battle and Duels</h3><p>Run a live quiz game on the projector, and let students race each other in head-to-head coding duels.</p></div></div>
     </div>
-  </section>
+    <div class="ctas"><a class="btn primary" href="academy/teacher.html">Open the Teacher Dashboard</a><a class="btn line" href="academy/resources/">See teacher resources</a></div>
+  </div>
+  <div class="shot"><img src="img/home/teacher-dashboard.png" alt="Teacher Dashboard showing a class leaderboard and the Duel scoreboard" width="1280" height="580" loading="lazy"></div>
+</div></section>
 
-  <section class="band book" id="book-csp" style="background:color-mix(in srgb, var(--c-csp) 16%, transparent)">
-    <img class="cover" src="apcsp/book-cover.jpg" alt="Cover of Kevin Wellborn&#39;s AP® Computer Science Principles Study Guide">
-    <div>
-      <span class="label">New book</span>
-      <h2>Kevin Wellborn's AP® Computer Science Principles Study Guide</h2>
-      <p class="muted" style="margin:0 0 16px;max-width:60ch">Study guide for all 5 Big Ideas, with pseudocode practice and the Create performance task. Use it alongside the free AP CSP lessons and labs.</p>
-      <div class="row"><a class="btn primary" href="https://www.amazon.com/dp/B0HN67PZWG" target="_blank" rel="noopener">Get it on Amazon</a><a class="btn" href="apcsp/">See the free course</a></div>
-    </div>
-  </section>
+<section class="block" id="book"><div class="wrap">
+  <div class="head"><span class="eyebrow">Study guides</span><h2>Books by Kevin Wellborn</h2><p>Companion books for the free courses, with extra examples and practice. Available on Amazon.</p></div>
+  <div class="books">
+    <a class="book" href="https://www.amazon.com/dp/B0HMFKHXQ3" target="_blank" rel="noopener"><img src="book-cover.jpg" alt="Cover of Kevin Wellborn&#39;s AP® Cybersecurity Course Text & Study Guide" loading="lazy"><div><h3>Kevin Wellborn's AP® Cybersecurity Course Text & Study Guide</h3><p>Follows all 5 units and 24 lessons of the course.</p><span class="go">Get it on Amazon →</span></div></a>
+    <a class="book" href="https://www.amazon.com/dp/B0HN67PZWG" target="_blank" rel="noopener"><img src="apcsp/book-cover.jpg" alt="Cover of Kevin Wellborn&#39;s AP® Computer Science Principles Study Guide" loading="lazy"><div><h3>Kevin Wellborn's AP® Computer Science Principles Study Guide</h3><p>All 5 Big Ideas, pseudocode practice and the Create task.</p><span class="go">Get it on Amazon →</span></div></a>
+    <a class="book" href="https://www.amazon.com/dp/B0HNDS8HNL" target="_blank" rel="noopener"><img src="securityplus/book-cover.jpg" alt="Cover of CompTIA Security+ SY0-801 Study Guide by Kevin Wellborn" loading="lazy"><div><h3>CompTIA Security+ SY0-801 Study Guide</h3><p>136 figures, realistic scenarios and a 90-question practice exam.</p><span class="go">Get it on Amazon →</span></div></a>
+  </div>
+</div></section>
 
-  <section class="band book" id="book-secplus" style="background:color-mix(in srgb, var(--c-sec) 14%, transparent)">
-    <img class="cover" src="securityplus/book-cover.jpg" alt="Cover of CompTIA Security+ SY0-801 Study Guide by Kevin Wellborn">
-    <div>
-      <span class="label">New book</span>
-      <h2>CompTIA Security+ SY0-801 Study Guide</h2>
-      <div class="muted" style="margin:-4px 0 8px">by Kevin Wellborn</div>
-      <p class="muted" style="margin:0 0 16px;max-width:60ch">Understand the concepts and practice the decisions. 136 explanatory figures, realistic scenarios, detailed answer explanations, and a 90-question practice exam, with the new SY0-801 topics.</p>
-      <div class="row"><a class="btn primary" href="https://www.amazon.com/dp/B0HNDS8HNL" target="_blank" rel="noopener">Get it on Amazon</a><a class="btn" href="securityplus/">See the free course</a></div>
-    </div>
-  </section>
+<div class="wrap"><section class="cta"><div><h2>Watch every lesson on YouTube</h2><p>Short, clear videos for AP Cybersecurity, AP CSP, and Security+. Subscribe to get new lessons as they come out.</p></div><a class="btn" href="https://www.youtube.com/@cyberteaches?sub_confirmation=1" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M6 4l14 8-14 8z" fill="currentColor"/></svg>Subscribe on YouTube</a></section></div>
+</main>
 
-  <section class="band channel">
-    <div class="play" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6 4l14 8-14 8z" fill="#fff"/></svg></div>
-    <div>
-      <span class="label" style="color:var(--term-ink);opacity:.75">YouTube</span>
-      <h2>Watch every lesson on the CyberTeaches channel</h2>
-      <p class="muted" style="margin:0 0 16px;max-width:60ch">Short, clear videos for AP Cybersecurity, AP CSP, and Security+. Subscribe to get new lessons as they come out.</p>
-      <a class="btn yt" href="https://www.youtube.com/@cyberteaches?sub_confirmation=1" target="_blank" rel="noopener">Subscribe</a>
-    </div>
-  </section>
-
-  <footer class="foot"><span>© CyberTeaches · Kevin Wellborn</span><span>AP® is a trademark of the College Board, which does not endorse this site.</span></footer>
-</div>
+<footer class="site"><div class="wrap">
+  <div class="cols">
+    <div><a class="brand" href="./"><img src="logo.png" alt="" width="34" height="34">CyberTeaches</a><p style="margin:14px 0 0;max-width:32ch">Free computer science and cybersecurity courses from teacher Kevin Wellborn.</p></div>
+    <div><h2>Courses</h2><ul><li><a href="apcybersecurity/">AP Cybersecurity</a></li><li><a href="apcsp/">AP CSP</a></li><li><a href="securityplus/">Security+</a></li><li><a href="networking/">AP Networking</a></li><li><a href="apcsp/exam/">AP CSP practice exam</a></li></ul></div>
+    <div><h2>Academy</h2><ul><li><a href="academy/">Start coding</a></li><li><a href="academy/quiz/">Join Quiz Battle</a></li><li><a href="academy/#duel">Duels</a></li></ul></div>
+    <div><h2>Teachers</h2><ul><li><a href="academy/teacher.html">Teacher Dashboard</a></li><li><a href="academy/resources/">Teacher resources</a></li></ul></div>
+    <div><h2>More</h2><ul><li><a href="#book">Books</a></li><li><a href="https://www.youtube.com/@cyberteaches" target="_blank" rel="noopener">YouTube</a></li><li><a href="award-tracker/">Award Tracker</a></li></ul></div>
+  </div>
+  <div class="legal"><span>© CyberTeaches · Kevin Wellborn</span><span>AP® is a trademark of the College Board, which does not endorse this site.</span></div>
+</div></footer>
 <script>
 // The coding course used to live here. Send its old links (?class=CODE join links, #puzzle-3, #home) to academy/.
 (function(){ if (/[?&]class=/.test(location.search) || /^#(puzzle-\d+|home)$/.test(location.hash)) location.replace('academy/' + location.search + location.hash); })();
-// Ad spots. Each spot shows one ad from this list, picking a different one per visit.
-// Add an ad by adding an entry; "art" is short cover text (or set img to an image path).
-window.CT_ADS = [
-  { title: "AP® Cybersecurity Course Text & Study Guide", text: "By Kevin Wellborn. Covers all 5 units.", cta: "Get it on Amazon", url: "https://www.amazon.com/dp/B0HMFKHXQ3", img: "book-cover.jpg" },
-  { title: "AP® Computer Science Principles Study Guide", text: "By Kevin Wellborn. All 5 Big Ideas.", cta: "Get it on Amazon", url: "https://www.amazon.com/dp/B0HN67PZWG", img: "apcsp/book-cover.jpg" },
-  { title: "CompTIA Security+ SY0-801 Study Guide", text: "By Kevin Wellborn. Includes a 90-question practice exam.", cta: "Get it on Amazon", url: "https://www.amazon.com/dp/B0HNDS8HNL", img: "securityplus/book-cover.jpg" },
-  { title: "Free video lessons", text: "Subscribe to CyberTeaches on YouTube.", cta: "Subscribe", url: "https://www.youtube.com/@cyberteaches?sub_confirmation=1", art: "▶" }
-];
-(function(){
-  const ads = window.CT_ADS || [];
-  if (!ads.length) return;
-  const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
-  let i = Math.floor(Math.random() * ads.length);
-  document.querySelectorAll('[data-ad]').forEach(slot => {
-    const a = ads[i++ % ads.length];
-    const art = a.img ? `<img class="ad-art" src="${esc(a.img)}" alt="">` : `<span class="ad-art" aria-hidden="true">${esc(a.art || '')}</span>`;
-    slot.outerHTML = `<a class="ad ad-${slot.dataset.ad}" href="${esc(a.url)}" target="_blank" rel="noopener sponsored"><span class="ad-tag">Ad</span>${art}<span class="ad-text"><b>${esc(a.title)}</b><span class="muted">${esc(a.text)}</span></span><span class="ad-cta">${esc(a.cta)} →</span></a>`;
-  });
-})();
 </script>
 </body></html>
