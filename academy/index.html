@@ -107,6 +107,8 @@ h1,h2,h3{font-family:var(--f-display);text-wrap:balance;margin:0;line-height:1.1
 .lb small{display:block;color:var(--muted);font-weight:400}
 .insig{vertical-align:-0.2em;margin-right:2px}
 .lbwrap{max-height:55vh;overflow:auto}
+.lbtabs{display:flex;gap:6px;justify-content:center;margin:-4px 0 10px;background:var(--panel-2);border-radius:999px;padding:4px;width:max-content;max-width:100%;margin-inline:auto}
+.lbtabs .lvlbtn{padding:6px 14px;font-weight:700}
 .unit{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:22px;display:grid;grid-template-columns:auto minmax(0,1fr);gap:18px;align-items:start}
 .unit-num{font-family:var(--f-display);font-weight:800;font-size:15px;width:52px;height:52px;border-radius:14px;display:grid;place-items:center;color:#fff}
 .unit h2{font-size:24px}
@@ -326,7 +328,7 @@ body{border-top:8px solid var(--lv,var(--accent))}
 
 <script src="course.js?v=13"></script>
 <script src="firebase-config.js"></script>
-<script src="cloud.js?v=15"></script>
+<script src="cloud.js?v=16"></script>
 <script src="sound.js?v=1"></script>
 <script src="duel.js?v=2"></script>
 <script>
@@ -571,24 +573,43 @@ function rankBar(){
   else if(Cloud&&Cloud.ready) bar.appendChild(h('span','label',Cloud.user?'Join a class to see the leaderboard':'Sign in and join a class to see the leaderboard'));
   return bar;
 }
-let boardStop=null;
+let boardStop=null, boardTab='all';
+// Class leaderboard with two tabs: All time (total stars) and Today (stars earned today, live). Today = stars - dayBase on today's date.
 function openBoard(){
   const p=Cloud.profile||{}, me=Cloud.user.uid;
-  showMsg('Leaderboard: '+esc(p.className||p.classCode), '<div class="lbwrap" id="lbBox"><p>Loading…</p></div><p style="margin-top:10px;font-size:14px">Earn stars to climb the board and get promoted. 3 stars on every puzzle is the top score.</p>', [['Close',true,()=>{ if(boardStop){ boardStop(); boardStop=null } }]]);
+  showMsg('Leaderboard: '+esc(p.className||p.classCode), `<div class="lbtabs" role="tablist"><button class="lvlbtn" role="tab" data-tab="all">All time</button><button class="lvlbtn" role="tab" data-tab="today">⭐ Today</button></div>
+    <div class="lbwrap" id="lbBox"><p>Loading…</p></div><p style="margin-top:10px;font-size:14px" id="lbNote"></p>`, [['Close',true,()=>{ if(boardStop){ boardStop(); boardStop=null } }]]);
   if(boardStop) boardStop();
-  boardStop=Cloud.watchBoard(p.classCode, (rows,err)=>{
+  let rows=null, err=null;
+  const draw=()=>{
     const box=$('#lbBox'); if(!box){ if(boardStop){ boardStop(); boardStop=null } return }
-    if(err||!rows){ box.innerHTML='<p>The leaderboard is not available right now. Try again in a moment.</p>'; return }
+    document.querySelectorAll('.lbtabs .lvlbtn').forEach(b=>{ const on=b.dataset.tab===boardTab; b.classList.toggle('on',on); b.setAttribute('aria-selected',String(on)) });
+    $('#lbNote').textContent = boardTab==='today' ? 'Stars earned today. Starts again at 0 tomorrow. Updates live.' : 'Earn stars to climb the board and get promoted. 3 stars on every puzzle is the top score.';
+    if(err||!rows){ box.innerHTML=err?'<p>The leaderboard is not available right now. Try again in a moment.</p>':'<p>Loading…</p>'; return }
+    const today=Cloud.today(), stars=totalStars(progress), old=rows.find(r=>r.uid===me)||{};
     // Show this student's live stars even before their latest save reaches the board.
-    const mine={uid:me, name:'You', stars:totalStars(progress), solved:Object.values(progress).filter(Boolean).length};
-    rows=rows.filter(r=>r.uid!==me).concat([{...(rows.find(r=>r.uid===me)||{}), ...mine}]);
-    rows.sort((a,b)=>b.stars-a.stars || b.solved-a.solved || String(a.name).localeCompare(b.name));
-    let place=0, prev=null;
-    box.innerHTML=`<table class="lb"><thead><tr><th>#</th><th>Student</th><th class="n">Stars</th><th class="n">Solved</th></tr></thead><tbody>${rows.map((r,i)=>{
-      if(r.stars!==prev){ place=i+1; prev=r.stars }
-      return `<tr class="${r.uid===me?'me':''}"><td>${place}</td><td>${esc(r.uid===me?'You':r.name)}<small>${insigniaSvg(rankFor(r.stars).i,18)} ${rankFor(r.stars).title}</small></td><td class="n">${r.stars} ★</td><td class="n">${r.solved}</td></tr>` }).join('')}</tbody></table>`;
+    const myToday = old.day===today ? stars-(old.dayBase||0) : Math.max(0, stars-(old.stars||stars));
+    const mine={...old, uid:me, name:'You', stars, solved:Object.values(progress).filter(Boolean).length, todayStars:Math.max(0,myToday)};
+    let list=rows.filter(r=>r.uid!==me).map(r=>({...r, todayStars: r.day===today ? Math.max(0,(r.stars||0)-(r.dayBase||0)) : 0})).concat([mine]);
+    if(boardTab==='today'){
+      list=list.filter(r=>r.todayStars>0 || r.uid===me).sort((a,b)=>b.todayStars-a.todayStars || String(a.name).localeCompare(b.name));
+      if(!list.some(r=>r.todayStars>0)){ box.innerHTML='<p>No stars earned yet today. Solve a puzzle to be first on today\'s board!</p>'; return }
+      let place=0, prev=null;
+      box.innerHTML=`<table class="lb"><thead><tr><th>#</th><th>Student</th><th class="n">Today</th></tr></thead><tbody>${list.map((r,i)=>{
+        if(r.todayStars!==prev){ place=i+1; prev=r.todayStars }
+        return `<tr class="${r.uid===me?'me':''}"><td>${place===1&&r.todayStars?'👑':place}</td><td>${esc(r.uid===me?'You':r.name)}</td><td class="n">+${r.todayStars} ★</td></tr>` }).join('')}</tbody></table>`;
+    } else {
+      list.sort((a,b)=>b.stars-a.stars || b.solved-a.solved || String(a.name).localeCompare(b.name));
+      let place=0, prev=null;
+      box.innerHTML=`<table class="lb"><thead><tr><th>#</th><th>Student</th><th class="n">Stars</th><th class="n">Solved</th></tr></thead><tbody>${list.map((r,i)=>{
+        if(r.stars!==prev){ place=i+1; prev=r.stars }
+        return `<tr class="${r.uid===me?'me':''}"><td>${place}</td><td>${esc(r.uid===me?'You':r.name)}<small>${insigniaSvg(rankFor(r.stars).i,18)} ${rankFor(r.stars).title}</small></td><td class="n">${r.stars} ★</td><td class="n">${r.solved}</td></tr>` }).join('')}</tbody></table>`;
+    }
     const mineRow=$('tr.me',box); if(mineRow) mineRow.scrollIntoView({block:'nearest'});
-  });
+  };
+  document.querySelectorAll('.lbtabs .lvlbtn').forEach(b=>b.onclick=()=>{ boardTab=b.dataset.tab; draw() });
+  draw();
+  boardStop=Cloud.watchBoard(p.classCode, (r,e)=>{ rows=r; err=e||(!r); draw() });
 }
 
 // ---------- home ----------
