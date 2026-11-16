@@ -63,12 +63,15 @@ img{max-width:100%}
 .announce{background:var(--navy);color:#C9D6E6;font-size:14px;text-align:center;padding:8px 16px}
 .announce a{color:#fff;font-weight:600;text-decoration:underline;text-underline-offset:3px}
 header.site{position:sticky;top:0;z-index:5;background:var(--header);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
-.bar{display:flex;align-items:center;gap:28px;min-height:68px}
+.bar{display:flex;align-items:center;gap:16px;min-height:68px}
 .brand{display:flex;align-items:center;gap:10px;font-family:var(--f-h);font-weight:800;font-size:20px;letter-spacing:-.02em}
 .brand img{width:34px;height:34px;border-radius:8px;background:#fff}
 .nav{display:flex;gap:4px;flex:1}
-.nav a{font-weight:500;font-size:15px;color:var(--ink-2);padding:8px 12px;border-radius:8px;white-space:nowrap}
+.nav a{font-weight:500;font-size:15px;color:var(--ink-2);padding:8px 12px;border-radius:8px;white-space:nowrap;flex:none}
 .nav a:hover{background:var(--panel-2);color:var(--ink)}
+.nav a.award{margin-left:auto;display:inline-flex;align-items:center;gap:8px;font-weight:600;color:var(--ink);border:1px solid color-mix(in srgb,var(--c-award) 55%,var(--line));background:color-mix(in srgb,var(--c-award) 10%,var(--panel));padding:6px 12px 6px 7px}
+.nav a.award:hover{background:color-mix(in srgb,var(--c-award) 20%,var(--panel))}
+.nav a.award img{border-radius:6px;display:block}
 
 .hero{background:radial-gradient(1200px 500px at 85% -10%, #1C4D7A 0%, transparent 60%),linear-gradient(180deg,#0B1B2E,#13294A);color:#fff;overflow:hidden}
 .hero .wrap{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);gap:56px;align-items:center;padding-top:72px;padding-bottom:84px}
@@ -154,12 +157,13 @@ footer a:hover{color:#fff}
 footer .brand{color:#fff}
 footer .legal{border-top:1px solid rgba(255,255,255,.1);padding:18px 0 28px;display:flex;justify-content:space-between;gap:8px 16px;flex-wrap:wrap;font-size:13px}
 
-@media (max-width:900px){
+@media (max-width:1040px){
   .bar{flex-wrap:wrap;gap:0 12px;justify-content:space-between;padding-top:10px}
   .brand{font-size:18px}
   .nav{order:3;flex:0 0 100%;overflow-x:auto;margin:4px -8px 0;padding-bottom:6px;scrollbar-width:none}
   .nav::-webkit-scrollbar{display:none}
   .nav a{padding:8px 10px}
+  .nav a.award{order:-1;margin:0 6px 0 8px;padding:5px 10px 5px 6px}
   .hero .wrap,.teach .wrap{grid-template-columns:minmax(0,1fr);gap:40px}
   .hero .wrap{padding-top:44px;padding-bottom:56px}
   .frame,.frame:hover{transform:none}
@@ -189,6 +193,7 @@ footer .legal{border-top:1px solid rgba(255,255,255,.1);padding:18px 0 28px;disp
     <a href="#teachers">For teachers</a>
     <a href="#book">Books</a>
     <a href="https://www.youtube.com/@cyberteaches" target="_blank" rel="noopener">YouTube</a>
+    <a class="award" href="award-tracker/"><img src="award-tracker-icon.png" alt="" width="22" height="22">Award Tracker</a>
   </nav>
   <a class="btn primary sm" href="academy/teacher.html">Teacher Dashboard</a>
 </div></header>
