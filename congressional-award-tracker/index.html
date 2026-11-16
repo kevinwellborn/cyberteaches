@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Congressional Award Tracker | Free Hours Log for Web and iPhone</title>
+<meta name="description" content="Free Congressional Award tracker. Log your Voluntary Public Service, Personal Development, Physical Fitness and Expedition hours, see your progress to each Certificate and Medal, and share it with your Advisor.">
+<link rel="canonical" href="https://cyberteaches.com/congressional-award-tracker/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="CyberTeaches">
+<meta property="og:title" content="Congressional Award Tracker | Free Hours Log for Web and iPhone">
+<meta property="og:description" content="Log your Congressional Award hours, see how close you are to each Certificate and Medal, and share your progress with your Advisor. Free on the web and iPhone.">
+<meta property="og:url" content="https://cyberteaches.com/congressional-award-tracker/">
+<meta property="og:image" content="https://cyberteaches.com/award-tracker-icon.png">
+<meta name="twitter:card" content="summary">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Congressional Award Tracker","alternateName":"Award Tracker","applicationCategory":"EducationalApplication","operatingSystem":"Web, iOS","url":"https://cyberteaches.com/congressional-award-tracker/","installUrl":"https://apps.apple.com/us/app/congressional-award-tracker/id6828575876","image":"https://cyberteaches.com/award-tracker-icon.png","description":"Log Congressional Award hours for Voluntary Public Service, Personal Development, Physical Fitness and Expedition, see progress to each Certificate and Medal, and share it with an Advisor.","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"author":{"@type":"Person","name":"Kevin Wellborn"},"publisher":{"@type":"Organization","name":"CyberTeaches","url":"https://cyberteaches.com/"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[
+{"@type":"Question","name":"Is the Congressional Award Tracker free?","acceptedAnswer":{"@type":"Answer","text":"Yes. The tracker is free on the web at cyberteaches.com/award-tracker and as an iPhone app."}},
+{"@type":"Question","name":"Is this the official Congressional Award website?","acceptedAnswer":{"@type":"Answer","text":"No. Award Tracker is made by Kevin Wellborn and is not made or endorsed by The Congressional Award. You register for the program and submit your official Record Book at congressionalaward.org. The tracker is your own record that helps you get ready."}},
+{"@type":"Question","name":"What can I log in the tracker?","acceptedAnswer":{"@type":"Answer","text":"Hours for the four program areas: Voluntary Public Service, Personal Development, Physical Fitness, and Expedition or Exploration. Each entry keeps the date, hours, goal, notes and validator."}},
+{"@type":"Question","name":"Can my Advisor see my progress?","acceptedAnswer":{"@type":"Answer","text":"Yes. Enter your Advisor's email and they can sign in to see your progress, activity log and Record Book summary. They cannot change your entries, and you can stop sharing at any time."}},
+{"@type":"Question","name":"Does it work on a phone and a computer?","acceptedAnswer":{"@type":"Answer","text":"Yes. Your entries are saved to your account, so the website and the iPhone app show the same records when you sign in with the same account."}},
+{"@type":"Question","name":"Can a school add the tracker to Clever?","acceptedAnswer":{"@type":"Answer","text":"Yes. A Clever admin or teacher can add https://cyberteaches.com/award-tracker/ as a link in the school's Clever Portal so students open it from their Clever page."}}
+]}</script>
+<link rel="icon" type="image/png" href="../favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: sticky header, navy hero with the app icon, four program areas, how it works, Advisor and school notes, FAQ, footer. */
+:root{
+  --ink:#0F1E2E; --ink-2:#33475B; --muted:#5A6B7D; --line:#E3E8EF; --bg:#F7F9FC; --panel:#FFFFFF; --panel-2:#F0F3F7;
+  --teal:#0F7B78; --teal-ink:#FFFFFF; --gold:#A8741A; --gold-soft:#F6EEDC; --header:rgba(255,255,255,.92);
+  --f-h:"Plus Jakarta Sans","Segoe UI",system-ui,sans-serif; --f-b:"Inter","Segoe UI",system-ui,sans-serif;
+  --shadow:0 1px 2px rgba(15,30,46,.06),0 8px 24px rgba(15,30,46,.06);
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --ink:#E8EEF5; --ink-2:#C3CFDD; --muted:#93A4B8; --line:#24364D; --bg:#0A1524; --panel:#111F33; --panel-2:#18293F;
+  --teal:#2BB5AE; --teal-ink:#06201F; --gold:#DDA93F; --gold-soft:#2A2413; --header:rgba(10,21,36,.9); --shadow:0 1px 2px rgba(0,0,0,.3); color-scheme:dark }
+}
+:root[data-theme="dark"]{
+  --ink:#E8EEF5; --ink-2:#C3CFDD; --muted:#93A4B8; --line:#24364D; --bg:#0A1524; --panel:#111F33; --panel-2:#18293F;
+  --teal:#2BB5AE; --teal-ink:#06201F; --gold:#DDA93F; --gold-soft:#2A2413; --header:rgba(10,21,36,.9); --shadow:0 1px 2px rgba(0,0,0,.3); color-scheme:dark
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:84px}
+html,body{margin:0;background:var(--bg)}
+body{font-family:var(--f-b);color:var(--ink);font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased}
+h1,h2,h3{font-family:var(--f-h);margin:0;line-height:1.15;letter-spacing:-.02em;text-wrap:balance}
+a{color:inherit;text-decoration:none}
+p a,li a,summary + p a{color:var(--teal);font-weight:600;text-decoration:underline;text-underline-offset:3px}
+:focus-visible{outline:3px solid var(--teal);outline-offset:2px;border-radius:6px}
+.wrap{max-width:1040px;margin:0 auto;padding-left:max(20px, env(safe-area-inset-left, 0px));padding-right:max(20px, env(safe-area-inset-right, 0px))}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;font-weight:600;font-size:15px;padding:12px 20px;border-radius:10px;border:1px solid transparent;white-space:nowrap}
+.btn.primary{background:var(--teal);color:var(--teal-ink)} .btn.primary:hover{filter:brightness(.92)}
+.btn.ghost{border-color:rgba(255,255,255,.3);color:#fff} .btn.ghost:hover{background:rgba(255,255,255,.08)}
+.btn.sm{padding:8px 14px;font-size:14px}
+.eyebrow{font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--gold)}
+header.site{position:sticky;top:0;z-index:5;background:var(--header);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.bar{display:flex;align-items:center;gap:12px;min-height:64px;justify-content:space-between}
+.brand{display:flex;align-items:center;gap:10px;font-family:var(--f-h);font-weight:800;font-size:19px;letter-spacing:-.02em}
+.brand img{width:32px;height:32px;border-radius:8px;background:#fff}
+.hero{background:radial-gradient(900px 420px at 85% -10%, #5A4313 0%, transparent 60%),linear-gradient(180deg,#0B1B2E,#13294A);color:#fff}
+.hero .wrap{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:48px;align-items:center;padding-top:64px;padding-bottom:72px}
+.hero .eyebrow{color:#EBC66E}
+.hero h1{font-size:clamp(32px,4.6vw,50px);font-weight:800;margin:12px 0 16px}
+.hero p{font-size:18px;color:#B8C7D9;max-width:54ch;margin:0 0 26px}
+.hero .btn.primary{background:#14918D;color:#fff}
+.ctas{display:flex;gap:12px;flex-wrap:wrap}
+.hero .note{font-size:14px;color:#9FB2C8;margin:22px 0 0}
+.appicon{width:200px;height:200px;border-radius:44px;box-shadow:0 30px 70px rgba(0,0,0,.5);display:block}
+section.block{padding:64px 0}
+section.alt{background:var(--panel);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.head{margin-bottom:28px}
+.head h2{font-size:clamp(26px,3.2vw,34px);margin-top:8px}
+.head p{color:var(--muted);max-width:60ch;margin:10px 0 0}
+.grid4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
+.grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:22px;box-shadow:var(--shadow)}
+section.alt .card{background:var(--bg);box-shadow:none}
+.card h3{font-size:17px;letter-spacing:-.01em;margin-bottom:6px}
+.card p{margin:0;color:var(--muted);font-size:15px}
+.card .ic{width:40px;height:40px;border-radius:10px;background:var(--gold-soft);color:var(--gold);display:grid;place-items:center;margin-bottom:14px}
+.card .ic svg{width:21px;height:21px}
+.step{font-family:var(--f-h);font-weight:800;font-size:15px;width:34px;height:34px;border-radius:50%;background:var(--teal);color:var(--teal-ink);display:grid;place-items:center;margin-bottom:14px}
+ol.steps{margin:10px 0 0;padding-left:20px;color:var(--muted);font-size:15px}
+ol.steps li{margin:4px 0}
+code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:14px;background:var(--panel-2);border:1px solid var(--line);border-radius:6px;padding:1px 6px;word-break:break-all}
+details{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:0 18px;margin-bottom:10px}
+summary{cursor:pointer;font-family:var(--f-h);font-weight:700;font-size:16px;padding:16px 0;list-style-position:outside}
+details p{margin:0 0 16px;color:var(--muted)}
+.cta{background:linear-gradient(120deg,#0F7B78,#0B5E8A);color:#fff;border-radius:20px;padding:40px;display:flex;justify-content:space-between;align-items:center;gap:24px;flex-wrap:wrap}
+.cta h2{font-size:28px}
+.cta p{margin:8px 0 0;color:#D5F1EE}
+.cta .btn{background:#fff;color:#0F1E2E}
+footer.site{background:#0B1B2E;color:#9FB2C8;margin-top:64px;font-size:13px}
+footer .legal{padding:24px 0 30px;display:grid;gap:8px}
+footer a{color:#fff;text-decoration:underline;text-underline-offset:3px}
+@media (max-width:860px){
+  .hero .wrap{grid-template-columns:minmax(0,1fr);gap:32px;padding-top:40px;padding-bottom:52px}
+  .appicon{width:120px;height:120px;border-radius:27px;order:-1}
+  .grid4,.grid2{grid-template-columns:minmax(0,1fr)}
+  .grid3{grid-template-columns:minmax(0,1fr)}
+  section.block{padding:48px 0}
+  .cta{padding:28px}
+  .brand span{display:none}
+}
+@media (min-width:600px) and (max-width:860px){ .grid4{grid-template-columns:repeat(2,minmax(0,1fr))} }
+@media (prefers-reduced-motion: reduce){ html{scroll-behavior:auto} }
+</style>
+</head><body>
+
+<header class="site"><div class="wrap bar">
+  <a class="brand" href="../"><img src="../logo.png" alt="" width="32" height="32">CyberTeaches</a>
+  <a class="btn primary sm" href="../award-tracker/">Open the tracker</a>
+</div></header>
+
+<main>
+<section class="hero"><div class="wrap">
+  <div>
+    <span class="eyebrow">Free · Web and iPhone</span>
+    <h1>Congressional Award Tracker</h1>
+    <p>Log your Congressional Award hours, see how close you are to each Certificate and Medal, and share your progress with your Advisor.</p>
+    <div class="ctas">
+      <a class="btn primary" href="../award-tracker/">Open the tracker on the web</a>
+      <a class="btn ghost" href="https://apps.apple.com/us/app/congressional-award-tracker/id6828575876" target="_blank" rel="noopener">Get the iPhone app</a>
+    </div>
+    <p class="note">Made by teacher Kevin Wellborn. Not made or endorsed by The Congressional Award.</p>
+  </div>
+  <img class="appicon" src="../award-tracker-icon.png" alt="Congressional Award Tracker app icon: a gold medal on a navy background" width="200" height="200">
+</div></section>
+
+<section class="block"><div class="wrap">
+  <div class="head"><span class="eyebrow">What you can log</span><h2>All four Congressional Award program areas</h2><p>Add hours after you finish an activity. The tracker adds them up and shows your progress toward the Bronze, Silver and Gold Certificates and Medals.</p></div>
+  <div class="grid4">
+    <div class="card"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-4.5-7-10a4 4 0 017-2.5A4 4 0 0119 11c0 5.5-7 10-7 10z"/></svg></div><h3>Voluntary Public Service</h3><p>Volunteer hours that help your community, including planning and meetings.</p></div>
+    <div class="card"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19V6l8-3 8 3v13"/><path d="M9 19v-6h6v6"/></svg></div><h3>Personal Development</h3><p>Hours spent building a skill, hobby or interest you want to grow in.</p></div>
+    <div class="card"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h3l2-5 4 10 2-5h5"/></svg></div><h3>Physical Fitness</h3><p>Hours working toward a fitness goal, from team sports to running or swimming.</p></div>
+    <div class="card"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 20l6-11 4 7 2-3 6 7z"/></svg></div><h3>Expedition or Exploration</h3><p>The days and nights of your trip, with the planning that goes into it.</p></div>
+  </div>
+</div></section>
+
+<section class="block alt"><div class="wrap">
+  <div class="head"><span class="eyebrow">How it works</span><h2>Three steps to stay on track</h2></div>
+  <div class="grid3">
+    <div class="card"><div class="step">1</div><h3>Sign in</h3><p>Create a free account on the website or the iPhone app. Use the same account on both and your entries sync.</p></div>
+    <div class="card"><div class="step">2</div><h3>Log your hours</h3><p>Pick the program area, then add the date, hours, the goal they count toward, notes and your validator.</p></div>
+    <div class="card"><div class="step">3</div><h3>See your progress</h3><p>Watch each Certificate and Medal fill up, then make a PDF of every entry that earned a level.</p></div>
+  </div>
+</div></section>
+
+<section class="block"><div class="wrap">
+  <div class="grid2">
+    <div class="card" id="advisors"><span class="eyebrow">For Advisors</span><h3 style="font-size:21px;margin-top:8px">See your students' progress</h3><p>A student enters your email to share with you. Sign in with that email to see their progress, activity log and Record Book summary. Only the student can change their entries, and they can stop sharing at any time.</p></div>
+    <div class="card" id="clever"><span class="eyebrow">For schools</span><h3 style="font-size:21px;margin-top:8px">Add it to your Clever Portal</h3><p>Schools can add the tracker as a link so students open it from their Clever page.</p>
+      <ol class="steps"><li>In Clever, choose to add a link (admins on the Portal, teachers on their Teacher Page).</li><li>Paste this address: <code>https://cyberteaches.com/award-tracker/</code></li><li>Name it "Congressional Award Tracker" and upload <a href="../award-tracker-icon.png" download>this icon</a>.</li></ol>
+    </div>
+  </div>
+</div></section>
+
+<section class="block alt" id="faq"><div class="wrap" style="max-width:800px">
+  <div class="head"><span class="eyebrow">Questions</span><h2>Congressional Award Tracker FAQ</h2></div>
+  <details open><summary>Is the Congressional Award Tracker free?</summary><p>Yes. The tracker is free on the web and as an iPhone app.</p></details>
+  <details><summary>Is this the official Congressional Award website?</summary><p>No. Award Tracker is made by Kevin Wellborn and is not made or endorsed by The Congressional Award. You register for the program and submit your official Record Book at <a href="https://www.congressionalaward.org/" target="_blank" rel="noopener">congressionalaward.org</a>. The tracker is your own record that helps you get ready.</p></details>
+  <details><summary>What can I log in the tracker?</summary><p>Hours for the four program areas: Voluntary Public Service, Personal Development, Physical Fitness, and Expedition or Exploration. Each entry keeps the date, hours, goal, notes and validator.</p></details>
+  <details><summary>Can my Advisor see my progress?</summary><p>Yes. Enter your Advisor's email and they can sign in to see your progress, activity log and Record Book summary. They cannot change your entries, and you can stop sharing at any time.</p></details>
+  <details><summary>Does it work on a phone and a computer?</summary><p>Yes. Your entries are saved to your account, so the website and the iPhone app show the same records when you sign in with the same account.</p></details>
+  <details><summary>How is my information protected?</summary><p>Read the <a href="../award-tracker/privacy.html">Award Tracker privacy policy</a>. On a shared or school computer, always sign out when you finish.</p></details>
+</div></section>
+
+<div class="wrap" style="margin-top:64px"><section class="cta"><div><h2>Start tracking your Congressional Award hours</h2><p>Free on the web and iPhone. Your entries sync between both.</p></div><a class="btn" href="../award-tracker/">Open the tracker</a></section></div>
+</main>
+
+<footer class="site"><div class="wrap legal">
+  <span>Award Tracker is made by Kevin Wellborn and is not made, sponsored or endorsed by The Congressional Award. Register and submit your Record Book at <a href="https://www.congressionalaward.org/" target="_blank" rel="noopener">congressionalaward.org</a>.</span>
+  <span>© CyberTeaches · Kevin Wellborn · <a href="../">CyberTeaches home</a> · <a href="../award-tracker/privacy.html">Privacy</a></span>
+</div></footer>
+</body></html>
