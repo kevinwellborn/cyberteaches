@@ -243,6 +243,9 @@ textarea.code:focus{border-color:var(--accent)}
 .challenge b{flex:none;color:var(--star)}
 /* Show code exactly as typed: no joined symbols such as >= drawn as one character. */
 textarea.code,.output,.stim,.example,.lesson p,.terms,.choice,.todo{font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0}
+.plan-head{font-size:18px;margin:22px 0 4px}
+.plan-head:first-child{margin-top:0}
+.plan-head + .plan-row{border-top:0}
 </style>
 </head><body>
 <div class="wrap">
@@ -348,7 +351,8 @@ textarea.code,.output,.stim,.example,.lesson p,.terms,.choice,.todo{font-variant
       </section>
       <div class="units">${MAIN.map(unitCard).join('')}</div>
       <div class="section-head"><div><span class="label">Optional</span><h2>Enter your app in a competition</h2></div><a href="#challenge">About the App Challenge →</a></div>
-      <div class="units">${TRACK.map(unitCard).join('')}</div>`;
+      <div class="units">${TRACK.map(unitCard).join('')}</div>
+      <p style="margin:18px 0 0"><a href="lessons/">Browse every lesson as a page you can read, print, or share →</a></p>`;
   }
 
   function renderChallenge(){
@@ -388,7 +392,7 @@ textarea.code,.output,.stim,.example,.lesson p,.terms,.choice,.todo{font-variant
         </tbody></table></div></section>
       <div class="two" style="margin-top:16px">
         <section class="card"><h2 style="font-size:20px;margin-bottom:10px">Seeing student work</h2>
-          <p style="margin:0">Students can copy their whole plan from the My plan page and turn it in. Class progress on the Teacher Dashboard, like in CyberTeaches Academy, is planned for this course.</p></section>
+          <p style="margin:0">Students can copy their whole plan from the My plan page and turn it in. Signed-in students keep their lesson progress on any device. Class progress on the Teacher Dashboard, like in CyberTeaches Academy, is planned for this course.</p></section>
         <section class="card"><h2 style="font-size:20px;margin-bottom:10px">A real audience</h2>
           <p style="margin:0">Students who want to compete can enter their app in the Congressional App Challenge. The <a href="#challenge">App Challenge track</a> covers eligibility, the rules, the demo video, and submitting.</p></section>
       </div>`;
@@ -439,8 +443,8 @@ textarea.code,.output,.stim,.example,.lesson p,.terms,.choice,.todo{font-variant
           <section class="card quiz" id="quiz">
             <div><h2 style="font-size:22px">Quick check</h2><p class="muted" style="margin:4px 0 0">Get all ${t.quiz.length} right to complete this lesson. You can retry as many times as you like.</p></div>
             ${t.quiz.map((q, qi) => `<div class="q" data-q="${qi}">
-              <h3>${qi + 1}. ${esc(q.q.split('\n\n')[0])}</h3>
-              ${q.q.includes('\n\n') ? `<pre class="stim">${esc(q.q.split('\n\n').slice(1).join('\n\n'))}</pre>` : ''}
+              <h3>${qi + 1}. ${esc(q.q)}</h3>
+              ${q.st ? `<pre class="stim">${esc(q.st)}</pre>` : ''}
               <div class="choices">${order[qi].map((ai, pos) => `<button class="choice" data-a="${ai}"><b class="letter">(${'ABCD'[pos]})</b> ${esc(q.a[ai])}</button>`).join('')}</div>
               <div class="why" aria-live="polite"></div>
             </div>`).join('')}
@@ -554,7 +558,7 @@ textarea.code,.output,.stim,.example,.lesson p,.terms,.choice,.todo{font-variant
         <p>Everything you write in the lessons shows up here. It is saved only in this browser on this device, so copy it into your build journal now and then.</p></div>
       <section class="card plan">
         <div class="row" style="justify-content:space-between"><span class="pill">${filled} of ${FIELDS.length} filled in</span><button class="btn small" id="copyPlan" type="button">Copy my plan</button></div>
-        <div>${FIELDS.map(f => { const v = (work.fields[f.key] || '').trim(); return `<div class="plan-row"><span class="label">${esc(f.label)}</span><div class="v${v ? '' : ' empty'}">${v ? esc(v) : 'Not written yet.'}</div><a href="#${slug(f.topic.id)}" style="font-size:14px">${v ? 'Edit' : 'Write this'} in lesson ${f.topic.id}</a></div>`; }).join('')}</div>
+        <div>${FIELDS.map((f, k) => { const v = (work.fields[f.key] || '').trim(); const head = !k || FIELDS[k - 1].topic.unit !== f.topic.unit ? `<h2 class="plan-head">${f.topic.unit.track ? 'App Challenge track' : `Module ${f.topic.unit.num}: ${esc(f.topic.unit.title)}`}</h2>` : ''; return `${head}<div class="plan-row"><span class="label">${esc(f.label)}</span><div class="v${v ? '' : ' empty'}">${v ? esc(v) : 'Not written yet.'}</div><a href="#${slug(f.topic.id)}" style="font-size:14px">${v ? 'Edit' : 'Write this'} in lesson ${f.topic.id}</a></div>`; }).join('')}</div>
       </section>`;
     const b = document.getElementById('copyPlan');
     b.addEventListener('click', () => {

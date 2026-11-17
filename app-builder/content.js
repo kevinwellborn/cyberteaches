@@ -6,7 +6,7 @@
 // example ({ title, text }), fields (fill-in boxes saved in the browser and collected on the My Plan page),
 // cac (optional note shown as "For the App Challenge"), blocks (optional note linking to Academy block coding),
 // tries (Try it boxes: { mode: 'js' | 'html', title, intro, code, challenge }), quiz ({ q, a, c, why }).
-// Lessons with soon: true are listed but not written yet. A unit with track: true is the App Challenge track.
+// A unit with track: true is the App Challenge track. A lesson with soon: true is listed but not written yet.
 window.CAC_INFO = {
   site: 'https://www.congressionalappchallenge.us/',
   season: '2027',
@@ -74,7 +74,7 @@ window.AP_UNITS = [
         cac: 'Your demo video must explain your target audience, and the rules say your app must not violate anyone\'s privacy rights. The notes you take now cover both.',
         fields: [
           { key: 'audience', label: 'My target audience', hint: 'Be specific. Example: middle school students at my school who ride the bus.', rows: 2 },
-          { key: 'learned', label: 'What I learned from talking to people', hint: 'One or two things that surprised you or that more than one person said.', rows: 3 }
+          { key: 'interviews', label: 'What I learned from talking to people', hint: 'One or two things that surprised you or that more than one person said.', rows: 3 }
         ],
         quiz: [
           { q: 'Which interview question will teach you the most?', a: ['"Would you use my app?"', '"Do you like my idea?"', '"Tell me about the last time you lost track of a homework assignment."', '"Is my app name cool?"'], c: 2, why: 'Open questions about real past events get true stories instead of polite yes answers.' },
@@ -171,14 +171,135 @@ window.AP_UNITS = [
         ] }
     ]
   },
-  { id: 'm2', num: 2, title: 'Design your app', blurb: 'Plan before you code: the one core feature, the screens, and the data your app needs.',
+  {
+    id: 'm2', num: 2, title: 'Design your app',
+    blurb: 'Plan before you code: the one core feature, the screens, and the data your app needs.',
     milestone: 'Sketches of your screens and a feature list split into "must have" and "if there is time."',
     topics: [
-      { id: '2.1', title: 'User stories and your one core feature', soon: true },
-      { id: '2.2', title: 'Sketch your screens', soon: true },
-      { id: '2.3', title: 'Plan your data with privacy first', soon: true },
-      { id: '2.4', title: 'Get feedback on your design', soon: true }
-    ] },
+      { id: '2.1', title: 'User stories and your one core feature',
+        summary: `Designing an app starts with deciding what it does, and just as important, what it does not do. A user story is one sentence that describes something a user wants to do and why. Write a few, then choose the single most important one. That is your core feature, and it is the first thing you will build.`,
+        more: [
+          `User stories follow a pattern: "As a [user], I want to [do something] so that [reason]." They keep you thinking about people instead of buttons.`,
+          `Sort your stories into two piles. "Must have" is the short list the app is useless without. "If there is time" is everything else. Beginners almost always plan too much. A finished app with one great feature beats an unfinished app with ten.`
+        ],
+        terms: [
+          ['Feature', 'One thing your app can do.'],
+          ['User story', 'A sentence that says what a user wants to do and why.'],
+          ['Core feature', 'The one feature your app cannot work without.'],
+          ['Must have', 'A feature the app needs in its first version.'],
+          ['MVP', 'Minimum viable product: the smallest version of your app that still solves the problem.'],
+          ['Scope creep', 'When a project keeps growing because new features keep getting added.']
+        ],
+        steps: [
+          'Write five user stories for your app using the pattern.',
+          'Put a star next to the one story the app is useless without. That is your core feature.',
+          'Sort the other four: "must have" or "if there is time." Try to keep "must have" to three stories or fewer.',
+          'Check each must-have against your purpose sentence. If it does not serve the sentence, move it down.'
+        ],
+        example: { title: 'User stories for a homework planner', text: `★ As a student, I want to add an assignment with a due date so that I do not forget it.\n\nMust have:\nAs a student, I want to see my assignments in date order so that I know what is due next.\nAs a student, I want to mark an assignment done so that my list stays short.\n\nIf there is time:\nAs a student, I want a reminder the night before so that I start on time.\nAs a student, I want to pick a color for each class so that the list is easy to scan.` },
+        fields: [
+          { key: 'corefeature', label: 'My core feature', hint: 'One user story: As a ___, I want to ___ so that ___.', rows: 2 },
+          { key: 'features', label: 'My feature list', hint: 'Two short lists: "Must have" and "If there is time."', rows: 5 }
+        ],
+        quiz: [
+          { q: 'Which is a well-written user story?', a: ['"The app has a blue button."', '"As a club member, I want to see who is bringing snacks so that we do not get five bags of chips."', '"Use JavaScript."', '"Make it good."'], c: 1, why: 'It names the user, what they want to do, and why.' },
+          { q: 'What is a core feature?', a: ['The feature with the most code', 'The one feature the app cannot work without', 'The last feature you add', 'A feature copied from another app'], c: 1, why: 'The core feature delivers your purpose. Build it first.' },
+          { q: 'Your must-have list has 14 features. What should you do?', a: ['Build all 14 at once', 'Move most of them to "if there is time" and keep only what the app truly needs', 'Add more', 'Give up on the idea'], c: 1, why: 'A small first version gets finished. You can add more after the core works.' }
+        ] },
+      { id: '2.2', title: 'Sketch your screens',
+        summary: `Before you write code, draw your app on paper. A quick sketch of each screen is called a wireframe. It shows where things go, such as titles, buttons, lists, and text boxes, without worrying about colors or pictures. Changing a drawing takes seconds. Changing code takes much longer.`,
+        more: [
+          `Start with the screen where your core feature happens. Draw a rectangle for the screen, then add boxes and labels for each part. Stick figures and messy handwriting are fine.`,
+          `Then show how screens connect. Draw an arrow from each button to the screen it opens. This map is called a user flow. Many good first apps have only one or two screens.`
+        ],
+        terms: [
+          ['Wireframe', 'A simple sketch of a screen that shows what goes where.'],
+          ['Screen', 'One view of your app, such as a home screen or a settings screen.'],
+          ['Layout', 'How the parts of a screen are arranged.'],
+          ['User flow', 'The path a user takes from screen to screen to get something done.'],
+          ['User interface (UI)', 'Everything the user sees and touches in your app.'],
+          ['Prototype', 'An early model of your app that you can show to people before it is built.']
+        ],
+        steps: [
+          'Take a sheet of paper. Draw the screen where your core feature happens.',
+          'Label every part: title, buttons, text boxes, lists.',
+          'Draw any other screens your must-have features need. Aim for three screens or fewer.',
+          'Draw arrows to show which button leads where.',
+          'Take a photo of your sketches and save it in your project folder.'
+        ],
+        example: { title: 'A one-screen wireframe, described', text: `+-----------------------------+\n|  Homework Planner           |\n|                             |\n|  [ Assignment name      ]   |\n|  [ Due date ]  ( Add )      |\n|                             |\n|  Due next:                  |\n|  1. Math worksheet   Tue    |\n|  2. Read chapter 4   Wed    |\n|  3. Science poster   Fri    |\n+-----------------------------+` },
+        fields: [
+          { key: 'screens', label: 'My screens', hint: 'List each screen and what is on it. Example: Home: title, add box, Add button, list of tasks.', rows: 4 }
+        ],
+        quiz: [
+          { q: 'What is a wireframe?', a: ['The finished app', 'A simple sketch showing what goes where on a screen', 'A kind of bug', 'A programming language'], c: 1, why: 'A wireframe is a quick plan of a screen, usually drawn before any code.' },
+          { q: 'Why sketch on paper before coding?', a: ['Paper is required', 'Changing a sketch is much faster than changing code', 'Computers cannot draw', 'It makes the app run faster'], c: 1, why: 'Sketching lets you try ideas and fix problems in seconds.' },
+          { q: 'What does a user flow show?', a: ['How fast the app runs', 'The path a user takes from screen to screen', 'The colors of the app', 'Who wrote the code'], c: 1, why: 'A user flow maps how someone moves through your app to get something done.' }
+        ] },
+      { id: '2.3', title: 'Plan your data with privacy first',
+        summary: `Almost every app stores data, which is the information it remembers, such as tasks, scores, or names. Before you build, list what your app needs to store and where it will be kept. Then ask the most important question: do I really need this? The safest data is data you never collect.`,
+        more: [
+          `Personal information is anything that can identify a real person, such as a full name, address, phone number, birthday, photo, or location. Collect as little of it as you can. A task list does not need anyone's birthday.`,
+          `For a first app, the simplest and safest choice is to keep data on the user's own device and never send it anywhere. Web apps can do this with a feature called local storage, which you will learn in Module 4.`
+        ],
+        terms: [
+          ['Data', 'Information your app stores or uses.'],
+          ['Personal information', 'Data that can identify a real person.'],
+          ['Privacy', 'People\'s right to control their personal information.'],
+          ['Data minimization', 'Collecting only the data you truly need.'],
+          ['Local storage', 'A way for a web app to save data on the user\'s own device.'],
+          ['Consent', 'Permission a person gives before you collect or use their information.']
+        ],
+        steps: [
+          'List every piece of data your app will store.',
+          'Next to each one, write why the app needs it.',
+          'Cross out anything without a good reason.',
+          'Circle any personal information that is left. Can you avoid it or use less? For example, a first name or nickname instead of a full name.',
+          'Decide where the data lives. For a first app, choose "on the user\'s device."'
+        ],
+        example: { title: 'Data plan for a homework planner', text: `Assignment name     needed to show the list\nDue date            needed to sort the list\nDone or not done    needed to hide finished work\nStudent full name   NOT needed. Removed.\nSchool name         NOT needed. Removed.\n\nWhere it lives: on the user's device only.` },
+        cac: 'The rules say an app must not violate the privacy rights of others. An app that keeps data on the device and collects no personal information is the easiest to defend.',
+        fields: [
+          { key: 'data', label: 'My data plan', hint: 'What the app stores, why, and where it lives.', rows: 4 }
+        ],
+        quiz: [
+          { q: 'Which of these is personal information?', a: ['A high score', 'A home address', 'The app\'s background color', 'The number of tasks'], c: 1, why: 'A home address can identify and locate a real person.' },
+          { q: 'What does data minimization mean?', a: ['Using the smallest font', 'Collecting only the data you truly need', 'Deleting your code', 'Making files smaller'], c: 1, why: 'The less you collect, the less can go wrong.' },
+          { q: 'A student\'s quiz app asks for each user\'s birthday but never uses it. What should they do?', a: ['Keep it in case it is useful later', 'Stop collecting it', 'Share it with friends', 'Ask for the address too'], c: 1, why: 'If the app does not need a piece of data, do not collect it.' }
+        ] },
+      { id: '2.4', title: 'Get feedback on your design',
+        summary: `You know how your app is supposed to work, so your sketches make sense to you. The real test is whether they make sense to someone else. Show your wireframes to two or three people before you build, watch what confuses them, and fix the design while it is still just paper.`,
+        more: [
+          `Do not explain your design first. Hand over the sketch, give the person a task such as "add a homework assignment," and ask them to point at what they would tap. Stay quiet and watch. Every pause or wrong tap is a clue.`,
+          `Good feedback is specific. "It's nice" does not help you. "I could not find the Add button" does. Thank people for criticism. They just saved you hours of rebuilding.`
+        ],
+        terms: [
+          ['Feedback', 'What people tell you or show you that helps you improve your work.'],
+          ['Usability', 'How easy your app is to use.'],
+          ['Paper prototype', 'Testing your sketches by having someone pretend to use them.'],
+          ['Task', 'Something you ask a tester to try to do in your app.'],
+          ['Revise', 'To change your work to make it better.'],
+          ['Iterate', 'To repeat the cycle of making, testing, and improving.']
+        ],
+        steps: [
+          'Pick one task a user should be able to do, such as your core feature.',
+          'Show your sketch to someone and ask them to do the task by pointing. Do not help.',
+          'Write down where they paused, guessed wrong, or asked a question.',
+          'Repeat with one or two more people.',
+          'Change your sketches to fix the biggest problem you saw.'
+        ],
+        example: { title: 'Rate your own design', text: `Score each from 1 (no) to 4 (yes):\n\nThe idea: Is it clear what problem this solves, and for whom?\nThe design: Could a new user do the main task without help?\nThe plan: Is the core feature small enough to finish?\n\nAnything you scored 1 or 2 is what to fix next.` },
+        cac: 'Judges score "implementation of the idea, including user experience and design." Testing your design with real people is how you earn that score.',
+        fields: [
+          { key: 'designfeedback', label: 'What I changed after feedback', hint: 'What confused people, and what did you change?', rows: 3 }
+        ],
+        quiz: [
+          { q: 'What is the best way to test a paper sketch?', a: ['Explain every part first, then ask if they like it', 'Give the person a task and watch what they try to tap, without helping', 'Hide the sketch', 'Only ask your best friend if it is cool'], c: 1, why: 'Watching someone try a task shows you what is confusing.' },
+          { q: 'Which feedback is most useful?', a: ['"Looks good."', '"I did not know what the star button does."', '"Cool."', '"Nice colors."'], c: 1, why: 'Specific feedback tells you exactly what to fix.' },
+          { q: 'Two of three testers could not find your Add button. What should you do?', a: ['Blame the testers', 'Change the design so the button is easier to find', 'Remove the feature', 'Ignore it'], c: 1, why: 'If more than one person struggles, the design has a problem. Fix it now, while it is easy.' }
+        ] }
+    ]
+  },
   {
     id: 'm3', num: 3, title: 'Coding basics',
     blurb: 'Learn the programming logic every app runs on: variables, if / else, loops, lists, and functions. Then use it to build your first small app.',
@@ -478,31 +599,416 @@ window.AP_UNITS = [
         ] }
     ]
   },
-  { id: 'm4', num: 4, title: 'Build the core', blurb: 'Build the one feature your app cannot live without, from start to finish.',
-    milestone: 'Your core feature works from start to finish.',
+  {
+    id: 'm4', num: 4, title: 'Build the core',
+    blurb: 'Build the one feature your app cannot live without, from start to finish.',
+    milestone: 'Your core feature works from start to finish, and your code is saved with its history.',
     topics: [
-      { id: '4.1', title: 'Break the core feature into small steps', soon: true },
-      { id: '4.2', title: 'Save and load data', soon: true },
-      { id: '4.3', title: 'Debugging: find and fix errors', soon: true },
-      { id: '4.4', title: 'Use libraries and AI the honest way', soon: true },
-      { id: '4.5', title: 'Save your history with GitHub', soon: true }
-    ] },
-  { id: 'm5', num: 5, title: 'Test and polish', blurb: 'Make it easy to use, try to break it, and fix what matters most.',
+      { id: '4.1', title: 'Break the core feature into small steps',
+        summary: `A whole app is too big to build in one go. Programmers break big jobs into small steps, build one step, test it, and then move on. This is called decomposition, and it is the most useful habit you can learn. Each step should be small enough to finish in one work session.`,
+        more: [
+          `Start by writing what should happen in plain words, one line at a time. This is called pseudocode. It is not real code, so there are no syntax errors to fight. You are just thinking clearly about the order of things.`,
+          `Then build in tiny pieces. Get one line of your plan working, and run it. Never write fifty lines before running anything. When you run after every small change, a new bug can only be in the few lines you just wrote.`
+        ],
+        terms: [
+          ['Decomposition', 'Breaking a big problem into smaller ones you can solve one at a time.'],
+          ['Pseudocode', 'A plan for code written in plain words.'],
+          ['Algorithm', 'A set of steps that solves a problem.'],
+          ['Incremental development', 'Building and testing one small piece at a time.'],
+          ['Test', 'To run your code and check that it does what you expect.'],
+          ['Working session goal', 'The one small thing you plan to finish today.']
+        ],
+        steps: [
+          'Write your core feature as pseudocode: five to ten plain lines.',
+          'Turn each line into a small task. Order them so each one builds on the last.',
+          'Open your index.html from lesson 3.9 and rename things to fit your app, or start a fresh file.',
+          'Build the first task only. Run it. Fix it until it works.',
+          'Write a journal entry, then move to the next task next session.'
+        ],
+        example: { title: 'Pseudocode for "add an assignment"', text: `When the user clicks Add:\n  read the assignment name from the text box\n  read the due date\n  if the name is empty, show "Type a name first" and stop\n  otherwise make a new assignment with that name and date\n  add it to the list of assignments\n  sort the list by due date\n  show the list on the page\n  clear the text box` },
+        fields: [
+          { key: 'buildsteps', label: 'My build steps', hint: 'The small tasks for your core feature, in order.', rows: 6 }
+        ],
+        quiz: [
+          { q: 'What is decomposition?', a: ['Deleting old code', 'Breaking a big problem into smaller, solvable pieces', 'Making code run faster', 'Writing code without testing'], c: 1, why: 'Small pieces are easier to build, test, and fix.' },
+          { q: 'Why run your code after every small change?', a: ['To use more battery', 'So a new bug can only be in the few lines you just wrote', 'Because the computer forgets code', 'It is not useful'], c: 1, why: 'Frequent testing makes bugs easy to find.' },
+          { q: 'What is pseudocode?', a: ['Code with errors', 'A plan written in plain words, before real code', 'A secret language', 'Code copied from the internet'], c: 1, why: 'Pseudocode lets you think about the steps without worrying about exact syntax.' }
+        ] },
+      { id: '4.2', title: 'Save and load data',
+        summary: `Right now your app forgets everything when the page is closed. Variables live only while the page is open. To remember data between visits, a web app can save it on the user's device with local storage. You save when something changes, and you load when the app starts.`,
+        more: [
+          `Local storage holds text only. To save a list, first turn it into text with JSON.stringify. To get the list back, turn the text into a list again with JSON.parse. JSON is just a standard way to write data as text.`,
+          `Local storage has two main commands. localStorage.setItem("tasks", text) saves text under a name. localStorage.getItem("tasks") reads it back, or gives null if nothing was saved yet. Always check for null before you use what you loaded.`,
+          `Local storage stays on one device and one browser. It is private to the user, which fits the privacy plan you made in Module 2. It does not sync between a phone and a laptop.`
+        ],
+        terms: [
+          ['Persistence', 'Keeping data after the app is closed.'],
+          ['Local storage', 'A place in the browser where a web app can save text on the user\'s device.'],
+          ['JSON', 'A standard way to write data, such as lists, as text.'],
+          ['JSON.stringify', 'Turns a value such as a list into text.'],
+          ['JSON.parse', 'Turns that text back into a value.'],
+          ['null', 'A special value that means "nothing here."']
+        ],
+        steps: [
+          'Run the Try it box to see a list turn into text and back.',
+          'In your own index.html, add a save function like the one in the example. Call it every time your data changes.',
+          'Add the loading lines near the top of your script, so saved data comes back when the page opens.',
+          'Test it: add something, close the tab, and open the file again. Is it still there?'
+        ],
+        example: { title: 'Saving and loading a list in a web app', text: `let tasks = [];\n\n// Load: runs once when the page opens\nconst saved = localStorage.getItem("tasks");\nif (saved !== null) {\n  tasks = JSON.parse(saved);\n}\n\n// Save: call this every time tasks changes\nfunction saveTasks() {\n  localStorage.setItem("tasks", JSON.stringify(tasks));\n}` },
+        tries: [
+          { mode: 'js', title: 'Turn a list into text and back', intro: 'Local storage can only hold text. This is how a list makes the trip.',
+            code: `let tasks = ["Math worksheet", "Read chapter 4"];\n\nlet text = JSON.stringify(tasks);\nconsole.log("As text: " + text);\n\nlet loaded = JSON.parse(text);\nconsole.log("Back as a list with " + loaded.length + " items.");\nconsole.log("First item: " + loaded[0]);`,
+            challenge: 'Add a third task to the list and run it again. What changes in the text?' }
+        ],
+        quiz: [
+          { q: 'Why does an app without saved data forget everything when it is closed?', a: ['The browser deletes the app', 'Variables only live while the page is open', 'Lists cannot hold data', 'The internet turned off'], c: 1, why: 'Variables are temporary. To keep data, you have to save it somewhere.' },
+          { q: 'What does JSON.stringify do?', a: ['Deletes a list', 'Turns a value such as a list into text', 'Sorts a list', 'Draws a string on the screen'], c: 1, why: 'Local storage holds only text, so lists are converted to text first.' },
+          { q: 'localStorage.getItem("tasks") gives null. What does that mean?', a: ['The app is broken', 'Nothing has been saved under that name yet', 'The list is full', 'The user typed "null"'], c: 1, why: 'null means there is no saved value, which is normal the first time someone opens the app.' }
+        ] },
+      { id: '4.3', title: 'Debugging: find and fix errors',
+        summary: `Every programmer writes bugs, every day. A bug is a mistake that makes code do something you did not intend. Debugging is the skill of finding and fixing bugs, and it is a normal part of coding, not a sign you are bad at it. Good debuggers stay calm and follow a method.`,
+        more: [
+          `There are three kinds of errors. A syntax error breaks the rules of the language, like a missing bracket, and the code will not run at all. A runtime error happens while the code runs, like using a variable that does not exist. A logic error is the sneaky one: the code runs, but gives the wrong answer.`,
+          `The method: read the error message, because it usually names the problem and the line. Find the last thing that worked. Use console.log to show the values of your variables, so you can see where they stop being what you expected. Change one thing at a time. If you are stuck, explain the code out loud, line by line, to a friend or even a rubber duck. Explaining often reveals the mistake.`
+        ],
+        terms: [
+          ['Bug', 'A mistake in code that makes it behave in a way you did not intend.'],
+          ['Debugging', 'Finding and fixing bugs.'],
+          ['Syntax error', 'Code that breaks the rules of the language and cannot run.'],
+          ['Runtime error', 'An error that happens while the code is running.'],
+          ['Logic error', 'Code that runs but does the wrong thing.'],
+          ['Console', 'The place where console.log messages and error messages appear. In a browser, press F12 or right-click and choose Inspect.']
+        ],
+        steps: [
+          'Fix all three bugs in the Try it box. Run after each fix.',
+          'In your own app, open the browser console (F12, or right-click and choose Inspect, then Console).',
+          'Add a console.log to show one of your variables, and find it in the console.',
+          'Next time something breaks, write the bug and the fix in your journal.'
+        ],
+        tries: [
+          { mode: 'js', title: 'Bug hunt: this code has three bugs', intro: 'It should show the total of the prices and say whether it is over the $20 budget. Fix one bug at a time and run after each fix.',
+            code: `let prices = [4, 7, 12];\nlet total = 0;\n\nfor (let i = 0; i <= prices.length; i++) {\n  total = total + prices[i];\n}\n\nconsole.log("Total: " + totl);\n\nif (total < 20) {\n  console.log("Over budget!");\n} else {\n  console.log("Within budget.");\n}`,
+            challenge: 'When it is fixed, the output is "Total: 23" and "Over budget!" Name the kind of error each bug was.' }
+        ],
+        cac: 'One written question asks: "What technical or coding difficulty did you face, and how did you address it?" Every bug you write in your journal is a possible answer.',
+        quiz: [
+          { q: 'Your code runs with no error message, but the total it shows is wrong. What kind of error is this?', a: ['Syntax error', 'Runtime error', 'Logic error', 'Network error'], c: 2, why: 'The code runs but does the wrong thing. That is a logic error.' },
+          { q: 'What should you do first when you see an error message?', a: ['Delete all your code', 'Read it, because it usually names the problem and the line', 'Restart the computer', 'Ignore it'], c: 1, why: 'Error messages are clues. Read them carefully.' },
+          { q: 'How does console.log help with debugging?', a: ['It fixes bugs automatically', 'It shows the values of variables so you can see where things go wrong', 'It makes the code faster', 'It hides errors'], c: 1, why: 'Showing values lets you compare what the code is doing with what you expected.' }
+        ] },
+      { id: '4.4', title: 'Use libraries and AI the honest way',
+        summary: `Professional developers rarely write everything from scratch. They use libraries, which are code other people wrote and shared, and many use AI assistants. You can too. The honest way has two rules: say what you used, and understand every part of your own app.`,
+        more: [
+          `Keep a credits file. For each library, image, sound, or font you did not make, write its name, where it came from, and what you used it for. Check that you are allowed to use it. Look for words like "free to use," "open source," or a license name.`,
+          `Treat an AI assistant like a tutor, not a builder. Good uses: asking it to explain an error message, explain a concept, or suggest why a function is not working. A bad use: asking it to write your whole app. If it does, you have not learned to build, and you cannot explain or fix what it wrote.`,
+          `A simple test: could you explain every line of your app to a friend? If AI or a tutorial gave you a piece you do not understand, slow down, ask how it works, and rewrite it in your own way before you keep it.`
+        ],
+        terms: [
+          ['Library', 'Code written by someone else that you can use in your project.'],
+          ['Open source', 'Code that its authors let others use, usually under a license.'],
+          ['License', 'The rules for how you may use someone else\'s work.'],
+          ['Credit', 'Saying clearly who made something you used.'],
+          ['AI assistant', 'A program that can answer questions and write text or code.'],
+          ['AI use log', 'Your own record of when you used AI and what for.']
+        ],
+        steps: [
+          'Open CREDITS.txt in your project folder. Add anything in your app that you did not make.',
+          'Add a section named "AI use." If you have used AI, write what you asked and what you did with the answer. If not, write "None so far."',
+          'Pick the hardest part of your code. Explain it out loud, line by line.',
+          'If there is a line you cannot explain, look it up or ask how it works, then rewrite it yourself.'
+        ],
+        example: { title: 'CREDITS.txt', text: `Homework Planner by Maya R.\n\nLibraries: none\nIcons: drawn by me\nFont: Atkinson Hyperlegible (Google Fonts, free to use)\n\nAI use:\nNov 20. Asked an AI assistant what "undefined" means in an error.\n  It explained that my loop went one step past the end of the list. I fixed the loop myself.\nDec 2. Asked how to sort a list by date. It showed an example.\n  I rewrote it for my assignments and can explain each line.` },
+        cac: 'The rules: all coding must be done by the student or team. Libraries, frameworks, and tools are allowed if clearly documented. AI is permitted only if fully disclosed, it must not be the entire technical development, and you must show significant personal contribution and technical understanding. Your credits file and AI use log are your proof.',
+        quiz: [
+          { q: 'Which is an honest use of an AI assistant?', a: ['Having it write the whole app, then saying you wrote it', 'Asking it to explain an error message, then fixing the bug yourself and noting it in your log', 'Hiding that you used it', 'Copying its answer without reading it'], c: 1, why: 'Use AI to learn and get unstuck, understand the result, and say that you used it.' },
+          { q: 'What belongs in a credits file?', a: ['Only your name', 'Each library, image, sound, font, or tool you did not make, and where it came from', 'Your passwords', 'Nothing'], c: 1, why: 'Credits give honest attribution and show what work is your own.' },
+          { q: 'A tutorial gave you ten lines that work, but you cannot explain them. What is the best move?', a: ['Keep them and hope nobody asks', 'Learn how they work and rewrite them in your own way', 'Delete your whole app', 'Add more lines you do not understand'], c: 1, why: 'You should be able to explain every part of your own app.' }
+        ] },
+      { id: '4.5', title: 'Save your history with GitHub',
+        summary: `Imagine breaking your app the night before you show it, with no way to go back. Version history prevents that. It is a record of saved copies of your project over time. GitHub is a free website that stores your code and its history online, so it is backed up and easy to share.`,
+        more: [
+          `Each saved point is called a commit. A commit has a short message that says what changed, such as "Add due dates." A project stored on GitHub is called a repository, or repo.`,
+          `GitHub accounts are for people 13 and older. If you are younger, ask a parent or guardian whether they can hold the account for you. You can also keep history without GitHub: at the end of each work session, copy your project folder and add the date to the copy's name.`,
+          `Never upload private information. No passwords, no home address, and no data about real people. A public repository can be seen by anyone.`
+        ],
+        terms: [
+          ['Version history', 'Saved earlier versions of your project that you can go back to.'],
+          ['GitHub', 'A website that stores code and its history.'],
+          ['Repository (repo)', 'A project folder stored on GitHub.'],
+          ['Commit', 'One saved point in your project\'s history, with a message.'],
+          ['Commit message', 'A short note that says what changed.'],
+          ['Backup', 'A second copy of your work kept somewhere safe.']
+        ],
+        steps: [
+          'With a parent or guardian\'s OK, create a free account at github.com. If you are under 13, use dated folder copies instead and skip to the last step.',
+          'Create a new repository. Name it after your app.',
+          'Choose "Add file", then "Upload files". Add index.html, CREDITS.txt, and your journal.',
+          'Write a commit message such as "First working version" and commit.',
+          'From now on, upload your changed files at the end of each work session, with a message that says what changed.'
+        ],
+        example: { title: 'Good commit messages', text: `Add the assignment list\nSave assignments so they stay after closing\nFix bug: empty names were being added\nSort assignments by due date\n\nNot helpful: "stuff", "update", "asdf"` },
+        cac: 'Judges have the right to request access to your app and source code to verify it works as you say. A GitHub repository with dated commits makes that easy, and shows your work was done after the contest start date.',
+        quiz: [
+          { q: 'What is a commit?', a: ['A bug', 'A saved point in your project\'s history, with a message', 'A kind of loop', 'A password'], c: 1, why: 'Each commit records what your project looked like at that moment.' },
+          { q: 'Which is the best commit message?', a: ['"stuff"', '"Fix bug: empty tasks were being added"', '"asdfgh"', '"final final v2"'], c: 1, why: 'A good message says what changed, so you can find that version later.' },
+          { q: 'What should you never upload to a public repository?', a: ['Your index.html', 'Passwords or private information about real people', 'Your credits file', 'Your commit messages'], c: 1, why: 'Anyone can see a public repository. Keep private information out of it.' }
+        ] }
+    ]
+  },
+  {
+    id: 'm5', num: 5, title: 'Test and polish',
+    blurb: 'Make it easy to use, try to break it, and fix what matters most.',
     milestone: 'A tested app and a short test report.',
     topics: [
-      { id: '5.1', title: 'Add your "if there is time" features', soon: true },
-      { id: '5.2', title: 'Design that is easy for everyone to use', soon: true },
-      { id: '5.3', title: 'Test with three real users', soon: true },
-      { id: '5.4', title: 'Clean up and comment your code', soon: true }
-    ] },
-  { id: 'm6', num: 6, title: 'Share your app', blurb: 'Put your app in front of people: publish it, demo it, and plan what comes next.',
+      { id: '5.1', title: 'Add your "if there is time" features',
+        summary: `Your core feature works. Now you can make the app better, carefully. Go back to your "if there is time" list from Module 2 and add features one at a time. After each one, test the whole app again, because new code can break old code.`,
+        more: [
+          `Choose what to add by asking two questions. How much does it help the user? How hard is it to build? Start with features that help a lot and are easy. Leave the ones that are hard and help only a little.`,
+          `Set a stopping point. Decide on a date when you will stop adding features and only fix and polish. Apps that keep growing until the last day usually ship with bugs.`
+        ],
+        terms: [
+          ['Priority', 'How important something is compared with other things.'],
+          ['Regression', 'A bug in something that used to work, caused by a new change.'],
+          ['Feature freeze', 'The point when you stop adding features and only fix and polish.'],
+          ['Polish', 'Small improvements that make an app feel finished.'],
+          ['Trade-off', 'Giving up one thing to get another, such as fewer features for fewer bugs.'],
+          ['Backlog', 'Your list of features and fixes that are not done yet.']
+        ],
+        steps: [
+          'Rate each "if there is time" feature: how much it helps (1 to 3) and how hard it is (1 to 3).',
+          'Pick the one that helps most and is easiest. Break it into steps, like you did in lesson 4.1.',
+          'Build it. Then test your core feature again to make sure it still works.',
+          'Save a version with a clear message before you start the next feature.',
+          'Write your feature freeze date in your journal.'
+        ],
+        example: { title: 'Choosing what to add', text: `Feature                Helps  Hard   Decision\nMark as done            3      1     Build first\nColor per class         2      1     Build second\nSort by class           2      2     If time\nNight-before reminder   3      3     Save for version 2.0` },
+        quiz: [
+          { q: 'You have time for one more feature. Which should you choose?', a: ['The hardest one, to impress people', 'One that helps users a lot and is easy to build', 'One nobody asked for', 'All of them at once'], c: 1, why: 'High help and low difficulty gives the most value for your time.' },
+          { q: 'After adding a new feature, your Add button stops working. What is this called?', a: ['A feature freeze', 'A regression', 'A wireframe', 'A commit'], c: 1, why: 'A regression is a bug in something that used to work. Retest old features after every change.' },
+          { q: 'Why set a feature freeze date?', a: ['To stop coding forever', 'To leave time to fix bugs and polish before you share the app', 'Because features expire', 'To delete old features'], c: 1, why: 'Stopping new features early gives you time to make the app solid.' }
+        ] },
+      { id: '5.2', title: 'Design that is easy for everyone to use',
+        summary: `An app can work perfectly and still be hard to use. Good design means people can see what to do, read everything easily, and never feel lost. It also means the app works for everyone, including people who cannot see well, cannot use a mouse, or are using a small phone. That is called accessibility.`,
+        more: [
+          `A few rules fix most problems. Make text big enough to read, at least 16 pixels. Use strong contrast, such as dark text on a light background. Make buttons large enough to tap, and label them with what they do, such as "Add task" instead of "OK" or "Go."`,
+          `Do not rely on color alone to show meaning, because some people cannot tell red from green. Add a word or a symbol too. Be consistent: the same kind of button should look the same on every screen. When something goes wrong, show a friendly message that says how to fix it.`
+        ],
+        terms: [
+          ['User experience (UX)', 'How it feels to use your app.'],
+          ['Accessibility', 'Designing so that everyone can use your app, including people with disabilities.'],
+          ['Contrast', 'How different the text color is from the background color.'],
+          ['Label', 'Words that say what a button or text box is for.'],
+          ['Consistency', 'Making similar things look and work the same way.'],
+          ['Responsive', 'A design that adjusts to fit different screen sizes.']
+        ],
+        steps: [
+          'Fix the page in the Try it box using the rules above.',
+          'Open your own app on a phone or make the browser window narrow. Can you still read and tap everything?',
+          'Try using your app with only the keyboard: Tab to move, Enter to press.',
+          'Check every button label. Does it say what will happen?',
+          'Fix the two biggest problems you found.'
+        ],
+        tries: [
+          { mode: 'html', title: 'Fix this hard-to-use page', intro: 'This page works, but it is hard to read and use. Change the CSS and the words to fix it.',
+            code: `<style>\n  body { font-family: sans-serif; padding: 16px; background: white; }\n  h1 { color: #dddddd; font-size: 14px; }\n  p { color: yellow; font-size: 9px; }\n  button { font-size: 8px; padding: 1px; }\n</style>\n\n<h1>Snack Sign-Up</h1>\n<p>Tell your club what you are bringing this week.</p>\n<input placeholder="?">\n<button>OK</button>`,
+            challenge: 'Make the heading large and dark, the paragraph readable, the button big with a clear label, and the text box hint helpful.' }
+        ],
+        cac: 'Judges score "implementation of the idea, including user experience and design." A clean, readable app that anyone can use scores better than a flashy one that confuses people.',
+        quiz: [
+          { q: 'Which button label is best?', a: ['"OK"', '"Click"', '"Add task"', '"Button 1"'], c: 2, why: 'A good label says exactly what will happen.' },
+          { q: 'Why should you not use color alone to show that something is wrong?', a: ['Color slows the app down', 'Some people cannot tell certain colors apart, so add words or a symbol too', 'Colors are not allowed', 'Red is unlucky'], c: 1, why: 'Accessible designs give more than one signal, such as color plus a message.' },
+          { q: 'Which text is easiest to read?', a: ['Light gray on white', 'Yellow on white', 'Dark text on a light background', 'Red on green'], c: 2, why: 'Strong contrast between text and background makes reading easy.' }
+        ] },
+      { id: '5.3', title: 'Test with three real users',
+        summary: `You have tested your app many times, but you always use it the way you meant it to be used. Real users will do things you never imagined. Ask three people to try your app while you watch quietly. You will find more problems in fifteen minutes than in a week of testing alone.`,
+        more: [
+          `Before the testers arrive, write a test plan: a list of things to try and what should happen for each. Include unusual inputs called edge cases, such as an empty box, a very long name, or pressing a button twice.`,
+          `During the test, give each person a task and do not help. Write down every bug and every moment of confusion. Afterward, sort the problems. Fix anything that stops the main task first. Small annoyances come after that.`
+        ],
+        terms: [
+          ['User testing', 'Watching real people use your app to find problems.'],
+          ['Test plan', 'A list of things to try and what should happen.'],
+          ['Test case', 'One thing to try, with its expected result.'],
+          ['Edge case', 'An unusual input or situation, such as an empty box or a huge number.'],
+          ['Bug report', 'A note that says what happened, what should have happened, and how to make it happen again.'],
+          ['Expected result', 'What the app should do if it is working correctly.']
+        ],
+        steps: [
+          'Write a test plan with at least six test cases. Include three edge cases.',
+          'Run the plan yourself first. Fix anything that fails.',
+          'Ask three people to try your app. Give each the same task. Watch and take notes.',
+          'Write a bug report for each problem.',
+          'Fix the problems that block the main task. Then retest.'
+        ],
+        example: { title: 'Part of a test plan', text: `Test                              Expected                 Result\nAdd "Math worksheet"              Shows in the list         Pass\nAdd with an empty box             "Type a name first"       Pass\nAdd a 200-letter name             Wraps, does not break     FAIL: runs off the screen\nClose and reopen the page         List is still there       Pass\nPress Add twice quickly           Only one item added       Pass\nUse on a phone                    Everything fits           FAIL: button cut off` },
+        fields: [
+          { key: 'testreport', label: 'My test report', hint: 'How many tests passed, what users struggled with, and what you fixed.', rows: 5 }
+        ],
+        quiz: [
+          { q: 'Which is an edge case for a "type your age" box?', a: ['Typing 14', 'Typing 15', 'Leaving it empty or typing -5', 'Typing 13'], c: 2, why: 'Edge cases are unusual inputs. Good apps handle them without breaking.' },
+          { q: 'During a user test, the tester cannot find the Save button. What should you do?', a: ['Point to it right away', 'Stay quiet, write it down, and fix the design later', 'Tell them they are wrong', 'End the test'], c: 1, why: 'Their confusion is exactly what you need to see. Note it and fix it afterward.' },
+          { q: 'What does a good bug report include?', a: ['Only "it is broken"', 'What happened, what should have happened, and how to make it happen again', 'The tester\'s home address', 'A guess about who caused it'], c: 1, why: 'Clear steps and expected results make a bug possible to find and fix.' }
+        ] },
+      { id: '5.4', title: 'Clean up and comment your code',
+        summary: `Code is read far more often than it is written, sometimes by other people and often by you, weeks later. Clean code uses clear names, tidy spacing, and short comments that explain why something is done. Cleaning up does not change what your app does. It changes how easy it is to understand.`,
+        more: [
+          `A comment is a note for humans that the computer ignores. In JavaScript, a comment starts with two slashes. Write comments that explain the reason or the tricky part. Do not repeat what the code already says.`,
+          `Other cleanup jobs: rename unclear variables, delete code you no longer use, indent blocks the same way everywhere, and move repeated code into a function. Run your tests again after cleaning to make sure nothing broke.`
+        ],
+        terms: [
+          ['Comment', 'A note in code for people to read. The computer ignores it.'],
+          ['Readable', 'Easy for a person to understand.'],
+          ['Indentation', 'Spaces at the start of a line that show which code belongs inside a block.'],
+          ['Refactor', 'To improve how code is written without changing what it does.'],
+          ['Dead code', 'Code that is never used and should be deleted.'],
+          ['Documentation', 'Written explanation of what a program does and how to use it.']
+        ],
+        steps: [
+          'Clean up the code in the Try it box. It should show the same output when you are done.',
+          'In your own app, rename any variable whose name does not say what it holds.',
+          'Add a comment at the top of the file: the app name, your name, and its purpose sentence.',
+          'Add a one-line comment above each function saying what it is for.',
+          'Delete code you do not use. Run your test plan again. Save a new version.'
+        ],
+        tries: [
+          { mode: 'js', title: 'Make this code readable', intro: 'This code works, but it is hard to understand. Rename the variables, fix the spacing, and add comments. The output must stay the same.',
+            code: `let a = [3, 5, 4];\nlet b = 0;\nfor (let i = 0; i < a.length; i++) {\nb = b + a[i];\n}\nlet c = b / a.length;\nconsole.log(c);\nif (c > 3) { console.log("yes"); } else { console.log("no"); }`,
+            challenge: 'Hint: a holds hours of practice on three days. What do b and c really mean? Make the final messages say something useful.' }
+        ],
+        cac: 'Judges score "demonstrated excellence of coding and programming skills" and may ask to see your source code. Clear names and comments help them see your skill.',
+        quiz: [
+          { q: 'What is a comment in code?', a: ['A bug', 'A note for people that the computer ignores', 'A kind of loop', 'An error message'], c: 1, why: 'Comments explain code to human readers.' },
+          { q: 'Which comment is most useful?', a: ['// add 1 to i', '// Skip the first row because it holds the column titles', '// code', '// this is a variable'], c: 1, why: 'Good comments explain why, not what the code already says.' },
+          { q: 'What does refactoring change?', a: ['What the app does', 'How the code is written, without changing what it does', 'The app\'s name', 'The user\'s data'], c: 1, why: 'Refactoring improves the code\'s structure while keeping its behavior the same.' }
+        ] }
+    ]
+  },
+  {
+    id: 'm6', num: 6, title: 'Share your app',
+    blurb: 'Put your app in front of people: publish it, demo it, and plan what comes next.',
     milestone: 'Your app is online and you have shown it to an audience.',
     topics: [
-      { id: '6.1', title: 'Put your app online', soon: true },
-      { id: '6.2', title: 'Give a two-minute demo', soon: true },
-      { id: '6.3', title: 'Record a demo video', soon: true },
-      { id: '6.4', title: 'Plan version 2.0', soon: true }
-    ] },
+      { id: '6.1', title: 'Put your app online',
+        summary: `So far your app lives in a file on your computer. Publishing puts it on the internet, so anyone with the link can use it. For a web app made of HTML, CSS, and JavaScript files, this is free and takes a few minutes with GitHub Pages.`,
+        more: [
+          `GitHub Pages turns a repository into a website. Your main file must be named index.html. In your repository, open Settings, then Pages. Under "Build and deployment," choose "Deploy from a branch," pick the main branch, and save. After a minute or two, your app is live at an address like yourname.github.io/your-app.`,
+          `Before you publish, look through your files one more time. Remove anything private. Then test the live link on a different device, because problems sometimes show up only after publishing. If you cannot use GitHub, you can still share your app by sending the project folder to someone, who can open index.html in a browser.`
+        ],
+        terms: [
+          ['Publish', 'To put your app where other people can reach it.'],
+          ['Host', 'A service that stores your app and serves it to visitors.'],
+          ['GitHub Pages', 'A free service that turns a GitHub repository into a website.'],
+          ['URL', 'The web address of your app.'],
+          ['Live', 'Available on the internet right now.'],
+          ['Deploy', 'To send a new version of your app to the place where people use it.']
+        ],
+        steps: [
+          'Make sure your main file is named index.html and your latest version is uploaded to your repository.',
+          'Check your files for anything private, and remove it.',
+          'In the repository, go to Settings, then Pages. Choose "Deploy from a branch," pick main, and save.',
+          'Wait a minute or two, then open the link GitHub shows you.',
+          'Test the live app on a phone and on a computer. Send the link to one person and ask them to try it.'
+        ],
+        example: { title: 'Before you publish', text: `Main file is named index.html\nNo passwords or private information in any file\nCREDITS.txt is up to date\nThe app works when opened in a fresh browser window\nA parent or guardian knows it is going online` },
+        quiz: [
+          { q: 'What does it mean to publish a web app?', a: ['Print the code on paper', 'Put it on the internet so people can use it with a link', 'Delete the old version', 'Email it to yourself'], c: 1, why: 'Publishing makes your app reachable by other people.' },
+          { q: 'What must your main file be named for GitHub Pages to show your app?', a: ['app.txt', 'index.html', 'main.doc', 'home.js'], c: 1, why: 'Web hosts look for index.html as the starting page.' },
+          { q: 'What should you check before publishing?', a: ['That the files contain no private information', 'That the app has at least 20 screens', 'That nobody else can open it', 'That the code has no comments'], c: 0, why: 'Anything you publish can be seen by anyone, so remove private information first.' }
+        ] },
+      { id: '6.2', title: 'Give a two-minute demo',
+        summary: `A demo is a short, live show of your app. It answers three questions quickly: what problem does this solve, who is it for, and does it work? Two minutes is plenty. A good demo tells a small story about one user and shows the app doing its main job.`,
+        more: [
+          `Use this order. Start with the problem and who has it. Say your purpose sentence. Then show the app working, by doing the main task on screen while you describe it. Mention what you used to build it and one thing you learned. End with what you would add next.`,
+          `Practice out loud with a timer at least three times. Set up your app with a little example data before you start, so the screen is not empty. If something breaks during a demo, stay calm, say what should have happened, and keep going. Everyone who builds software has had a demo go wrong.`
+        ],
+        terms: [
+          ['Demo', 'A short showing of your app in action.'],
+          ['Audience', 'The people watching your demo.'],
+          ['Hook', 'An opening line that makes people want to listen.'],
+          ['Script', 'A written plan of what you will say and show.'],
+          ['Rehearse', 'To practice before the real thing.'],
+          ['Call to action', 'What you ask your audience to do next, such as trying the app.']
+        ],
+        steps: [
+          'Write a demo script using the order above. Keep it under 250 words.',
+          'Put example data in your app so it looks real.',
+          'Practice out loud with a timer. Cut words until you are under two minutes.',
+          'Give your demo to a real audience: your class, your family, or a friend.',
+          'Ask for one thing they liked and one thing that was unclear.'
+        ],
+        example: { title: 'A two-minute demo plan', text: `0:00  Problem: "Last month I forgot three assignments. My friends do too."\n0:15  Purpose: "Homework Planner helps students see what is due next, so nothing gets forgotten."\n0:25  Show it: add an assignment, watch the list sort, mark one done, reload to show it saves.\n1:15  How I built it: HTML, CSS, JavaScript. A list, a loop, and local storage.\n1:35  What I learned: my hardest bug and how I fixed it.\n1:50  Next: reminders the night before.` },
+        fields: [
+          { key: 'demoscript', label: 'My demo script', hint: 'Problem, purpose sentence, what you will show, how you built it, what you learned, what is next.', rows: 8 }
+        ],
+        quiz: [
+          { q: 'What should a demo start with?', a: ['Every line of your code', 'The problem and who has it', 'An apology', 'Your favorite color'], c: 1, why: 'Starting with the problem tells the audience why your app matters.' },
+          { q: 'What is the most important part of a demo?', a: ['Reading your code aloud', 'Showing the app doing its main job', 'A long introduction', 'Talking as fast as you can'], c: 1, why: 'People want to see that the app works.' },
+          { q: 'Something breaks in the middle of your demo. What should you do?', a: ['Stop and leave', 'Stay calm, say what should have happened, and keep going', 'Blame the computer loudly', 'Start over from the beginning three times'], c: 1, why: 'Staying calm and moving on is what experienced presenters do.' }
+        ] },
+      { id: '6.3', title: 'Record a demo video',
+        summary: `A demo video lets people see your app when you are not there to show it. It is your two-minute demo, recorded: your screen, your voice, and your app working. You do not need a camera crew or fancy editing. Clear sound and a clear screen matter most.`,
+        more: [
+          `Most devices can record the screen with no extra software. On a Chromebook, use Screen capture in the quick settings menu. On Windows, the Snipping Tool can record video. On a Mac, press Shift, Command, and 5. Phones and tablets have a screen recording button in their control menus.`,
+          `Record in a quiet room and speak a little slower than normal. Close other tabs and turn off notifications so nothing private pops up. Make the browser text large enough to read. Do a ten-second test recording first and play it back to check the sound. It usually takes a few tries, and that is normal.`
+        ],
+        terms: [
+          ['Screen recording', 'A video of what happens on your screen.'],
+          ['Voice-over', 'Your voice explaining what the video shows.'],
+          ['Take', 'One attempt at recording.'],
+          ['Edit', 'To cut or rearrange a recording.'],
+          ['Upload', 'To send a file from your device to a website.'],
+          ['Public / unlisted', 'Public videos can be found by anyone. Unlisted videos can be seen only by people with the link.']
+        ],
+        steps: [
+          'Open your demo script from the last lesson.',
+          'Close other tabs, turn off notifications, and put example data in your app.',
+          'Make a ten-second test recording. Play it back and check the sound.',
+          'Record your demo. If you make a mistake, pause, then say the sentence again. You can cut it later, or just start a new take.',
+          'Watch the whole video once. Is the screen readable? Can you hear every word?',
+          'Save the video file in your project folder.'
+        ],
+        example: { title: 'Video checklist', text: `Under 3 minutes\nSays my name and the app name\nPurpose in one clear sentence\nSays who the app is for\nNames the tools and languages I used\nShows the app working\nSound is clear, screen is readable\nNothing private on screen` },
+        cac: 'The official demonstration video must be 1 to 3 minutes long, uploaded to YouTube or Vimeo, and set to public. It must include each participant\'s name, the app name, the purpose in one clear sentence, the target audience, the tools and coding languages used, and the app\'s functionality. Videos outside the time limit may be penalized.',
+        quiz: [
+          { q: 'What matters most in a demo video?', a: ['Special effects', 'Clear sound and a readable screen showing the app working', 'Background music', 'A long title sequence'], c: 1, why: 'Viewers need to hear you and see the app. Everything else is extra.' },
+          { q: 'Why turn off notifications before recording?', a: ['They use too much battery', 'So nothing private or distracting pops up in your video', 'They make the video longer', 'Recording does not work with them on'], c: 1, why: 'A pop-up message can show private information or distract the viewer.' },
+          { q: 'What should you do before recording the full demo?', a: ['Make a short test recording and check the sound', 'Delete your app', 'Memorize your code', 'Nothing'], c: 0, why: 'A quick test catches sound and screen problems before you record the whole thing.' }
+        ] },
+      { id: '6.4', title: 'Plan version 2.0',
+        summary: `You built an app. Take a moment to notice that. Then do what every developer does after a release: look back at what you learned, and look ahead to what comes next. Apps are never really finished. Each version teaches you what the next one should be.`,
+        more: [
+          `Reflection turns experience into skill. Read through your build journal. What was the hardest problem, and how did you solve it? What would you do differently if you started again? What surprised you about how people used the app?`,
+          `Then sketch version 2.0. Use the features you saved for later, plus the feedback from your testers and your demo audience. You do not have to build it now. Having a plan means you know where to start when you are ready.`
+        ],
+        terms: [
+          ['Version', 'One release of your app. The first is often called 1.0.'],
+          ['Reflection', 'Thinking carefully about what you did and what you learned.'],
+          ['Roadmap', 'A plan for what you will build next, in order.'],
+          ['Feedback loop', 'Using what users tell you to improve the next version.'],
+          ['Release', 'Making a version of your app available to users.'],
+          ['Portfolio', 'A collection of projects that shows what you can do.']
+        ],
+        steps: [
+          'Read your whole build journal from the beginning.',
+          'Write what you learned: your hardest problem, how you solved it, and your biggest takeaway.',
+          'List three things for version 2.0, from your saved features and your feedback.',
+          'Copy everything from your My plan page into your journal for safekeeping.',
+          'Share your app link with someone new. You are an app developer now.'
+        ],
+        example: { title: 'Looking back, looking ahead', text: `Hardest problem: my list disappeared on reload.\nHow I solved it: learned local storage and JSON. Saved after every change.\nBiggest takeaway: build one small piece at a time and test it.\n\nVersion 2.0:\n1. Reminder the night before\n2. Color for each class\n3. A weekly view` },
+        fields: [
+          { key: 'learned', label: 'What I learned', hint: 'Your hardest problem, how you solved it, and your biggest takeaway.', rows: 4 },
+          { key: 'v2', label: 'What I would add in version 2.0', hint: 'Two or three things, and why.', rows: 3 }
+        ],
+        cac: 'Three of the written questions are answered right here: the technical difficulty you faced and how you addressed it, what you learned and your biggest takeaway, and what you would change in a 2.0 version.',
+        quiz: [
+          { q: 'Why reflect after finishing a project?', a: ['It is a waste of time', 'Thinking about what worked and what did not makes you better at the next project', 'To find someone to blame', 'Because apps expire'], c: 1, why: 'Reflection turns what happened into lessons you can use again.' },
+          { q: 'Where do good ideas for version 2.0 come from?', a: ['Only from guessing', 'Features you saved for later and feedback from real users', 'Copying another app exactly', 'Nowhere, version 1.0 is final'], c: 1, why: 'Your backlog and your users tell you what to build next.' },
+          { q: 'What is a roadmap?', a: ['A map of your school', 'A plan for what you will build next, in order', 'A list of bugs you will ignore', 'A kind of loop'], c: 1, why: 'A roadmap keeps future work organized and in priority order.' }
+        ] }
+    ]
+  },
   {
     id: 'c', num: 'c', track: true, title: 'Congressional App Challenge track',
     blurb: 'Optional. Want to enter your app in the Congressional App Challenge? These lessons cover who can enter, the rules, the demo video, and how to submit.',
@@ -591,9 +1097,102 @@ window.AP_UNITS = [
           { q: 'A team has four members. How many must live or attend school in the same district?', a: ['At least one', 'At least two', 'All four', 'None'], c: 1, why: 'At least half of the teammates must live or attend school in the same congressional district. Half of four is two.' },
           { q: 'Sam is on Team A. Can Sam also join Team B to help with a second app this year?', a: ['Yes, if the apps are different', 'Yes, if the teams are in different districts', 'No, each student can be on only one entry per year', 'Yes, but only as a tester'], c: 2, why: 'One entry per person per year. Entries across multiple teams are not allowed.' }
         ] },
-      { id: 'C.4', title: 'Build by the rules: credits and AI disclosure', soon: true },
-      { id: 'C.5', title: 'Make the official demo video', soon: true },
-      { id: 'C.6', title: 'Register, write your answers, and submit', soon: true }
+      { id: 'C.4', title: 'Build by the rules: credits and AI disclosure',
+        summary: `The challenge wants to see what you can do. The rules protect that with three requirements: the app must be new, the technical work must be yours, and anything that is not yours must be clearly disclosed. None of this is hard if you keep records while you build. It is very hard to rebuild those records at the last minute.`,
+        more: [
+          `New means created after the cutoff date. For the 2026 challenge that was October 30, 2025. If you enter a 2.0 version of an older app, only the new coding is considered, so be ready to point out exactly what is new.`,
+          `Yours means all coding and technical development is done by you or your team. You may use open-source libraries, frameworks, and external tools, but you must clearly document them, and the project must reflect significant personal effort and technical understanding.`,
+          `AI tools are permitted only if all AI use is fully disclosed in your submission materials. AI may support specific parts of the project. It must not be the entire technical development, and you are expected to show significant individual contribution and understanding of your app. Judges may ask for your app and source code, and refusing means disqualification.`
+        ],
+        terms: [
+          ['Cutoff date', 'The date after which your app must have been created.'],
+          ['Disclosure', 'Clearly telling the judges what tools, libraries, and AI help you used.'],
+          ['Original work', 'Work created by you or your team, not copied.'],
+          ['Technical understanding', 'Being able to explain how your own code works.'],
+          ['Disqualification', 'Being removed from the contest for breaking a rule.'],
+          ['Source code', 'The code you wrote, which judges may ask to see.']
+        ],
+        steps: [
+          'Check your start date. Your first journal entry and your first commit should be after the cutoff date.',
+          'Open CREDITS.txt. Make sure every library, framework, tool, image, sound, and font you did not make is listed.',
+          'Check your AI use log. Each entry should say what you asked and what you did with the answer.',
+          'Practice explaining your code. Pick any function and explain it line by line to someone.',
+          'Write a short disclosure paragraph in the box below. You will paste it into your submission.'
+        ],
+        example: { title: 'A disclosure paragraph', text: `I wrote all of the HTML, CSS, and JavaScript for Homework Planner myself. I used no code libraries. The font is Atkinson Hyperlegible from Google Fonts. I used an AI assistant twice: once to explain an error message, and once to see an example of sorting by date, which I then rewrote for my own data. I can explain every line of my code.` },
+        fields: [
+          { key: 'disclosure', label: 'My disclosure paragraph', hint: 'What you built yourself, what libraries and tools you used, and exactly how you used AI, if at all.', rows: 5 }
+        ],
+        quiz: [
+          { q: 'A student used an AI assistant to explain two error messages. What do the rules require?', a: ['Nothing, because it was a small use', 'Fully disclosing the AI use in the submission', 'Deleting the app', 'Removing the fixed code'], c: 1, why: 'AI use is permitted only when it is fully disclosed, however small.' },
+          { q: 'A team has AI generate the entire app and submits it. Is this allowed?', a: ['Yes, if they disclose it', 'No, AI must not be the entire technical development', 'Yes, if the app works', 'Only for teams of four'], c: 1, why: 'AI may support specific parts only. Students must show significant contribution and understanding.' },
+          { q: 'Judges ask to see a team\'s source code and the team refuses. What happens?', a: ['Nothing', 'The submission is disqualified', 'They get extra time', 'They lose one point'], c: 1, why: 'The rules say failing to honor the request results in immediate disqualification.' }
+        ] },
+      { id: 'C.5', title: 'Make the official demo video',
+        summary: `The rules call the demonstration video the most critical part of your application. Judges may never run your app. They learn about it from your video. It must be 1 to 3 minutes long, cover six required things, and be uploaded to YouTube or Vimeo with the visibility set to public.`,
+        more: [
+          `The six required things are: the name of each participant, the name of the app, the purpose of the app in one clear sentence, the target audience, the tools and coding languages used, and a showcase of the app's functionality. Write a script that checks off each one, and spend most of the time showing the app working.`,
+          `The rules say this is not a video-creation competition, so skip fancy effects. Do make it clear and compelling. Stay inside the time limit, because videos that are too short or too long may be penalized. Lesson 6.3 covers how to record. This lesson is about getting the content right.`
+        ],
+        terms: [
+          ['Demonstration video', 'The 1 to 3 minute video that explains and shows your app. The most important part of your entry.'],
+          ['Functionality', 'What your app actually does when someone uses it.'],
+          ['Target audience', 'The specific people your app is made for.'],
+          ['Public', 'A video setting that lets anyone watch. Required by the rules.'],
+          ['Penalized', 'Scored lower for breaking a rule.'],
+          ['Script', 'A written plan of what you will say and show.']
+        ],
+        steps: [
+          'Write your script in the box below. Cover all six required items.',
+          'Read it aloud with a timer. Aim for about two minutes, and never more than three.',
+          'Record it using the steps in lesson 6.3.',
+          'Watch it with the checklist in the example. Fix anything missing and record again if needed.',
+          'With a parent or guardian\'s OK, upload it to YouTube or Vimeo and set it to public.',
+          'Open the link in a private browser window to make sure anyone can watch it. Save the link.'
+        ],
+        example: { title: 'Script that covers all six', text: `1. Names:      "Hi, I'm Maya, and this is my teammate Leo."\n2. App name:   "Our app is called Homework Planner."\n3. Purpose:    "It helps students see what is due next so that nothing gets forgotten."\n4. Audience:   "We built it for middle school students who juggle many classes."\n5. Tools:      "We wrote it in HTML, CSS, and JavaScript, using a browser and GitHub."\n6. Show it:    Add an assignment, show the sorted list, mark one done, reload to show it saves.\n\nClose: one thing we learned, and what we would add next.` },
+        fields: [
+          { key: 'videoscript', label: 'My official video script', hint: 'Names, app name, one-sentence purpose, audience, tools and languages, then what you will show.', rows: 8 },
+          { key: 'videolink', label: 'My video link', hint: 'The public YouTube or Vimeo link, once it is uploaded.', rows: 1 }
+        ],
+        quiz: [
+          { q: 'How long must the demonstration video be?', a: ['Under 30 seconds', '1 to 3 minutes', 'Exactly 5 minutes', 'Any length'], c: 1, why: 'The rules require 1 to 3 minutes. Videos outside that range may be penalized.' },
+          { q: 'Which of these is NOT one of the six required items?', a: ['The app\'s purpose in one sentence', 'The tools and coding languages used', 'The number of lines of code', 'The target audience'], c: 2, why: 'The six items are names, app name, purpose, audience, tools and languages, and functionality.' },
+          { q: 'What visibility setting must the uploaded video have?', a: ['Private', 'Public', 'Friends only', 'Deleted after a week'], c: 1, why: 'The rules say the video must be set to public.' }
+        ] },
+      { id: 'C.6', title: 'Register, write your answers, and submit',
+        summary: `This is the finish line. You register on the official site, pass a short eligibility quiz, and fill in an application: your video link and written answers to questions about your app. After the submission period ends, nothing can be changed, so submit early and check everything twice.`,
+        more: [
+          `To register you need a personal email address that is not your school account, your home and school addresses with 9-digit ZIP codes, the congressional district and Member of Congress for each, and a parent or guardian's name and email. A teacher or mentor's name and email is optional. For a team, one member creates the team profile and invites up to three others.`,
+          `Expect questions like these: the title of your app, its purpose, what inspired you, what technical difficulty you faced and how you addressed it, what you learned and your biggest takeaway, and what you would change in a 2.0 version. You have already written most of this. Your My plan page holds your purpose, what you learned, and your version 2.0 ideas.`,
+          `After the deadline, you will receive a link to an exit questionnaire. Every team member must complete it individually. Winners are chosen by each Member of Congress and announced by that office.`
+        ],
+        terms: [
+          ['Registration', 'Signing up on the official site with your details.'],
+          ['Eligibility quiz', 'A short set of questions on the official site that confirms you are allowed to enter.'],
+          ['Application', 'The form with your video link and written answers.'],
+          ['Submission period', 'The dates when entries are accepted. In 2026 it ran from May to late October.'],
+          ['Exit questionnaire', 'A survey every participant fills out after the deadline.'],
+          ['Embargo', 'A date before which results cannot be announced.']
+        ],
+        steps: [
+          'Gather your registration details: personal email, both addresses with 9-digit ZIP codes, districts, and your parent or guardian\'s contact.',
+          'Register at congressionalappchallenge.us and complete the eligibility quiz. Teams: one person creates the team and invites the others.',
+          'Write your answers in a document first, using your My plan page. Fill in the two boxes below for the answers you have not written yet.',
+          'Ask someone to proofread your answers.',
+          'Paste in your answers and your public video link. Check every field.',
+          'Submit at least a week before the deadline. Then watch your email for the exit questionnaire.'
+        ],
+        example: { title: 'Final submission checklist', text: `Everyone on the team is registered\nI am entering in one district only\nVideo is 1 to 3 minutes, public, and the link works in a private window\nVideo covers all six required items\nEvery written question is answered\nAI use and libraries are fully disclosed\nMy code is ready to share if judges ask\nSubmitted before the deadline\nExit questionnaire done by every team member` },
+        fields: [
+          { key: 'inspired', label: 'What inspired me to create this app', hint: 'The real moment or person that gave you the idea.', rows: 3 },
+          { key: 'difficulty', label: 'A technical difficulty I faced and how I addressed it', hint: 'Pick one from your build journal. Say what broke, how you found the cause, and how you fixed it.', rows: 4 }
+        ],
+        quiz: [
+          { q: 'What kind of email address does registration require?', a: ['Your school email', 'A personal email that is not your school account', 'A teacher\'s email', 'No email is needed'], c: 1, why: 'The rules require a personal email address that is not a school account.' },
+          { q: 'You notice a typo in your answers one day after the deadline. What can you do?', a: ['Edit the submission', 'Nothing. Submissions cannot be changed after the period ends', 'Submit a second entry', 'Email a new video'], c: 1, why: 'After the submission period ends, the submission cannot be modified in any way.' },
+          { q: 'Who must complete the exit questionnaire?', a: ['Only the team captain', 'Every team member, individually', 'Only the winners', 'Parents'], c: 1, why: 'All members of a team must complete the exit questionnaire individually.' }
+        ] }
     ]
   }
 ];
@@ -607,3 +1206,10 @@ window.CAC_RULES = [
 ];
 window.CAC_VIDEO = ['The name of each participant', 'The name of the app', 'The purpose of the app, in one clear sentence', 'The target audience: who the app is for', 'The tools and coding languages you used', 'The app working: show what it does'];
 window.CAC_QUESTIONS = ['What is the title of your app?', 'Explain the app\'s purpose.', 'What inspired you to create this app?', 'What technical or coding difficulty did you face, and how did you address it?', 'What did you learn while participating? What was your biggest takeaway?', 'What would you change if you made a 2.0 version?'];
+
+// A quiz question written as "Question?\n\ncode" is split into q (the question) and st (the code shown with it),
+// the same shape the other courses use.
+window.AP_UNITS.forEach(u => u.topics.forEach(t => (t.quiz || []).forEach(q => {
+  const k = q.q.indexOf('\n\n');
+  if (k > 0) { q.st = q.q.slice(k + 2); q.q = q.q.slice(0, k); }
+})));

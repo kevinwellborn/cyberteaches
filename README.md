@@ -10,6 +10,7 @@ and small ad spots (edit `CT_ADS` in `index.html`).
 | `apcsp/` | AP Computer Science Principles (high school) |
 | `networking/` | AP Networking (companion site for the book: labs, practice exams, syllabus, teacher keys) |
 | `academy/` | CyberTeaches Academy block coding (grades 6 to 12) |
+| `app-builder/` | App Builder: design and build your own app, with a Congressional App Challenge track (grades 6 to 12) |
 
 Old links keep working: `ap-cyber/` and `teacher.html` redirect, and the hub forwards `?class=CODE` join links
 and `#puzzle-N` links to `academy/`.
@@ -19,6 +20,21 @@ and `#puzzle-N` links to `academy/`.
 `apcybersecurity/` covers all five units and 24 topics of the College Board course framework. Each topic has a short
 paragraph, vocabulary, a video, and AP-style practice questions (`questions.js`). There are six quick labs and a
 pretend-terminal mission for each unit (`missions.js`). Lesson text lives in `apcybersecurity/content.js`.
+
+## App Builder (grades 6 to 12)
+
+`app-builder/` is a self-paced project course: students find a problem, design an app, learn programming logic, build,
+test, and share a web app. It works for a student alone or for a class. Six modules plus an optional track for entering the
+Congressional App Challenge (lessons `C.1` to `C.6` and a plain-words rules page). All lesson text is in
+`app-builder/content.js`; the comment at the top of that file explains each field.
+
+- Lessons can have Try it boxes (`tries`). `mode: 'js'` runs the student's JavaScript in a Web Worker and stops it after
+  3 seconds, so an endless loop cannot freeze the page. `mode: 'html'` shows the student's page in a sandboxed frame.
+- Fill-in boxes (`fields`) are saved in the browser and collected on the My plan page (`#plan`).
+- Main lessons do not depend on the contest. Contest facts go in a lesson's `cac` note or in the track.
+- The track is based on the official 2026 rules. When the 2027 rules and dates are published, update `CAC_INFO`,
+  `CAC_RULES` and the `C.` lessons.
+- Routes are plain names (`#lesson-3-5`, `#challenge`, `#rules`, `#plan`, `#teachers`); `#/topic/3.5` also works.
 
 ## AP Networking (high school)
 
