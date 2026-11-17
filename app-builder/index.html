@@ -1,16 +1,16 @@
 <!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>App Challenge: Free Course to Build an App for the Congressional App Challenge | CyberTeaches</title>
-<meta name="description" content="Free self-paced course for middle and high school students: find an idea, build your own app, make the demo video, and submit to the Congressional App Challenge.">
-<link rel="canonical" href="https://cyberteaches.com/app-challenge/">
+<title>App Builder: Free Course to Design and Build Your Own App | CyberTeaches</title>
+<meta name="description" content="Free course for grades 6 to 12: find a real problem, design and build your own app, and share it. Includes a track for entering the Congressional App Challenge.">
+<link rel="canonical" href="https://cyberteaches.com/app-builder/">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="CyberTeaches">
-<meta property="og:title" content="App Challenge: Free Course to Build an App for the Congressional App Challenge | CyberTeaches">
-<meta property="og:description" content="Free self-paced course for middle and high school students: find an idea, build your own app, make the demo video, and submit to the Congressional App Challenge.">
-<meta property="og:url" content="https://cyberteaches.com/app-challenge/">
+<meta property="og:title" content="App Builder: Free Course to Design and Build Your Own App | CyberTeaches">
+<meta property="og:description" content="Free course for grades 6 to 12: find a real problem, design and build your own app, and share it. Includes a track for entering the Congressional App Challenge.">
+<meta property="og:url" content="https://cyberteaches.com/app-builder/">
 <meta property="og:image" content="https://cyberteaches.com/yt-banner.jpg">
 <meta name="twitter:card" content="summary_large_image">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"Course","name":"Build Your App for the Congressional App Challenge","description":"Free self-paced course for middle and high school students: find an idea, build your own app, make the demo video, and submit to the Congressional App Challenge.","url":"https://cyberteaches.com/app-challenge/","provider":{"@type":"Organization","name":"CyberTeaches","url":"https://cyberteaches.com/"},"inLanguage":"en","isAccessibleForFree":true,"educationalLevel":"Middle school and high school","teaches":["App design","Programming","Software testing","Presenting a project"],"offers":{"@type":"Offer","category":"Free","price":0,"priceCurrency":"USD"},"hasCourseInstance":{"@type":"CourseInstance","courseMode":"Online","courseWorkload":"PT30H"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Course","name":"App Builder: Design and Build Your Own App","description":"Free course for grades 6 to 12: find a real problem, design and build your own app, and share it. Includes a track for entering the Congressional App Challenge.","url":"https://cyberteaches.com/app-builder/","provider":{"@type":"Organization","name":"CyberTeaches","url":"https://cyberteaches.com/"},"inLanguage":"en","isAccessibleForFree":true,"educationalLevel":"Middle school and high school","teaches":["App design","Programming","Software testing","Presenting a project"],"offers":{"@type":"Offer","category":"Free","price":0,"priceCurrency":"USD"},"hasCourseInstance":{"@type":"CourseInstance","courseMode":"Online","courseWorkload":"PT30H"}}</script>
 <link rel="icon" type="image/png" href="../favicon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Atkinson+Hyperlegible:wght@400;700&family=JetBrains+Mono:wght@400;600&display=swap">
@@ -179,10 +179,10 @@ input[type=range]{width:100%;accent-color:var(--accent)}
 .yt-banner:hover .yt-cta,.yt-banner:focus-visible .yt-cta{background:#C21F1F}
 @media (max-width:560px){ .yt-banner .yt-cta{position:static;display:flex;justify-content:center;border-radius:0;box-shadow:none;font-size:13px;padding:7px} }
 
-/* App Challenge course: civic blue accent, nine module colors, and the self-paced pieces (steps, fill-in boxes, plan). */
-:root{ --accent:#2B55B8; --accent-soft:#DDE6F8; --u0:#5C6B6B; --u6:#1F8FA8; --u7:#C8402F; --u8:#3E5BC9; --star:#D97E16 }
-@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){ --accent:#7FA2F5; --accent-ink:#0B1226; --accent-soft:#1F2C4A; --u0:#9AABA9; --u6:#4FBAD1; --u7:#EF6B57; --u8:#8AA0F2; --star:#E9A04A } }
-:root[data-theme="dark"]{ --accent:#7FA2F5; --accent-ink:#0B1226; --accent-soft:#1F2C4A; --u0:#9AABA9; --u6:#4FBAD1; --u7:#EF6B57; --u8:#8AA0F2; --star:#E9A04A }
+/* App Builder course: civic blue accent, nine module colors, and the self-paced pieces (steps, fill-in boxes, plan). */
+:root{ --accent:#2B55B8; --accent-soft:#DDE6F8; --u6:#1F8FA8; --uc:#2B55B8; --star:#D97E16 }
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){ --accent:#7FA2F5; --accent-ink:#0B1226; --accent-soft:#1F2C4A; --u6:#4FBAD1; --uc:#7FA2F5; --star:#E9A04A } }
+:root[data-theme="dark"]{ --accent:#7FA2F5; --accent-ink:#0B1226; --accent-soft:#1F2C4A; --u6:#4FBAD1; --uc:#7FA2F5; --star:#E9A04A }
 .entry{display:grid;gap:12px}
 .entry h2{font-size:20px}
 .entry ol{margin:0;padding:0;list-style:none;display:grid;gap:8px}
@@ -224,24 +224,30 @@ textarea:focus{border-color:var(--accent);outline:none}
 .plan-row .v{white-space:pre-wrap}
 .plan-row .v.empty{color:var(--muted)}
 .two{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:16px}
+.cacnote{border:2px dashed color-mix(in srgb, var(--uc) 55%, var(--line));border-radius:14px;padding:12px 16px;background:color-mix(in srgb, var(--uc) 7%, var(--panel))}
+.cacnote .label{color:var(--uc)}
+.cacnote p{margin:6px 0 0;font-size:16px;max-width:68ch}
+.section-head a{font-weight:700;text-decoration:none}
+td{vertical-align:top}
 </style>
 </head><body>
 <div class="wrap">
   <header class="topbar">
     <a class="brand" href="#home">
       <img class="logo" src="../logo.png" alt="" width="36" height="36">
-      App Challenge
+      App Builder
     </a>
     <span class="spacer"></span>
     <nav class="nav" aria-label="Main">
       <a href="#home" data-nav="home">Modules</a>
-      <a href="#rules" data-nav="rules">Rules</a>
+      <a href="#challenge" data-nav="challenge">App Challenge</a>
       <a href="#plan" data-nav="plan">My plan</a>
+      <a href="#teachers" data-nav="teachers">Teachers</a>
       <a href="../">All courses</a>
     </nav>
   </header>
   <main id="app"></main>
-  <div class="foot"><span>Your progress and notes are saved in this browser.</span><span>Not affiliated with the Congressional App Challenge. Always check the official rules at congressionalappchallenge.us.</span></div>
+  <div class="foot"><span>Your progress and notes are saved in this browser.</span><span>CyberTeaches is not affiliated with the Congressional App Challenge. Check the official rules at congressionalappchallenge.us.</span></div>
 </div>
 <script src="../academy/firebase-config.js"></script>
 <script src="../academy/cloud.js?v=16"></script>
@@ -263,17 +269,21 @@ textarea:focus{border-color:var(--accent);outline:none}
   if (window.Account) Account.attach(KEY, () => progress, merged => { progress = merged; write(KEY, progress); route(); });
   const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
   const isDone = id => progress[id] && progress[id].passed;
-  const slug = id => 'lesson-' + id.replace('.', '-');
+  const slug = id => 'lesson-' + id.replace('.', '-').toLowerCase();
   const uvar = u => `--u:var(--u${u.num})`;
+  const MAIN = UNITS.filter(u => !u.track), TRACK = UNITS.filter(u => u.track);
+  const ulabel = u => u.track ? 'App Challenge track' : `Module ${u.num}`;
+  const umark = u => u.track ? '★' : u.num;
 
-  // Routes are plain names (#home, #rules, #plan, #lesson-0-1). #/topic/0.1 also works, for links from the lesson pages.
+  // Routes are plain names (#home, #challenge, #rules, #plan, #teachers, #lesson-1-1, #lesson-c-1).
+  // #/topic/1.1 also works, for links from the lesson pages.
   function route(){
     const h = location.hash.replace(/^#\/?/, '');
-    const m = h.match(/^lesson-(\d+)-(\d+)$/) || h.match(/^topic\/(\d+)\.(\d+)$/);
-    const t = m && LIVE.find(x => x.id === m[1] + '.' + m[2]);
-    const page = t ? '' : h === 'rules' || h === 'plan' ? h : 'home';
-    document.querySelectorAll('[data-nav]').forEach(a => a.classList.toggle('on', a.dataset.nav === page));
-    if (t) renderTopic(t.id); else if (page === 'rules') renderRules(); else if (page === 'plan') renderPlan(); else renderHome();
+    const m = h.match(/^lesson-(\d+|c)-(\d+)$/i) || h.match(/^topic\/(\d+|c)\.(\d+)$/i);
+    const t = m && LIVE.find(x => x.id === m[1].toUpperCase() + '.' + m[2]);
+    const page = t ? (t.unit.track ? 'challenge' : '') : ['rules', 'plan', 'challenge', 'teachers'].includes(h) ? h : 'home';
+    document.querySelectorAll('[data-nav]').forEach(a => a.classList.toggle('on', a.dataset.nav === (page === 'rules' ? 'challenge' : page)));
+    if (t) renderTopic(t.id); else if (page === 'rules') renderRules(); else if (page === 'plan') renderPlan(); else if (page === 'challenge') renderChallenge(); else if (page === 'teachers') renderTeachers(); else renderHome();
     window.scrollTo(0, 0);
   }
   window.addEventListener('hashchange', route);
@@ -284,57 +294,106 @@ textarea:focus{border-color:var(--accent);outline:none}
       : `<a class="topic-link${isDone(t.id) ? ' done' : ''}" href="#${slug(t.id)}"><b>${t.id}</b><span>${esc(t.title)}</span><span class="chk" aria-label="${isDone(t.id) ? 'Completed' : 'Not completed'}">${isDone(t.id) ? '✓' : ''}</span></a>`).join('');
   }
 
+  function unitCard(u){
+    const live = u.topics.filter(t => !t.soon), ud = live.filter(t => isDone(t.id)).length;
+    return `<section class="card unit" style="${uvar(u)}">
+      <div class="unit-num" style="background:var(--u)">${umark(u)}</div>
+      <div>
+        <div class="row" style="justify-content:space-between"><h2>${esc(u.title)}</h2><span class="pill">${live.length ? `${ud}/${live.length} done${live.length < u.topics.length ? ' · more coming' : ''}` : 'Coming soon'}</span></div>
+        <p class="blurb">${esc(u.blurb)}</p>
+        <div class="milestone"><b>Milestone</b><span>${esc(u.milestone)}</span></div>
+        <div class="topics">${topicLinks(u)}</div>
+      </div>
+    </section>`;
+  }
+
   function renderHome(){
-    const d = LIVE.filter(t => isDone(t.id)).length, next = LIVE.find(t => !isDone(t.id)) || LIVE[0];
+    const main = LIVE.filter(t => !t.unit.track);
+    const d = main.filter(t => isDone(t.id)).length, next = main.find(t => !isDone(t.id)) || main[0];
     app.innerHTML = `
       <section class="hero">
         <div>
           <span class="label">CyberTeaches · Free course · Grades 6 to 12</span>
-          <h1 style="margin-top:8px">Build your own app for the <em>Congressional App Challenge.</em></h1>
-          <p>Go from no idea to a submitted entry, one small step at a time. No teacher and no coding experience needed. Work alone or with up to three friends.</p>
+          <h1 style="margin-top:8px">Build your own app, from <em>first idea to finished.</em></h1>
+          <p>Find a real problem, design a solution, learn the code, and build an app that works. One small step at a time, with no coding experience needed. Use it on your own or with your class.</p>
           <div class="row" style="margin-bottom:18px">
             <a class="btn primary" href="#${slug(next.id)}">${d ? 'Continue' : 'Start'} with ${next.id} ${esc(next.title)}</a>
-            <a class="btn" href="#rules">Read the rules in plain words</a>
+            <a class="btn" href="#teachers">For teachers</a>
           </div>
-          <div class="meter"><span class="label">${d} of ${LIVE.length} lessons complete</span><div class="meter-bar"><i style="width:${Math.round(d / LIVE.length * 100)}%"></i></div></div>
+          <div class="meter"><span class="label">${d} of ${main.length} lessons complete</span><div class="meter-bar"><i style="width:${Math.round(d / main.length * 100)}%"></i></div></div>
         </div>
         <div class="card entry">
-          <span class="label">What you will submit</span>
+          <span class="label">What you will make</span>
           <ol>
-            <li><span class="n">1</span><div><b>A working app</b><span>Any topic, any language, any platform. It has to really work.</span></div></li>
-            <li><span class="n">2</span><div><b>A demo video, 1 to 3 minutes</b><span>Public on YouTube or Vimeo. Six things it must cover.</span></div></li>
-            <li><span class="n">3</span><div><b>Written answers</b><span>Six short questions about your app and what you learned.</span></div></li>
+            <li><span class="n">1</span><div><b>A plan</b><span>A real problem, the people who have it, and your design.</span></div></li>
+            <li><span class="n">2</span><div><b>A working app</b><span>Built by you, starting with one core feature.</span></div></li>
+            <li><span class="n">3</span><div><b>A demo</b><span>Show people what you built and how it works.</span></div></li>
           </ol>
-          <div class="notice">${esc(INFO.note)}</div>
+          <div class="notice"><b>Want to compete?</b> Your app can be your entry in the Congressional App Challenge. <a href="#challenge">See the App Challenge track</a></div>
         </div>
       </section>
-      <div class="units">
-        ${UNITS.map(u => {
-          const live = u.topics.filter(t => !t.soon), ud = live.filter(t => isDone(t.id)).length;
-          return `<section class="card unit" style="${uvar(u)}">
-            <div class="unit-num" style="background:var(--u)">${u.num}</div>
-            <div>
-              <div class="row" style="justify-content:space-between"><h2>${esc(u.title)}</h2><span class="pill">${live.length ? `${ud}/${live.length} done` : 'Coming soon'}</span></div>
-              <p class="blurb">${esc(u.blurb)}</p>
-              <div class="milestone"><b>Milestone</b><span>${esc(u.milestone)}</span></div>
-              <div class="topics">${topicLinks(u)}</div>
-            </div>
-          </section>`; }).join('')}
+      <div class="units">${MAIN.map(unitCard).join('')}</div>
+      <div class="section-head"><div><span class="label">Optional</span><h2>Enter your app in a competition</h2></div><a href="#challenge">About the App Challenge →</a></div>
+      <div class="units">${TRACK.map(unitCard).join('')}</div>`;
+  }
+
+  function renderChallenge(){
+    app.innerHTML = `
+      <div class="page-head"><span class="label">Optional track</span>
+        <h1>Enter the Congressional App Challenge</h1>
+        <p>The Congressional App Challenge is a yearly app competition for middle and high school students, hosted by Members of the U.S. House of Representatives. The app you build in this course can be your entry. This track covers the contest parts: who can enter, the rules, the demo video, and how to submit.</p></div>
+      <div class="notice" style="margin-bottom:16px">${esc(INFO.note)}</div>
+      <div class="two" style="margin-bottom:16px">
+        <section class="card entry"><span class="label">What you submit</span><ol>
+          <li><span class="n">1</span><div><b>A working app</b><span>Any topic, any language, any platform.</span></div></li>
+          <li><span class="n">2</span><div><b>A demo video, 1 to 3 minutes</b><span>Public on YouTube or Vimeo.</span></div></li>
+          <li><span class="n">3</span><div><b>Written answers</b><span>Six short questions about your app.</span></div></li></ol></section>
+        <section class="card"><h2 style="font-size:20px;margin-bottom:10px">Who can enter</h2>
+          <ul class="plain"><li>Middle school and high school students.</li><li>Solo, or a team of up to 4.</li><li>Your home or school district must be hosting a challenge.</li><li>One app per person per year.</li></ul>
+          <p style="margin:14px 0 0"><a class="btn" href="#rules">Read the rules in plain words</a></p></section>
+      </div>
+      <div class="units">${TRACK.map(unitCard).join('')}</div>`;
+  }
+
+  function renderTeachers(){
+    const weeks = ['1 to 2', '1 to 2', '2 to 3', '3 to 4', '1 to 2', '1'];
+    app.innerHTML = `
+      <div class="page-head"><span class="label">For teachers</span>
+        <h1>Use App Builder with your class</h1>
+        <p>App Builder is a free project course. Students find a real problem, design an app, learn enough code to build it, test it, and present it. Every lesson is written to the student, so it runs as a class project, a club activity, or independent work.</p></div>
+      <div class="two">
+        <section class="card"><h2 style="font-size:20px;margin-bottom:10px">How a lesson works</h2>
+          <ul class="plain"><li>A short reading and an example, about 5 minutes.</li><li>A "Do this" checklist students work through.</li><li>Fill-in boxes that build the student's project plan.</li><li>Vocabulary and a 3-question quick check that completes the lesson.</li></ul></section>
+        <section class="card"><h2 style="font-size:20px;margin-bottom:10px">What you need</h2>
+          <ul class="plain"><li>Any device with a browser, including Chromebooks.</li><li>No installs and no paid tools.</li><li>No coding background required for students.</li><li>Students can work solo or in teams of up to 4.</li></ul></section>
+      </div>
+      <section class="card" style="margin-top:16px"><h2 style="font-size:20px;margin-bottom:10px">Pacing and what to collect</h2>
+        <p class="muted" style="margin:0 0 10px">A suggested pace for two or three class periods a week. Each module ends in a milestone you can collect and grade.</p>
+        <div class="scroll"><table><thead><tr><th>Module</th><th>Weeks</th><th>Milestone to collect</th></tr></thead><tbody>
+          ${MAIN.map((u, k) => `<tr><td><b>${u.num}. ${esc(u.title)}</b></td><td>${weeks[k] || ''}</td><td>${esc(u.milestone)}</td></tr>`).join('')}
+        </tbody></table></div></section>
+      <div class="two" style="margin-top:16px">
+        <section class="card"><h2 style="font-size:20px;margin-bottom:10px">Seeing student work</h2>
+          <p style="margin:0">Students can copy their whole plan from the My plan page and turn it in. Class progress on the Teacher Dashboard, like in CyberTeaches Academy, is planned for this course.</p></section>
+        <section class="card"><h2 style="font-size:20px;margin-bottom:10px">A real audience</h2>
+          <p style="margin:0">Students who want to compete can enter their app in the Congressional App Challenge. The <a href="#challenge">App Challenge track</a> covers eligibility, the rules, the demo video, and submitting.</p></section>
       </div>`;
   }
 
   function renderTopic(id){
-    const i = LIVE.findIndex(t => t.id === id), t = LIVE[i], u = t.unit;
-    const prev = LIVE[i - 1], next = LIVE[i + 1];
+    const group = LIVE.filter(x => !!x.unit.track === !!ALL.find(y => y.id === id).unit.track);
+    const i = group.findIndex(t => t.id === id), t = group[i], u = t.unit;
+    const prev = group[i - 1], next = group[i + 1];
+    const home = u.track ? 'challenge' : 'home';
     const last = u.topics.filter(x => !x.soon).slice(-1)[0].id === t.id;
     const answers = {};
     const order = t.quiz.map(q => { const o = q.a.map((_, k) => k); for (let k = o.length - 1; k > 0; k--) { const j = Math.floor(Math.random() * (k + 1)); [o[k], o[j]] = [o[j], o[k]]; } return o; });
     const st = work.steps[t.id] || [];
     app.innerHTML = `
-      <div class="crumbs"><a href="#home">Modules</a> / Module ${u.num}: ${esc(u.title)}</div>
+      <div class="crumbs"><a href="#${home}">${u.track ? 'App Challenge' : 'Modules'}</a> / ${u.track ? esc(u.title) : `Module ${u.num}: ${esc(u.title)}`}</div>
       <div class="lesson u-scope" style="${uvar(u)}">
         <article>
-          <span class="u-band"><i>${u.num}</i>Module ${u.num}: ${esc(u.title)}</span><br><span class="label u" style="display:inline-block;margin-top:12px">Lesson ${t.id}</span><br>
+          <span class="u-band"><i>${umark(u)}</i>${u.track ? esc(u.title) : `Module ${u.num}: ${esc(u.title)}`}</span><br><span class="label u" style="display:inline-block;margin-top:12px">Lesson ${t.id}</span><br>
           <h1>${esc(t.title)}</h1>
           <p class="summary">${esc(t.summary)}</p>
           ${(t.more || []).map(p => `<p class="more">${esc(p)}</p>`).join('')}
@@ -344,10 +403,11 @@ textarea:focus{border-color:var(--accent);outline:none}
             <ul class="todo">${t.steps.map((s, k) => `<li><label><input type="checkbox" id="step-${slug(t.id)}-${k}" data-step="${k}"${st[k] ? ' checked' : ''}><span>${esc(s)}</span></label></li>`).join('')}</ul>
           </section>
           ${t.fields ? `<section class="card block">
-            <h2>Write it down</h2><p class="sub">What you type here is saved in this browser and collected on your <a href="#plan">My plan</a> page. You will reuse it in your video and written answers.</p>
+            <h2>Write it down</h2><p class="sub">What you type here is saved in this browser and collected on your <a href="#plan">My plan</a> page. You will reuse it when you design, build, and present your app.</p>
             ${t.fields.map(f => `<div class="field"><label for="f-${f.key}">${esc(f.label)}</label><span class="hint">${esc(f.hint)}</span><textarea id="f-${f.key}" data-field="${f.key}" rows="${f.rows || 2}">${esc(work.fields[f.key] || '')}</textarea></div>`).join('')}
             <div class="saved" id="savedNote" aria-live="polite"></div>
           </section>` : ''}
+          ${t.cac ? `<aside class="cacnote block"><span class="label">★ For the App Challenge</span><p>${esc(t.cac)} <a href="#challenge">About the track</a></p></aside>` : ''}
           <section class="card block">
             <h2 style="margin-bottom:12px">Words to know</h2>
             <ul class="terms">${t.terms.map(([k, v]) => `<li><b>${esc(k)}:</b> ${esc(v)}</li>`).join('')}</ul>
@@ -361,14 +421,14 @@ textarea:focus{border-color:var(--accent);outline:none}
             </div>`).join('')}
             <div id="quizResult" aria-live="polite"></div>
           </section>
-          ${last ? `<div class="milestone block"><b>Module ${u.num} milestone</b><span>${esc(u.milestone)}</span></div>` : ''}
+          ${last && !u.track ? `<div class="milestone block"><b>Module ${u.num} milestone</b><span>${esc(u.milestone)}</span></div>` : ''}
           <nav class="pager">
             ${prev ? `<a class="btn" href="#${slug(prev.id)}">← ${prev.id} ${esc(prev.title)}</a>` : '<span></span>'}
-            ${next ? `<a class="btn" href="#${slug(next.id)}">${next.id} ${esc(next.title)} →</a>` : '<a class="btn" href="#home">Back to all modules</a>'}
+            ${next ? `<a class="btn" href="#${slug(next.id)}">${next.id} ${esc(next.title)} →</a>` : `<a class="btn" href="#${home}">${u.track ? 'Back to the track' : 'Back to all modules'}</a>`}
           </nav>
         </article>
         <aside class="side">
-          <div class="card unitbox"><span class="label">Module ${u.num}</span><h3 style="margin:6px 0 10px">${esc(u.title)}</h3>
+          <div class="card unitbox"><span class="label">${ulabel(u)}</span><h3 style="margin:6px 0 10px">${esc(u.title)}</h3>
             <div style="display:grid;gap:6px">${u.topics.map(x => x.soon ? `<span class="muted">○ ${x.id} ${esc(x.title)}</span>` : `<a href="#${slug(x.id)}" style="text-decoration:none;color:var(--ink);${x.id === t.id ? 'font-weight:700' : ''}">${isDone(x.id) ? '✓' : '○'} ${x.id} ${esc(x.title)}</a>`).join('')}</div>
           </div>
           <a class="card lab-card" href="#plan"><span class="label">Your work so far</span><h3>My plan</h3><span class="muted">Everything you have written, in one place.</span></a>
