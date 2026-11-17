@@ -34,16 +34,30 @@ window.AP_UNITS = [
           ['Originality', 'Your own thinking and work, not a copy of an existing app.']
         ],
         steps: [
-          'Set a timer for 10 minutes. List at least 10 problems you or people around you have. Do not judge them yet.',
-          'Circle the three you care about most.',
-          'For each of the three, write who has the problem and when it happens.',
-          'Cross out any that need things you cannot get, like private data or special hardware.',
-          'Pick one to explore. You can still change your mind after the next lesson.'
+          'Set a timer for 10 minutes. In the first box below, list at least 10 problems you or people around you have, one on each line. Do not judge them yet.',
+          'Pick the three you care about most and put a star (*) in front of each one.',
+          'For each of the three, add who has the problem and when it happens.',
+          'Cross out any that need things you cannot get, like private data or special hardware.'
         ],
+        together: {
+          title: 'Trade problems with a partner',
+          time: 'About 15 minutes',
+          steps: [
+            'Pair up with a classmate. Decide who goes first.',
+            'Partner A reads their three starred problems out loud. Partner B asks about each one: "Who has this problem?" and "When does it happen?"',
+            'Partner B says which of the three they would most want solved, and why. Partner A writes that down in the second box below.',
+            'Switch roles and do it again.',
+            'Give your partner one new problem they did not think of. Add the one you get to your own list.',
+            'Class share: each person says one problem in one sentence. Raise your hand when you hear a problem you have too. Problems that get many hands are worth a closer look.',
+            'Pick one problem to explore and write it in the last box. You can still change your mind after the next lesson.'
+          ]
+        },
         example: { title: 'From too big to just right', text: `Too big: "Help people be healthier."\nStill big: "Help teens drink more water."\nJust right: "Remind students on my cross country team to drink water before practice, and let them log it with one tap."` },
         cac: 'Judges score the quality of your idea, including creativity and originality. A small, real problem for a specific group scores better than a copy of a famous app.',
         fields: [
-          { key: 'problem', label: 'The problem I want to solve', hint: 'Who has it, and when does it happen? Two or three sentences.', rows: 3 }
+          { key: 'problemlist', label: 'My list of problems', hint: 'One problem on each line. Put a star (*) in front of your top three.', rows: 10, lines: 10 },
+          { key: 'partner', label: 'What my partner said', hint: 'Your partner\'s first name, which problem they would most want solved, and why.', rows: 3, min: 12 },
+          { key: 'problem', label: 'The problem I want to solve', hint: 'Who has it, and when does it happen? Two or three sentences.', rows: 3, min: 15 }
         ],
         quiz: [
           { q: 'Which idea has the best scope for a first app?', a: ['An app that ends world hunger', 'An app that replaces every social network', 'An app that helps a school club track who is bringing snacks each week', 'An app that does everything a phone can do'], c: 2, why: 'A small, specific problem with one main feature is something you can finish and explain well.' },
@@ -1213,3 +1227,24 @@ window.AP_UNITS.forEach(u => u.topics.forEach(t => (t.quiz || []).forEach(q => {
   const k = q.q.indexOf('\n\n');
   if (k > 0) { q.st = q.q.slice(k + 2); q.q = q.q.slice(0, k); }
 })));
+
+// Automatic lesson scores, used by the course page and the teacher page so both always agree.
+// A lesson is worth 10 points: quick check 4 (first try), steps checked off 2, written work 4.
+// Written work earns its points when each box is long enough: f.lines (lines) or f.min (words, 5 if not set).
+// A lesson with no boxes is scored on the other two parts. The score checks that work is complete,
+// not how good it is. Teachers read the writing itself on the teacher page.
+window.AB_COUNT = (f, v) => { v = String(v || '').trim(); return !v ? 0 : f.lines ? v.split(/\n+/).filter(x => x.trim()).length : v.split(/\s+/).length; };
+window.AB_NEED = f => f.lines || f.min || 5;
+window.AB_STEPS = t => t.steps.length + (t.together ? t.together.steps.length : 0);
+// s = { done: lesson finished, first: questions right on the first try, steps: steps checked, fields: { key: text } }
+window.AB_GRADE = function (t, s) {
+  const nq = t.quiz.length, ns = window.AB_STEPS(t), fl = t.fields || [], text = s.fields || {};
+  const tried = s.first != null || !!s.done;
+  const first = s.first != null ? Math.min(+s.first || 0, nq) : s.done ? nq : 0;
+  const steps = Math.min(+s.steps || 0, ns);
+  const ok = fl.filter(f => window.AB_COUNT(f, text[f.key]) >= window.AB_NEED(f)).length;
+  const ww = fl.length ? 4 : 0;
+  const pts = first / nq * 4 + steps / ns * 2 + (fl.length ? ok / fl.length * ww : 0);
+  return { pct: Math.round(pts / (6 + ww) * 100), started: tried || steps > 0 || fl.some(f => String(text[f.key] || '').trim()),
+    tried, first, questions: nq, steps, stepsOf: ns, written: ok, writtenOf: fl.length };
+};

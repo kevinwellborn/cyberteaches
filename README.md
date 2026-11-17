@@ -38,10 +38,18 @@ Congressional App Challenge (lessons `C.1` to `C.6` and a plain-words rules page
 - Classes: App Builder uses the Academy's sign-in, classes and roster (`academy/cloud.js`), with no change to
   `firestore.rules`. Students sign in and join on the My class page (`#class`, or the join link
   `app-builder/?class=CODE`). A signed-in student's writing is saved to `users/{uid}.courses['ctcac-work-v1']`.
-  For a student in a class, finished lessons, step counts and writing are also copied to
+  For a student in a class, finished lessons, step counts, first-try quick check scores and writing are also copied to
   `classes/{code}/students/{uid}.appBuilder`, which only that student and the class's teacher can read.
-- `app-builder/teacher.html` shows a teacher each class's progress by module, each student's lessons and written work,
-  and a CSV download. It only reads. Classes and student logins are still made on `academy/teacher.html`, which links to it.
+- Class lessons can have a `together` activity (`{ title, time, steps }`), shown as "With your class": partner and
+  whole-class steps that a student working alone can do with a friend.
+- Lessons are scored automatically by `AB_GRADE` at the bottom of `content.js`, used by both the course page and the
+  teacher page. A lesson is worth 10 points: quick check 4 (first try only), steps checked off 2, written work 4.
+  A box earns credit when it is long enough: `lines` (lines) or `min` (words, 5 if not set) on the field. The score
+  checks that work is complete, not how good it is.
+- Pictures are inline SVG in `app-builder/figures.js`. `AB_ART(lessonId, slot)` returns the picture for the `hero`,
+  `example` or `together` slot of a lesson, and lessons without pictures show none.
+- `app-builder/teacher.html` shows a teacher each class's gradebook (scores by lesson, with everyone's writing for one
+  lesson on one page), progress by module, each student's lessons and written work, and a CSV download. It only reads. Classes and student logins are still made on `academy/teacher.html`, which links to it.
 
 ## AP Networking (high school)
 

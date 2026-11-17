@@ -268,6 +268,19 @@ table.progress tr.on{background:var(--accent-soft)}
 .dmod .chk{width:20px;height:20px;border-radius:50%;border:2px solid var(--line);display:grid;place-items:center;font-size:12px}
 .dmod li.done .chk{background:var(--u);border-color:var(--u);color:#fff}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}
+/* Class activities, lesson scores and the gradebook */
+.together{border-left:6px solid var(--u, var(--accent))}
+.field .count{font-size:14px;color:var(--muted)}
+.field .count.ok{color:var(--good);font-weight:700}
+.scorebox{display:grid;gap:8px}
+.scorebox .big{font-family:var(--f-display);font-size:30px;line-height:1.1}
+.scorebox ul{margin:0;padding:0;list-style:none;display:grid;gap:4px;font-size:15px}
+.scorebox li{display:flex;justify-content:space-between;gap:10px}
+.scorebox li b.ok{color:var(--good)}
+.scorebox p{margin:0;font-size:14px}
+.lw{margin-top:12px}
+.lw-head{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-bottom:6px}
+.lw-head h3{font-size:19px;margin:0}
 </style>
 </head><body>
 <div class="wrap">
@@ -293,6 +306,7 @@ table.progress tr.on{background:var(--accent-soft)}
 <script src="../academy/cloud.js?v=16"></script>
 <script src="../account.js"></script>
 <script src="content.js"></script>
+<script src="figures.js"></script>
 <script>
 (function(){
   const app = document.getElementById('app');
@@ -304,12 +318,16 @@ table.progress tr.on{background:var(--accent-soft)}
   const read = (k, d) => { try { return JSON.parse(localStorage.getItem(k)) || d; } catch (e) { return d; } };
   const write = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} };
   let progress = read(KEY, {});
-  const work = read(WKEY, {}); work.steps = work.steps || {}; work.fields = work.fields || {}; work.code = work.code || {};
+  const work = read(WKEY, {}); work.steps = work.steps || {}; work.fields = work.fields || {}; work.code = work.code || {}; work.quiz = work.quiz || {};
   const save = () => { write(KEY, progress); if (window.Account) Account.push(); syncSoon(1500); };
   let current = 'home';
   if (window.Account) Account.attach(KEY, () => progress, merged => { progress = merged; write(KEY, progress); route(); });
   const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
   const isDone = id => progress[id] && progress[id].passed;
+  // Automatic lesson score (window.AB_GRADE in content.js), from what this student has done so far.
+  const grade = t => window.AB_GRADE(t, { done: isDone(t.id), first: work.quiz[t.id], steps: (work.steps[t.id] || []).filter(Boolean).length, fields: work.fields });
+  const need = f => `${window.AB_NEED(f)} ${f.lines ? 'lines' : 'words'}`;
+  const art = (id, slot) => window.AB_ART ? window.AB_ART(id, slot) : '';
   const slug = id => 'lesson-' + id.replace('.', '-').toLowerCase();
   const uvar = u => `--u:var(--u${u.num})`;
   const MAIN = UNITS.filter(u => !u.track), TRACK = UNITS.filter(u => u.track);
@@ -406,7 +424,7 @@ table.progress tr.on{background:var(--accent-soft)}
         <p>App Builder is a free project course. Students find a real problem, design an app, learn enough code to build it, test it, and present it. Every lesson is written to the student, so it runs as a class project, a club activity, or independent work.</p></div>
       <div class="two">
         <section class="card"><h2 style="font-size:20px;margin-bottom:10px">How a lesson works</h2>
-          <ul class="plain"><li>A short reading and an example, about 5 minutes.</li><li>A "Do this" checklist students work through.</li><li>Fill-in boxes that build the student's project plan.</li><li>Vocabulary and a 3-question quick check that completes the lesson.</li></ul></section>
+          <ul class="plain"><li>A short reading and an example, about 5 minutes.</li><li>A "Do this" checklist students work through.</li><li>Class lessons add a "With your class" activity for partners and whole-class sharing.</li><li>Fill-in boxes that build the student's project plan.</li><li>Vocabulary and a 3-question quick check that completes the lesson.</li></ul></section>
         <section class="card"><h2 style="font-size:20px;margin-bottom:10px">What you need</h2>
           <ul class="plain"><li>Any device with a browser, including Chromebooks.</li><li>No installs and no paid tools.</li><li>No coding background required for students.</li><li>Students can work solo or in teams of up to 4.</li></ul></section>
       </div>
@@ -416,8 +434,8 @@ table.progress tr.on{background:var(--accent-soft)}
           ${MAIN.map((u, k) => `<tr><td><b>${u.num}. ${esc(u.title)}</b></td><td>${weeks[k] || ''}</td><td>${esc(u.milestone)}</td></tr>`).join('')}
         </tbody></table></div></section>
       <div class="two" style="margin-top:16px">
-        <section class="card"><h2 style="font-size:20px;margin-bottom:10px">Seeing student work</h2>
-          <p style="margin:0 0 12px">Use the same classes as CyberTeaches Academy. Students sign in and join with your class code. You see which lessons each student finished and everything they wrote: their problem, purpose sentence, feature list, test report, and more.</p><div class="row"><a class="btn primary" href="teacher.html">Open class progress</a><a class="btn" href="../academy/teacher.html">Create a class</a></div></section>
+        <section class="card"><h2 style="font-size:20px;margin-bottom:10px">Grading and student work</h2>
+          <p style="margin:0 0 12px">Use the same classes as CyberTeaches Academy. Students sign in and join with your class code. Every lesson is scored automatically out of 10 points: 4 for the quick check (first try), 2 for steps checked off, and 4 for written work that is long enough. The gradebook shows each score, and you can read what everyone wrote for a lesson on one page. The score checks that work is complete, not how good it is.</p><div class="row"><a class="btn primary" href="teacher.html">Open class progress</a><a class="btn" href="../academy/teacher.html">Create a class</a></div></section>
         <section class="card"><h2 style="font-size:20px;margin-bottom:10px">A real audience</h2>
           <p style="margin:0">Students who want to compete can enter their app in the Congressional App Challenge. The <a href="#challenge">App Challenge track</a> covers eligibility, the rules, the demo video, and submitting.</p></section>
       </div>`;
@@ -438,10 +456,11 @@ table.progress tr.on{background:var(--accent-soft)}
         <article>
           <span class="u-band"><i>${umark(u)}</i>${u.track ? esc(u.title) : `Module ${u.num}: ${esc(u.title)}`}</span><br><span class="label u" style="display:inline-block;margin-top:12px">Lesson ${t.id}</span><br>
           <h1>${esc(t.title)}</h1>
+          ${art(t.id, 'hero')}
           <p class="summary">${esc(t.summary)}</p>
           ${(t.more || []).map(p => `<p class="more">${esc(p)}</p>`).join('')}
           ${t.blocks ? `<aside class="blocksnote block"><span class="label">You did this with blocks</span><p>${esc(t.blocks)} <a href="../academy/">Open the Academy</a></p></aside>` : ''}
-          ${t.example ? `<section class="block"><h2>${esc(t.example.title)}</h2><pre class="example">${esc(t.example.text)}</pre></section>` : ''}
+          ${t.example ? `<section class="block"><h2>${esc(t.example.title)}</h2>${art(t.id, 'example')}<pre class="example">${esc(t.example.text)}</pre></section>` : ''}
           ${(t.tries || []).map((x, k) => `<section class="card block try" data-try="${k}">
             <span class="label u">Try it</span><h2>${esc(x.title)}</h2><p class="sub">${esc(x.intro)}</p>
             <label class="label" for="code-${slug(t.id)}-${k}">${x.mode === 'html' ? 'HTML, CSS, and JavaScript' : 'JavaScript'}</label>
@@ -452,12 +471,18 @@ table.progress tr.on{background:var(--accent-soft)}
             ${x.challenge ? `<div class="challenge"><b>Challenge</b><span>${esc(x.challenge)}</span></div>` : ''}
           </section>`).join('')}
           <section class="card block">
-            <h2>Do this</h2><p class="sub">Check off each step as you finish it. Your checks are saved in this browser.</p>
+            <h2>Do this</h2><p class="sub">Check off each step as you finish it. Checked steps count toward your lesson score.</p>
             <ul class="todo">${t.steps.map((s, k) => `<li><label><input type="checkbox" id="step-${slug(t.id)}-${k}" data-step="${k}"${st[k] ? ' checked' : ''}><span>${esc(s)}</span></label></li>`).join('')}</ul>
           </section>
+          ${t.together ? `<section class="card block together">
+            <span class="label u">With your class</span><h2>${esc(t.together.title)}</h2>
+            <p class="sub">${t.together.time ? esc(t.together.time) + '. ' : ''}Working on your own? Do these steps with a friend or someone at home.</p>
+            ${art(t.id, 'together')}
+            <ul class="todo">${t.together.steps.map((s, k) => { const n = t.steps.length + k; return `<li><label><input type="checkbox" id="step-${slug(t.id)}-${n}" data-step="${n}"${st[n] ? ' checked' : ''}><span>${esc(s)}</span></label></li>`; }).join('')}</ul>
+          </section>` : ''}
           ${t.fields ? `<section class="card block">
             <h2>Write it down</h2><p class="sub">What you type here is saved in this browser and collected on your <a href="#plan">My plan</a> page. You will reuse it when you design, build, and present your app.</p>
-            ${t.fields.map(f => `<div class="field"><label for="f-${f.key}">${esc(f.label)}</label><span class="hint">${esc(f.hint)}</span><textarea id="f-${f.key}" data-field="${f.key}" rows="${f.rows || 2}">${esc(work.fields[f.key] || '')}</textarea></div>`).join('')}
+            ${t.fields.map(f => `<div class="field"><label for="f-${f.key}">${esc(f.label)}</label><span class="hint">${esc(f.hint)}</span><textarea id="f-${f.key}" data-field="${f.key}" rows="${f.rows || 2}">${esc(work.fields[f.key] || '')}</textarea><span class="count" data-count="${f.key}"></span></div>`).join('')}
             <div class="saved" id="savedNote" aria-live="polite"></div>
           </section>` : ''}
           ${t.cac ? `<aside class="cacnote block"><span class="label">★ For the App Challenge</span><p>${esc(t.cac)} <a href="#challenge">About the track</a></p></aside>` : ''}
@@ -466,7 +491,7 @@ table.progress tr.on{background:var(--accent-soft)}
             <ul class="terms">${t.terms.map(([k, v]) => `<li><b>${esc(k)}:</b> ${esc(v)}</li>`).join('')}</ul>
           </section>
           <section class="card quiz" id="quiz">
-            <div><h2 style="font-size:22px">Quick check</h2><p class="muted" style="margin:4px 0 0">Get all ${t.quiz.length} right to complete this lesson. You can retry as many times as you like.</p></div>
+            <div><h2 style="font-size:22px">Quick check</h2><p class="muted" style="margin:4px 0 0">Get all ${t.quiz.length} right to complete this lesson. You can retry as many times as you like, but your first try is the one that counts toward your lesson score.</p></div>
             ${t.quiz.map((q, qi) => `<div class="q" data-q="${qi}">
               <h3>${qi + 1}. ${esc(q.q)}</h3>
               ${q.st ? `<pre class="stim">${esc(q.st)}</pre>` : ''}
@@ -482,17 +507,27 @@ table.progress tr.on{background:var(--accent-soft)}
           </nav>
         </article>
         <aside class="side">
+          <div class="card scorebox" id="scoreBox" aria-live="polite"></div>
           <div class="card unitbox"><span class="label">${ulabel(u)}</span><h3 style="margin:6px 0 10px">${esc(u.title)}</h3>
             <div style="display:grid;gap:6px">${u.topics.map(x => x.soon ? `<span class="muted">○ ${x.id} ${esc(x.title)}</span>` : `<a href="#${slug(x.id)}" style="text-decoration:none;color:var(--ink);${x.id === t.id ? 'font-weight:700' : ''}">${isDone(x.id) ? '✓' : '○'} ${x.id} ${esc(x.title)}</a>`).join('')}</div>
           </div>
           <a class="card lab-card" href="#plan"><span class="label">Your work so far</span><h3>My plan</h3><span class="muted">Everything you have written, in one place.</span></a>
         </aside>
       </div>`;
+    const drawScore = () => {
+      const g = grade(t), row = (name, got, of) => `<li><span>${name}</span><b class="${got >= of ? 'ok' : ''}">${got} of ${of}</b></li>`;
+      document.getElementById('scoreBox').innerHTML = `<span class="label">Lesson score</span><b class="big">${g.started ? g.pct + '%' : 'Not started'}</b>
+        <ul>${row('Quick check, first try', g.first, g.questions)}${row('Steps checked', g.steps, g.stepsOf)}${g.writtenOf ? row('Boxes filled in', g.written, g.writtenOf) : ''}</ul>
+        <p class="muted">Scored automatically as you work.${inClass() ? ' Your teacher sees this score.' : ''}</p>`;
+      (t.fields || []).forEach(f => { const c = app.querySelector(`[data-count="${f.key}"]`), n = window.AB_COUNT(f, work.fields[f.key]), ok = n >= window.AB_NEED(f);
+        c.className = 'count' + (ok ? ' ok' : ''); c.textContent = ok ? `✓ ${n} ${f.lines ? 'lines' : 'words'}` : `${n} of ${need(f)} needed for full credit`; });
+    };
+    drawScore();
     app.querySelectorAll('[data-step]').forEach(c => c.addEventListener('change', () => {
-      const a = work.steps[t.id] = work.steps[t.id] || []; a[+c.dataset.step] = c.checked; write(WKEY, work); syncSoon(20000);
+      const a = work.steps[t.id] = work.steps[t.id] || []; a[+c.dataset.step] = c.checked; write(WKEY, work); syncSoon(20000); drawScore();
     }));
     app.querySelectorAll('[data-field]').forEach(x => x.addEventListener('input', () => {
-      work.fields[x.dataset.field] = x.value; write(WKEY, work); syncSoon(20000);
+      work.fields[x.dataset.field] = x.value; write(WKEY, work); syncSoon(20000); drawScore();
       const n = document.getElementById('savedNote'); if (n) n.textContent = inClass() ? 'Saved. Your teacher can see this.' : 'Saved.';
     }));
     app.querySelectorAll('[data-try]').forEach(box => {
@@ -524,7 +559,10 @@ table.progress tr.on{background:var(--accent-soft)}
     });
     function finish(){
       const score = Object.values(answers).filter(Boolean).length, all = score === t.quiz.length;
+// The first finished try is kept for the lesson score. Lessons finished before scores existed count as full marks.
+      if (work.quiz[t.id] == null) { work.quiz[t.id] = isDone(t.id) ? t.quiz.length : score; write(WKEY, work); syncSoon(1500); }
       if (all) { progress[t.id] = { passed: true, at: Date.now() }; save(); }
+      drawScore();
       const r = document.getElementById('quizResult');
       r.innerHTML = `<div class="result ${all ? 'ok' : 'no'}">${all ? `${score} of ${t.quiz.length} correct. Lesson ${t.id} complete. ` : `${score} of ${t.quiz.length} correct. Read the explanations, then try again. `}<button class="btn small" id="retry">${all ? 'Take it again' : 'Try again'}</button></div>`;
       r.querySelector('#retry').addEventListener('click', () => { renderTopic(t.id); document.getElementById('quiz').scrollIntoView(); });
@@ -541,10 +579,10 @@ table.progress tr.on{background:var(--accent-soft)}
   function inClass(){ return !!(signedIn() && Cloud.profile && Cloud.profile.classCode); }
   let syncTimer = null, lastSync = '', syncState = '', syncUid = null;
   function snapshot(){
-    const done = {}, steps = {}, text = {};
-    LIVE.forEach(t => { if (isDone(t.id)) done[t.id] = progress[t.id].at || 1; const n = (work.steps[t.id] || []).filter(Boolean).length; if (n) steps[t.id] = n; });
+    const done = {}, steps = {}, text = {}, quiz = {};
+    LIVE.forEach(t => { if (isDone(t.id)) done[t.id] = progress[t.id].at || 1; const n = (work.steps[t.id] || []).filter(Boolean).length; if (n) steps[t.id] = n; if (work.quiz[t.id] != null) quiz[t.id] = work.quiz[t.id]; });
     FIELDS.forEach(f => { const v = (work.fields[f.key] || '').trim(); if (v) text[f.key] = v.slice(0, 2000); });
-    return { done, steps, work: text };
+    return { done, steps, quiz, work: text };
   }
   async function syncNow(){
     clearTimeout(syncTimer);
@@ -554,7 +592,7 @@ table.progress tr.on{background:var(--accent-soft)}
     lastSync = key;
     try {
       const fs = firebase.firestore, at = fs.FieldValue.serverTimestamp();
-      await Cloud.db.collection('users').doc(uid).set({ courses: { [WKEY]: { fields: work.fields, steps: Object.fromEntries(Object.entries(work.steps).map(([k, v]) => [k, Array.from(v || [], Boolean)])) } } }, { mergeFields: [new fs.FieldPath('courses', WKEY)] });
+      await Cloud.db.collection('users').doc(uid).set({ courses: { [WKEY]: { fields: work.fields, quiz: work.quiz, steps: Object.fromEntries(Object.entries(work.steps).map(([k, v]) => [k, Array.from(v || [], Boolean)])) } } }, { mergeFields: [new fs.FieldPath('courses', WKEY)] });
       if (code) await Cloud.db.collection('classes').doc(code).collection('students').doc(uid).set({ appBuilder: Object.assign(snap, { updatedAt: at }) }, { mergeFields: ['appBuilder'] });
       syncState = 'ok';
     } catch (e) { console.error('Could not save to your account', e); lastSync = ''; syncState = 'error'; }
@@ -568,12 +606,14 @@ table.progress tr.on{background:var(--accent-soft)}
       const was = syncUid; syncUid = uid; lastSync = '';
       if (!uid && was) {
         // Signing out clears this browser's copy, so the next person on a shared computer starts fresh.
-        work.fields = {}; work.steps = {}; work.code = {}; write(WKEY, work);
+        work.fields = {}; work.steps = {}; work.code = {}; work.quiz = {}; write(WKEY, work);
       } else if (uid) {
         // Bring back work saved from another device. What is already typed here wins.
         const remote = (Cloud.profile && Cloud.profile.courses && Cloud.profile.courses[WKEY]) || {};
         Object.entries(remote.fields || {}).forEach(([k, v]) => { if (!(work.fields[k] || '').trim()) work.fields[k] = v; });
         Object.entries(remote.steps || {}).forEach(([k, v]) => { if (!work.steps[k]) work.steps[k] = v; });
+        // A first try saved on another device stays the first try.
+        Object.entries(remote.quiz || {}).forEach(([k, v]) => { work.quiz[k] = v; });
         write(WKEY, work); syncSoon(3000);
       }
     }
@@ -635,7 +675,7 @@ table.progress tr.on{background:var(--accent-soft)}
     app.innerHTML = head(`You are in ${esc(Cloud.profile.className || Cloud.profile.classCode)}`, `Signed in as ${name}.`) + `
       <div class="two">
         <section class="card"><h2 style="font-size:20px;margin-bottom:10px">What your teacher can see</h2>
-          <ul class="plain"><li>Which lessons you have finished (${d} of ${LIVE.length} so far).</li><li>How many "Do this" steps you checked off.</li><li>What you wrote in the lessons, the same text as your <a href="#plan">My plan</a> page.</li></ul>
+          <ul class="plain"><li>Which lessons you have finished (${d} of ${LIVE.length} so far).</li><li>How many steps you checked off, and your score on each lesson.</li><li>How many quick check questions you got right on your first try.</li><li>What you wrote in the lessons, the same text as your <a href="#plan">My plan</a> page.</li></ul>
           <p class="muted" style="margin:12px 0 0">Your teacher cannot see the code you type in Try it boxes.</p></section>
         <section class="card"><h2 style="font-size:20px;margin-bottom:10px">Saving</h2>
           <p style="margin:0 0 14px">${syncState === 'error' ? 'Your last save did not go through. It will try again the next time you change something.' : 'Your work is saved to your account a few seconds after you change it, so it follows you to any device.'}</p>

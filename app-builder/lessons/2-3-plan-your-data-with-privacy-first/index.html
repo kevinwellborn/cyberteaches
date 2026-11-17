@@ -269,6 +269,19 @@ table.progress tr.on{background:var(--accent-soft)}
 .dmod .chk{width:20px;height:20px;border-radius:50%;border:2px solid var(--line);display:grid;place-items:center;font-size:12px}
 .dmod li.done .chk{background:var(--u);border-color:var(--u);color:#fff}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}
+/* Class activities, lesson scores and the gradebook */
+.together{border-left:6px solid var(--u, var(--accent))}
+.field .count{font-size:14px;color:var(--muted)}
+.field .count.ok{color:var(--good);font-weight:700}
+.scorebox{display:grid;gap:8px}
+.scorebox .big{font-family:var(--f-display);font-size:30px;line-height:1.1}
+.scorebox ul{margin:0;padding:0;list-style:none;display:grid;gap:4px;font-size:15px}
+.scorebox li{display:flex;justify-content:space-between;gap:10px}
+.scorebox li b.ok{color:var(--good)}
+.scorebox p{margin:0;font-size:14px}
+.lw{margin-top:12px}
+.lw-head{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-bottom:6px}
+.lw-head h3{font-size:19px;margin:0}
 
 .static-q{border-top:1px solid var(--line);padding-top:16px}
 .static-q ol{margin:10px 0;padding-left:0;list-style:none;display:grid;gap:6px}
@@ -277,7 +290,7 @@ table.progress tr.on{background:var(--accent-soft)}
 .static-q details{margin-top:8px}
 .static-q summary{cursor:pointer;font-weight:700;color:var(--accent)}
 .lesson-list{display:grid;gap:4px;margin:8px 0 0;padding-left:0;list-style:none}
-
+.art{margin:18px 0 0}.art svg{border-radius:18px}.art figcaption{margin-top:8px;color:var(--muted);font-size:15px}
 </style>
 </head><body>
 <div class="wrap">

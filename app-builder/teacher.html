@@ -259,6 +259,19 @@ table.progress tr.on{background:var(--accent-soft)}
 .dmod .chk{width:20px;height:20px;border-radius:50%;border:2px solid var(--line);display:grid;place-items:center;font-size:12px}
 .dmod li.done .chk{background:var(--u);border-color:var(--u);color:#fff}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}
+/* Class activities, lesson scores and the gradebook */
+.together{border-left:6px solid var(--u, var(--accent))}
+.field .count{font-size:14px;color:var(--muted)}
+.field .count.ok{color:var(--good);font-weight:700}
+.scorebox{display:grid;gap:8px}
+.scorebox .big{font-family:var(--f-display);font-size:30px;line-height:1.1}
+.scorebox ul{margin:0;padding:0;list-style:none;display:grid;gap:4px;font-size:15px}
+.scorebox li{display:flex;justify-content:space-between;gap:10px}
+.scorebox li b.ok{color:var(--good)}
+.scorebox p{margin:0;font-size:14px}
+.lw{margin-top:12px}
+.lw-head{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-bottom:6px}
+.lw-head h3{font-size:19px;margin:0}
 </style>
 </head><body>
 <div class="wrap">
@@ -297,6 +310,12 @@ table.progress tr.on{background:var(--accent-soft)}
   const total = s => LIVE.filter(t => (ab(s).done || {})[t.id]).length;
   const written = s => FIELDS.filter(f => (ab(s).work || {})[f.key]).length;
   const ago = ts => { const ms = ts && ts.toMillis ? ts.toMillis() : ts && ts.seconds ? ts.seconds * 1000 : 0; if (!ms) return 'Not started'; const m = Math.round((Date.now() - ms) / 60000); return m < 2 ? 'Just now' : m < 60 ? m + ' min ago' : m < 1440 ? Math.round(m / 60) + ' hr ago' : (Math.round(m / 1440) === 1 ? '1 day ago' : Math.round(m / 1440) + ' days ago'); };
+  const G = (s, t) => window.AB_GRADE(t, { done: (ab(s).done || {})[t.id], first: (ab(s).quiz || {})[t.id], steps: (ab(s).steps || {})[t.id], fields: ab(s).work || {} });
+  // Average score over the lessons a student has started. null when they have started none.
+  const avgOf = (s, list) => { const g = list.map(t => G(s, t)).filter(x => x.started); return g.length ? Math.round(g.reduce((a, x) => a + x.pct, 0) / g.length) : null; };
+  const pc = v => v == null ? '<span class="cellp">–</span>' : `<span class="cellp ${v >= 90 ? 'full' : 'part'}">${v}%</span>`;
+  const parts = g => `Quick check ${g.tried ? g.first + '/' + g.questions + ' first try' : 'not taken'} · Steps ${g.steps}/${g.stepsOf}${g.writtenOf ? ` · Boxes ${g.written}/${g.writtenOf}` : ''}`;
+  let mode = 'grades', gmod = UNITS[0], lesson = null;
   let classes = [], current = null, roster = [], open = null, stopClasses = null, stopRoster = null, stopStatus = null, gateUid;
 
   const hero = (t, p, extra) => { app.innerHTML = `<div class="page-head"><span class="label">For teachers</span><h1>${t}</h1><p>${p}</p>${extra || ''}</div>`; };
@@ -321,7 +340,7 @@ table.progress tr.on{background:var(--accent-soft)}
 
   function start(){
     app.innerHTML = `<div class="page-head"><span class="label">For teachers</span><h1>App Builder class progress</h1>
-      <p>See which lessons each student finished and read what they wrote. To create a class or make student logins, use the <a href="../academy/teacher.html">Teacher Dashboard</a>.</p></div>
+      <p>See each student's automatic lesson scores, which lessons they finished, and what they wrote. To create a class or make student logins, use the <a href="../academy/teacher.html">Teacher Dashboard</a>.</p></div>
       <div class="row" id="tabs" role="tablist" aria-label="Your classes"></div><div id="classview"></div>`;
     stopClasses = Cloud.watchClasses((list, err) => {
       classes = list.filter(c => !c.archived).sort((a, b) => (a.name || a.code).localeCompare(b.name || b.code));
@@ -336,7 +355,7 @@ table.progress tr.on{background:var(--accent-soft)}
     document.querySelectorAll('#tabs [data-code]').forEach(b => b.addEventListener('click', () => select(b.dataset.code)));
   }
   function select(code){
-    current = code; open = null; roster = []; if (stopRoster) stopRoster();
+    current = code; open = null; lesson = null; roster = []; if (stopRoster) stopRoster();
     tabsHtml(); render();
     stopRoster = Cloud.watchRoster(code, (list, err) => { roster = list.sort((a, b) => (a.name || '').localeCompare(b.name || '')); render(err); });
   }
@@ -356,10 +375,18 @@ table.progress tr.on{background:var(--accent-soft)}
         <section class="card"><span class="label">${esc(c.name || c.code)}</span>
           <div class="stats"><div><b>${n}</b><span class="muted">students in class</span></div><div><b>${started}</b><span class="muted">started App Builder</span></div><div><b>${avg.toFixed(1)}</b><span class="muted">lessons done, average, of ${LIVE.length}</span></div></div></section>
       </div>
-      <div class="section-head"><div><span class="label">Class</span><h2>Progress</h2></div><button class="btn" type="button" id="csv" ${n ? '' : 'disabled'}>Download CSV</button></div>
-      <p class="muted" style="margin:0 0 10px">Lessons finished in each module. A lesson is finished when the student gets every quick check question right. Select a student to see each lesson and read their work.</p>
-      <div class="card" style="padding:0"><div class="scroll">${err ? '<p style="padding:18px;margin:0">Could not load students. Check that the Firestore rules are published.</p>' : n ? table() : '<p style="padding:18px;margin:0">No students have joined this class yet.</p>'}</div></div>
+      <div class="section-head"><div><span class="label">Class</span><h2>${mode === 'grades' ? 'Gradebook' : 'Progress'}</h2></div>
+        <div class="row"><button class="btn${mode === 'grades' ? ' primary' : ''}" type="button" data-view="grades" aria-pressed="${mode === 'grades'}">Grades</button><button class="btn${mode === 'progress' ? ' primary' : ''}" type="button" data-view="progress" aria-pressed="${mode === 'progress'}">Progress</button><button class="btn" type="button" id="csv" ${n ? '' : 'disabled'}>Download CSV</button></div></div>
+      ${mode === 'grades' ? `<p class="muted" style="margin:0 0 10px">Scores are worked out automatically. Each lesson is worth 10 points: quick check 4 (first try), steps checked off 2, written work that is long enough 4. Select a lesson number to read what everyone wrote for it. Select a student to see all their work.</p>
+      <div class="row" role="tablist" aria-label="Module" style="margin-bottom:10px">${UNITS.map(u => `<button class="btn small${u === gmod ? ' primary' : ''}" type="button" role="tab" aria-selected="${u === gmod}" data-mod="${esc(u.id)}" title="${esc(uname(u))}">${esc(u.track ? 'Challenge' : 'Module ' + u.num)}</button>`).join('')}</div>`
+      : '<p class="muted" style="margin:0 0 10px">Lessons finished in each module. A lesson is finished when the student gets every quick check question right. Select a student to see each lesson and read their work.</p>'}
+      <div class="card" style="padding:0"><div class="scroll">${err ? '<p style="padding:18px;margin:0">Could not load students. Check that the Firestore rules are published.</p>' : n ? (mode === 'grades' ? grades() : table()) : '<p style="padding:18px;margin:0">No students have joined this class yet.</p>'}</div></div>
+      <div id="lessonwork"></div>
       <div id="detail"></div>`;
+    document.querySelectorAll('[data-view]').forEach(b => b.addEventListener('click', () => { mode = b.dataset.view; lesson = null; render(); }));
+    document.querySelectorAll('[data-mod]').forEach(b => b.addEventListener('click', () => { gmod = UNITS.find(u => String(u.id) === b.dataset.mod); lesson = null; render(); }));
+    document.querySelectorAll('[data-lesson]').forEach(b => b.addEventListener('click', () => { lesson = lesson === b.dataset.lesson ? null : b.dataset.lesson; open = null; render(); const d = document.getElementById('lessonwork'); if (lesson) d.scrollIntoView({ block: 'start', behavior: 'smooth' }); }));
+    lessonWork();
     document.getElementById('copyLink').addEventListener('click', e => {
       const b = e.currentTarget, done = () => { b.textContent = 'Copied'; setTimeout(() => { b.textContent = 'Copy link'; }, 1600); };
       if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(link).then(done, () => {}); });
@@ -374,6 +401,23 @@ table.progress tr.on{background:var(--accent-soft)}
         <td><b>${total(s)}</b>/${LIVE.length}</td><td>${written(s)}/${FIELDS.length}</td><td class="muted">${esc(ago(ab(s).updatedAt))}</td></tr>`).join('')}
     </tbody></table>`;
   }
+  function grades(){
+    const list = gmod.topics.filter(t => !t.soon);
+    return `<table class="progress"><thead><tr><th>Student</th>${list.map(t => `<th><button class="who" type="button" data-lesson="${esc(t.id)}" aria-expanded="${t.id === lesson}" title="${esc(t.title)}">${esc(t.id)}</button></th>`).join('')}<th>${esc(gmod.track ? 'Track' : 'Module')} average</th><th>Course average</th></tr></thead><tbody>
+      ${roster.map(s => `<tr class="${s.uid === open ? 'on' : ''}"><td><button class="who" type="button" data-uid="${esc(s.uid)}" aria-expanded="${s.uid === open}">${esc(s.name || 'Student')}</button></td>
+        ${list.map(t => { const g = G(s, t); return `<td style="--u:var(--u${gmod.num})" title="${esc(parts(g))}">${pc(g.started ? g.pct : null)}</td>`; }).join('')}
+        <td style="--u:var(--u${gmod.num})">${pc(avgOf(s, list))}</td><td style="--u:var(--accent)">${pc(avgOf(s, LIVE))}</td></tr>`).join('')}
+    </tbody></table>`;
+  }
+  // Everyone's work for one lesson on one page, for quick grading.
+  function lessonWork(){
+    const box = document.getElementById('lessonwork'), t = LIVE.find(x => x.id === lesson);
+    if (!t || mode !== 'grades') { box.innerHTML = ''; return; }
+    box.innerHTML = `<div class="section-head"><div><span class="label">Lesson ${esc(t.id)} · everyone's work</span><h2>${esc(t.title)}</h2></div><button class="btn" type="button" id="closeLesson">Close</button></div>
+      ${roster.map(s => { const g = G(s, t), w = ab(s).work || {}; return `<section class="card lw" style="--u:var(--u${t.unit.num})"><div class="lw-head"><h3>${esc(s.name || 'Student')}</h3>${pc(g.started ? g.pct : null)}<span class="muted">${g.started ? esc(parts(g)) : 'Not started'}</span></div>
+        ${(t.fields || []).map(f => `<div class="plan-row"><span class="label">${esc(f.label)}</span><div class="v${w[f.key] ? '' : ' empty'}">${w[f.key] ? esc(w[f.key]) : 'Not written yet.'}</div></div>`).join('')}</section>`; }).join('')}`;
+    document.getElementById('closeLesson').addEventListener('click', () => { lesson = null; render(); });
+  }
   function detail(){
     const box = document.getElementById('detail'), s = roster.find(x => x.uid === open);
     if (!s) { box.innerHTML = ''; return; }
@@ -381,7 +425,7 @@ table.progress tr.on{background:var(--accent-soft)}
     box.innerHTML = `<div class="section-head"><div><span class="label">Student</span><h2>${esc(s.name || 'Student')}</h2></div><button class="btn" type="button" id="closeDetail">Close</button></div>
       <div class="lesson" style="grid-template-columns:minmax(0,1fr) minmax(0,1.4fr)">
         <section class="card"><h3 style="font-size:19px;margin-bottom:10px">Lessons</h3>
-          ${UNITS.map(u => `<div class="dmod" style="--u:var(--u${u.num})"><b>${esc(uname(u))}</b><ul>${u.topics.filter(t => !t.soon).map(t => { const d = (a.done || {})[t.id], st = (a.steps || {})[t.id] || 0; return `<li class="${d ? 'done' : ''}"><span class="chk" aria-hidden="true">${d ? '✓' : ''}</span><span>${t.id} ${esc(t.title)}${d ? '<span class="sr"> (finished)</span>' : ''}</span><span class="muted">${st}/${t.steps.length} steps</span></li>`; }).join('')}</ul></div>`).join('')}</section>
+          ${UNITS.map(u => `<div class="dmod" style="--u:var(--u${u.num})"><b>${esc(uname(u))}</b><ul>${u.topics.filter(t => !t.soon).map(t => { const d = (a.done || {})[t.id], st = (a.steps || {})[t.id] || 0, g = G(s, t); return `<li class="${d ? 'done' : ''}"><span class="chk" aria-hidden="true">${d ? '✓' : ''}</span><span>${t.id} ${esc(t.title)}${d ? '<span class="sr"> (finished)</span>' : ''}</span><span class="muted" title="${esc(parts(g))}">${g.started ? g.pct + '%' : '–'}</span></li>`; }).join('')}</ul></div>`).join('')}</section>
         <section class="card"><h3 style="font-size:19px;margin-bottom:10px">Written work</h3>
           ${FIELDS.some(f => w[f.key]) ? FIELDS.map((f, k) => { const head = !k || FIELDS[k - 1].topic.unit !== f.topic.unit ? `<h4 class="plan-head">${esc(uname(f.topic.unit))}</h4>` : ''; return `${head}<div class="plan-row"><span class="label">${esc(f.label)} · lesson ${f.topic.id}</span><div class="v${w[f.key] ? '' : ' empty'}">${w[f.key] ? esc(w[f.key]) : 'Not written yet.'}</div></div>`; }).join('') : '<p class="muted" style="margin:0">Nothing written yet.</p>'}</section>
       </div>`;
@@ -389,8 +433,8 @@ table.progress tr.on{background:var(--accent-soft)}
   }
   function csv(c){
     const q = v => '"' + String(v == null ? '' : v).replace(/"/g, '""') + '"';
-    const lines = [['Student', 'Email or username', 'Lessons finished', ...LIVE.map(t => t.id + ' ' + t.title), ...FIELDS.map(f => f.label)].map(q).join(',')];
-    roster.forEach(s => lines.push([s.name || 'Student', s.email || s.username || '', total(s), ...LIVE.map(t => (ab(s).done || {})[t.id] ? 1 : 0), ...FIELDS.map(f => (ab(s).work || {})[f.key] || '')].map(q).join(',')));
+    const lines = [['Student', 'Email or username', 'Lessons finished', 'Average score % (lessons started)', ...LIVE.map(t => t.id + ' score %'), ...LIVE.map(t => t.id + ' ' + t.title), ...FIELDS.map(f => f.label)].map(q).join(',')];
+    roster.forEach(s => lines.push([s.name || 'Student', s.email || s.username || '', total(s), (v => v == null ? '' : v)(avgOf(s, LIVE)), ...LIVE.map(t => { const g = G(s, t); return g.started ? g.pct : ''; }), ...LIVE.map(t => (ab(s).done || {})[t.id] ? 1 : 0), ...FIELDS.map(f => (ab(s).work || {})[f.key] || '')].map(q).join(',')));
     const a = document.createElement('a');
     a.href = URL.createObjectURL(new Blob(['﻿' + lines.join('\r\n')], { type: 'text/csv' }));
     a.download = 'app-builder-' + (c.name || c.code).replace(/[^\w-]+/g, '-') + '.csv';

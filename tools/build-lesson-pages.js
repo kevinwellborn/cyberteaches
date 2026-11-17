@@ -17,7 +17,7 @@ const COURSES = [
   { dir: 'securityplus', name: 'CompTIA Security+ SY0-801', short: 'Security+', unit: 'Domain', units: 'Domains',
     files: ['content.js', 'questions.js', 'figures.js', 'images.js'], practice: 'Exam-style practice questions' },
   { dir: 'app-builder', name: 'App Builder: Design and Build Your Own App', short: 'App Builder', unit: 'Module', units: 'Modules',
-    files: ['content.js'], practice: 'Quick check questions' },
+    files: ['content.js', 'figures.js'], practice: 'Quick check questions' },
 ];
 
 // App Builder lessons have extra parts (more paragraphs, an example, starter code, steps). Other courses skip these.
@@ -29,6 +29,7 @@ function extras(t) {
     t.example ? `<section style="margin-top:20px"><h2 style="font-size:22px;margin-bottom:8px">${esc(t.example.title)}</h2><pre class="stim">${esc(t.example.text)}</pre></section>` : '',
     ...(t.tries || []).map(x => `<section style="margin-top:20px"><h2 style="font-size:22px;margin-bottom:4px">Try it: ${esc(x.title)}</h2><p class="muted" style="margin:0 0 8px">${esc(x.intro)}</p><pre class="stim">${esc(x.code)}</pre>${x.challenge ? `<p><b>Challenge:</b> ${esc(x.challenge)}</p>` : ''}</section>`),
     t.steps ? `<section class="card" style="margin-top:20px"><h2 style="font-size:22px;margin-bottom:12px">Do this</h2><ol style="margin:0;padding-left:22px;display:grid;gap:6px">${t.steps.map(s => `<li>${esc(s)}</li>`).join('')}</ol></section>` : '',
+    t.together ? `<section class="card" style="margin-top:20px"><h2 style="font-size:22px;margin-bottom:4px">With your class: ${esc(t.together.title)}</h2><p class="muted" style="margin:0 0 12px">${t.together.time ? esc(t.together.time) + '. ' : ''}Working on your own? Do these steps with a friend or someone at home.</p><ol style="margin:0;padding-left:22px;display:grid;gap:6px">${t.together.steps.map(s => `<li>${esc(s)}</li>`).join('')}</ol></section>` : '',
     t.cac ? `<p style="margin-top:20px"><b>For the Congressional App Challenge:</b> ${esc(t.cac)}</p>` : '',
   ].filter(Boolean).map(x => '\n        ' + x).join('');
 }
