@@ -51,6 +51,34 @@
           ${kid(170, 122, Bn, '#2A1E18', '', 'curly')}${kid(550, 122, A, '#7A4B2A', PAPER, 'long')}
           <path d="M262 84h180m-16-13 16 13-16 13" ${line}/><path d="M458 150H278m16-13-16 13 16 13" ${line}/>
           ${text(352, 70, 'my top 3 problems', 20, 'font-weight="700"')}${text(368, 184, '"Who has it? When?"', 20, 'font-weight="700"')}`) }
+    },
+    '1.2': {
+      hero: { cap: 'An interview is mostly listening. Ask about a real moment, then let the other person tell the story.',
+        html: svg(720, 330, 'One student listens and takes notes on a clipboard while another tells a story.',
+          `<rect x="4" y="4" width="712" height="322" rx="22" fill="${SOFT}"/>
+          <circle cx="78" cy="70" r="22" fill="${U}" opacity=".35"/>
+          ${bubble(470, 84, 330, 110, 520, ['"Last Tuesday I missed', 'the bus because the', 'schedule changed."'])}
+          ${kid(190, 230, C, '#1E1A18', PAPER, 'short')}${kid(540, 232, A, '#5A3A22', '', 'long')}
+          <g transform="translate(262 222) rotate(-8)"><rect x="-34" y="-44" width="68" height="88" rx="8" fill="${PAPER}" stroke="${INK}" stroke-width="3"/><rect x="-14" y="-52" width="28" height="14" rx="5" fill="${U}" stroke="${INK}" stroke-width="3"/><path d="M-20-18h40M-20-2h40M-20 14h26" ${line}/></g>
+          <path d="M318 180l34-12M318 200h36M318 220l34 12" ${line} opacity=".55"/>`) },
+      example: { cap: 'A yes or no question gets a polite answer. A question about a real moment gets a story you can use.',
+        html: svg(720, 250, 'Two questions compared. Would you use my app gets the answer Sure. Tell me about the last time gets a long story.',
+          `<rect x="6" y="6" width="340" height="238" rx="18" fill="${PAPER}" stroke="${INK}" stroke-width="3"/>
+          <rect x="374" y="6" width="340" height="238" rx="18" fill="${SOFT}" stroke="${INK}" stroke-width="3"/>
+          ${text(176, 44, 'Closed question', 20, 'font-weight="700"')}${text(544, 44, 'Open question', 20, 'font-weight="700"')}
+          ${bubble(176, 98, 290, 56, 96, ['"Would you use my app?"'])}
+          <path d="M226 168h60a12 12 0 0 1 12 12v24a12 12 0 0 1-12 12h-60a12 12 0 0 1-12-12v-24a12 12 0 0 1 12-12z" fill="${SOFT}" stroke="${INK}" stroke-width="3"/>${text(256, 199, '"Sure."', 20)}
+          ${bubble(544, 98, 300, 56, 464, ['"Tell me about a time…"'])}
+          <rect x="430" y="158" width="262" height="72" rx="12" fill="${PAPER}" stroke="${INK}" stroke-width="3"/><path d="M448 178h226M448 194h226M448 210h150" ${line} opacity=".7"/>`) },
+      together: { cap: 'Three jobs, three rounds. Rotate so everyone gets to ask.',
+        html: svg(720, 250, 'Three students in a circle with the jobs asker, storyteller and note-taker, and arrows showing the jobs rotating.',
+          `<rect x="4" y="4" width="712" height="242" rx="22" fill="${SOFT}"/>
+          <g transform="translate(140 70) scale(.7)">${kid(0, 0, Bn, '#2A1E18', '', 'curly')}</g>
+          <g transform="translate(360 70) scale(.7)">${kid(0, 0, A, '#7A4B2A', PAPER, 'long')}</g>
+          <g transform="translate(580 70) scale(.7)">${kid(0, 0, C, '#1E1A18', '', 'short')}</g>
+          ${text(140, 174, 'Asker', 22, 'font-weight="700"')}${text(360, 174, 'Storyteller', 22, 'font-weight="700"')}${text(580, 174, 'Note-taker', 22, 'font-weight="700"')}
+          <path d="M200 196h100m-14-12 14 12-14 12M420 196h100m-14-12 14 12-14 12" ${line}/>
+          <path d="M580 206c0 34-440 34-440 4M127 224l13-14 13 14" ${line}/>`) }
     }
   };
 

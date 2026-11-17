@@ -78,17 +78,31 @@ window.AP_UNITS = [
           ['Feedback', 'What people tell you about your idea or app that helps you improve it.']
         ],
         steps: [
-          'Pick three people who have your problem. Friends, family, teammates, and neighbors all count.',
-          'Ask each one the four questions in the example below. Listen more than you talk.',
-          'Write down their answers the same day.',
+          'Read the four interview questions in the example above. Change the words so they fit your problem.',
+          'Do the class activity below. You will interview one classmate.',
+          'Interview two more people outside of class who have your problem. Family, teammates, and neighbors all count.',
+          'Write one line of notes for each person in the first box below, the same day you talk to them.',
           'Look for something at least two people said. That is your strongest clue.',
           'Decide: keep the problem, adjust it, or go back and pick another from your list.'
         ],
+        together: {
+          title: 'Interview circle',
+          time: 'About 20 minutes',
+          steps: [
+            'Get into a group of three. Each round has three jobs: the asker, the storyteller, and the note-taker.',
+            'Round 1: the asker tells their problem in one sentence, then asks the storyteller the four questions. The note-taker writes down the answers for the asker.',
+            'The asker adds one follow-up question that starts with "Tell me more about".',
+            'Rotate jobs and do round 2, then round 3, so everyone gets to ask.',
+            'Take your notes back from your note-taker. Thank the people you interviewed.',
+            'Class share: say one thing you heard that surprised you.'
+          ]
+        },
         example: { title: 'Four interview questions', text: `1. Tell me about the last time this problem happened to you.\n2. What do you do about it now?\n3. What is the most annoying part?\n4. If you had a magic wand, what would you change?` },
         cac: 'Your demo video must explain your target audience, and the rules say your app must not violate anyone\'s privacy rights. The notes you take now cover both.',
         fields: [
-          { key: 'audience', label: 'My target audience', hint: 'Be specific. Example: middle school students at my school who ride the bus.', rows: 2 },
-          { key: 'interviews', label: 'What I learned from talking to people', hint: 'One or two things that surprised you or that more than one person said.', rows: 3 }
+          { key: 'interviewnotes', label: 'My interview notes', hint: 'One line for each person: first name or initials only, then the most important thing they said.', rows: 4, lines: 3 },
+          { key: 'audience', label: 'My target audience', hint: 'Be specific. Example: middle school students at my school who ride the bus.', rows: 2, min: 8 },
+          { key: 'interviews', label: 'What I learned from talking to people', hint: 'One or two things that surprised you or that more than one person said.', rows: 3, min: 15 }
         ],
         quiz: [
           { q: 'Which interview question will teach you the most?', a: ['"Would you use my app?"', '"Do you like my idea?"', '"Tell me about the last time you lost track of a homework assignment."', '"Is my app name cool?"'], c: 2, why: 'Open questions about real past events get true stories instead of polite yes answers.' },
