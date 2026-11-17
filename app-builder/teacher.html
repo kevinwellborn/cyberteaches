@@ -274,6 +274,15 @@ table.progress tr.on{background:var(--accent-soft)}
 .lw-head h3{font-size:19px;margin:0}
 .courseswitch{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:0 0 18px;padding-bottom:14px;border-bottom:1px solid var(--line)}
 .courseswitch .muted{font-size:14px}
+/* Lesson locks on the teacher page */
+.locks{display:grid;gap:12px}
+.lockmod{display:grid;gap:8px;padding:12px;border:1px solid var(--line);border-radius:16px;background:var(--panel)}
+.locklessons{display:grid;gap:8px;grid-template-columns:repeat(auto-fill,minmax(210px,1fr))}
+.lockbtn{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:10px;align-items:center;text-align:left;padding:8px 12px;border:2px solid var(--u, var(--accent));border-radius:12px;background:color-mix(in srgb, var(--u, var(--accent)) 10%, var(--panel));color:var(--ink);font-size:15px}
+.lockbtn.mod{grid-template-columns:minmax(0,1fr) auto;font-size:16px}
+.lockbtn .lt{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lockbtn.off{border-color:var(--line);border-style:dashed;background:transparent;color:var(--muted)}
+.lockbtn:disabled{opacity:.6;cursor:not-allowed}
 </style>
 </head><body>
 <div class="wrap">
@@ -319,6 +328,7 @@ table.progress tr.on{background:var(--accent-soft)}
   const pc = v => v == null ? '<span class="cellp">–</span>' : `<span class="cellp ${v >= 90 ? 'full' : 'part'}">${v}%</span>`;
   const parts = g => `Quick check ${g.tried ? g.first + '/' + g.questions + ' first try' : 'not taken'} · Steps ${g.steps}/${g.stepsOf}${g.writtenOf ? ` · Boxes ${g.written}/${g.writtenOf}` : ''}`;
   const pick = { get(){ try { return localStorage.getItem('cyberteaches:teacherClass'); } catch (e) { return null; } }, set(v){ try { localStorage.setItem('cyberteaches:teacherClass', v); } catch (e) {} } };
+  let lockSeen = '[]';
   let mode = 'grades', gmod = OPENU[0], lesson = null;
   let classes = [], current = null, roster = [], open = null, stopClasses = null, stopRoster = null, stopStatus = null, gateUid;
 
@@ -353,7 +363,7 @@ table.progress tr.on{background:var(--accent-soft)}
       if (err) { view.innerHTML = '<div class="card">Could not load your classes. Check your internet connection and reload.</div>'; return; }
       if (!classes.length) { tabs.innerHTML = ''; view.innerHTML = '<div class="card"><h2 style="font-size:20px;margin-bottom:8px">No classes yet</h2><p style="margin:0 0 14px">Create a class on the Teacher Dashboard. Then share the App Builder join link with your students.</p><a class="btn primary" href="../academy/teacher.html">Create a class</a></div>'; return; }
       // Open on the class last chosen here or on the Teacher Dashboard, so switching course keeps the same class.
-      if (!current || !classes.find(c => c.code === current)) select((classes.find(c => c.code === pick.get()) || classes[0]).code); else tabsHtml();
+      if (!current || !classes.find(c => c.code === current)) select((classes.find(c => c.code === pick.get()) || classes[0]).code); else { tabsHtml(); const now = JSON.stringify((classes.find(c => c.code === current) || {}).abLocked || []); if (now !== lockSeen) render(); }
     });
   }
   function tabsHtml(){
@@ -369,6 +379,8 @@ table.progress tr.on{background:var(--accent-soft)}
   function render(err){
     const c = classes.find(x => x.code === current); if (!c) return;
     const view = document.getElementById('classview'), n = roster.length;
+    const lk = new Set(c.abLocked || []); lockSeen = JSON.stringify(c.abLocked || []);
+    const saveLocks = async list => { try { await Cloud.db.collection('classes').doc(c.code).update({ abLocked: list }); } catch (e) { console.error(e); const m = document.getElementById('lockErr'); if (m) { m.textContent = 'Could not save. Check your connection and try again.'; m.hidden = false; } } };
     const link = location.origin + location.pathname.replace(/teacher\.html$/, '') + '?class=' + c.code;
     const started = roster.filter(s => total(s) || written(s)).length, avg = n ? roster.reduce((t, s) => t + total(s), 0) / n : 0;
     view.innerHTML = `
@@ -381,6 +393,11 @@ table.progress tr.on{background:var(--accent-soft)}
         <section class="card"><span class="label">${esc(c.name || c.code)}</span>
           <div class="stats"><div><b>${n}</b><span class="muted">students in class</span></div><div><b>${started}</b><span class="muted">started App Builder</span></div><div><b>${avg.toFixed(1)}</b><span class="muted">lessons done, average, of ${LIVE.length}</span></div></div></section>
       </div>
+      <div class="section-head"><div><span class="label">Class</span><h2>Lessons open to students</h2></div><div class="row"><button class="btn" type="button" data-lockall="0">Unlock all</button><button class="btn" type="button" data-lockall="1">Lock all</button></div></div>
+      <p class="muted" style="margin:0 0 10px">Select a lesson to lock or unlock it for this class, or lock a whole module. Students see a lock and cannot open it. Changes reach students right away, and their work and scores are kept.</p>
+      <div class="locks">${OPENU.map(u => { const all = lk.has(u.id); return `<div class="lockmod" style="--u:var(--u${u.num})"><button class="lockbtn mod${all ? ' off' : ''}" type="button" data-lock="${esc(u.id)}" aria-pressed="${!all}"><b>${esc(uname(u))}</b><span>${all ? '🔒 Module locked' : 'Open'}</span></button>
+        <div class="locklessons">${u.topics.filter(t => !t.soon).map(t => { const off = all || lk.has(t.id); return `<button class="lockbtn${off ? ' off' : ''}" type="button" data-lock="${esc(t.id)}" aria-pressed="${!off}" ${all ? 'disabled' : ''}><b>${esc(t.id)}</b><span class="lt">${esc(t.title)}</span><span>${off ? '🔒 Locked' : 'Open'}</span></button>`; }).join('')}</div></div>`; }).join('')}</div>
+      <p class="result no" id="lockErr" role="alert" hidden></p>
       <div class="section-head"><div><span class="label">Class</span><h2>${mode === 'grades' ? 'Gradebook' : 'Progress'}</h2></div>
         <div class="row"><button class="btn${mode === 'grades' ? ' primary' : ''}" type="button" data-view="grades" aria-pressed="${mode === 'grades'}">Grades</button><button class="btn${mode === 'progress' ? ' primary' : ''}" type="button" data-view="progress" aria-pressed="${mode === 'progress'}">Progress</button><button class="btn" type="button" id="csv" ${n ? '' : 'disabled'}>Download CSV</button></div></div>
       ${mode === 'grades' ? `<p class="muted" style="margin:0 0 10px">Scores are worked out automatically. Each lesson is worth 10 points: quick check 4 (first try), steps checked off 2, written work that is long enough 4. Select a lesson number to read what everyone wrote for it. Select a student to see all their work.</p>
@@ -397,6 +414,8 @@ table.progress tr.on{background:var(--accent-soft)}
       const b = e.currentTarget, done = () => { b.textContent = 'Copied'; setTimeout(() => { b.textContent = 'Copy link'; }, 1600); };
       if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(link).then(done, () => {}); });
     document.getElementById('csv').addEventListener('click', () => csv(c));
+    view.querySelectorAll('[data-lock]').forEach(b => b.addEventListener('click', () => { const id = b.dataset.lock, list = [...lk]; saveLocks(lk.has(id) ? list.filter(x => x !== id) : list.concat(id)); }));
+    view.querySelectorAll('[data-lockall]').forEach(b => b.addEventListener('click', () => saveLocks(b.dataset.lockall === '1' ? OPENU.map(u => u.id) : [])));
     view.querySelectorAll('[data-uid]').forEach(r => r.addEventListener('click', () => { open = open === r.dataset.uid ? null : r.dataset.uid; render(); const d = document.getElementById('detail'); if (open && d.firstElementChild) d.scrollIntoView({ block: 'start', behavior: 'smooth' }); }));
     detail();
   }
