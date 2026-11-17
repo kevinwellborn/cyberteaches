@@ -28,6 +28,8 @@ test, and share a web app. It works for a student alone or for a class. Six modu
 Congressional App Challenge (lessons `C.1` to `C.6` and a plain-words rules page). All lesson text is in
 `app-builder/content.js`; the comment at the top of that file explains each field.
 
+- Only the modules listed in `AB_OPEN` at the bottom of `content.js` are open. The rest show as "Coming soon".
+  To open one, add its id there and run `node tools/build-lesson-pages.js`.
 - Lessons can have Try it boxes (`tries`). `mode: 'js'` runs the student's JavaScript in a Web Worker and stops it after
   3 seconds, so an endless loop cannot freeze the page. `mode: 'html'` shows the student's page in a sandboxed frame.
 - Fill-in boxes (`fields`) are saved in the browser and collected on the My plan page (`#plan`).

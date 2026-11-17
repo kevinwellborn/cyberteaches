@@ -300,6 +300,7 @@ table.progress tr.on{background:var(--accent-soft)}
 (function(){
   const app = document.getElementById('app'), Cloud = window.Cloud;
   const UNITS = window.AP_UNITS;
+  const OPENU = UNITS.filter(u => u.topics.some(t => !t.soon)); // modules with at least one open lesson
   const LIVE = UNITS.flatMap(u => u.topics.filter(t => !t.soon).map(t => Object.assign({ unit: u }, t)));
   const FIELDS = LIVE.flatMap(t => (t.fields || []).map(f => Object.assign({ topic: t }, f)));
   const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
@@ -315,7 +316,7 @@ table.progress tr.on{background:var(--accent-soft)}
   const avgOf = (s, list) => { const g = list.map(t => G(s, t)).filter(x => x.started); return g.length ? Math.round(g.reduce((a, x) => a + x.pct, 0) / g.length) : null; };
   const pc = v => v == null ? '<span class="cellp">–</span>' : `<span class="cellp ${v >= 90 ? 'full' : 'part'}">${v}%</span>`;
   const parts = g => `Quick check ${g.tried ? g.first + '/' + g.questions + ' first try' : 'not taken'} · Steps ${g.steps}/${g.stepsOf}${g.writtenOf ? ` · Boxes ${g.written}/${g.writtenOf}` : ''}`;
-  let mode = 'grades', gmod = UNITS[0], lesson = null;
+  let mode = 'grades', gmod = OPENU[0], lesson = null;
   let classes = [], current = null, roster = [], open = null, stopClasses = null, stopRoster = null, stopStatus = null, gateUid;
 
   const hero = (t, p, extra) => { app.innerHTML = `<div class="page-head"><span class="label">For teachers</span><h1>${t}</h1><p>${p}</p>${extra || ''}</div>`; };
@@ -378,7 +379,7 @@ table.progress tr.on{background:var(--accent-soft)}
       <div class="section-head"><div><span class="label">Class</span><h2>${mode === 'grades' ? 'Gradebook' : 'Progress'}</h2></div>
         <div class="row"><button class="btn${mode === 'grades' ? ' primary' : ''}" type="button" data-view="grades" aria-pressed="${mode === 'grades'}">Grades</button><button class="btn${mode === 'progress' ? ' primary' : ''}" type="button" data-view="progress" aria-pressed="${mode === 'progress'}">Progress</button><button class="btn" type="button" id="csv" ${n ? '' : 'disabled'}>Download CSV</button></div></div>
       ${mode === 'grades' ? `<p class="muted" style="margin:0 0 10px">Scores are worked out automatically. Each lesson is worth 10 points: quick check 4 (first try), steps checked off 2, written work that is long enough 4. Select a lesson number to read what everyone wrote for it. Select a student to see all their work.</p>
-      <div class="row" role="tablist" aria-label="Module" style="margin-bottom:10px">${UNITS.map(u => `<button class="btn small${u === gmod ? ' primary' : ''}" type="button" role="tab" aria-selected="${u === gmod}" data-mod="${esc(u.id)}" title="${esc(uname(u))}">${esc(u.track ? 'Challenge' : 'Module ' + u.num)}</button>`).join('')}</div>`
+      <div class="row" role="tablist" aria-label="Module" style="margin-bottom:10px;${OPENU.length < 2 ? 'display:none' : ''}">${OPENU.map(u => `<button class="btn small${u === gmod ? ' primary' : ''}" type="button" role="tab" aria-selected="${u === gmod}" data-mod="${esc(u.id)}" title="${esc(uname(u))}">${esc(u.track ? 'Challenge' : 'Module ' + u.num)}</button>`).join('')}</div>`
       : '<p class="muted" style="margin:0 0 10px">Lessons finished in each module. A lesson is finished when the student gets every quick check question right. Select a student to see each lesson and read their work.</p>'}
       <div class="card" style="padding:0"><div class="scroll">${err ? '<p style="padding:18px;margin:0">Could not load students. Check that the Firestore rules are published.</p>' : n ? (mode === 'grades' ? grades() : table()) : '<p style="padding:18px;margin:0">No students have joined this class yet.</p>'}</div></div>
       <div id="lessonwork"></div>
@@ -395,9 +396,9 @@ table.progress tr.on{background:var(--accent-soft)}
     detail();
   }
   function table(){
-    return `<table class="progress"><thead><tr><th>Student</th>${UNITS.map(u => `<th title="${esc(uname(u))}">${esc(ushort(u))}</th>`).join('')}<th>Lessons</th><th>Written</th><th>Last active</th></tr></thead><tbody>
+    return `<table class="progress"><thead><tr><th>Student</th>${OPENU.map(u => `<th title="${esc(uname(u))}">${esc(ushort(u))}</th>`).join('')}<th>Lessons</th><th>Written</th><th>Last active</th></tr></thead><tbody>
       ${roster.map(s => `<tr class="${s.uid === open ? 'on' : ''}"><td><button class="who" type="button" data-uid="${esc(s.uid)}" aria-expanded="${s.uid === open}">${esc(s.name || 'Student')}</button></td>
-        ${UNITS.map(u => { const live = u.topics.filter(t => !t.soon).length, d = doneIn(s, u); return `<td><span class="cellp ${d === live ? 'full' : d ? 'part' : ''}" style="--u:var(--u${u.num})">${d}/${live}</span></td>`; }).join('')}
+        ${OPENU.map(u => { const live = u.topics.filter(t => !t.soon).length, d = doneIn(s, u); return `<td><span class="cellp ${d === live ? 'full' : d ? 'part' : ''}" style="--u:var(--u${u.num})">${d}/${live}</span></td>`; }).join('')}
         <td><b>${total(s)}</b>/${LIVE.length}</td><td>${written(s)}/${FIELDS.length}</td><td class="muted">${esc(ago(ab(s).updatedAt))}</td></tr>`).join('')}
     </tbody></table>`;
   }
@@ -425,7 +426,7 @@ table.progress tr.on{background:var(--accent-soft)}
     box.innerHTML = `<div class="section-head"><div><span class="label">Student</span><h2>${esc(s.name || 'Student')}</h2></div><button class="btn" type="button" id="closeDetail">Close</button></div>
       <div class="lesson" style="grid-template-columns:minmax(0,1fr) minmax(0,1.4fr)">
         <section class="card"><h3 style="font-size:19px;margin-bottom:10px">Lessons</h3>
-          ${UNITS.map(u => `<div class="dmod" style="--u:var(--u${u.num})"><b>${esc(uname(u))}</b><ul>${u.topics.filter(t => !t.soon).map(t => { const d = (a.done || {})[t.id], st = (a.steps || {})[t.id] || 0, g = G(s, t); return `<li class="${d ? 'done' : ''}"><span class="chk" aria-hidden="true">${d ? '✓' : ''}</span><span>${t.id} ${esc(t.title)}${d ? '<span class="sr"> (finished)</span>' : ''}</span><span class="muted" title="${esc(parts(g))}">${g.started ? g.pct + '%' : '–'}</span></li>`; }).join('')}</ul></div>`).join('')}</section>
+          ${OPENU.map(u => `<div class="dmod" style="--u:var(--u${u.num})"><b>${esc(uname(u))}</b><ul>${u.topics.filter(t => !t.soon).map(t => { const d = (a.done || {})[t.id], st = (a.steps || {})[t.id] || 0, g = G(s, t); return `<li class="${d ? 'done' : ''}"><span class="chk" aria-hidden="true">${d ? '✓' : ''}</span><span>${t.id} ${esc(t.title)}${d ? '<span class="sr"> (finished)</span>' : ''}</span><span class="muted" title="${esc(parts(g))}">${g.started ? g.pct + '%' : '–'}</span></li>`; }).join('')}</ul></div>`).join('')}</section>
         <section class="card"><h3 style="font-size:19px;margin-bottom:10px">Written work</h3>
           ${FIELDS.some(f => w[f.key]) ? FIELDS.map((f, k) => { const head = !k || FIELDS[k - 1].topic.unit !== f.topic.unit ? `<h4 class="plan-head">${esc(uname(f.topic.unit))}</h4>` : ''; return `${head}<div class="plan-row"><span class="label">${esc(f.label)} · lesson ${f.topic.id}</span><div class="v${w[f.key] ? '' : ' empty'}">${w[f.key] ? esc(w[f.key]) : 'Not written yet.'}</div></div>`; }).join('') : '<p class="muted" style="margin:0">Nothing written yet.</p>'}</section>
       </div>`;

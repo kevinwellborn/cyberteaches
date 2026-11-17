@@ -376,6 +376,7 @@ table.progress tr.on{background:var(--accent-soft)}
           <span class="label">CyberTeaches · Free course · Grades 6 to 12</span>
           <h1 style="margin-top:8px">Build your own app, from <em>first idea to finished.</em></h1>
           <p>Find a real problem, design a solution, learn the code, and build an app that works. One small step at a time, with no coding experience needed. Use it on your own or with your class.</p>
+          ${UNITS.some(u => u.topics.every(t => t.soon)) ? `<p class="muted" style="margin-top:-6px">${MAIN.filter(u => u.topics.some(t => !t.soon)).map(u => 'Module ' + u.num).join(' and ')} is open now. The other modules are coming soon.</p>` : ''}
           <div class="row" style="margin-bottom:18px">
             <a class="btn primary" href="#${slug(next.id)}">${d ? 'Continue' : 'Start'} with ${next.id} ${esc(next.title)}</a>
             <a class="btn" href="#teachers">For teachers</a>
@@ -413,6 +414,7 @@ table.progress tr.on{background:var(--accent-soft)}
           <ul class="plain"><li>Middle school and high school students.</li><li>Solo, or a team of up to 4.</li><li>Your home or school district must be hosting a challenge.</li><li>One app per person per year.</li></ul>
           <p style="margin:14px 0 0"><a class="btn" href="#rules">Read the rules in plain words</a></p></section>
       </div>
+      ${TRACK.some(u => u.topics.every(t => t.soon)) ? '<div class="notice" style="margin-bottom:16px"><b>Coming soon.</b> The track lessons are not open yet. You can read the rules in plain words now.</div>' : ''}
       <div class="units">${TRACK.map(unitCard).join('')}</div>`;
   }
 
@@ -431,7 +433,7 @@ table.progress tr.on{background:var(--accent-soft)}
       <section class="card" style="margin-top:16px"><h2 style="font-size:20px;margin-bottom:10px">Pacing and what to collect</h2>
         <p class="muted" style="margin:0 0 10px">A suggested pace for two or three class periods a week. Each module ends in a milestone you can collect and grade.</p>
         <div class="scroll"><table><thead><tr><th>Module</th><th>Weeks</th><th>Milestone to collect</th></tr></thead><tbody>
-          ${MAIN.map((u, k) => `<tr><td><b>${u.num}. ${esc(u.title)}</b></td><td>${weeks[k] || ''}</td><td>${esc(u.milestone)}</td></tr>`).join('')}
+          ${MAIN.map((u, k) => `<tr><td><b>${u.num}. ${esc(u.title)}</b>${u.topics.some(t => !t.soon) ? '' : ' <span class="muted">(coming soon)</span>'}</td><td>${weeks[k] || ''}</td><td>${esc(u.milestone)}</td></tr>`).join('')}
         </tbody></table></div></section>
       <div class="two" style="margin-top:16px">
         <section class="card"><h2 style="font-size:20px;margin-bottom:10px">Grading and student work</h2>

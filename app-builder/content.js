@@ -1283,6 +1283,13 @@ window.CAC_RULES = [
 window.CAC_VIDEO = ['The name of each participant', 'The name of the app', 'The purpose of the app, in one clear sentence', 'The target audience: who the app is for', 'The tools and coding languages you used', 'The app working: show what it does'];
 window.CAC_QUESTIONS = ['What is the title of your app?', 'Explain the app\'s purpose.', 'What inspired you to create this app?', 'What technical or coding difficulty did you face, and how did you address it?', 'What did you learn while participating? What was your biggest takeaway?', 'What would you change if you made a 2.0 version?'];
 
+// Modules that are open to students. Every lesson in a module that is not listed here is marked soon: true,
+// which shows it as "Coming soon" and leaves it out of lesson pages, My plan, scores and the teacher page.
+// To open a module, add its id here ('m2' to 'm6', and 'c' for the App Challenge track), then run
+// node tools/build-lesson-pages.js.
+window.AB_OPEN = ['m1'];
+window.AP_UNITS.forEach(u => { if (!window.AB_OPEN.includes(u.id)) u.topics.forEach(t => { t.soon = true; }); });
+
 // A quiz question written as "Question?\n\ncode" is split into q (the question) and st (the code shown with it),
 // the same shape the other courses use.
 window.AP_UNITS.forEach(u => u.topics.forEach(t => (t.quiz || []).forEach(q => {
