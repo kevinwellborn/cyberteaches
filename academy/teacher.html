@@ -59,6 +59,8 @@ h1,h2,h3{font-family:var(--f-display);margin:0;line-height:1.15;text-wrap:balanc
 .tab{border:2px solid var(--line);background:var(--panel);border-radius:99px;padding:6px 14px;font-weight:700}
 .tab[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:var(--bg)}
 .tab.archived{opacity:.65;font-style:italic}
+.courseswitch{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:6px 0 14px;padding-bottom:14px;border-bottom:1px solid var(--line)}
+.courseswitch .tab{text-decoration:none;color:var(--ink)}.courseswitch .tab[aria-pressed="true"]{color:var(--bg)}.courseswitch .muted{font-size:14px}
 .btn.small{padding:4px 10px;font-size:14px;border-radius:99px}
 .btn.danger{border-color:#c0392b;color:#c0392b}
 .settings{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(280px,1fr))}.settings>div{border:2px solid var(--line);border-radius:12px;padding:12px 14px;background:var(--panel)}.settings p{margin:4px 0 10px;font-size:14px}
@@ -242,12 +244,11 @@ function renderAcct(c){
 }
 
 function dashboard(admin){
-  app.innerHTML=`${admin?'<section id="adminview" class="panel" style="margin-top:6px"></section>':''}<div class="toolbar" style="margin-top:6px"><h2>Your classes</h2></div>
+  app.innerHTML=`${admin?'<section id="adminview" class="panel" style="margin-top:6px"></section>':''}<nav class="courseswitch" aria-label="Course to manage"><span class="label">Course</span><span class="tab" aria-current="page" aria-pressed="true">Coding Academy</span><a class="tab" href="../app-builder/teacher.html">App Builder</a><span class="muted">Your classes work in both courses. Pick the course you want to manage.</span></nav>
+    <div class="toolbar" style="margin-top:6px"><h2>Your classes</h2></div>
     <div class="classes" id="classes"></div>
     <form class="newclass" id="newclass"><label class="label" for="cname" style="align-self:center">New class</label><input id="cname" placeholder="e.g. Period 3 Coding" maxlength="60" required><button class="btn primary" id="cbtn">Create class</button><span class="err" id="cerr" role="alert"></span></form>
     <div id="classview"></div><section id="loginsview"></section>
-    <section id="abview"><div class="toolbar"><h2>App Builder course</h2><div class="spacer"></div><a class="btn primary" href="../app-builder/teacher.html">Open App Builder progress</a></div>
-      <p class="muted" style="margin:0">Students design and build their own app. Your classes work there too: see which lessons each student finished and read what they wrote.</p></section>
     <section id="resview"><div class="toolbar"><h2>Teacher resources</h2><div class="spacer"></div><a class="btn primary" href="resources/">Open Teacher resources</a></div>
       <p class="muted" style="margin:0">Lesson plans, slides to teach each lesson before students start the puzzles, and printable classwork with an answer key.</p></section>
     <section id="keyview"><div class="toolbar"><h2>Answer key</h2><div class="spacer"></div><button class="btn" id="keyBtn" aria-expanded="false">Show answers</button></div>
