@@ -16,7 +16,23 @@ const COURSES = [
     files: ['content.js', 'questions.js', 'labs.js', 'figures.js', 'images.js'], practice: 'AP-style practice questions' },
   { dir: 'securityplus', name: 'CompTIA Security+ SY0-801', short: 'Security+', unit: 'Domain', units: 'Domains',
     files: ['content.js', 'questions.js', 'figures.js', 'images.js'], practice: 'Exam-style practice questions' },
+  { dir: 'app-builder', name: 'App Builder: Design and Build Your Own App', short: 'App Builder', unit: 'Module', units: 'Modules',
+    files: ['content.js', 'figures.js'], practice: 'Quick check questions' },
 ];
+
+// App Builder lessons have extra parts (more paragraphs, an example, starter code, steps). Other courses skip these.
+const unitName = (course, u) => u.track ? u.title : `${course.unit} ${u.num}${course.unit === 'Domain' ? '.0' : ''}: ${u.title}`;
+const unitMark = u => u.track ? '★' : u.num;
+function extras(t) {
+  return [
+    ...(t.more || []).map(p => `<p style="max-width:68ch">${esc(p)}</p>`),
+    t.example ? `<section style="margin-top:20px"><h2 style="font-size:22px;margin-bottom:8px">${esc(t.example.title)}</h2><pre class="stim">${esc(t.example.text)}</pre></section>` : '',
+    ...(t.tries || []).map(x => `<section style="margin-top:20px"><h2 style="font-size:22px;margin-bottom:4px">Try it: ${esc(x.title)}</h2><p class="muted" style="margin:0 0 8px">${esc(x.intro)}</p><pre class="stim">${esc(x.code)}</pre>${x.challenge ? `<p><b>Challenge:</b> ${esc(x.challenge)}</p>` : ''}</section>`),
+    t.steps ? `<section class="card" style="margin-top:20px"><h2 style="font-size:22px;margin-bottom:12px">Do this</h2><ol style="margin:0;padding-left:22px;display:grid;gap:6px">${t.steps.map(s => `<li>${esc(s)}</li>`).join('')}</ol></section>` : '',
+    t.together ? `<section class="card" style="margin-top:20px"><h2 style="font-size:22px;margin-bottom:4px">With your class: ${esc(t.together.title)}</h2><p class="muted" style="margin:0 0 12px">${t.together.time ? esc(t.together.time) + '. ' : ''}Working on your own? Do these steps with a friend or someone at home.</p><ol style="margin:0;padding-left:22px;display:grid;gap:6px">${t.together.steps.map(s => `<li>${esc(s)}</li>`).join('')}</ol></section>` : '',
+    t.cac ? `<p style="margin-top:20px"><b>For the Congressional App Challenge:</b> ${esc(t.cac)}</p>` : '',
+  ].filter(Boolean).map(x => '\n        ' + x).join('');
+}
 
 const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 const slug = t => (t.id.replace('.', '-') + '-' + t.title).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
@@ -94,12 +110,12 @@ function breadcrumbs(items) {
     itemListElement: items.map(([name, item], i) => ({ '@type': 'ListItem', position: i + 1, name, item })) };
 }
 
-const sitemap = ['', 'apcybersecurity/', 'apcsp/', 'apcsp/exam/', 'securityplus/', 'networking/', 'networking/exam-1/', 'networking/exam-2/', 'networking/lab-1/', 'networking/lab-2/', 'networking/lab-3/', 'networking/lab-4/', 'networking/syllabus/', 'networking/updates/', 'academy/', 'congressional-award-tracker/', 'award-tracker/'];
+const sitemap = ['', 'app-builder/', 'apcybersecurity/', 'apcsp/', 'apcsp/exam/', 'securityplus/', 'networking/', 'networking/exam-1/', 'networking/exam-2/', 'networking/lab-1/', 'networking/lab-2/', 'networking/lab-3/', 'networking/lab-4/', 'networking/syllabus/', 'networking/updates/', 'academy/', 'congressional-award-tracker/', 'award-tracker/'];
 
 for (const course of COURSES) {
   const w = load(course);
   const units = w.AP_UNITS;
-  const all = units.flatMap(u => u.topics.map(t => Object.assign({ unit: u }, t)));
+  const all = units.flatMap(u => u.topics.filter(t => !t.soon).map(t => Object.assign({ unit: u }, t)));
   const videos = (w.AP_VIDEOS && w.AP_VIDEOS.topics) || {};
   const skills = w.AP_SKILLS || {};
   const courseUrl = SITE + course.dir + '/';
@@ -113,18 +129,18 @@ for (const course of COURSES) {
     const url = indexUrl + slug(t) + '/';
     const quiz = t.quiz || [];
     const vid = ytId(videos[t.id]);
-    const unitLabel = `${course.unit} ${u.num}${course.unit === 'Domain' ? '.0' : ''}: ${u.title}`;
+    const unitLabel = unitName(course, u);
     const title = `${course.short} ${t.id} ${t.title}: Notes, Vocabulary and Practice | CyberTeaches`;
     const desc = clip(`${course.short} ${t.id} ${t.title}. ${t.summary}`, 158);
     const body = `
     <div class="crumbs"><a href="../../">${esc(course.name)}</a> / <a href="../">All lessons</a> / ${esc(unitLabel)}</div>
     <div class="lesson u-scope" style="--u:var(--u${u.num})">
       <article>
-        <span class="u-band"><i>${u.num}</i>${esc(unitLabel)}</span><br><span class="label u" style="display:inline-block;margin-top:12px">${esc(course.short)} topic ${t.id}</span><br>
+        <span class="u-band"><i>${unitMark(u)}</i>${esc(unitLabel)}</span><br><span class="label u" style="display:inline-block;margin-top:12px">${esc(course.short)} topic ${t.id}</span><br>
         <h1>${esc(t.title)}</h1>
         ${w.AP_IMAGE ? w.AP_IMAGE(t.id, t.title) : ''}
         <p class="summary">${esc(t.summary)}</p>
-        ${w.AP_FIGURE ? w.AP_FIGURE(t.id) : ''}
+        ${w.AP_FIGURE ? w.AP_FIGURE(t.id) : ''}${extras(t)}
         ${vid ? `<div class="video"><iframe src="https://www.youtube-nocookie.com/embed/${vid}" title="CyberTeaches video: ${esc(t.title)}" allow="encrypted-media; picture-in-picture" allowfullscreen loading="lazy"></iframe></div>` : ''}
         <section class="card" style="margin-top:20px">
           <h2 style="font-size:22px;margin-bottom:12px">${esc(t.title)} vocabulary</h2>
@@ -148,7 +164,7 @@ for (const course of COURSES) {
         </nav>
       </article>
       <aside class="side">
-        <div class="card unitbox"><span class="label">${esc(course.unit)} ${u.num}</span><h3 style="margin:6px 0 10px">${esc(u.title)}</h3>
+        <div class="card unitbox"><span class="label">${u.track ? 'Optional track' : `${esc(course.unit)} ${u.num}`}</span><h3 style="margin:6px 0 10px">${esc(u.title)}</h3>
           <ul class="lesson-list">${u.topics.map(x => `<li><a href="../${slug(x)}/" style="text-decoration:none;color:var(--ink);${x.id === t.id ? 'font-weight:700' : ''}">${x.id} ${esc(x.title)}</a></li>`).join('')}</ul>
         </div>
       </aside>
@@ -178,9 +194,9 @@ for (const course of COURSES) {
     </section>
     <div class="units">
       ${units.map(u => `<section class="card unit" style="--u:var(--u${u.num})">
-        <div class="unit-num" style="background:var(--u)">${u.num}</div>
+        <div class="unit-num" style="background:var(--u)">${unitMark(u)}</div>
         <div>
-          <h2>${course.unit} ${u.num}: ${esc(u.title)}</h2>
+          <h2>${u.track ? esc(u.title) : `${course.unit} ${u.num}: ${esc(u.title)}`}</h2>
           <p class="blurb">${esc(u.blurb)}</p>
           <ul class="lesson-list">${u.topics.map(t => `<li><a href="${slug(t)}/">${t.id} ${esc(t.title)}</a></li>`).join('')}</ul>
         </div>

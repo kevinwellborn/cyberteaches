@@ -10,6 +10,7 @@ and small ad spots (edit `CT_ADS` in `index.html`).
 | `apcsp/` | AP Computer Science Principles (high school) |
 | `networking/` | AP Networking (companion site for the book: labs, practice exams, syllabus, teacher keys) |
 | `academy/` | CyberTeaches Academy block coding (grades 6 to 12) |
+| `app-builder/` | App Builder: design and build your own app, with a Congressional App Challenge track (grades 6 to 12) |
 
 Old links keep working: `ap-cyber/` and `teacher.html` redirect, and the hub forwards `?class=CODE` join links
 and `#puzzle-N` links to `academy/`.
@@ -19,6 +20,38 @@ and `#puzzle-N` links to `academy/`.
 `apcybersecurity/` covers all five units and 24 topics of the College Board course framework. Each topic has a short
 paragraph, vocabulary, a video, and AP-style practice questions (`questions.js`). There are six quick labs and a
 pretend-terminal mission for each unit (`missions.js`). Lesson text lives in `apcybersecurity/content.js`.
+
+## App Builder (grades 6 to 12)
+
+`app-builder/` is a self-paced project course: students find a problem, design an app, learn programming logic, build,
+test, and share a web app. It works for a student alone or for a class. Six modules plus an optional track for entering the
+Congressional App Challenge (lessons `C.1` to `C.6` and a plain-words rules page). All lesson text is in
+`app-builder/content.js`; the comment at the top of that file explains each field.
+
+- Only the modules listed in `AB_OPEN` at the bottom of `content.js` are open. The rest show as "Coming soon".
+  To open one, add its id there and run `node tools/build-lesson-pages.js`.
+- Lessons can have Try it boxes (`tries`). `mode: 'js'` runs the student's JavaScript in a Web Worker and stops it after
+  3 seconds, so an endless loop cannot freeze the page. `mode: 'html'` shows the student's page in a sandboxed frame.
+- Fill-in boxes (`fields`) are saved in the browser and collected on the My plan page (`#plan`).
+- Main lessons do not depend on the contest. Contest facts go in a lesson's `cac` note or in the track.
+- The track is based on the official 2026 rules. When the 2027 rules and dates are published, update `CAC_INFO`,
+  `CAC_RULES` and the `C.` lessons.
+- Routes are plain names (`#lesson-3-5`, `#challenge`, `#rules`, `#plan`, `#class`, `#teachers`); `#/topic/3.5` also works.
+- Classes: App Builder uses the Academy's sign-in, classes and roster (`academy/cloud.js`), with no change to
+  `firestore.rules`. Students sign in and join on the My class page (`#class`, or the join link
+  `app-builder/?class=CODE`). A signed-in student's writing is saved to `users/{uid}.courses['ctcac-work-v1']`.
+  For a student in a class, finished lessons, step counts, first-try quick check scores and writing are also copied to
+  `classes/{code}/students/{uid}.appBuilder`, which only that student and the class's teacher can read.
+- Class lessons can have a `together` activity (`{ title, time, steps }`), shown as "With your class": partner and
+  whole-class steps that a student working alone can do with a friend.
+- Lessons are scored automatically by `AB_GRADE` at the bottom of `content.js`, used by both the course page and the
+  teacher page. A lesson is worth 10 points: quick check 4 (first try only), steps checked off 2, written work 4.
+  A box earns credit when it is long enough: `lines` (lines) or `min` (words) on the field; with neither, any writing counts. The score
+  checks that work is complete, not how good it is.
+- Pictures are inline SVG in `app-builder/figures.js`. `AB_ART(lessonId, slot)` returns the picture for the `hero`,
+  `example` or `together` slot of a lesson, and lessons without pictures show none.
+- `app-builder/teacher.html` shows a teacher each class's gradebook (scores by lesson, with everyone's writing for one
+  lesson on one page), progress by module, each student's lessons and written work, and a CSV download. It only reads. Classes and student logins are still made on `academy/teacher.html`, which links to it.
 
 ## AP Networking (high school)
 

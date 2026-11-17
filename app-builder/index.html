@@ -1,0 +1,755 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>App Builder: Free Course to Design and Build Your Own App | CyberTeaches</title>
+<meta name="description" content="Free course for grades 6 to 12: find a real problem, design and build your own app, and share it. Includes a track for entering the Congressional App Challenge.">
+<link rel="canonical" href="https://cyberteaches.com/app-builder/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="CyberTeaches">
+<meta property="og:title" content="App Builder: Free Course to Design and Build Your Own App | CyberTeaches">
+<meta property="og:description" content="Free course for grades 6 to 12: find a real problem, design and build your own app, and share it. Includes a track for entering the Congressional App Challenge.">
+<meta property="og:url" content="https://cyberteaches.com/app-builder/">
+<meta property="og:image" content="https://cyberteaches.com/yt-banner.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Course","name":"App Builder: Design and Build Your Own App","description":"Free course for grades 6 to 12: find a real problem, design and build your own app, and share it. Includes a track for entering the Congressional App Challenge.","url":"https://cyberteaches.com/app-builder/","provider":{"@type":"Organization","name":"CyberTeaches","url":"https://cyberteaches.com/"},"inLanguage":"en","isAccessibleForFree":true,"educationalLevel":"Middle school and high school","teaches":["App design","Programming","Software testing","Presenting a project"],"offers":{"@type":"Offer","category":"Free","price":0,"priceCurrency":"USD"},"hasCourseInstance":{"@type":"CourseInstance","courseMode":"Online","courseWorkload":"PT30H"}}</script>
+<link rel="icon" type="image/png" href="../favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Atkinson+Hyperlegible:wght@400;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+:root{
+  --bg:#EEF1EC; --panel:#FFFFFF; --panel-2:#F6F8F4; --ink:#1C292C; --muted:#5C6B6B; --line:#D5DCD4;
+  --accent:#0F7B78; --accent-ink:#FFFFFF; --accent-soft:#D6EEEA;
+  --good:#2E9363; --good-soft:#DDF1E6; --bad:#C8402F; --bad-soft:#F8E0DB; --term:#13201F; --term-ink:#B9F5DA;
+  --u1:#2F6FDE; --u2:#2E9363; --u3:#D97E16; --u4:#C2417A; --u5:#7A4FD0;
+  --f-display:"Bricolage Grotesque", "Trebuchet MS", system-ui, sans-serif;
+  --f-body:"Atkinson Hyperlegible", "Segoe UI", system-ui, sans-serif;
+  --f-mono:"JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#141B1C; --panel:#1C2526; --panel-2:#222D2E; --ink:#E6EEEC; --muted:#9AABA9; --line:#33403F;
+  --accent:#3FC1B8; --accent-ink:#0B1A1A; --accent-soft:#1D3A38;
+  --good:#4CC28A; --good-soft:#1B3328; --bad:#EF6B57; --bad-soft:#3A221E; --term:#0C1213; --term-ink:#9FEBC8; --u1:#5B8FF0; --u2:#45B57E; --u3:#E9A04A; --u4:#E06A9E; --u5:#A083EA; color-scheme:dark }
+}
+:root[data-theme="dark"]{
+  --bg:#141B1C; --panel:#1C2526; --panel-2:#222D2E; --ink:#E6EEEC; --muted:#9AABA9; --line:#33403F;
+  --accent:#3FC1B8; --accent-ink:#0B1A1A; --accent-soft:#1D3A38;
+  --good:#4CC28A; --good-soft:#1B3328; --bad:#EF6B57; --bad-soft:#3A221E; --term:#0C1213; --term-ink:#9FEBC8; --u1:#5B8FF0; --u2:#45B57E; --u3:#E9A04A; --u4:#E06A9E; --u5:#A083EA; color-scheme:dark
+}
+*{box-sizing:border-box}
+html,body{background:var(--bg)}
+body{margin:0;color:var(--ink);font-family:var(--f-body);font-size:17px;line-height:1.55;
+  padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px));padding-bottom:48px}
+button,input,select{font:inherit;color:inherit}
+button{cursor:pointer}
+a{color:var(--accent)}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+h1,h2,h3{font-family:var(--f-display);text-wrap:balance;margin:0;line-height:1.15}
+.wrap{max-width:1080px;margin:0 auto}
+.topbar{display:flex;align-items:center;gap:14px;padding-block:16px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:10px;font-family:var(--f-display);font-weight:800;font-size:20px;text-decoration:none;color:var(--ink)}
+.brand svg{width:32px;height:32px}
+.brand .logo{width:36px;height:36px;flex:none;border-radius:9px;background:#fff;padding:2px;box-shadow:0 0 0 1px var(--line)}
+.spacer{flex:1}
+.nav a{font-weight:700;text-decoration:none;padding:6px 10px;border-radius:8px;color:var(--ink)}
+.nav a:hover,.nav a.on{background:var(--accent-soft)}
+.btn{border:2px solid var(--line);background:var(--panel);border-radius:10px;padding:8px 14px;font-weight:700;display:inline-flex;align-items:center;gap:8px;text-decoration:none;color:var(--ink)}
+.btn:hover{border-color:var(--accent)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn.small{padding:4px 10px;font-size:14px}
+.label{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:700}
+.muted{color:var(--muted)}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:22px}
+
+.hero{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:28px;align-items:center;padding-block:20px 32px}
+.hero h1{font-size:clamp(32px,5vw,54px);font-weight:800;letter-spacing:-.02em}
+.hero h1 em{font-style:normal;color:var(--accent)}
+.hero p{font-size:18px;color:var(--muted);max-width:54ch;margin:14px 0 20px}
+.terminal{background:var(--term);color:var(--term-ink);border-radius:14px;padding:18px 20px;font-family:var(--f-mono);font-size:14px;line-height:1.7;overflow:hidden;min-width:0}
+.terminal .dim{opacity:.6}
+.meter{display:flex;flex-direction:column;gap:6px;max-width:360px}
+.meter-bar{height:10px;border-radius:99px;background:var(--line);overflow:hidden}
+.meter-bar i{display:block;height:100%;background:var(--accent);border-radius:99px;transition:width .4s}
+
+.units{display:grid;gap:18px}
+.unit{display:grid;grid-template-columns:auto minmax(0,1fr);gap:18px}
+.unit-num{font-family:var(--f-display);font-weight:800;width:54px;height:54px;border-radius:14px;display:grid;place-items:center;color:#fff;font-size:20px}
+.unit h2{font-size:24px}
+.unit .blurb{color:var(--muted);margin:4px 0 14px;max-width:72ch}
+.topics{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px}
+.topic-link{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:var(--panel-2);text-decoration:none;color:var(--ink);font-size:15px;line-height:1.35}
+.topic-link:hover{border-color:var(--accent)}
+.topic-link b{font-family:var(--f-mono);font-size:13px;color:var(--muted);flex:none;padding-top:1px}
+.topic-link .chk{margin-left:auto;flex:none;width:20px;height:20px;border-radius:50%;border:2px solid var(--line);display:grid;place-items:center;font-size:12px}
+.topic-link.done .chk{background:var(--u, var(--good));border-color:var(--u, var(--good));color:#fff}
+/* Unit color coding: each unit section sets --u and its cards, lessons and quiz pick it up */
+.unit{border-top:6px solid var(--u)}
+.unit .pill{background:color-mix(in srgb, var(--u) 16%, transparent)}
+.unit .topic-link{background:color-mix(in srgb, var(--u) 7%, var(--panel))}
+.unit .topic-link:hover{border-color:var(--u)}
+.unit .topic-link b{color:var(--u)}
+.u-scope .label.u{color:var(--u)}
+.u-scope h1{border-bottom:4px solid var(--u);padding-bottom:10px;display:inline-block}
+.u-scope .quiz,.u-scope .side .card.unitbox{border-top:6px solid var(--u)}
+.u-scope .choice:hover:not(:disabled){border-color:var(--u)}
+.u-band{display:inline-flex;align-items:center;gap:8px;font-weight:700;font-size:14px;padding:3px 12px 3px 4px;border-radius:99px;background:color-mix(in srgb, var(--u) 16%, transparent)}
+.u-band i{font-style:normal;width:22px;height:22px;border-radius:50%;background:var(--u);color:#fff;display:grid;place-items:center;font-size:12px}
+.section-head{display:flex;align-items:end;justify-content:space-between;gap:12px;margin:34px 0 14px;flex-wrap:wrap}
+.section-head h2{font-size:28px}
+.labs{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px}
+.lab-card{text-decoration:none;color:var(--ink);display:flex;flex-direction:column;gap:6px}
+.lab-card:hover{border-color:var(--accent)}
+.lab-card h3{font-size:19px}
+
+.crumbs{font-size:14px;color:var(--muted);margin:6px 0 14px}
+.crumbs a{text-decoration:none}
+.lesson{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:22px;align-items:start}
+.lesson h1{font-size:clamp(28px,4vw,40px);margin-bottom:14px}
+.lesson .summary{font-size:19px;max-width:68ch}
+.topic-art{display:block;width:100%;max-width:680px;height:auto;margin:14px 0 6px}
+.terms{display:grid;gap:10px;margin:0;padding:0;list-style:none}
+.terms li{border-left:4px solid var(--u, var(--accent));padding:4px 0 4px 12px}
+.terms dt,.terms b{font-weight:700}
+.side{display:grid;gap:14px;position:sticky;top:12px}
+.quiz{margin-top:22px;display:grid;gap:18px}
+.q h3{font-family:var(--f-body);font-size:18px;font-weight:700;margin-bottom:10px;line-height:1.4}
+.choices{display:grid;gap:8px}
+.choice{white-space:pre-line;text-align:left;border:2px solid var(--line);background:var(--panel-2);border-radius:10px;padding:10px 14px}
+.choice:hover:not(:disabled){border-color:var(--accent)}
+.choice:disabled{cursor:default}
+.choice.right{border-color:var(--good);background:var(--good-soft)}
+.choice.wrong{border-color:var(--bad);background:var(--bad-soft)}
+.why{margin-top:8px;font-size:15px}
+.stim{font-family:var(--f-mono);font-size:13.5px;line-height:1.55;background:var(--panel-2);border:1px solid var(--line);border-left:4px solid var(--u, var(--accent));border-radius:10px;padding:12px 14px;margin:0 0 12px;white-space:pre-wrap;word-break:break-word;overflow-x:auto}
+.skill{display:inline-block;font-size:12px;font-weight:700;letter-spacing:.04em;color:var(--muted);margin-bottom:6px}
+.choice .letter{font-family:var(--f-mono);font-size:14px;margin-right:4px}
+.pager{display:flex;justify-content:space-between;gap:12px;margin-top:26px;flex-wrap:wrap}
+.pill{display:inline-block;font-size:13px;font-weight:700;padding:2px 10px;border-radius:99px;background:var(--accent-soft);color:var(--ink)}
+
+/* labs */
+.lab h1{font-size:clamp(28px,4vw,40px)}
+.lab .intro{color:var(--muted);max-width:68ch;margin:8px 0 18px}
+.msg{border:1px solid var(--line);border-radius:12px;background:var(--panel-2);padding:14px 16px;font-size:15px}
+.msg .from{font-family:var(--f-mono);font-size:13px;color:var(--muted)}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.result{margin-top:10px;padding:10px 14px;border-radius:10px;font-size:15px}
+.result.ok{background:var(--good-soft)}
+.result.no{background:var(--bad-soft)}
+.mono{font-family:var(--f-mono)}
+.url{font-family:var(--f-mono);font-size:16px;word-break:break-all;padding:10px 14px;border-radius:10px;background:var(--term);color:var(--term-ink)}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th,td{text-align:left;padding:6px 10px;border-bottom:1px solid var(--line)}
+th{font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+.scroll{overflow-x:auto}
+.rule{display:grid;grid-template-columns:28px minmax(0,1fr) auto;gap:10px;align-items:center;padding:8px 10px;border:1px solid var(--line);border-radius:10px;background:var(--panel-2);font-family:var(--f-mono);font-size:14px}
+.tag{font-weight:700;padding:1px 8px;border-radius:6px;font-family:var(--f-body);font-size:13px}
+.tag.allow{background:var(--good-soft);color:var(--good)}
+.tag.deny{background:var(--bad-soft);color:var(--bad)}
+input[type=text],input[type=password]{width:100%;padding:10px 12px;border:2px solid var(--line);border-radius:10px;background:var(--panel)}
+input[type=range]{width:100%;accent-color:var(--accent)}
+.strength{height:12px;border-radius:99px;background:var(--line);overflow:hidden}
+.strength i{display:block;height:100%;transition:width .3s,background .3s}
+.brute{font-family:var(--f-mono);font-size:14px;display:grid;gap:2px;max-height:320px;overflow:auto;background:var(--term);color:var(--term-ink);padding:12px;border-radius:12px}
+.book{display:grid;grid-template-columns:auto minmax(0,1fr);gap:22px;align-items:center;margin-top:28px;background:var(--accent-soft);border-color:transparent}
+.book img{width:120px;height:auto;border-radius:8px;box-shadow:0 6px 18px rgba(0,0,0,.18)}
+.book .cover{width:120px;aspect-ratio:2/3;border-radius:8px;object-fit:cover;box-shadow:0 6px 18px rgba(0,0,0,.18)}
+.book .cover{background:var(--accent);color:var(--accent-ink);display:grid;place-items:center;text-align:center;padding:10px;font-family:var(--f-display);font-weight:800;font-size:15px;line-height:1.2}
+.book h2{font-size:26px}
+.book.big img,.book.big .cover{width:200px}
+.deeper{display:flex;gap:14px;align-items:flex-start}
+.deeper img{width:72px;height:auto;border-radius:6px;box-shadow:0 4px 12px rgba(0,0,0,.18);display:block}
+.video{position:relative;aspect-ratio:16/9;border-radius:14px;overflow:hidden;background:var(--term);margin:20px 0 0}
+.video iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.term-box{background:var(--term);color:var(--term-ink);border-radius:14px;font-family:var(--f-mono);font-size:14px;line-height:1.55;display:flex;flex-direction:column;min-width:0;height:520px;cursor:text}
+.term-out{flex:1;overflow:auto;padding:16px 16px 4px;white-space:pre-wrap;word-break:break-word}
+.term-out .cmd{opacity:.65;margin-top:8px}
+.term-out .win{color:#FFE08A}
+.term-in{display:flex;gap:8px;align-items:center;padding:10px 16px 14px;border-top:1px solid rgba(255,255,255,.08)}
+.term-in label{flex:none;opacity:.8}
+.term-in input{flex:1;min-width:0;background:transparent;border:0;color:inherit;font-size:14px;outline:none;padding:4px 0}
+.term-box:focus-within{box-shadow:0 0 0 3px var(--accent)}
+.steps{margin:0;padding:0;list-style:none;display:grid;gap:6px;font-size:15px}
+.steps li.ok{color:var(--good);font-weight:700}
+@media (max-width:820px){ .term-box{height:440px} .term-in label{display:none} }
+.foot{margin-top:40px;color:var(--muted);font-size:14px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+@media (max-width:820px){ .hero,.lesson{grid-template-columns:1fr} .side{position:static} .unit{grid-template-columns:1fr} }
+.lesson>*{min-width:0}
+.lesson h1{overflow-wrap:break-word}
+.yt-banner{position:relative;display:block;text-decoration:none;margin:12px 0 4px;border-radius:14px;overflow:hidden;box-shadow:0 4px 14px rgba(0,0,0,.12)}
+.yt-banner img{display:block;width:100%;height:auto}
+.yt-banner .yt-cta{position:absolute;right:12px;bottom:10px;display:inline-flex;align-items:center;gap:6px;background:#E02F2F;color:#fff;font-weight:700;font-size:14px;padding:6px 12px;border-radius:99px;text-decoration:none;box-shadow:0 2px 8px rgba(0,0,0,.25)}
+.yt-banner:hover .yt-cta,.yt-banner:focus-visible .yt-cta{background:#C21F1F}
+@media (max-width:560px){ .yt-banner .yt-cta{position:static;display:flex;justify-content:center;border-radius:0;box-shadow:none;font-size:13px;padding:7px} }
+
+/* App Builder course: civic blue accent, nine module colors, and the self-paced pieces (steps, fill-in boxes, plan). */
+:root{ --accent:#2B55B8; --accent-soft:#DDE6F8; --u6:#1F8FA8; --uc:#2B55B8; --star:#D97E16 }
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){ --accent:#7FA2F5; --accent-ink:#0B1226; --accent-soft:#1F2C4A; --u6:#4FBAD1; --uc:#7FA2F5; --star:#E9A04A } }
+:root[data-theme="dark"]{ --accent:#7FA2F5; --accent-ink:#0B1226; --accent-soft:#1F2C4A; --u6:#4FBAD1; --uc:#7FA2F5; --star:#E9A04A }
+.entry{display:grid;gap:12px}
+.entry h2{font-size:20px}
+.entry ol{margin:0;padding:0;list-style:none;display:grid;gap:8px}
+.entry li{display:grid;grid-template-columns:auto minmax(0,1fr);gap:12px;align-items:start;padding:10px 12px;border-radius:12px;background:var(--panel-2);border:1px solid var(--line)}
+.entry li b{display:block}
+.entry li span{color:var(--muted);font-size:15px}
+.entry .n{font-family:var(--f-display);font-weight:800;width:30px;height:30px;border-radius:9px;background:var(--accent);color:var(--accent-ink);display:grid;place-items:center}
+.notice{background:var(--accent-soft);border-radius:12px;padding:10px 14px;font-size:15px}
+.milestone{display:flex;gap:10px;align-items:flex-start;margin:0 0 14px;padding:10px 12px;border-radius:12px;background:color-mix(in srgb, var(--u) 10%, var(--panel));font-size:15px}
+.milestone b{flex:none;color:var(--u)}
+.topic-link.soon{opacity:.7;cursor:default}
+.topic-link.soon:hover{border-color:var(--line)}
+.topic-link .tagsoon{margin-left:auto;flex:none;font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
+.lesson .more{max-width:68ch}
+.block{margin-top:20px}
+.block h2{font-size:22px;margin-bottom:4px}
+.block .sub{margin:0 0 12px;color:var(--muted);font-size:15px}
+.todo{margin:0;padding:0;list-style:none;display:grid;gap:8px}
+.todo label{display:grid;grid-template-columns:auto minmax(0,1fr);gap:12px;align-items:start;padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:var(--panel-2);cursor:pointer}
+.todo input{width:20px;height:20px;margin:3px 0 0;accent-color:var(--u, var(--accent))}
+.todo input:checked + span{color:var(--muted);text-decoration:line-through}
+.example{font-family:var(--f-mono);font-size:14px;line-height:1.6;background:var(--panel-2);border:1px solid var(--line);border-left:4px solid var(--u, var(--accent));border-radius:10px;padding:12px 14px;margin:0;white-space:pre-wrap;word-break:break-word}
+.field{display:grid;gap:6px}
+.field + .field{margin-top:14px}
+.field label{font-weight:700}
+.field .hint{color:var(--muted);font-size:14px}
+textarea{width:100%;padding:10px 12px;border:2px solid var(--line);border-radius:10px;background:var(--panel);color:var(--ink);font:inherit;resize:vertical;min-height:46px}
+textarea:focus{border-color:var(--accent);outline:none}
+.saved{font-size:13px;color:var(--good);min-height:1.2em}
+.rules{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:16px}
+.rules h2{font-size:20px;margin-bottom:10px}
+.rules ul,.plain{margin:0;padding-left:20px;display:grid;gap:8px}
+.page-head{margin:12px 0 20px}
+.page-head h1{font-size:clamp(28px,4vw,40px);margin-top:8px}
+.page-head p{color:var(--muted);max-width:64ch;margin:8px 0 0}
+.plan{display:grid;gap:16px}
+.plan-row{display:grid;gap:4px;padding:12px 0;border-top:1px solid var(--line)}
+.plan-row:first-of-type{border-top:0;padding-top:0}
+.plan-row .v{white-space:pre-wrap}
+.plan-row .v.empty{color:var(--muted)}
+.two{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:16px}
+.cacnote{border:2px dashed color-mix(in srgb, var(--uc) 55%, var(--line));border-radius:14px;padding:12px 16px;background:color-mix(in srgb, var(--uc) 7%, var(--panel))}
+.cacnote .label{color:var(--uc)}
+.cacnote p{margin:6px 0 0;font-size:16px;max-width:68ch}
+.section-head a{font-weight:700;text-decoration:none}
+td{vertical-align:top}
+.blocksnote{border-radius:14px;padding:12px 16px;background:var(--good-soft)}
+.blocksnote p{margin:6px 0 0;font-size:16px;max-width:68ch}
+.try{border-top:6px solid var(--u, var(--accent))}
+.try h2{margin-top:6px}
+textarea.code{font-family:var(--f-mono);font-size:14px;line-height:1.6;background:var(--term);color:var(--term-ink);border-color:var(--term);border-radius:12px;padding:14px 16px;margin-top:6px;white-space:pre;overflow-x:auto;tab-size:2}
+textarea.code:focus{border-color:var(--accent)}
+.output{font-family:var(--f-mono);font-size:14px;line-height:1.6;background:var(--panel-2);border:1px solid var(--line);border-radius:12px;padding:12px 16px;margin:6px 0 0;min-height:56px;max-height:320px;overflow:auto;white-space:pre-wrap;word-break:break-word}
+.output .err{color:var(--bad);font-weight:700}
+.preview{display:block;width:100%;height:220px;margin-top:6px;border:1px solid var(--line);border-radius:12px;background:#fff}
+.preview.tall{height:340px}
+.challenge{display:flex;gap:10px;align-items:flex-start;margin-top:14px;padding:10px 12px;border-radius:12px;background:color-mix(in srgb, var(--star) 14%, var(--panel));font-size:15px}
+.challenge b{flex:none;color:var(--star)}
+/* Show code exactly as typed: no joined symbols such as >= drawn as one character. */
+textarea.code,.output,.stim,.example,.lesson p,.terms,.choice,.todo{font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0}
+.plan-head{font-size:18px;margin:22px 0 4px}
+.plan-head:first-child{margin-top:0}
+.plan-head + .plan-row{border-top:0}
+.field input{width:100%;padding:10px 12px;border:2px solid var(--line);border-radius:10px;background:var(--panel);color:var(--ink)}
+.field input:focus{border-color:var(--accent);outline:none}
+#slCode,#joinCode{font-family:var(--f-mono);letter-spacing:.12em;text-transform:uppercase;max-width:220px}
+/* Teacher page (teacher.html) */
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:12px;margin-top:10px}
+.stats div{display:grid;gap:2px}
+.stats b{font-family:var(--f-display);font-size:30px;line-height:1}
+.stats span{font-size:14px}
+table.progress{font-size:15px;font-variant-numeric:tabular-nums}
+table.progress th,table.progress td{padding:10px 12px;white-space:nowrap}
+table.progress tr.on{background:var(--accent-soft)}
+.who{border:0;background:none;padding:0;font-weight:700;color:var(--accent);text-decoration:underline;text-align:left}
+.cellp{display:inline-block;min-width:44px;text-align:center;padding:2px 8px;border-radius:8px;background:var(--panel-2);border:1px solid var(--line);color:var(--muted)}
+.cellp.part{background:color-mix(in srgb, var(--u) 16%, var(--panel));border-color:transparent;color:var(--ink)}
+.cellp.full{background:var(--u);border-color:transparent;color:#fff;font-weight:700}
+.dmod{border-left:4px solid var(--u);padding-left:12px;margin-top:14px}
+.dmod:first-of-type{margin-top:0}
+.dmod ul{list-style:none;margin:6px 0 0;padding:0;display:grid;gap:6px;font-size:15px}
+.dmod li{display:grid;grid-template-columns:20px minmax(0,1fr) auto;gap:8px;align-items:start}
+.dmod .chk{width:20px;height:20px;border-radius:50%;border:2px solid var(--line);display:grid;place-items:center;font-size:12px}
+.dmod li.done .chk{background:var(--u);border-color:var(--u);color:#fff}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}
+/* Class activities, lesson scores and the gradebook */
+.together{border-left:6px solid var(--u, var(--accent))}
+.field .count{font-size:14px;color:var(--muted)}
+.field .count.ok{color:var(--good);font-weight:700}
+.scorebox{display:grid;gap:8px}
+.scorebox .big{font-family:var(--f-display);font-size:30px;line-height:1.1}
+.scorebox ul{margin:0;padding:0;list-style:none;display:grid;gap:4px;font-size:15px}
+.scorebox li{display:flex;justify-content:space-between;gap:10px}
+.scorebox li b.ok{color:var(--good)}
+.scorebox p{margin:0;font-size:14px}
+.lw{margin-top:12px}
+.lw-head{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-bottom:6px}
+.lw-head h3{font-size:19px;margin:0}
+</style>
+</head><body>
+<div class="wrap">
+  <header class="topbar">
+    <a class="brand" href="#home">
+      <img class="logo" src="../logo.png" alt="" width="36" height="36">
+      App Builder
+    </a>
+    <span class="spacer"></span>
+    <nav class="nav" aria-label="Main">
+      <a href="#home" data-nav="home">Modules</a>
+      <a href="#challenge" data-nav="challenge">App Challenge</a>
+      <a href="#plan" data-nav="plan">My plan</a>
+      <a href="#class" data-nav="class">My class</a>
+      <a href="#teachers" data-nav="teachers">Teachers</a>
+      <a href="../">All courses</a>
+    </nav>
+  </header>
+  <main id="app"></main>
+  <div class="foot"><span>Your progress and notes are saved in this browser, and to your account when you sign in.</span><span>CyberTeaches is not affiliated with the Congressional App Challenge. Check the official rules at congressionalappchallenge.us.</span></div>
+</div>
+<script src="../academy/firebase-config.js"></script>
+<script src="../academy/cloud.js?v=16"></script>
+<script src="../account.js"></script>
+<script src="content.js"></script>
+<script src="figures.js"></script>
+<script>
+(function(){
+  const app = document.getElementById('app');
+  const UNITS = window.AP_UNITS, INFO = window.CAC_INFO;
+  const ALL = UNITS.flatMap(u => u.topics.map(t => Object.assign({ unit: u }, t)));
+  const LIVE = ALL.filter(t => !t.soon);
+  const FIELDS = LIVE.flatMap(t => (t.fields || []).map(f => Object.assign({ topic: t }, f)));
+  const KEY = 'ctcac-progress-v1', WKEY = 'ctcac-work-v1';
+  const read = (k, d) => { try { return JSON.parse(localStorage.getItem(k)) || d; } catch (e) { return d; } };
+  const write = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} };
+  let progress = read(KEY, {});
+  const work = read(WKEY, {}); work.steps = work.steps || {}; work.fields = work.fields || {}; work.code = work.code || {}; work.quiz = work.quiz || {};
+  const save = () => { write(KEY, progress); if (window.Account) Account.push(); syncSoon(1500); };
+  let current = 'home';
+  if (window.Account) Account.attach(KEY, () => progress, merged => { progress = merged; write(KEY, progress); route(); });
+  const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
+  const isDone = id => progress[id] && progress[id].passed;
+  // Automatic lesson score (window.AB_GRADE in content.js), from what this student has done so far.
+  const grade = t => window.AB_GRADE(t, { done: isDone(t.id), first: work.quiz[t.id], steps: (work.steps[t.id] || []).filter(Boolean).length, fields: work.fields });
+  const need = f => `${window.AB_NEED(f)} ${f.lines ? 'lines' : 'words'}`;
+  const art = (id, slot) => window.AB_ART ? window.AB_ART(id, slot) : '';
+  const slug = id => 'lesson-' + id.replace('.', '-').toLowerCase();
+  const uvar = u => `--u:var(--u${u.num})`;
+  const MAIN = UNITS.filter(u => !u.track), TRACK = UNITS.filter(u => u.track);
+  const ulabel = u => u.track ? 'App Challenge track' : `Module ${u.num}`;
+  const umark = u => u.track ? '★' : u.num;
+
+  // Routes are plain names (#home, #challenge, #rules, #plan, #class, #teachers, #lesson-1-1, #lesson-c-1).
+  // #/topic/1.1 also works, for links from the lesson pages.
+  function route(){
+    const h = location.hash.replace(/^#\/?/, '');
+    const m = h.match(/^lesson-(\d+|c)-(\d+)$/i) || h.match(/^topic\/(\d+|c)\.(\d+)$/i);
+    const t = m && LIVE.find(x => x.id === m[1].toUpperCase() + '.' + m[2]);
+    const page = t ? (t.unit.track ? 'challenge' : '') : ['rules', 'plan', 'challenge', 'teachers', 'class'].includes(h) ? h : 'home';
+    current = page;
+    document.querySelectorAll('[data-nav]').forEach(a => a.classList.toggle('on', a.dataset.nav === (page === 'rules' ? 'challenge' : page)));
+    if (t) renderTopic(t.id); else if (page === 'rules') renderRules(); else if (page === 'plan') renderPlan(); else if (page === 'challenge') renderChallenge(); else if (page === 'teachers') renderTeachers(); else if (page === 'class') renderClass(); else renderHome();
+    window.scrollTo(0, 0);
+  }
+  window.addEventListener('hashchange', route);
+
+  function topicLinks(u){
+    return u.topics.map(t => t.soon
+      ? `<span class="topic-link soon"><b>${t.id}</b><span>${esc(t.title)}</span><span class="tagsoon">Soon</span></span>`
+      : `<a class="topic-link${isDone(t.id) ? ' done' : ''}" href="#${slug(t.id)}"><b>${t.id}</b><span>${esc(t.title)}</span><span class="chk" aria-label="${isDone(t.id) ? 'Completed' : 'Not completed'}">${isDone(t.id) ? '✓' : ''}</span></a>`).join('');
+  }
+
+  function unitCard(u){
+    const live = u.topics.filter(t => !t.soon), ud = live.filter(t => isDone(t.id)).length;
+    return `<section class="card unit" style="${uvar(u)}">
+      <div class="unit-num" style="background:var(--u)">${umark(u)}</div>
+      <div>
+        <div class="row" style="justify-content:space-between"><h2>${esc(u.title)}</h2><span class="pill">${live.length ? `${ud}/${live.length} done${live.length < u.topics.length ? ' · more coming' : ''}` : 'Coming soon'}</span></div>
+        <p class="blurb">${esc(u.blurb)}</p>
+        <div class="milestone"><b>Milestone</b><span>${esc(u.milestone)}</span></div>
+        <div class="topics">${topicLinks(u)}</div>
+      </div>
+    </section>`;
+  }
+
+  function renderHome(){
+    const main = LIVE.filter(t => !t.unit.track);
+    const d = main.filter(t => isDone(t.id)).length, next = main.find(t => !isDone(t.id)) || main[0];
+    app.innerHTML = `
+      <section class="hero">
+        <div>
+          <span class="label">CyberTeaches · Free course · Grades 6 to 12</span>
+          <h1 style="margin-top:8px">Build your own app, from <em>first idea to finished.</em></h1>
+          <p>Find a real problem, design a solution, learn the code, and build an app that works. One small step at a time, with no coding experience needed. Use it on your own or with your class.</p>
+          ${UNITS.some(u => u.topics.every(t => t.soon)) ? `<p class="muted" style="margin-top:-6px">${MAIN.filter(u => u.topics.some(t => !t.soon)).map(u => 'Module ' + u.num).join(' and ')} is open now. The other modules are coming soon.</p>` : ''}
+          <div class="row" style="margin-bottom:18px">
+            <a class="btn primary" href="#${slug(next.id)}">${d ? 'Continue' : 'Start'} with ${next.id} ${esc(next.title)}</a>
+            <a class="btn" href="#teachers">For teachers</a>
+          </div>
+          <div class="meter"><span class="label">${d} of ${main.length} lessons complete</span><div class="meter-bar"><i style="width:${Math.round(d / main.length * 100)}%"></i></div></div>
+        </div>
+        <div class="card entry">
+          <span class="label">What you will make</span>
+          <ol>
+            <li><span class="n">1</span><div><b>A plan</b><span>A real problem, the people who have it, and your design.</span></div></li>
+            <li><span class="n">2</span><div><b>A working app</b><span>Built by you, starting with one core feature.</span></div></li>
+            <li><span class="n">3</span><div><b>A demo</b><span>Show people what you built and how it works.</span></div></li>
+          </ol>
+          <div class="notice"><b>Want to compete?</b> Your app can be your entry in the Congressional App Challenge. <a href="#challenge">See the App Challenge track</a></div>
+        </div>
+      </section>
+      <div class="units">${MAIN.map(unitCard).join('')}</div>
+      <div class="section-head"><div><span class="label">Optional</span><h2>Enter your app in a competition</h2></div><a href="#challenge">About the App Challenge →</a></div>
+      <div class="units">${TRACK.map(unitCard).join('')}</div>
+      <p style="margin:18px 0 0"><a href="lessons/">Browse every lesson as a page you can read, print, or share →</a></p>`;
+  }
+
+  function renderChallenge(){
+    app.innerHTML = `
+      <div class="page-head"><span class="label">Optional track</span>
+        <h1>Enter the Congressional App Challenge</h1>
+        <p>The Congressional App Challenge is a yearly app competition for middle and high school students, hosted by Members of the U.S. House of Representatives. The app you build in this course can be your entry. This track covers the contest parts: who can enter, the rules, the demo video, and how to submit.</p></div>
+      <div class="notice" style="margin-bottom:16px">${esc(INFO.note)}</div>
+      <div class="two" style="margin-bottom:16px">
+        <section class="card entry"><span class="label">What you submit</span><ol>
+          <li><span class="n">1</span><div><b>A working app</b><span>Any topic, any language, any platform.</span></div></li>
+          <li><span class="n">2</span><div><b>A demo video, 1 to 3 minutes</b><span>Public on YouTube or Vimeo.</span></div></li>
+          <li><span class="n">3</span><div><b>Written answers</b><span>Six short questions about your app.</span></div></li></ol></section>
+        <section class="card"><h2 style="font-size:20px;margin-bottom:10px">Who can enter</h2>
+          <ul class="plain"><li>Middle school and high school students.</li><li>Solo, or a team of up to 4.</li><li>Your home or school district must be hosting a challenge.</li><li>One app per person per year.</li></ul>
+          <p style="margin:14px 0 0"><a class="btn" href="#rules">Read the rules in plain words</a></p></section>
+      </div>
+      ${TRACK.some(u => u.topics.every(t => t.soon)) ? '<div class="notice" style="margin-bottom:16px"><b>Coming soon.</b> The track lessons are not open yet. You can read the rules in plain words now.</div>' : ''}
+      <div class="units">${TRACK.map(unitCard).join('')}</div>`;
+  }
+
+  function renderTeachers(){
+    const weeks = ['1 to 2', '1 to 2', '3 to 4', '3 to 4', '1 to 2', '1'];
+    app.innerHTML = `
+      <div class="page-head"><span class="label">For teachers</span>
+        <h1>Use App Builder with your class</h1>
+        <p>App Builder is a free project course. Students find a real problem, design an app, learn enough code to build it, test it, and present it. Every lesson is written to the student, so it runs as a class project, a club activity, or independent work.</p></div>
+      <div class="two">
+        <section class="card"><h2 style="font-size:20px;margin-bottom:10px">How a lesson works</h2>
+          <ul class="plain"><li>A short reading and an example, about 5 minutes.</li><li>A "Do this" checklist students work through.</li><li>Class lessons add a "With your class" activity for partners and whole-class sharing.</li><li>Fill-in boxes that build the student's project plan.</li><li>Vocabulary and a 3-question quick check that completes the lesson.</li></ul></section>
+        <section class="card"><h2 style="font-size:20px;margin-bottom:10px">What you need</h2>
+          <ul class="plain"><li>Any device with a browser, including Chromebooks.</li><li>No installs and no paid tools.</li><li>No coding background required for students.</li><li>Students can work solo or in teams of up to 4.</li></ul></section>
+      </div>
+      <section class="card" style="margin-top:16px"><h2 style="font-size:20px;margin-bottom:10px">Pacing and what to collect</h2>
+        <p class="muted" style="margin:0 0 10px">A suggested pace for two or three class periods a week. Each module ends in a milestone you can collect and grade.</p>
+        <div class="scroll"><table><thead><tr><th>Module</th><th>Weeks</th><th>Milestone to collect</th></tr></thead><tbody>
+          ${MAIN.map((u, k) => `<tr><td><b>${u.num}. ${esc(u.title)}</b>${u.topics.some(t => !t.soon) ? '' : ' <span class="muted">(coming soon)</span>'}</td><td>${weeks[k] || ''}</td><td>${esc(u.milestone)}</td></tr>`).join('')}
+        </tbody></table></div></section>
+      <div class="two" style="margin-top:16px">
+        <section class="card"><h2 style="font-size:20px;margin-bottom:10px">Grading and student work</h2>
+          <p style="margin:0 0 12px">Use the same classes as CyberTeaches Academy. Students sign in and join with your class code. Every lesson is scored automatically out of 10 points: 4 for the quick check (first try), 2 for steps checked off, and 4 for written work that is long enough. The gradebook shows each score, and you can read what everyone wrote for a lesson on one page. The score checks that work is complete, not how good it is.</p><div class="row"><a class="btn primary" href="teacher.html">Open class progress</a><a class="btn" href="../academy/teacher.html">Create a class</a></div></section>
+        <section class="card"><h2 style="font-size:20px;margin-bottom:10px">A real audience</h2>
+          <p style="margin:0">Students who want to compete can enter their app in the Congressional App Challenge. The <a href="#challenge">App Challenge track</a> covers eligibility, the rules, the demo video, and submitting.</p></section>
+      </div>`;
+  }
+
+  function renderTopic(id){
+    const group = LIVE.filter(x => !!x.unit.track === !!ALL.find(y => y.id === id).unit.track);
+    const i = group.findIndex(t => t.id === id), t = group[i], u = t.unit;
+    const prev = group[i - 1], next = group[i + 1];
+    const home = u.track ? 'challenge' : 'home';
+    const last = u.topics.filter(x => !x.soon).slice(-1)[0].id === t.id;
+    const answers = {};
+    const order = t.quiz.map(q => { const o = q.a.map((_, k) => k); for (let k = o.length - 1; k > 0; k--) { const j = Math.floor(Math.random() * (k + 1)); [o[k], o[j]] = [o[j], o[k]]; } return o; });
+    const st = work.steps[t.id] || [];
+    app.innerHTML = `
+      <div class="crumbs"><a href="#${home}">${u.track ? 'App Challenge' : 'Modules'}</a> / ${u.track ? esc(u.title) : `Module ${u.num}: ${esc(u.title)}`}</div>
+      <div class="lesson u-scope" style="${uvar(u)}">
+        <article>
+          <span class="u-band"><i>${umark(u)}</i>${u.track ? esc(u.title) : `Module ${u.num}: ${esc(u.title)}`}</span><br><span class="label u" style="display:inline-block;margin-top:12px">Lesson ${t.id}</span><br>
+          <h1>${esc(t.title)}</h1>
+          ${art(t.id, 'hero')}
+          <p class="summary">${esc(t.summary)}</p>
+          ${(t.more || []).map(p => `<p class="more">${esc(p)}</p>`).join('')}
+          ${t.blocks ? `<aside class="blocksnote block"><span class="label">You did this with blocks</span><p>${esc(t.blocks)} <a href="../academy/">Open the Academy</a></p></aside>` : ''}
+          ${t.example ? `<section class="block"><h2>${esc(t.example.title)}</h2>${art(t.id, 'example')}<pre class="example">${esc(t.example.text)}</pre></section>` : ''}
+          ${(t.tries || []).map((x, k) => `<section class="card block try" data-try="${k}">
+            <span class="label u">Try it</span><h2>${esc(x.title)}</h2><p class="sub">${esc(x.intro)}</p>
+            <label class="label" for="code-${slug(t.id)}-${k}">${x.mode === 'html' ? 'HTML, CSS, and JavaScript' : 'JavaScript'}</label>
+            <textarea class="code" id="code-${slug(t.id)}-${k}" spellcheck="false" autocapitalize="off" autocomplete="off" rows="${Math.min(x.code.split('\n').length + 1, 24)}">${esc(work.code[t.id + '/' + k] || x.code)}</textarea>
+            <div class="row" style="margin-top:10px"><button class="btn primary" type="button" data-run>▶ Run</button><button class="btn" type="button" data-reset>Start over</button></div>
+            <span class="label" style="display:block;margin-top:14px">${x.mode === 'html' ? 'Your page' : 'Output'}</span>
+            ${x.mode === 'html' ? `<iframe class="preview${x.tall ? ' tall' : ''}" sandbox="allow-scripts" title="Your page"></iframe>` : '<pre class="output" aria-live="polite"><span class="muted">Press Run to see what your code does.</span></pre>'}
+            ${x.challenge ? `<div class="challenge"><b>Challenge</b><span>${esc(x.challenge)}</span></div>` : ''}
+          </section>`).join('')}
+          <section class="card block">
+            <h2>Do this</h2><p class="sub">Check off each step as you finish it. Checked steps count toward your lesson score.</p>
+            <ul class="todo">${t.steps.map((s, k) => `<li><label><input type="checkbox" id="step-${slug(t.id)}-${k}" data-step="${k}"${st[k] ? ' checked' : ''}><span>${esc(s)}</span></label></li>`).join('')}</ul>
+          </section>
+          ${t.together ? `<section class="card block together">
+            <span class="label u">With your class</span><h2>${esc(t.together.title)}</h2>
+            <p class="sub">${t.together.time ? esc(t.together.time) + '. ' : ''}Working on your own? Do these steps with a friend or someone at home.</p>
+            ${art(t.id, 'together')}
+            <ul class="todo">${t.together.steps.map((s, k) => { const n = t.steps.length + k; return `<li><label><input type="checkbox" id="step-${slug(t.id)}-${n}" data-step="${n}"${st[n] ? ' checked' : ''}><span>${esc(s)}</span></label></li>`; }).join('')}</ul>
+          </section>` : ''}
+          ${t.fields ? `<section class="card block">
+            <h2>Write it down</h2><p class="sub">What you type here is saved in this browser and collected on your <a href="#plan">My plan</a> page. You will reuse it when you design, build, and present your app.</p>
+            ${t.fields.map(f => `<div class="field"><label for="f-${f.key}">${esc(f.label)}</label><span class="hint">${esc(f.hint)}</span><textarea id="f-${f.key}" data-field="${f.key}" rows="${f.rows || 2}">${esc(work.fields[f.key] || '')}</textarea><span class="count" data-count="${f.key}"></span></div>`).join('')}
+            <div class="saved" id="savedNote" aria-live="polite"></div>
+          </section>` : ''}
+          ${t.cac ? `<aside class="cacnote block"><span class="label">★ For the App Challenge</span><p>${esc(t.cac)} <a href="#challenge">About the track</a></p></aside>` : ''}
+          <section class="card block">
+            <h2 style="margin-bottom:12px">Words to know</h2>
+            <ul class="terms">${t.terms.map(([k, v]) => `<li><b>${esc(k)}:</b> ${esc(v)}</li>`).join('')}</ul>
+          </section>
+          <section class="card quiz" id="quiz">
+            <div><h2 style="font-size:22px">Quick check</h2><p class="muted" style="margin:4px 0 0">Get all ${t.quiz.length} right to complete this lesson. You can retry as many times as you like, but your first try is the one that counts toward your lesson score.</p></div>
+            ${t.quiz.map((q, qi) => `<div class="q" data-q="${qi}">
+              <h3>${qi + 1}. ${esc(q.q)}</h3>
+              ${q.st ? `<pre class="stim">${esc(q.st)}</pre>` : ''}
+              <div class="choices">${order[qi].map((ai, pos) => `<button class="choice" data-a="${ai}"><b class="letter">(${'ABCD'[pos]})</b> ${esc(q.a[ai])}</button>`).join('')}</div>
+              <div class="why" aria-live="polite"></div>
+            </div>`).join('')}
+            <div id="quizResult" aria-live="polite"></div>
+          </section>
+          ${last && !u.track ? `<div class="milestone block"><b>Module ${u.num} milestone</b><span>${esc(u.milestone)}</span></div>` : ''}
+          <nav class="pager">
+            ${prev ? `<a class="btn" href="#${slug(prev.id)}">← ${prev.id} ${esc(prev.title)}</a>` : '<span></span>'}
+            ${next ? `<a class="btn" href="#${slug(next.id)}">${next.id} ${esc(next.title)} →</a>` : `<a class="btn" href="#${home}">${u.track ? 'Back to the track' : 'Back to all modules'}</a>`}
+          </nav>
+        </article>
+        <aside class="side">
+          <div class="card scorebox" id="scoreBox" aria-live="polite"></div>
+          <div class="card unitbox"><span class="label">${ulabel(u)}</span><h3 style="margin:6px 0 10px">${esc(u.title)}</h3>
+            <div style="display:grid;gap:6px">${u.topics.map(x => x.soon ? `<span class="muted">○ ${x.id} ${esc(x.title)}</span>` : `<a href="#${slug(x.id)}" style="text-decoration:none;color:var(--ink);${x.id === t.id ? 'font-weight:700' : ''}">${isDone(x.id) ? '✓' : '○'} ${x.id} ${esc(x.title)}</a>`).join('')}</div>
+          </div>
+          <a class="card lab-card" href="#plan"><span class="label">Your work so far</span><h3>My plan</h3><span class="muted">Everything you have written, in one place.</span></a>
+        </aside>
+      </div>`;
+    const drawScore = () => {
+      const g = grade(t), row = (name, got, of) => `<li><span>${name}</span><b class="${got >= of ? 'ok' : ''}">${got} of ${of}</b></li>`;
+      document.getElementById('scoreBox').innerHTML = `<span class="label">Lesson score</span><b class="big">${g.started ? g.pct + '%' : 'Not started'}</b>
+        <ul>${row('Quick check, first try', g.first, g.questions)}${row('Steps checked', g.steps, g.stepsOf)}${g.writtenOf ? row('Boxes filled in', g.written, g.writtenOf) : ''}</ul>
+        <p class="muted">Scored automatically as you work.${inClass() ? ' Your teacher sees this score.' : ''}</p>`;
+      (t.fields || []).forEach(f => { const c = app.querySelector(`[data-count="${f.key}"]`), n = window.AB_COUNT(f, work.fields[f.key]), ok = n >= window.AB_NEED(f);
+        c.className = 'count' + (ok ? ' ok' : ''); c.textContent = ok ? `✓ ${n} ${f.lines ? 'lines' : 'words'}` : `${n} of ${need(f)} needed for full credit`; });
+    };
+    drawScore();
+    app.querySelectorAll('[data-step]').forEach(c => c.addEventListener('change', () => {
+      const a = work.steps[t.id] = work.steps[t.id] || []; a[+c.dataset.step] = c.checked; write(WKEY, work); syncSoon(20000); drawScore();
+    }));
+    app.querySelectorAll('[data-field]').forEach(x => x.addEventListener('input', () => {
+      work.fields[x.dataset.field] = x.value; write(WKEY, work); syncSoon(20000); drawScore();
+      const n = document.getElementById('savedNote'); if (n) n.textContent = inClass() ? 'Saved. Your teacher can see this.' : 'Saved.';
+    }));
+    app.querySelectorAll('[data-try]').forEach(box => {
+      const k = +box.dataset.try, x = t.tries[k], ta = box.querySelector('textarea'), ck = t.id + '/' + k;
+      const out = box.querySelector('.output'), frame = box.querySelector('.preview');
+      const run = () => { if (x.mode === 'html') frame.srcdoc = ta.value; else runJs(ta.value, out); };
+      ta.addEventListener('input', () => { work.code[ck] = ta.value; write(WKEY, work); });
+      // Tab indents instead of leaving the box. Escape then Tab moves on, for keyboard users.
+      let esced = false;
+      ta.addEventListener('keydown', e => {
+        if (e.key === 'Escape') { esced = true; return; }
+        if (e.key === 'Tab' && !esced && !e.shiftKey) { e.preventDefault(); const a = ta.selectionStart; ta.setRangeText('  ', a, ta.selectionEnd, 'end'); ta.dispatchEvent(new Event('input')); }
+        esced = false;
+      });
+      box.querySelector('[data-run]').addEventListener('click', run);
+      box.querySelector('[data-reset]').addEventListener('click', () => { ta.value = x.code; delete work.code[ck]; write(WKEY, work); run(); });
+      if (x.mode === 'html') run();
+    });
+    app.querySelectorAll('.q').forEach(qe => {
+      const qi = +qe.dataset.q, q = t.quiz[qi];
+      qe.querySelectorAll('.choice').forEach(b => b.addEventListener('click', () => {
+        const ai = +b.dataset.a, right = ai === q.c;
+        answers[qi] = right;
+        qe.querySelectorAll('.choice').forEach(x => { x.disabled = true; x.classList.toggle('right', +x.dataset.a === q.c); });
+        if (!right) b.classList.add('wrong');
+        qe.querySelector('.why').innerHTML = `<b style="color:var(${right ? '--good' : '--bad'})">${right ? 'Correct.' : 'Not quite.'}</b> ${esc(q.why)}`;
+        if (Object.keys(answers).length === t.quiz.length) finish();
+      }));
+    });
+    function finish(){
+      const score = Object.values(answers).filter(Boolean).length, all = score === t.quiz.length;
+// The first finished try is kept for the lesson score. Lessons finished before scores existed count as full marks.
+      if (work.quiz[t.id] == null) { work.quiz[t.id] = isDone(t.id) ? t.quiz.length : score; write(WKEY, work); syncSoon(1500); }
+      if (all) { progress[t.id] = { passed: true, at: Date.now() }; save(); }
+      drawScore();
+      const r = document.getElementById('quizResult');
+      r.innerHTML = `<div class="result ${all ? 'ok' : 'no'}">${all ? `${score} of ${t.quiz.length} correct. Lesson ${t.id} complete. ` : `${score} of ${t.quiz.length} correct. Read the explanations, then try again. `}<button class="btn small" id="retry">${all ? 'Take it again' : 'Try again'}</button></div>`;
+      r.querySelector('#retry').addEventListener('click', () => { renderTopic(t.id); document.getElementById('quiz').scrollIntoView(); });
+    }
+  }
+
+  // ---- Classes: the same sign-in, classes and roster as CyberTeaches Academy (academy/cloud.js). ----
+  // A signed-in student's written work is saved to their own record (users/{uid}.courses[WKEY]).
+  // If they are in a class, their finished lessons and written work are also copied to the class roster
+  // (classes/{code}/students/{uid}.appBuilder), which only that student and the class's teacher can read.
+  // Writes are held back and skipped when nothing changed, to stay inside the free Firebase plan.
+  const Cloud = window.Cloud && window.Cloud.enabled ? window.Cloud : null;
+  const signedIn = () => !!(Cloud && Cloud.user);
+  function inClass(){ return !!(signedIn() && Cloud.profile && Cloud.profile.classCode); }
+  let syncTimer = null, lastSync = '', syncState = '', syncUid = null;
+  function snapshot(){
+    const done = {}, steps = {}, text = {}, quiz = {};
+    LIVE.forEach(t => { if (isDone(t.id)) done[t.id] = progress[t.id].at || 1; const n = (work.steps[t.id] || []).filter(Boolean).length; if (n) steps[t.id] = n; if (work.quiz[t.id] != null) quiz[t.id] = work.quiz[t.id]; });
+    FIELDS.forEach(f => { const v = (work.fields[f.key] || '').trim(); if (v) text[f.key] = v.slice(0, 2000); });
+    return { done, steps, quiz, work: text };
+  }
+  async function syncNow(){
+    clearTimeout(syncTimer);
+    if (!signedIn() || !Cloud.db || !window.firebase) return;
+    const uid = Cloud.user.uid, snap = snapshot(), code = inClass() ? Cloud.profile.classCode : '', key = uid + code + JSON.stringify(snap);
+    if (key === lastSync) return;
+    lastSync = key;
+    try {
+      const fs = firebase.firestore, at = fs.FieldValue.serverTimestamp();
+      await Cloud.db.collection('users').doc(uid).set({ courses: { [WKEY]: { fields: work.fields, quiz: work.quiz, steps: Object.fromEntries(Object.entries(work.steps).map(([k, v]) => [k, Array.from(v || [], Boolean)])) } } }, { mergeFields: [new fs.FieldPath('courses', WKEY)] });
+      if (code) await Cloud.db.collection('classes').doc(code).collection('students').doc(uid).set({ appBuilder: Object.assign(snap, { updatedAt: at }) }, { mergeFields: ['appBuilder'] });
+      syncState = 'ok';
+    } catch (e) { console.error('Could not save to your account', e); lastSync = ''; syncState = 'error'; }
+    if (current === 'class') renderClass();
+  }
+  function syncSoon(ms){ if (!signedIn()) return; clearTimeout(syncTimer); syncTimer = setTimeout(syncNow, ms); }
+  document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden' && syncTimer) syncNow(); });
+  if (Cloud) Cloud.onChange(() => {
+    const uid = Cloud.user ? Cloud.user.uid : null;
+    if (uid !== syncUid) {
+      const was = syncUid; syncUid = uid; lastSync = '';
+      if (!uid && was) {
+        // Signing out clears this browser's copy, so the next person on a shared computer starts fresh.
+        work.fields = {}; work.steps = {}; work.code = {}; work.quiz = {}; write(WKEY, work);
+      } else if (uid) {
+        // Bring back work saved from another device. What is already typed here wins.
+        const remote = (Cloud.profile && Cloud.profile.courses && Cloud.profile.courses[WKEY]) || {};
+        Object.entries(remote.fields || {}).forEach(([k, v]) => { if (!(work.fields[k] || '').trim()) work.fields[k] = v; });
+        Object.entries(remote.steps || {}).forEach(([k, v]) => { if (!work.steps[k]) work.steps[k] = v; });
+        // A first try saved on another device stays the first try.
+        Object.entries(remote.quiz || {}).forEach(([k, v]) => { work.quiz[k] = v; });
+        write(WKEY, work); syncSoon(3000);
+      }
+    }
+    if (current === 'class' || current === 'plan') route();
+  });
+
+  function renderClass(){
+    const head = (t, p) => `<div class="page-head"><span class="label">My class</span><h1>${t}</h1><p>${p}</p></div>`;
+    const wanted = (new URLSearchParams(location.search).get('class') || '').toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 6);
+    if (!Cloud) { app.innerHTML = head('Class sign-in is not available here', 'You can still do every lesson. Your progress and notes are saved in this browser.'); return; }
+    if (!Cloud.ready) { app.innerHTML = head('Checking your account…', 'One moment.'); return; }
+    const msg = (id, text, bad) => { const n = document.getElementById(id); if (n) { n.textContent = text; n.className = 'result ' + (bad ? 'no' : 'ok'); n.hidden = !text; } };
+    if (!Cloud.user) {
+      app.innerHTML = head('Sign in to join your class', 'Signing in saves your progress and your writing to your account. If your teacher gave you a class code, you can join the class after you sign in. You do not need an account to do the lessons.') + `
+        <div class="two">
+          <section class="card"><h2 style="font-size:20px;margin-bottom:8px">I have a Google account</h2><p class="muted" style="margin:0 0 14px">Use your school or personal Google account.</p>
+            <button class="btn primary" type="button" id="googleIn">Sign in with Google</button><div class="result" id="googleMsg" hidden></div></section>
+          <form class="card" id="studentForm" novalidate><h2 style="font-size:20px;margin-bottom:8px">My teacher gave me a login</h2><p class="muted" style="margin:0 0 14px">Type the class code, username and password from your login card.</p>
+            <div class="field"><label for="slCode">Class code</label><input type="text" id="slCode" maxlength="6" autocomplete="off" autocapitalize="characters" value="${esc(wanted)}"></div>
+            <div class="field"><label for="slUser">Username</label><input type="text" id="slUser" autocomplete="username" autocapitalize="off"></div>
+            <div class="field"><label for="slPass">Password</label><input type="password" id="slPass" autocomplete="current-password"></div>
+            <button class="btn primary" style="margin-top:14px">Sign in</button><div class="result" id="studentMsg" hidden></div></form>
+        </div>`;
+      document.getElementById('googleIn').addEventListener('click', () => Cloud.signIn().catch(e => { console.error(e); msg('googleMsg', 'Sign-in did not work. If you use a school account, your school may block it. Try again or ask your teacher.', true); }));
+      document.getElementById('studentForm').addEventListener('submit', e => {
+        e.preventDefault();
+        const code = document.getElementById('slCode').value.trim().toUpperCase(), user = document.getElementById('slUser').value.trim(), pass = document.getElementById('slPass').value;
+        if (!code || !user || !pass) return msg('studentMsg', 'Fill in the class code, username and password.', true);
+        msg('studentMsg', 'Signing in…');
+        Cloud.signInStudent(code, user, pass).catch(err => { console.error(err); msg('studentMsg', 'That did not match. Check the class code, username and password on your login card.', true); });
+      });
+      return;
+    }
+    const name = esc(Cloud.user.displayName || Cloud.user.email || 'Student');
+    if (!inClass()) {
+      app.innerHTML = head('Join your class', `You are signed in as ${name}. Your progress and writing are saved to your account. If your teacher gave you a class code, type it here.`) + `
+        <form class="card" id="joinForm" novalidate style="max-width:520px">
+          <div class="field"><label for="joinCode">Class code</label><span class="hint">Six letters and numbers, like K7M2QX.</span><input type="text" id="joinCode" maxlength="6" autocomplete="off" autocapitalize="characters" value="${esc(wanted)}"></div>
+          <div class="row" style="margin-top:14px"><button class="btn primary">Join class</button><button class="btn" type="button" id="signOut">Sign out</button></div>
+          <div class="result" id="joinMsg" hidden></div></form>`;
+      document.getElementById('signOut').addEventListener('click', () => Cloud.signOut());
+      document.getElementById('joinForm').addEventListener('submit', async e => {
+        e.preventDefault();
+        const code = document.getElementById('joinCode').value.trim().toUpperCase();
+        if (!/^[A-Z0-9]{6}$/.test(code)) return msg('joinMsg', 'A class code has six letters and numbers.', true);
+        msg('joinMsg', 'Looking for your class…');
+        try {
+          const cls = await Cloud.findClass(code);
+          if (!cls) return msg('joinMsg', 'No class has that code. Check it with your teacher.', true);
+          // joinClass also saves Academy stars, so pass along what the account already has.
+          const p = Cloud.profile || {};
+          await Cloud.joinClass(cls, { progress: p.progress || {}, bonus: p.bonus || {}, programs: p.programs || '{}' });
+          await syncNow();
+        } catch (err) { console.error(err); msg('joinMsg', 'Could not join the class. Check your internet connection and try again.', true); }
+      });
+      return;
+    }
+    const d = LIVE.filter(t => isDone(t.id)).length;
+    app.innerHTML = head(`You are in ${esc(Cloud.profile.className || Cloud.profile.classCode)}`, `Signed in as ${name}.`) + `
+      <div class="two">
+        <section class="card"><h2 style="font-size:20px;margin-bottom:10px">What your teacher can see</h2>
+          <ul class="plain"><li>Which lessons you have finished (${d} of ${LIVE.length} so far).</li><li>How many steps you checked off, and your score on each lesson.</li><li>How many quick check questions you got right on your first try.</li><li>What you wrote in the lessons, the same text as your <a href="#plan">My plan</a> page.</li></ul>
+          <p class="muted" style="margin:12px 0 0">Your teacher cannot see the code you type in Try it boxes.</p></section>
+        <section class="card"><h2 style="font-size:20px;margin-bottom:10px">Saving</h2>
+          <p style="margin:0 0 14px">${syncState === 'error' ? 'Your last save did not go through. It will try again the next time you change something.' : 'Your work is saved to your account a few seconds after you change it, so it follows you to any device.'}</p>
+          <div class="row"><button class="btn" type="button" id="saveNow">Save now</button><button class="btn" type="button" id="signOut">Sign out</button></div><div class="result" id="saveMsg" hidden></div></section>
+      </div>`;
+    document.getElementById('signOut').addEventListener('click', () => Cloud.signOut());
+    document.getElementById('saveNow').addEventListener('click', async () => { lastSync = ''; await syncNow(); msg('saveMsg', syncState === 'error' ? 'Could not save. Check your internet connection.' : 'Saved.', syncState === 'error'); });
+  }
+
+  // Runs student JavaScript in a Web Worker, so a loop that never ends cannot freeze the page.
+  // console.log lines come back as messages. The worker is stopped after 3 seconds.
+  let runner = null;
+  function runJs(code, out){
+    if (runner) runner.stop();
+    const src = `const fmt = v => typeof v === 'string' ? v : v === undefined ? 'undefined' : typeof v === 'function' ? '[function]' : JSON.stringify(v);
+      let n = 0; const send = (t, a) => { if (n++ < 300) postMessage({ t, s: a.map(fmt).join(' ') }); };
+      self.console = { log: (...a) => send('log', a), error: (...a) => send('log', a), warn: (...a) => send('log', a), info: (...a) => send('log', a) };
+      onmessage = e => { try { new Function(e.data)(); postMessage({ t: 'done', n }); } catch (err) { postMessage({ t: 'err', s: err.name + ': ' + err.message }); } };`;
+    out.textContent = '';
+    const line = (s, cls) => { const d = document.createElement('div'); if (cls) d.className = cls; d.textContent = s; out.appendChild(d); };
+    let w, url, timer;
+    const stop = () => { clearTimeout(timer); if (w) w.terminate(); if (url) URL.revokeObjectURL(url); runner = null; };
+    try { url = URL.createObjectURL(new Blob([src], { type: 'text/javascript' })); w = new Worker(url); }
+    catch (e) { line('This browser cannot run code here. Try a different browser.', 'err'); return; }
+    runner = { stop };
+    w.onmessage = e => {
+      const m = e.data;
+      if (m.t === 'log') line(m.s);
+      else if (m.t === 'err') { line(m.s, 'err'); line('Read the message, check that line of your code, and run it again.', 'muted'); stop(); }
+      else { if (!m.n) line('Your code ran, but it did not show anything. Use console.log to show a value.', 'muted'); else if (m.n > 300) line('Only the first 300 lines are shown.', 'muted'); stop(); }
+    };
+    w.onerror = e => { e.preventDefault(); line(String(e.message || 'Error').replace(/^Uncaught /, ''), 'err'); line('Check for a missing quote, bracket, or parenthesis.', 'muted'); stop(); };
+    timer = setTimeout(() => { line('Stopped: your code ran for more than 3 seconds. Check for a loop that never ends.', 'err'); stop(); }, 3000);
+    w.postMessage(code);
+  }
+
+  function renderRules(){
+    app.innerHTML = `
+      <div class="page-head"><span class="label">Official 2026 rules, in plain words</span>
+        <h1>The rules you need to know</h1>
+        <p>This is a summary to help you plan. The official rules can change each year, so read them yourself at <a href="${esc(INFO.site)}" target="_blank" rel="noopener">congressionalappchallenge.us</a> before you submit.</p></div>
+      <div class="notice" style="margin-bottom:16px">${esc(INFO.note)}</div>
+      <div class="rules">${window.CAC_RULES.map(r => `<section class="card"><h2>${esc(r.h)}</h2><ul>${r.items.map(x => `<li>${esc(x)}</li>`).join('')}</ul></section>`).join('')}</div>
+      <div class="two" style="margin-top:16px">
+        <section class="card"><h2 style="font-size:20px;margin-bottom:10px">Your video must include</h2><ol class="plain">${window.CAC_VIDEO.map(x => `<li>${esc(x)}</li>`).join('')}</ol></section>
+        <section class="card"><h2 style="font-size:20px;margin-bottom:10px">Written questions to expect</h2><ol class="plain">${window.CAC_QUESTIONS.map(x => `<li>${esc(x)}</li>`).join('')}</ol></section>
+      </div>
+      <section class="card" style="margin-top:16px"><h2 style="font-size:20px;margin-bottom:10px">How winners are chosen</h2>
+        <ul class="plain"><li>Quality of the idea, including creativity and originality.</li><li>Implementation of the idea, including user experience and design.</li><li>Demonstrated excellence of coding and programming skills.</li></ul>
+        <p class="muted" style="margin:12px 0 0">Each Member of Congress and their office picks the winner for their district. Winning apps are featured on House.gov and on the challenge website.</p></section>`;
+  }
+
+  function renderPlan(){
+    const filled = FIELDS.filter(f => (work.fields[f.key] || '').trim()).length;
+    const text = () => FIELDS.map(f => `${f.label}:\n${(work.fields[f.key] || '').trim() || '(not written yet)'}`).join('\n\n');
+    app.innerHTML = `
+      <div class="page-head"><span class="label">Your work so far</span>
+        <h1>My plan</h1>
+        <p>${inClass() ? `Everything you write in the lessons shows up here. It is saved to your account, and your teacher in ${esc(Cloud.profile.className || Cloud.profile.classCode)} can see it.` : signedIn() ? 'Everything you write in the lessons shows up here. It is saved to your account, so it follows you to any device.' : 'Everything you write in the lessons shows up here. It is saved only in this browser on this device, so copy it into your build journal now and then.'}</p></div>
+      <section class="card plan">
+        <div class="row" style="justify-content:space-between"><span class="pill">${filled} of ${FIELDS.length} filled in</span><button class="btn small" id="copyPlan" type="button">Copy my plan</button></div>
+        <div>${FIELDS.map((f, k) => { const v = (work.fields[f.key] || '').trim(); const head = !k || FIELDS[k - 1].topic.unit !== f.topic.unit ? `<h2 class="plan-head">${f.topic.unit.track ? 'App Challenge track' : `Module ${f.topic.unit.num}: ${esc(f.topic.unit.title)}`}</h2>` : ''; return `${head}<div class="plan-row"><span class="label">${esc(f.label)}</span><div class="v${v ? '' : ' empty'}">${v ? esc(v) : 'Not written yet.'}</div><a href="#${slug(f.topic.id)}" style="font-size:14px">${v ? 'Edit' : 'Write this'} in lesson ${f.topic.id}</a></div>`; }).join('')}</div>
+      </section>`;
+    const b = document.getElementById('copyPlan');
+    b.addEventListener('click', () => {
+      const done = () => { b.textContent = 'Copied'; setTimeout(() => { b.textContent = 'Copy my plan'; }, 1600); };
+      const fallback = () => { const ta = document.createElement('textarea'); ta.value = text(); document.body.appendChild(ta); ta.select(); try { document.execCommand('copy'); done(); } catch (e) {} ta.remove(); };
+      if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text()).then(done, fallback); else fallback();
+    });
+  }
+
+  if (!location.hash && new URLSearchParams(location.search).get('class')) location.hash = 'class'; else route();
+})();
+</script>
+</body></html>
