@@ -178,14 +178,18 @@ window.AP_UNITS = [
       { id: '2.3', title: 'Plan your data with privacy first', soon: true },
       { id: '2.4', title: 'Get feedback on your design', soon: true }
     ] },
-  { id: 'm3', num: 3, title: 'Coding basics', blurb: 'Learn just enough code to start: pages, buttons, events, variables, decisions, lists, and saving data.',
-    milestone: 'A one-screen "hello app" that takes input and shows output.',
+  { id: 'm3', num: 3, title: 'Coding basics', blurb: 'Learn the programming logic every app runs on: variables, if / else, loops, lists, and functions. Then use it to build your first small app.',
+    milestone: 'A one-screen "hello app" that uses a variable, an if / else, a loop, and a list.',
     topics: [
       { id: '3.1', title: 'Choose your platform and language', soon: true },
       { id: '3.2', title: 'Your first web page: HTML and CSS', soon: true },
-      { id: '3.3', title: 'Make it respond: JavaScript and events', soon: true },
-      { id: '3.4', title: 'Variables, decisions, and lists', soon: true },
-      { id: '3.5', title: 'Build your hello app', soon: true }
+      { id: '3.3', title: 'Events: make a button do something', soon: true },
+      { id: '3.4', title: 'Variables: remember things', soon: true },
+      { id: '3.5', title: 'If / else: make decisions', soon: true },
+      { id: '3.6', title: 'Loops: repeat without retyping', soon: true },
+      { id: '3.7', title: 'Lists: keep many things together', soon: true },
+      { id: '3.8', title: 'Functions: name your steps and reuse them', soon: true },
+      { id: '3.9', title: 'Build your hello app', soon: true }
     ] },
   { id: 'm4', num: 4, title: 'Build the core', blurb: 'Build the one feature your app cannot live without, from start to finish.',
     milestone: 'Your core feature works from start to finish.',
