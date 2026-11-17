@@ -44,7 +44,7 @@ Congressional App Challenge (lessons `C.1` to `C.6` and a plain-words rules page
   whole-class steps that a student working alone can do with a friend.
 - Lessons are scored automatically by `AB_GRADE` at the bottom of `content.js`, used by both the course page and the
   teacher page. A lesson is worth 10 points: quick check 4 (first try only), steps checked off 2, written work 4.
-  A box earns credit when it is long enough: `lines` (lines) or `min` (words, 5 if not set) on the field. The score
+  A box earns credit when it is long enough: `lines` (lines) or `min` (words) on the field; with neither, any writing counts. The score
   checks that work is complete, not how good it is.
 - Pictures are inline SVG in `app-builder/figures.js`. `AB_ART(lessonId, slot)` returns the picture for the `hero`,
   `example` or `together` slot of a lesson, and lessons without pictures show none.

@@ -79,6 +79,28 @@
           ${text(140, 174, 'Asker', 22, 'font-weight="700"')}${text(360, 174, 'Storyteller', 22, 'font-weight="700"')}${text(580, 174, 'Note-taker', 22, 'font-weight="700"')}
           <path d="M200 196h100m-14-12 14 12-14 12M420 196h100m-14-12 14 12-14 12" ${line}/>
           <path d="M580 206c0 34-440 34-440 4M127 224l13-14 13 14" ${line}/>`) }
+    },
+    '1.3': {
+      hero: { cap: 'One sentence, three parts: who it helps, what it does, and why that matters.',
+        html: svg(720, 300, 'A sentence built from three blocks: My app helps, who, does what, so that, why.',
+          `<rect x="4" y="4" width="712" height="292" rx="22" fill="${SOFT}"/>
+          ${text(360, 58, 'My app helps…', 30, 'font-weight="700"')}
+          ${[[36, 'WHO', 'new band', 'members'], [258, 'WHAT', 'learn their', 'marching spots'], [480, 'WHY', 'so they feel', 'ready for game 1']].map(([x, h, l1, l2], k) => `<rect x="${x}" y="92" width="204" height="150" rx="16" fill="${PAPER}" stroke="${INK}" stroke-width="3"/><path d="M${x} 136v-28a16 16 0 0 1 16-16h172a16 16 0 0 1 16 16v28z" fill="${U}" stroke="${INK}" stroke-width="3" stroke-linejoin="round"/><text x="${x + 102}" y="124" text-anchor="middle" font-family="var(--f-display, sans-serif)" font-weight="800" font-size="22" fill="#fff">${h}</text>${text(x + 102, 180, l1, 22)}${text(x + 102, 210, l2, 22)}`).join('')}
+          <path d="M243 168h12M465 168h12" ${line}/>
+          ${text(360, 276, 'who  +  what  +  why  =  your purpose', 19)}`) },
+      example: { cap: 'A weak sentence leaves out who, what, or why. A strong one has all three.',
+        html: svg(720, 190, 'A weak sentence with question marks for who, what and why, next to a better sentence with three check marks.',
+          `${[[6, 'Weak', ['?', '?', '?'], PAPER], [374, 'Better', ['✓', '✓', '✓'], SOFT]].map(([x, h, m, fill]) => `<rect x="${x}" y="6" width="340" height="178" rx="18" fill="${fill}" stroke="${INK}" stroke-width="3"/>${text(x + 170, 44, h, 22, 'font-weight="700"')}
+            ${['Who', 'What', 'Why'].map((w, k) => `<circle cx="${x + 70 + k * 100}" cy="100" r="30" fill="${m[k] === '✓' ? U : PAPER}" stroke="${INK}" stroke-width="3"/><text x="${x + 70 + k * 100}" y="111" text-anchor="middle" font-family="var(--f-display, sans-serif)" font-weight="800" font-size="30" fill="${m[k] === '✓' ? '#fff' : INK}">${m[k]}</text>${text(x + 70 + k * 100, 162, w, 20)}`).join('')}`).join('')}`) },
+      together: { cap: 'If your partner can say it back, your sentence is clear. If not, make it shorter.',
+        html: svg(720, 250, 'One student says a purpose sentence and a partner repeats it back.',
+          `<rect x="4" y="4" width="712" height="242" rx="22" fill="${SOFT}"/>
+          ${bubble(190, 62, 260, 62, 150, ['"My app helps…"'])}
+          ${bubble(520, 62, 290, 62, 560, ['"So it helps… right?"'])}
+          <g transform="translate(150 164) scale(.82)">${kid(0, 0, A, '#3B2A20', '', 'short')}</g>
+          <g transform="translate(570 164) scale(.82)">${kid(0, 0, C, '#1E1A18', PAPER, 'curly')}</g>
+          <path d="M250 170h220m-16-13 16 13-16 13" ${line}/><path d="M470 208H250m16-13-16 13 16 13" ${line}/>
+          ${text(360, 160, 'say it', 19, 'font-weight="700"')}${text(360, 236, 'repeat it back', 19, 'font-weight="700"')}`) }
     }
   };
 

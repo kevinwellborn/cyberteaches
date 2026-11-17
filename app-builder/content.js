@@ -124,16 +124,29 @@ window.AP_UNITS = [
         ],
         steps: [
           'Fill in the pattern: "My app helps [audience] [do something] so that [benefit]."',
-          'Write three different versions. Pick the clearest.',
-          'Say it out loud to someone. Ask them to repeat it back.',
-          'Fix any word they stumbled on.',
+          'Write three different versions in the first box below, one on each line.',
+          'Put a star (*) in front of the clearest one. You will test it in the class activity.',
           'Pick a working name for your app. You can change it later.'
         ],
+        together: {
+          title: 'Pitch and repeat',
+          time: 'About 15 minutes',
+          steps: [
+            'Stand up and find a partner. Say your starred sentence out loud one time. Do not explain it.',
+            'Your partner repeats it back from memory, then tells you three things: who it is for, what it does, and why that matters.',
+            'If your partner got one of the three wrong or got stuck on a word, fix that part of your sentence.',
+            'Switch, so your partner pitches to you.',
+            'Find a new partner and do it again. Pitch to three classmates in all.',
+            'Write your final sentence and what you changed in the boxes below.'
+          ]
+        },
         example: { title: 'Purpose sentences', text: `Weak: "My app is about recycling."\nBetter: "My app helps families in my town know which bin goes out each week so that they never miss pickup day."\n\nWeak: "It is a study app with lots of features."\nBetter: "StudyBuddy helps 7th graders at my school quiz themselves on vocabulary so that they feel ready for tests."` },
         cac: 'The rules say your demo video should explain the purpose of your app in one clear sentence, and a written question asks for it too. The sentence you write here is that sentence.',
         fields: [
+          { key: 'purposedrafts', label: 'Three versions of my sentence', hint: 'One version on each line. Put a star (*) in front of the clearest one.', rows: 5, lines: 3 },
           { key: 'appname', label: 'Working name for my app', hint: 'Short and easy to say.', rows: 1 },
-          { key: 'purpose', label: 'My one-sentence purpose', hint: 'My app helps [audience] [do something] so that [benefit].', rows: 2 }
+          { key: 'purpose', label: 'My one-sentence purpose', hint: 'Your final version: My app helps [audience] [do something] so that [benefit].', rows: 2, min: 10 },
+          { key: 'pitchchange', label: 'What I changed after testing it', hint: 'What did your partners get wrong or stumble on, and how did you fix it? If nothing changed, say what worked.', rows: 3, min: 12 }
         ],
         quiz: [
           { q: 'Which is the strongest purpose statement?', a: ['"My app is really cool and uses AI."', '"My app helps new band members learn their marching spots so that they feel ready for the first game."', '"It is an app."', '"My app has 12 screens and a login."'], c: 1, why: 'It names the audience, the one thing the app does, and the benefit.' },
@@ -1244,11 +1257,11 @@ window.AP_UNITS.forEach(u => u.topics.forEach(t => (t.quiz || []).forEach(q => {
 
 // Automatic lesson scores, used by the course page and the teacher page so both always agree.
 // A lesson is worth 10 points: quick check 4 (first try), steps checked off 2, written work 4.
-// Written work earns its points when each box is long enough: f.lines (lines) or f.min (words, 5 if not set).
+// Written work earns its points when each box is long enough: f.lines (lines) or f.min (words). A box with neither earns its points for any writing.
 // A lesson with no boxes is scored on the other two parts. The score checks that work is complete,
 // not how good it is. Teachers read the writing itself on the teacher page.
 window.AB_COUNT = (f, v) => { v = String(v || '').trim(); return !v ? 0 : f.lines ? v.split(/\n+/).filter(x => x.trim()).length : v.split(/\s+/).length; };
-window.AB_NEED = f => f.lines || f.min || 5;
+window.AB_NEED = f => f.lines || f.min || 1;
 window.AB_STEPS = t => t.steps.length + (t.together ? t.together.steps.length : 0);
 // s = { done: lesson finished, first: questions right on the first try, steps: steps checked, fields: { key: text } }
 window.AB_GRADE = function (t, s) {
