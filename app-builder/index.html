@@ -229,6 +229,20 @@ textarea:focus{border-color:var(--accent);outline:none}
 .cacnote p{margin:6px 0 0;font-size:16px;max-width:68ch}
 .section-head a{font-weight:700;text-decoration:none}
 td{vertical-align:top}
+.blocksnote{border-radius:14px;padding:12px 16px;background:var(--good-soft)}
+.blocksnote p{margin:6px 0 0;font-size:16px;max-width:68ch}
+.try{border-top:6px solid var(--u, var(--accent))}
+.try h2{margin-top:6px}
+textarea.code{font-family:var(--f-mono);font-size:14px;line-height:1.6;background:var(--term);color:var(--term-ink);border-color:var(--term);border-radius:12px;padding:14px 16px;margin-top:6px;white-space:pre;overflow-x:auto;tab-size:2}
+textarea.code:focus{border-color:var(--accent)}
+.output{font-family:var(--f-mono);font-size:14px;line-height:1.6;background:var(--panel-2);border:1px solid var(--line);border-radius:12px;padding:12px 16px;margin:6px 0 0;min-height:56px;max-height:320px;overflow:auto;white-space:pre-wrap;word-break:break-word}
+.output .err{color:var(--bad);font-weight:700}
+.preview{display:block;width:100%;height:220px;margin-top:6px;border:1px solid var(--line);border-radius:12px;background:#fff}
+.preview.tall{height:340px}
+.challenge{display:flex;gap:10px;align-items:flex-start;margin-top:14px;padding:10px 12px;border-radius:12px;background:color-mix(in srgb, var(--star) 14%, var(--panel));font-size:15px}
+.challenge b{flex:none;color:var(--star)}
+/* Show code exactly as typed: no joined symbols such as >= drawn as one character. */
+textarea.code,.output,.stim,.example,.lesson p,.terms,.choice,.todo{font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0}
 </style>
 </head><body>
 <div class="wrap">
@@ -264,7 +278,7 @@ td{vertical-align:top}
   const read = (k, d) => { try { return JSON.parse(localStorage.getItem(k)) || d; } catch (e) { return d; } };
   const write = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} };
   let progress = read(KEY, {});
-  const work = read(WKEY, {}); work.steps = work.steps || {}; work.fields = work.fields || {};
+  const work = read(WKEY, {}); work.steps = work.steps || {}; work.fields = work.fields || {}; work.code = work.code || {};
   const save = () => { write(KEY, progress); if (window.Account) Account.push(); };
   if (window.Account) Account.attach(KEY, () => progress, merged => { progress = merged; write(KEY, progress); route(); });
   const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
@@ -397,7 +411,17 @@ td{vertical-align:top}
           <h1>${esc(t.title)}</h1>
           <p class="summary">${esc(t.summary)}</p>
           ${(t.more || []).map(p => `<p class="more">${esc(p)}</p>`).join('')}
+          ${t.blocks ? `<aside class="blocksnote block"><span class="label">You did this with blocks</span><p>${esc(t.blocks)} <a href="../academy/">Open the Academy</a></p></aside>` : ''}
           ${t.example ? `<section class="block"><h2>${esc(t.example.title)}</h2><pre class="example">${esc(t.example.text)}</pre></section>` : ''}
+          ${(t.tries || []).map((x, k) => `<section class="card block try" data-try="${k}">
+            <span class="label u">Try it</span><h2>${esc(x.title)}</h2><p class="sub">${esc(x.intro)}</p>
+            <label class="label" for="code-${slug(t.id)}-${k}">${x.mode === 'html' ? 'HTML, CSS, and JavaScript' : 'JavaScript'}</label>
+            <textarea class="code" id="code-${slug(t.id)}-${k}" spellcheck="false" autocapitalize="off" autocomplete="off" rows="${Math.min(x.code.split('\n').length + 1, 24)}">${esc(work.code[t.id + '/' + k] || x.code)}</textarea>
+            <div class="row" style="margin-top:10px"><button class="btn primary" type="button" data-run>▶ Run</button><button class="btn" type="button" data-reset>Start over</button></div>
+            <span class="label" style="display:block;margin-top:14px">${x.mode === 'html' ? 'Your page' : 'Output'}</span>
+            ${x.mode === 'html' ? `<iframe class="preview${x.tall ? ' tall' : ''}" sandbox="allow-scripts" title="Your page"></iframe>` : '<pre class="output" aria-live="polite"><span class="muted">Press Run to see what your code does.</span></pre>'}
+            ${x.challenge ? `<div class="challenge"><b>Challenge</b><span>${esc(x.challenge)}</span></div>` : ''}
+          </section>`).join('')}
           <section class="card block">
             <h2>Do this</h2><p class="sub">Check off each step as you finish it. Your checks are saved in this browser.</p>
             <ul class="todo">${t.steps.map((s, k) => `<li><label><input type="checkbox" id="step-${slug(t.id)}-${k}" data-step="${k}"${st[k] ? ' checked' : ''}><span>${esc(s)}</span></label></li>`).join('')}</ul>
@@ -415,7 +439,8 @@ td{vertical-align:top}
           <section class="card quiz" id="quiz">
             <div><h2 style="font-size:22px">Quick check</h2><p class="muted" style="margin:4px 0 0">Get all ${t.quiz.length} right to complete this lesson. You can retry as many times as you like.</p></div>
             ${t.quiz.map((q, qi) => `<div class="q" data-q="${qi}">
-              <h3>${qi + 1}. ${esc(q.q)}</h3>
+              <h3>${qi + 1}. ${esc(q.q.split('\n\n')[0])}</h3>
+              ${q.q.includes('\n\n') ? `<pre class="stim">${esc(q.q.split('\n\n').slice(1).join('\n\n'))}</pre>` : ''}
               <div class="choices">${order[qi].map((ai, pos) => `<button class="choice" data-a="${ai}"><b class="letter">(${'ABCD'[pos]})</b> ${esc(q.a[ai])}</button>`).join('')}</div>
               <div class="why" aria-live="polite"></div>
             </div>`).join('')}
@@ -441,6 +466,22 @@ td{vertical-align:top}
       work.fields[x.dataset.field] = x.value; write(WKEY, work);
       const n = document.getElementById('savedNote'); if (n) n.textContent = 'Saved.';
     }));
+    app.querySelectorAll('[data-try]').forEach(box => {
+      const k = +box.dataset.try, x = t.tries[k], ta = box.querySelector('textarea'), ck = t.id + '/' + k;
+      const out = box.querySelector('.output'), frame = box.querySelector('.preview');
+      const run = () => { if (x.mode === 'html') frame.srcdoc = ta.value; else runJs(ta.value, out); };
+      ta.addEventListener('input', () => { work.code[ck] = ta.value; write(WKEY, work); });
+      // Tab indents instead of leaving the box. Escape then Tab moves on, for keyboard users.
+      let esced = false;
+      ta.addEventListener('keydown', e => {
+        if (e.key === 'Escape') { esced = true; return; }
+        if (e.key === 'Tab' && !esced && !e.shiftKey) { e.preventDefault(); const a = ta.selectionStart; ta.setRangeText('  ', a, ta.selectionEnd, 'end'); ta.dispatchEvent(new Event('input')); }
+        esced = false;
+      });
+      box.querySelector('[data-run]').addEventListener('click', run);
+      box.querySelector('[data-reset]').addEventListener('click', () => { ta.value = x.code; delete work.code[ck]; write(WKEY, work); run(); });
+      if (x.mode === 'html') run();
+    });
     app.querySelectorAll('.q').forEach(qe => {
       const qi = +qe.dataset.q, q = t.quiz[qi];
       qe.querySelectorAll('.choice').forEach(b => b.addEventListener('click', () => {
@@ -459,6 +500,33 @@ td{vertical-align:top}
       r.innerHTML = `<div class="result ${all ? 'ok' : 'no'}">${all ? `${score} of ${t.quiz.length} correct. Lesson ${t.id} complete. ` : `${score} of ${t.quiz.length} correct. Read the explanations, then try again. `}<button class="btn small" id="retry">${all ? 'Take it again' : 'Try again'}</button></div>`;
       r.querySelector('#retry').addEventListener('click', () => { renderTopic(t.id); document.getElementById('quiz').scrollIntoView(); });
     }
+  }
+
+  // Runs student JavaScript in a Web Worker, so a loop that never ends cannot freeze the page.
+  // console.log lines come back as messages. The worker is stopped after 3 seconds.
+  let runner = null;
+  function runJs(code, out){
+    if (runner) runner.stop();
+    const src = `const fmt = v => typeof v === 'string' ? v : v === undefined ? 'undefined' : typeof v === 'function' ? '[function]' : JSON.stringify(v);
+      let n = 0; const send = (t, a) => { if (n++ < 300) postMessage({ t, s: a.map(fmt).join(' ') }); };
+      self.console = { log: (...a) => send('log', a), error: (...a) => send('log', a), warn: (...a) => send('log', a), info: (...a) => send('log', a) };
+      onmessage = e => { try { new Function(e.data)(); postMessage({ t: 'done', n }); } catch (err) { postMessage({ t: 'err', s: err.name + ': ' + err.message }); } };`;
+    out.textContent = '';
+    const line = (s, cls) => { const d = document.createElement('div'); if (cls) d.className = cls; d.textContent = s; out.appendChild(d); };
+    let w, url, timer;
+    const stop = () => { clearTimeout(timer); if (w) w.terminate(); if (url) URL.revokeObjectURL(url); runner = null; };
+    try { url = URL.createObjectURL(new Blob([src], { type: 'text/javascript' })); w = new Worker(url); }
+    catch (e) { line('This browser cannot run code here. Try a different browser.', 'err'); return; }
+    runner = { stop };
+    w.onmessage = e => {
+      const m = e.data;
+      if (m.t === 'log') line(m.s);
+      else if (m.t === 'err') { line(m.s, 'err'); line('Read the message, check that line of your code, and run it again.', 'muted'); stop(); }
+      else { if (!m.n) line('Your code ran, but it did not show anything. Use console.log to show a value.', 'muted'); else if (m.n > 300) line('Only the first 300 lines are shown.', 'muted'); stop(); }
+    };
+    w.onerror = e => { e.preventDefault(); line(String(e.message || 'Error').replace(/^Uncaught /, ''), 'err'); line('Check for a missing quote, bracket, or parenthesis.', 'muted'); stop(); };
+    timer = setTimeout(() => { line('Stopped: your code ran for more than 3 seconds. Check for a loop that never ends.', 'err'); stop(); }, 3000);
+    w.postMessage(code);
   }
 
   function renderRules(){

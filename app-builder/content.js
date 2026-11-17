@@ -4,7 +4,8 @@
 // Rules facts in the track come from the official 2026 CAC rules. Dates for 2027 are not announced yet; update CAC_INFO when they are.
 // Each lesson: summary (one paragraph), more (extra paragraphs), terms ([word, meaning]), steps (things to do),
 // example ({ title, text }), fields (fill-in boxes saved in the browser and collected on the My Plan page),
-// cac (optional note shown as "For the App Challenge"), quiz ({ q, a, c, why }).
+// cac (optional note shown as "For the App Challenge"), blocks (optional note linking to Academy block coding),
+// tries (Try it boxes: { mode: 'js' | 'html', title, intro, code, challenge }), quiz ({ q, a, c, why }).
 // Lessons with soon: true are listed but not written yet. A unit with track: true is the App Challenge track.
 window.CAC_INFO = {
   site: 'https://www.congressionalappchallenge.us/',
@@ -178,19 +179,305 @@ window.AP_UNITS = [
       { id: '2.3', title: 'Plan your data with privacy first', soon: true },
       { id: '2.4', title: 'Get feedback on your design', soon: true }
     ] },
-  { id: 'm3', num: 3, title: 'Coding basics', blurb: 'Learn the programming logic every app runs on: variables, if / else, loops, lists, and functions. Then use it to build your first small app.',
+  {
+    id: 'm3', num: 3, title: 'Coding basics',
+    blurb: 'Learn the programming logic every app runs on: variables, if / else, loops, lists, and functions. Then use it to build your first small app.',
     milestone: 'A one-screen "hello app" that uses a variable, an if / else, a loop, and a list.',
     topics: [
-      { id: '3.1', title: 'Choose your platform and language', soon: true },
-      { id: '3.2', title: 'Your first web page: HTML and CSS', soon: true },
-      { id: '3.3', title: 'Events: make a button do something', soon: true },
-      { id: '3.4', title: 'Variables: remember things', soon: true },
-      { id: '3.5', title: 'If / else: make decisions', soon: true },
-      { id: '3.6', title: 'Loops: repeat without retyping', soon: true },
-      { id: '3.7', title: 'Lists: keep many things together', soon: true },
-      { id: '3.8', title: 'Functions: name your steps and reuse them', soon: true },
-      { id: '3.9', title: 'Build your hello app', soon: true }
-    ] },
+      { id: '3.1', title: 'Choose your platform and language',
+        summary: `A platform is where your app runs, such as a web browser or a phone. A programming language is how you write instructions for it. There are many good choices, but you only need one to start. This course teaches web apps written in HTML, CSS, and JavaScript, because they run on almost any device, cost nothing, and need nothing installed.`,
+        more: [
+          `A web app is a website that does something, like a quiz, a planner, or a game. You can open it on a Chromebook, a laptop, or a phone, and you can share it with a link. HTML builds the parts of the page, CSS makes them look good, and JavaScript makes them do things.`,
+          `Other paths work too. MIT App Inventor builds Android and iPhone apps with blocks. Python is great for games, data, and tools. If you already know one of these, you can keep using it. The ideas in this module, such as variables, if / else, loops, and lists, are the same in every language.`
+        ],
+        terms: [
+          ['Platform', 'Where an app runs, such as a web browser, a phone, or a desktop computer.'],
+          ['Programming language', 'A set of words and rules for writing instructions a computer can follow.'],
+          ['Web app', 'An app that runs in a web browser and is shared with a link.'],
+          ['JavaScript', 'The programming language that makes web pages interactive.'],
+          ['Code', 'Instructions written in a programming language.'],
+          ['Run', 'To have the computer carry out your code.']
+        ],
+        steps: [
+          'Run the code in the Try it box below. Then change the message and run it again.',
+          'Think about your app. Where will people use it: at a desk, or on a phone while walking around?',
+          'Pick your platform and language. If you are not sure, choose a web app with JavaScript.',
+          'Write your choice in the box below and in your build journal.'
+        ],
+        tries: [
+          { mode: 'js', title: 'Your first line of code', intro: 'Press Run. The computer follows each line from top to bottom. console.log shows a message in the output.',
+            code: `console.log("Hello, world!");\nconsole.log("I am going to build an app.");`,
+            challenge: 'Add a third line that shows the name of your app.' }
+        ],
+        fields: [
+          { key: 'platform', label: 'My platform and language', hint: 'Example: a web app in HTML, CSS, and JavaScript, because my users have Chromebooks.', rows: 2 }
+        ],
+        cac: 'The rules allow any platform and any programming language, including block-based languages. Your demo video must name the tools and coding languages you used.',
+        quiz: [
+          { q: 'What is the job of JavaScript in a web app?', a: ['It decides the colors and fonts', 'It makes the page do things when people use it', 'It stores the page on the internet', 'It draws the logo'], c: 1, why: 'HTML builds the parts, CSS styles them, and JavaScript makes them interactive.' },
+          { q: 'Why is a web app a good first choice?', a: ['It only works on expensive phones', 'It runs in a browser on almost any device and is easy to share', 'It needs no code', 'It cannot have bugs'], c: 1, why: 'Web apps run on Chromebooks, laptops, and phones, and you can share one with a link.' },
+          { q: 'A student already knows Python well. What should they do?', a: ['Start over, because Python is not allowed', 'They can keep using Python, because the main ideas are the same in every language', 'Stop coding', 'Use two languages at once'], c: 1, why: 'Variables, if / else, loops, and lists work the same way everywhere. Use what helps you build.' }
+        ] },
+      { id: '3.2', title: 'Your first web page: HTML and CSS',
+        summary: `Every web app starts as a page. HTML describes what is on the page using tags, such as a heading, a paragraph, or a button. CSS describes how those things look, such as color, size, and spacing. You write both as plain text, and the browser turns them into what you see.`,
+        more: [
+          `Most tags come in pairs. An opening tag like <h1> starts something, and a closing tag like </h1> ends it. Whatever is between them is the content. A tag can also have an id, which is a name you give it so that CSS and JavaScript can find it later.`,
+          `CSS is a list of rules. Each rule picks something on the page and sets properties on it. For example, the rule h1 { color: teal; } turns every main heading teal.`
+        ],
+        terms: [
+          ['HTML', 'The language that describes what is on a web page.'],
+          ['Tag', 'A label in angle brackets, like <p> or <button>, that tells the browser what something is.'],
+          ['Element', 'One thing on the page, made of an opening tag, its content, and a closing tag.'],
+          ['CSS', 'The language that describes how a page looks.'],
+          ['Property', 'One thing CSS can change, such as color or font-size.'],
+          ['id', 'A unique name you give an element so code can find it.']
+        ],
+        steps: [
+          'Run the page in the Try it box. Change the heading text and run it again.',
+          'Change the color in the CSS to another color name, such as tomato or royalblue.',
+          'Add a second paragraph with a new <p> tag.',
+          'Look at one of your screen sketches from Module 2. List the HTML elements it needs, such as headings, buttons, and text boxes.'
+        ],
+        tries: [
+          { mode: 'html', title: 'A page with a heading, text, and a button', intro: 'The part inside <style> is CSS. Everything else is HTML. Press Run to see the page.',
+            code: `<style>\n  body { font-family: sans-serif; padding: 16px; }\n  h1 { color: teal; }\n  button { font-size: 18px; padding: 8px 16px; }\n</style>\n\n<h1>Homework Helper</h1>\n<p>Never forget an assignment again.</p>\n<button>Add homework</button>`,
+            challenge: 'Make the page look like the start of your own app: your app name, your purpose sentence, and one button.' }
+        ],
+        quiz: [
+          { q: 'Which tag makes a main heading?', a: ['<p>', '<h1>', '<button>', '<style>'], c: 1, why: '<h1> is the main heading. <p> is a paragraph.' },
+          { q: 'What does this CSS rule do?  p { color: blue; }', a: ['Deletes every paragraph', 'Makes the text of every paragraph blue', 'Makes a blue button', 'Names the page "blue"'], c: 1, why: 'The rule picks every p element and sets its color property to blue.' },
+          { q: 'Why would you give an element an id?', a: ['To make it invisible', 'So CSS and JavaScript can find that one element', 'To make the page load faster', 'It is required on every tag'], c: 1, why: 'An id is a unique name. Your code uses it to find and change that element.' }
+        ] },
+      { id: '3.3', title: 'Events: make a button do something',
+        summary: `A page that only sits there is not an app yet. Apps respond to events. An event is something that happens, such as a click, a key press, or a tap. You write code that waits for an event and then runs. This is called event-driven programming, and almost every app works this way.`,
+        more: [
+          `There are three steps. First, find the element with document.getElementById and the id you gave it. Second, tell it which event to listen for with addEventListener. Third, give it the code to run, wrapped in a function.`,
+          `To show a result, change what is on the page. Setting an element's textContent replaces the words inside it.`
+        ],
+        terms: [
+          ['Event', 'Something that happens in an app, such as a click or a key press.'],
+          ['Event listener', 'Code that waits for an event and runs when it happens.'],
+          ['Click', 'The event that fires when someone presses a button or taps it.'],
+          ['getElementById', 'A JavaScript command that finds the element with a certain id.'],
+          ['textContent', 'The words inside an element. Changing it changes what the page shows.'],
+          ['Input', 'What the user gives the app, such as a click or typed text.']
+        ],
+        steps: [
+          'Run the code and press the button.',
+          'Change the message that appears when the button is pressed.',
+          'Do the challenge: add a second button with its own message.',
+          'Look at your screen sketches. For each button, write one sentence: "When the user clicks ___, the app ___."'
+        ],
+        tries: [
+          { mode: 'html', title: 'A button that responds', intro: 'The code inside <script> is JavaScript. It finds the button, listens for a click, and changes the message.',
+            code: `<button id="helloButton">Say hello</button>\n<p id="message">Waiting for a click...</p>\n\n<script>\n  const button = document.getElementById("helloButton");\n  const message = document.getElementById("message");\n\n  button.addEventListener("click", function () {\n    message.textContent = "Hello! You clicked the button.";\n  });\n</script>`,
+            challenge: 'Add a second button with the id "byeButton" that changes the message to "Goodbye!"' }
+        ],
+        quiz: [
+          { q: 'Which of these is an event?', a: ['A color', 'A user clicking a button', 'A heading', 'A file name'], c: 1, why: 'An event is something that happens, such as a click, that code can respond to.' },
+          { q: 'What does addEventListener("click", ...) do?', a: ['Clicks the button for the user', 'Runs the given code each time the element is clicked', 'Deletes the button', 'Changes the button color'], c: 1, why: 'It tells the element to run your code whenever the click event happens.' },
+          { q: 'A button does nothing when clicked. The code uses getElementById("startBtn"), but the HTML says id="startButton". What is wrong?', a: ['Buttons cannot be clicked', 'The id in the code does not match the id in the HTML', 'The page needs more CSS', 'JavaScript is turned off'], c: 1, why: 'The id must match exactly. Mismatched names are one of the most common bugs.' }
+        ] },
+      { id: '3.4', title: 'Variables: remember things',
+        summary: `Apps need to remember things: a score, a name, how many tasks are left. A variable is a named box that holds a value. You create one with the word let, give it a name, and put a value in it. Later you can read the value or change it.`,
+        more: [
+          `Values come in types. A number is written plainly, like 12. Text is called a string and goes inside quotes, like "Maya". A boolean is either true or false.`,
+          `The equals sign does not mean "is equal to" here. It means "put the value on the right into the variable on the left." So score = score + 1 means "take the current score, add 1, and store the result back in score."`,
+          `Pick names that say what the value is. tasksLeft is clear. x is a mystery.`
+        ],
+        terms: [
+          ['Variable', 'A named place in memory that holds a value.'],
+          ['Value', 'A piece of data, such as 7, "hello", or true.'],
+          ['Assign', 'To put a value into a variable, using the equals sign.'],
+          ['String', 'Text, written inside quotes.'],
+          ['Number', 'A numeric value you can do math with.'],
+          ['Boolean', 'A value that is either true or false.']
+        ],
+        steps: [
+          'Run the code. Before each run, guess what the output will be.',
+          'Change the starting score and the name. Run it again.',
+          'Do the challenge.',
+          'List three things your own app has to remember. Give each a clear variable name.'
+        ],
+        tries: [
+          { mode: 'js', title: 'Make a variable, then change it', intro: 'Read each line and guess the output before you press Run.',
+            code: `let playerName = "Maya";\nlet score = 0;\n\nconsole.log(playerName + " starts with " + score + " points.");\n\nscore = score + 10;\nconsole.log("After one win: " + score);\n\nscore = score + 10;\nconsole.log("After two wins: " + score);`,
+            challenge: 'Add a variable named level that starts at 1. Add 1 to it, then show it with console.log.' }
+        ],
+        fields: [
+          { key: 'variables', label: 'Things my app has to remember', hint: 'Example: tasksLeft (number), userName (string), isDone (true or false)', rows: 3 }
+        ],
+        quiz: [
+          { q: 'What is shown?\n\nlet coins = 5;\ncoins = coins + 3;\nconsole.log(coins);', a: ['5', '3', '8', 'coins + 3'], c: 2, why: 'coins starts at 5. The second line adds 3 and stores 8 back in coins.' },
+          { q: 'Which value is a string?', a: ['42', 'true', '"42"', 'score'], c: 2, why: 'Anything inside quotes is a string, even if it looks like a number.' },
+          { q: 'Which is the best variable name for the number of lives a player has left?', a: ['x', 'thing', 'livesLeft', 'n2'], c: 2, why: 'A good name says what the value means, so the code is easy to read.' }
+        ] },
+      { id: '3.5', title: 'If / else: make decisions',
+        summary: `Apps make decisions all the time. Is the password right? Is the cart empty? Did the player win? An if statement checks a condition, which is a question with a true or false answer. If it is true, one block of code runs. With else, a different block runs when it is false.`,
+        more: [
+          `Conditions compare values. Use === for "is equal to", !== for "is not equal to", and <, >, <=, >= for less than and greater than. Notice that a single = assigns a value, while === asks a question.`,
+          `You can chain choices with else if, which checks another condition when the first one was false. You can also join conditions: && means "and", so both sides must be true. || means "or", so one true side is enough.`
+        ],
+        blocks: 'In CyberTeaches Academy you used the "if tank ahead" and "if ... else" blocks to help the rover decide what to do. This is the same idea, written as text.',
+        terms: [
+          ['Condition', 'A question the code asks that is either true or false.'],
+          ['if statement', 'Code that runs a block only when a condition is true.'],
+          ['else', 'The block that runs when the condition is false.'],
+          ['else if', 'A second condition to check when the first one was false.'],
+          ['Comparison', 'Checking two values against each other, with ===, !==, <, >, <=, or >=.'],
+          ['Boolean', 'A value that is either true or false. Every condition produces one.']
+        ],
+        steps: [
+          'Run the code with score set to 85. Then try 95, 70, and 40. Guess the output first each time.',
+          'Change the messages to ones you would want to see.',
+          'Do the challenge.',
+          'Write one decision your own app must make, as a sentence: "If ___, then ___, otherwise ___."'
+        ],
+        tries: [
+          { mode: 'js', title: 'Choose a message', intro: 'Only one of the three blocks runs. Change the score on the first line to see each one.',
+            code: `let score = 85;\n\nif (score >= 90) {\n  console.log("Amazing! You earned a gold star.");\n} else if (score >= 70) {\n  console.log("Nice work. You passed.");\n} else {\n  console.log("Keep practicing. Try again.");\n}`,
+            challenge: 'Add one more else if so that a score of exactly 100 shows "Perfect score!" Hint: check for 100 first.' }
+        ],
+        fields: [
+          { key: 'decision', label: 'A decision my app must make', hint: 'If ___, then ___, otherwise ___.', rows: 2 }
+        ],
+        quiz: [
+          { q: 'What is shown?\n\nlet age = 12;\nif (age >= 13) {\n  console.log("Teen");\n} else {\n  console.log("Kid");\n}', a: ['Teen', 'Kid', 'Teen and Kid', 'Nothing'], c: 1, why: '12 >= 13 is false, so the else block runs.' },
+          { q: 'What is the difference between = and === ?', a: ['There is no difference', '= stores a value, and === asks whether two values are equal', '=== stores a value, and = compares', '= is for numbers and === is for text'], c: 1, why: 'A single equals sign assigns. Three equals signs compare.' },
+          { q: 'What is shown?\n\nlet temp = 75;\nlet sunny = false;\nif (temp > 70 && sunny) {\n  console.log("Go to the park");\n} else {\n  console.log("Stay in");\n}', a: ['Go to the park', 'Stay in', 'Both', 'An error'], c: 1, why: '&& needs both sides to be true. sunny is false, so the else block runs.' }
+        ] },
+      { id: '3.6', title: 'Loops: repeat without retyping',
+        summary: `Computers are great at repeating things. A loop runs the same block of code many times, so you do not have to type it many times. Use a for loop when you know how many times to repeat. Use a while loop when you want to repeat until something changes.`,
+        more: [
+          `A for loop has three parts inside its parentheses: where the counter starts, the condition for continuing, and how the counter changes after each round. for (let i = 1; i <= 5; i++) starts i at 1, keeps going while i is 5 or less, and adds 1 to i each time. i++ is a short way to write i = i + 1.`,
+          `A while loop repeats as long as its condition is true. Something inside the loop must eventually make the condition false. If nothing does, the loop never ends. That bug is called an infinite loop. The Try it box stops your code after a few seconds if this happens, so it is safe to experiment.`
+        ],
+        blocks: 'In CyberTeaches Academy, the "repeat" block is a for loop, and "repeat until" is a while loop. You already know how to think in loops.',
+        terms: [
+          ['Loop', 'Code that runs a block again and again.'],
+          ['for loop', 'A loop that repeats a set number of times, using a counter.'],
+          ['while loop', 'A loop that repeats as long as a condition is true.'],
+          ['Counter', 'A variable that keeps track of which round of the loop you are on. It is often named i.'],
+          ['Iteration', 'One trip through the loop.'],
+          ['Infinite loop', 'A loop that never ends because its condition never becomes false.']
+        ],
+        steps: [
+          'Run the first box. Change the loop so it counts to 10.',
+          'Run the second box. Change the starting battery level and guess how many lines will show.',
+          'Do both challenges.',
+          'Find one place in your own app where something repeats, such as showing every item in a list.'
+        ],
+        tries: [
+          { mode: 'js', title: 'A for loop: repeat a set number of times', intro: 'The variable i counts the rounds. It changes each time through the loop.',
+            code: `for (let i = 1; i <= 5; i++) {\n  console.log("Lap " + i);\n}\n\nconsole.log("Done running!");`,
+            challenge: 'Make it count down from 5 to 1. Hint: start at 5, continue while i >= 1, and use i-- to subtract 1.' },
+          { mode: 'js', title: 'A while loop: repeat until something changes', intro: 'This loop keeps going while the battery is above 0. Each round uses 25.',
+            code: `let battery = 100;\n\nwhile (battery > 0) {\n  console.log("Battery at " + battery + "%. Still exploring.");\n  battery = battery - 25;\n}\n\nconsole.log("Battery empty. Time to recharge.");`,
+            challenge: 'Add a variable named trips that starts at 0 and goes up by 1 each round. Show the total after the loop.' }
+        ],
+        quiz: [
+          { q: 'How many times does "Hi" show?\n\nfor (let i = 0; i < 4; i++) {\n  console.log("Hi");\n}', a: ['3', '4', '5', 'Forever'], c: 1, why: 'i takes the values 0, 1, 2, and 3. That is 4 rounds. When i reaches 4, the condition is false.' },
+          { q: 'What is wrong with this loop?\n\nlet n = 1;\nwhile (n < 5) {\n  console.log(n);\n}', a: ['Nothing, it shows 1 to 4', 'n never changes, so the loop never ends', 'while loops cannot use numbers', 'It needs an else'], c: 1, why: 'Nothing inside the loop changes n, so n < 5 stays true forever. Add n = n + 1 inside the loop.' },
+          { q: 'You need to show a welcome message to each of 30 students. What is the best tool?', a: ['30 separate console.log lines', 'A loop', 'An if statement', 'A bigger screen'], c: 1, why: 'Loops repeat work for you. One loop handles 30 students or 300.' }
+        ] },
+      { id: '3.7', title: 'Lists: keep many things together',
+        summary: `One variable holds one value. But apps deal with many things at once: all your tasks, every player, each photo. A list holds many values in order under one name. In JavaScript a list is called an array, and you write it with square brackets.`,
+        more: [
+          `Each item has a position called an index. In JavaScript, counting starts at 0, so the first item is at index 0 and the second is at index 1. To get an item, write the list name and the index in square brackets, like tasks[0].`,
+          `Lists can grow. push adds an item to the end. length tells you how many items the list has. Lists and loops are best friends: a loop can visit every item, no matter how long the list gets.`
+        ],
+        terms: [
+          ['List', 'An ordered group of values stored under one name.'],
+          ['Array', 'The JavaScript word for a list.'],
+          ['Item', 'One value in a list. Also called an element.'],
+          ['Index', 'The position of an item in a list. In JavaScript the first index is 0.'],
+          ['length', 'How many items are in a list.'],
+          ['push', 'The command that adds an item to the end of a list.']
+        ],
+        steps: [
+          'Run the code. Guess each line of output first.',
+          'Change the list to hold three things from your own life, such as your classes.',
+          'Do the challenge.',
+          'What list does your own app need? Write its name and three example items.'
+        ],
+        tries: [
+          { mode: 'js', title: 'Make a list, add to it, and loop over it', intro: 'The loop uses i as the index, so tasks[i] is a different item each round.',
+            code: `let tasks = ["Math worksheet", "Read chapter 4", "Science poster"];\n\nconsole.log("First task: " + tasks[0]);\nconsole.log("Number of tasks: " + tasks.length);\n\ntasks.push("Practice piano");\nconsole.log("Now there are " + tasks.length + " tasks:");\n\nfor (let i = 0; i < tasks.length; i++) {\n  console.log((i + 1) + ". " + tasks[i]);\n}`,
+            challenge: 'Add an if inside the loop that shows "(last one!)" after the final task. Hint: the last index is tasks.length - 1.' }
+        ],
+        fields: [
+          { key: 'lists', label: 'A list my app needs', hint: 'Example: tasks, such as "Math worksheet", "Read chapter 4", "Science poster"', rows: 2 }
+        ],
+        quiz: [
+          { q: 'What is shown?\n\nlet pets = ["cat", "dog", "fish"];\nconsole.log(pets[1]);', a: ['cat', 'dog', 'fish', '1'], c: 1, why: 'Indexes start at 0 in JavaScript. Index 0 is "cat" and index 1 is "dog".' },
+          { q: 'What is shown?\n\nlet nums = [4, 8];\nnums.push(15);\nconsole.log(nums.length);', a: ['2', '3', '15', '27'], c: 1, why: 'push adds one item to the end, so the list now has 3 items.' },
+          { q: 'Why do lists and loops work so well together?', a: ['Loops delete lists', 'A loop can visit every item, however long the list is', 'Lists make loops run only once', 'They do not work together'], c: 1, why: 'A loop from 0 up to the list length handles every item, even after the list grows.' }
+        ] },
+      { id: '3.8', title: 'Functions: name your steps and reuse them',
+        summary: `A function is a named set of steps. You write the steps once, give them a name, and then run them any time by calling that name. Functions keep code short, and they make it easier to read, because a good name tells you what a chunk of code does.`,
+        more: [
+          `Functions can take inputs called parameters, which go inside the parentheses. They let one function do slightly different work each time. A function can also hand back a result with the word return.`,
+          `You have already used functions. console.log is a function someone else wrote. The code you gave to addEventListener was a function too. Now you can write your own.`
+        ],
+        terms: [
+          ['Function', 'A named block of code you can run whenever you need it.'],
+          ['Call', 'To run a function by writing its name followed by parentheses.'],
+          ['Parameter', 'A named input a function receives.'],
+          ['Argument', 'The actual value you pass in when you call a function.'],
+          ['return', 'The word that sends a result back from a function.'],
+          ['Reuse', 'Using the same code in more than one place without retyping it.']
+        ],
+        steps: [
+          'Run the code. Find where each function is defined and where it is called.',
+          'Call greet with your own name.',
+          'Do the challenge.',
+          'Name two functions your own app might need, such as addTask or showScore.'
+        ],
+        tries: [
+          { mode: 'js', title: 'Write a function once, use it many times', intro: 'greet shows a message. addPoints calculates a number and returns it.',
+            code: `function greet(name) {\n  console.log("Welcome, " + name + "!");\n}\n\nfunction addPoints(score, points) {\n  return score + points;\n}\n\ngreet("Maya");\ngreet("Leo");\n\nlet score = 10;\nscore = addPoints(score, 5);\nconsole.log("Score is now " + score);`,
+            challenge: 'Write a function named double that takes a number and returns twice that number. Show the result of double(21).' }
+        ],
+        quiz: [
+          { q: 'What is shown?\n\nfunction area(width, height) {\n  return width * height;\n}\nconsole.log(area(3, 4));', a: ['7', '12', '34', 'area'], c: 1, why: 'The function multiplies its two inputs. 3 times 4 is 12.' },
+          { q: 'What is the main benefit of a function?', a: ['It makes the screen brighter', 'You write the steps once and reuse them by name', 'It stops all bugs', 'It replaces variables'], c: 1, why: 'Functions let you reuse code and give it a clear name.' },
+          { q: 'In greet("Leo"), what is "Leo"?', a: ['A loop', 'The argument passed to the function', 'A condition', 'The function name'], c: 1, why: 'The value you pass in when calling a function is an argument. Inside the function it becomes the parameter.' }
+        ] },
+      { id: '3.9', title: 'Build your hello app',
+        summary: `Time to put it all together. A hello app is a tiny but complete app with one screen. It takes input from the user, remembers it, makes a decision, and shows a result. The one in this lesson is a small task list. It uses everything from this module: HTML, CSS, an event, variables, an if / else, a loop, a list, and a function.`,
+        more: [
+          `Read the code slowly before you run it. You will recognize every piece. The only new part is input.value, which reads what the user typed into a text box.`,
+          `Then move it out of this page and onto your own computer. Save the code as a file named index.html in your project folder and open that file in a browser. That file is a real web app. To edit it, use any plain text editor, or a free code editor that runs in the browser, such as vscode.dev.`
+        ],
+        terms: [
+          ['Hello app', 'A first small app that proves your tools work and you know the basics.'],
+          ['Text box', 'An <input> element where the user can type.'],
+          ['value', 'What is currently typed in a text box.'],
+          ['index.html', 'The usual name for the main file of a web app.'],
+          ['Code editor', 'A program for writing code, with helpful colors and checks.'],
+          ['Bug', 'A mistake in code that makes it behave in a way you did not intend.']
+        ],
+        steps: [
+          'Run the app. Add three tasks. Try adding an empty one and see what happens.',
+          'Find the variable, the list, the if / else, the loop, and the function in the code.',
+          'Change it: rename the app, change the colors, and change the messages.',
+          'Do the challenge.',
+          'Save the code as index.html in your project folder and open it in your browser.',
+          'Write a journal entry: what you built, one thing that broke, and how you fixed it.'
+        ],
+        tries: [
+          { mode: 'html', tall: true, title: 'A tiny task list app', intro: 'This is a complete app in one file. Every part comes from a lesson in this module.',
+            code: `<style>\n  body { font-family: sans-serif; padding: 16px; }\n  h1 { color: teal; }\n  input, button { font-size: 16px; padding: 6px 10px; }\n</style>\n\n<h1>My Tasks</h1>\n<input id="taskInput" placeholder="Type a task">\n<button id="addButton">Add</button>\n<p id="message">You have no tasks yet.</p>\n<ol id="taskList"></ol>\n\n<script>\n  let tasks = [];\n\n  const input = document.getElementById("taskInput");\n  const message = document.getElementById("message");\n  const list = document.getElementById("taskList");\n\n  function showTasks() {\n    list.innerHTML = "";\n    for (let i = 0; i < tasks.length; i++) {\n      const item = document.createElement("li");\n      item.textContent = tasks[i];\n      list.appendChild(item);\n    }\n    message.textContent = "You have " + tasks.length + " tasks.";\n  }\n\n  document.getElementById("addButton").addEventListener("click", function () {\n    const text = input.value;\n    if (text === "") {\n      message.textContent = "Type a task first.";\n    } else {\n      tasks.push(text);\n      input.value = "";\n      showTasks();\n    }\n  });\n</script>`,
+            challenge: 'Add a "Clear all" button that empties the list. Hint: set tasks = [] and then call showTasks().' }
+        ],
+        cac: 'The rules say the app must demonstrate some degree of functionality to be competitive. A small app that really works beats a big idea that does not run.',
+        quiz: [
+          { q: 'In the task app, what does tasks.push(text) do?', a: ['Deletes the task', 'Adds what the user typed to the end of the list', 'Shows the list', 'Checks whether the box is empty'], c: 1, why: 'push adds an item to the end of the tasks list.' },
+          { q: 'Why does the app check if (text === "") before adding?', a: ['To make the app slower', 'To avoid adding an empty task when the box is blank', 'Because loops require it', 'To change the color'], c: 1, why: 'The condition catches an empty text box and shows a helpful message instead of adding a blank task.' },
+          { q: 'Why is showTasks written as a function?', a: ['Functions are required by HTML', 'So the same steps can run any time the list changes', 'To hide the list', 'It makes the list longer'], c: 1, why: 'Redrawing the list is needed in more than one place, so it is written once and called by name.' }
+        ] }
+    ]
+  },
   { id: 'm4', num: 4, title: 'Build the core', blurb: 'Build the one feature your app cannot live without, from start to finish.',
     milestone: 'Your core feature works from start to finish.',
     topics: [
