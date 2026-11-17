@@ -283,6 +283,15 @@ table.progress tr.on{background:var(--accent-soft)}
 .lw-head h3{font-size:19px;margin:0}
 .courseswitch{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:0 0 18px;padding-bottom:14px;border-bottom:1px solid var(--line)}
 .courseswitch .muted{font-size:14px}
+/* Lesson locks on the teacher page */
+.locks{display:grid;gap:12px}
+.lockmod{display:grid;gap:8px;padding:12px;border:1px solid var(--line);border-radius:16px;background:var(--panel)}
+.locklessons{display:grid;gap:8px;grid-template-columns:repeat(auto-fill,minmax(210px,1fr))}
+.lockbtn{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:10px;align-items:center;text-align:left;padding:8px 12px;border:2px solid var(--u, var(--accent));border-radius:12px;background:color-mix(in srgb, var(--u, var(--accent)) 10%, var(--panel));color:var(--ink);font-size:15px}
+.lockbtn.mod{grid-template-columns:minmax(0,1fr) auto;font-size:16px}
+.lockbtn .lt{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lockbtn.off{border-color:var(--line);border-style:dashed;background:transparent;color:var(--muted)}
+.lockbtn:disabled{opacity:.6;cursor:not-allowed}
 </style>
 </head><body>
 <div class="wrap">
@@ -329,6 +338,10 @@ table.progress tr.on{background:var(--accent-soft)}
   // Automatic lesson score (window.AB_GRADE in content.js), from what this student has done so far.
   const grade = t => window.AB_GRADE(t, { done: isDone(t.id), first: work.quiz[t.id], steps: (work.steps[t.id] || []).filter(Boolean).length, fields: work.fields });
   const need = f => `${window.AB_NEED(f)} ${f.lines ? 'lines' : 'words'}`;
+  // Lessons and modules a teacher has locked for the student's class (classes/{code}.abLocked holds lesson ids
+  // like '1.3' and module ids like 'm1'). Empty when the student is not in a class, so nothing is ever locked then.
+  let locked = new Set(), lockStop = null, lockCode = null;
+  const isLocked = t => locked.has(t.id) || locked.has(t.unit.id);
   const art = (id, slot) => window.AB_ART ? window.AB_ART(id, slot) : '';
   const slug = id => 'lesson-' + id.replace('.', '-').toLowerCase();
   const uvar = u => `--u:var(--u${u.num})`;
@@ -345,13 +358,21 @@ table.progress tr.on{background:var(--accent-soft)}
     const page = t ? (t.unit.track ? 'challenge' : '') : ['rules', 'plan', 'challenge', 'teachers', 'class'].includes(h) ? h : 'home';
     current = page;
     document.querySelectorAll('[data-nav]').forEach(a => a.classList.toggle('on', a.dataset.nav === (page === 'rules' ? 'challenge' : page)));
-    if (t) renderTopic(t.id); else if (page === 'rules') renderRules(); else if (page === 'plan') renderPlan(); else if (page === 'challenge') renderChallenge(); else if (page === 'teachers') renderTeachers(); else if (page === 'class') renderClass(); else renderHome();
+    if (t && isLocked(t)) renderLocked(t); else if (t) renderTopic(t.id); else if (page === 'rules') renderRules(); else if (page === 'plan') renderPlan(); else if (page === 'challenge') renderChallenge(); else if (page === 'teachers') renderTeachers(); else if (page === 'class') renderClass(); else renderHome();
     window.scrollTo(0, 0);
   }
   window.addEventListener('hashchange', route);
 
+  function renderLocked(t){
+    app.innerHTML = `<div class="page-head"><span class="label">Lesson ${t.id}</span><h1>🔒 This lesson is locked</h1>
+      <p>Your teacher has locked <b>${esc(t.title)}</b> for now. Pick a lesson that is open, or ask your teacher.</p>
+      <p style="margin-top:16px"><a class="btn primary" href="#${t.unit.track ? 'challenge' : 'home'}">See the open lessons</a></p></div>`;
+  }
+
   function topicLinks(u){
-    return u.topics.map(t => t.soon
+    return u.topics.map(t => !t.soon && (locked.has(t.id) || locked.has(u.id))
+      ? `<span class="topic-link soon"><b>${t.id}</b><span>${esc(t.title)}</span><span class="tagsoon">🔒 Locked</span></span>`
+      : t.soon
       ? `<span class="topic-link soon"><b>${t.id}</b><span>${esc(t.title)}</span><span class="tagsoon">Soon</span></span>`
       : `<a class="topic-link${isDone(t.id) ? ' done' : ''}" href="#${slug(t.id)}"><b>${t.id}</b><span>${esc(t.title)}</span><span class="chk" aria-label="${isDone(t.id) ? 'Completed' : 'Not completed'}">${isDone(t.id) ? '✓' : ''}</span></a>`).join('');
   }
@@ -361,7 +382,7 @@ table.progress tr.on{background:var(--accent-soft)}
     return `<section class="card unit" style="${uvar(u)}">
       <div class="unit-num" style="background:var(--u)">${umark(u)}</div>
       <div>
-        <div class="row" style="justify-content:space-between"><h2>${esc(u.title)}</h2><span class="pill">${live.length ? `${ud}/${live.length} done${live.length < u.topics.length ? ' · more coming' : ''}` : 'Coming soon'}</span></div>
+        <div class="row" style="justify-content:space-between"><h2>${esc(u.title)}</h2><span class="pill">${!live.length ? 'Coming soon' : locked.has(u.id) ? '🔒 Locked by your teacher' : `${ud}/${live.length} done${live.length < u.topics.length ? ' · more coming' : ''}`}</span></div>
         <p class="blurb">${esc(u.blurb)}</p>
         <div class="milestone"><b>Milestone</b><span>${esc(u.milestone)}</span></div>
         <div class="topics">${topicLinks(u)}</div>
@@ -371,7 +392,7 @@ table.progress tr.on{background:var(--accent-soft)}
 
   function renderHome(){
     const main = LIVE.filter(t => !t.unit.track);
-    const d = main.filter(t => isDone(t.id)).length, next = main.find(t => !isDone(t.id)) || main[0];
+    const d = main.filter(t => isDone(t.id)).length, open = main.filter(t => !isLocked(t)), next = open.find(t => !isDone(t.id)) || open[0];
     app.innerHTML = `
       <section class="hero">
         <div>
@@ -380,7 +401,7 @@ table.progress tr.on{background:var(--accent-soft)}
           <p>Find a real problem, design a solution, learn the code, and build an app that works. One small step at a time, with no coding experience needed. Use it on your own or with your class.</p>
           ${UNITS.some(u => u.topics.every(t => t.soon)) ? `<p class="muted" style="margin-top:-6px">${MAIN.filter(u => u.topics.some(t => !t.soon)).map(u => 'Module ' + u.num).join(' and ')} is open now. The other modules are coming soon.</p>` : ''}
           <div class="row" style="margin-bottom:18px">
-            <a class="btn primary" href="#${slug(next.id)}">${d ? 'Continue' : 'Start'} with ${next.id} ${esc(next.title)}</a>
+            ${next ? `<a class="btn primary" href="#${slug(next.id)}">${d ? 'Continue' : 'Start'} with ${next.id} ${esc(next.title)}</a>` : '<span class="pill">🔒 Your teacher has locked the lessons for now</span>'}
             <a class="btn" href="#teachers">For teachers</a>
           </div>
           <div class="meter"><span class="label">${d} of ${main.length} lessons complete</span><div class="meter-bar"><i style="width:${Math.round(d / main.length * 100)}%"></i></div></div>
@@ -485,7 +506,7 @@ table.progress tr.on{background:var(--accent-soft)}
             <ul class="todo">${t.together.steps.map((s, k) => { const n = t.steps.length + k; return `<li><label><input type="checkbox" id="step-${slug(t.id)}-${n}" data-step="${n}"${st[n] ? ' checked' : ''}><span>${esc(s)}</span></label></li>`; }).join('')}</ul>
           </section>` : ''}
           ${t.fields ? `<section class="card block">
-            <h2>Write it down</h2><p class="sub">What you type here is saved in this browser and collected on your <a href="#plan">My plan</a> page. You will reuse it when you design, build, and present your app.</p>
+            <h2>Write it down</h2><p class="sub">Type your answers in your own words. Pasting is turned off. What you type here is saved in this browser and collected on your <a href="#plan">My plan</a> page. You will reuse it when you design, build, and present your app.</p>
             ${t.fields.map(f => `<div class="field"><label for="f-${f.key}">${esc(f.label)}</label><span class="hint">${esc(f.hint)}</span><textarea id="f-${f.key}" data-field="${f.key}" rows="${f.rows || 2}">${esc(work.fields[f.key] || '')}</textarea><span class="count" data-count="${f.key}"></span></div>`).join('')}
             <div class="saved" id="savedNote" aria-live="polite"></div>
           </section>` : ''}
@@ -506,14 +527,14 @@ table.progress tr.on{background:var(--accent-soft)}
           </section>
           ${last && !u.track ? `<div class="milestone block"><b>Module ${u.num} milestone</b><span>${esc(u.milestone)}</span></div>` : ''}
           <nav class="pager">
-            ${prev ? `<a class="btn" href="#${slug(prev.id)}">← ${prev.id} ${esc(prev.title)}</a>` : '<span></span>'}
-            ${next ? `<a class="btn" href="#${slug(next.id)}">${next.id} ${esc(next.title)} →</a>` : `<a class="btn" href="#${home}">${u.track ? 'Back to the track' : 'Back to all modules'}</a>`}
+            ${prev && !isLocked(prev) ? `<a class="btn" href="#${slug(prev.id)}">← ${prev.id} ${esc(prev.title)}</a>` : '<span></span>'}
+            ${next && isLocked(next) ? `<span class="pill">🔒 ${next.id} is locked by your teacher</span>` : next ? `<a class="btn" href="#${slug(next.id)}">${next.id} ${esc(next.title)} →</a>` : `<a class="btn" href="#${home}">${u.track ? 'Back to the track' : 'Back to all modules'}</a>`}
           </nav>
         </article>
         <aside class="side">
           <div class="card scorebox" id="scoreBox" aria-live="polite"></div>
           <div class="card unitbox"><span class="label">${ulabel(u)}</span><h3 style="margin:6px 0 10px">${esc(u.title)}</h3>
-            <div style="display:grid;gap:6px">${u.topics.map(x => x.soon ? `<span class="muted">○ ${x.id} ${esc(x.title)}</span>` : `<a href="#${slug(x.id)}" style="text-decoration:none;color:var(--ink);${x.id === t.id ? 'font-weight:700' : ''}">${isDone(x.id) ? '✓' : '○'} ${x.id} ${esc(x.title)}</a>`).join('')}</div>
+            <div style="display:grid;gap:6px">${u.topics.map(x => x.soon ? `<span class="muted">○ ${x.id} ${esc(x.title)}</span>` : isLocked(Object.assign({ unit: u }, x)) ? `<span class="muted">🔒 ${x.id} ${esc(x.title)}</span>` : `<a href="#${slug(x.id)}" style="text-decoration:none;color:var(--ink);${x.id === t.id ? 'font-weight:700' : ''}">${isDone(x.id) ? '✓' : '○'} ${x.id} ${esc(x.title)}</a>`).join('')}</div>
           </div>
           <a class="card lab-card" href="#plan"><span class="label">Your work so far</span><h3>My plan</h3><span class="muted">Everything you have written, in one place.</span></a>
         </aside>
@@ -530,6 +551,13 @@ table.progress tr.on{background:var(--accent-soft)}
     app.querySelectorAll('[data-step]').forEach(c => c.addEventListener('change', () => {
       const a = work.steps[t.id] = work.steps[t.id] || []; a[+c.dataset.step] = c.checked; write(WKEY, work); syncSoon(20000); drawScore();
     }));
+    // Answers must be typed. Pasting and dropping text into an answer box is turned off, so answers are not copied
+    // from other pages. This stops ordinary copy and paste; it is not a lock a determined student could never get past.
+    app.querySelectorAll('[data-field]').forEach(x => {
+      const stop = e => { e.preventDefault(); const n = document.getElementById('savedNote'); if (n) n.textContent = 'Pasting is turned off here. Type your answer in your own words.'; };
+      x.addEventListener('paste', stop); x.addEventListener('drop', stop);
+      x.addEventListener('beforeinput', e => { if (e.inputType === 'insertFromPaste' || e.inputType === 'insertFromDrop') stop(e); });
+    });
     app.querySelectorAll('[data-field]').forEach(x => x.addEventListener('input', () => {
       work.fields[x.dataset.field] = x.value; write(WKEY, work); syncSoon(20000); drawScore();
       const n = document.getElementById('savedNote'); if (n) n.textContent = inClass() ? 'Saved. Your teacher can see this.' : 'Saved.';
@@ -604,7 +632,17 @@ table.progress tr.on{background:var(--accent-soft)}
   }
   function syncSoon(ms){ if (!signedIn()) return; clearTimeout(syncTimer); syncTimer = setTimeout(syncNow, ms); }
   document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden' && syncTimer) syncNow(); });
+  // Watches the class for lessons the teacher locks or unlocks. The page is redrawn only when the locks change.
+  function watchLocks(){
+    const code = inClass() && Cloud.db ? Cloud.profile.classCode : null;
+    if (code === lockCode) return;
+    lockCode = code; if (lockStop) lockStop(); lockStop = null;
+    const apply = list => { const was = [...locked].sort().join(), now = [...new Set(list)].sort().join(); locked = new Set(list); if (was !== now) route(); };
+    if (!code) return apply([]);
+    lockStop = Cloud.db.collection('classes').doc(code).onSnapshot(snap => { const d = snap.exists ? snap.data() : {}; apply(Array.isArray(d.abLocked) ? d.abLocked.map(String) : []); }, e => console.error('Could not read class locks', e));
+  }
   if (Cloud) Cloud.onChange(() => {
+    watchLocks();
     const uid = Cloud.user ? Cloud.user.uid : null;
     if (uid !== syncUid) {
       const was = syncUid; syncUid = uid; lastSync = '';

@@ -48,6 +48,10 @@ Congressional App Challenge (lessons `C.1` to `C.6` and a plain-words rules page
   teacher page. A lesson is worth 10 points: quick check 4 (first try only), steps checked off 2, written work 4.
   A box earns credit when it is long enough: `lines` (lines) or `min` (words) on the field; with neither, any writing counts. The score
   checks that work is complete, not how good it is.
+- Locks: a teacher can lock lessons or whole modules for a class on `app-builder/teacher.html`. The list is saved as
+  `classes/{code}.abLocked` (lesson ids like `1.3`, module ids like `m1`), next to the Academy's own `locked` field.
+  Students in that class see a lock and cannot open those lessons. Students not in a class are never locked out.
+- Pasting and dropping text into the fill-in boxes is turned off so answers are typed. Try it code boxes still allow it.
 - Pictures are inline SVG in `app-builder/figures.js`. `AB_ART(lessonId, slot)` returns the picture for the `hero`,
   `example` or `together` slot of a lesson, and lessons without pictures show none.
 - `app-builder/teacher.html` shows a teacher each class's gradebook (scores by lesson, with everyone's writing for one
