@@ -101,6 +101,27 @@
           <g transform="translate(570 164) scale(.82)">${kid(0, 0, C, '#1E1A18', PAPER, 'curly')}</g>
           <path d="M250 170h220m-16-13 16 13-16 13" ${line}/><path d="M470 208H250m16-13-16 13 16 13" ${line}/>
           ${text(360, 160, 'say it', 19, 'font-weight="700"')}${text(360, 236, 'repeat it back', 19, 'font-weight="700"')}`) }
+    },
+    '1.4': {
+      hero: { cap: 'Three checks before you build: is it respectful, is it your own work, and does it keep private information safe?',
+        html: svg(720, 300, 'A shield with a check mark next to three checks: respectful, my own work, and private information kept safe.',
+          `<rect x="4" y="4" width="712" height="292" rx="22" fill="${SOFT}"/>
+          <path d="M170 40l96 34v76c0 62-40 104-96 126-56-22-96-64-96-126V74z" fill="${U}" stroke="${INK}" stroke-width="3" stroke-linejoin="round"/>
+          <path d="M126 152l32 32 58-66" fill="none" stroke="#fff" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/>
+          ${[['Respectful to everyone', 76], ['My own work', 150], ['Private info stays safe', 224]].map(([t, y]) => `<rect x="312" y="${y - 30}" width="372" height="60" rx="14" fill="${PAPER}" stroke="${INK}" stroke-width="3"/><circle cx="346" cy="${y}" r="17" fill="${U}" stroke="${INK}" stroke-width="3"/><path d="M337 ${y}l7 7 12-14" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><text x="376" y="${y + 8}" font-family="var(--f-body, sans-serif)" font-size="23" font-weight="700" fill="${INK}">${t}</text>`).join('')}`) },
+      example: { cap: 'Use what you made, or what the owner lets everyone use. Leave the rest alone.',
+        html: svg(720, 220, 'Three cards: I made it is okay, free to use is okay with credit, someone else\'s is not okay.',
+          `${[[6, 'I made it', 'Okay', true], [250, 'Free to use', 'Okay, give credit', true], [494, 'Someone else\'s', 'Not okay', false]].map(([x, h, sub, ok], k) => `<rect x="${x}" y="6" width="220" height="208" rx="18" fill="${ok ? SOFT : PAPER}" stroke="${INK}" stroke-width="3"/>
+            ${k === 0 ? `<path d="M${x + 84} 104l44-44 18 18-44 44-24 6z" fill="${U}" stroke="${INK}" stroke-width="3" stroke-linejoin="round"/><path d="M${x + 76} 134h70" ${line}/>`
+              : k === 1 ? `<path d="M${x + 76} 62h44l32 32-40 40-36-36z" fill="${U}" stroke="${INK}" stroke-width="3" stroke-linejoin="round"/><circle cx="${x + 94}" cy="80" r="7" fill="${PAPER}" stroke="${INK}" stroke-width="3"/>`
+              : `<path d="M${x + 110} 54l12 26 28 4-20 20 5 28-25-13-25 13 5-28-20-20 28-4z" fill="${PAPER}" stroke="${INK}" stroke-width="3" stroke-linejoin="round"/><path d="M${x + 70} 58l80 80" stroke="var(--bad, #C8402F)" stroke-width="7" stroke-linecap="round"/>`}
+            ${text(x + 110, 172, h, 22, 'font-weight="700"')}${text(x + 110, 198, sub, 18)}`).join('')}`) },
+      together: { cap: 'Vote at the same time, then explain why. The reason matters more than the vote.',
+        html: svg(720, 240, 'Three students holding up voting signs, two with an X and one with a check mark.',
+          `<rect x="4" y="4" width="712" height="232" rx="22" fill="${SOFT}"/>
+          ${[[150, false, A, '#3B2A20', 'long', ''], [360, false, C, '#1E1A18', 'curly', PAPER], [570, true, Bn, '#6B4A2B', 'short', '']].map(([x, ok, skin, hair, style, shirt]) => `<path d="M${x + 62} 150V92" ${line}/><circle cx="${x + 62}" cy="62" r="32" fill="${ok ? U : PAPER}" stroke="${INK}" stroke-width="3"/>
+            ${ok ? `<path d="M${x + 48} 62l10 11 20-23" fill="none" stroke="#fff" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>` : `<path d="M${x + 50} 50l24 24m0-24-24 24" stroke="var(--bad, #C8402F)" stroke-width="6" stroke-linecap="round"/>`}
+            <g transform="translate(${x - 14} 160) scale(.8)">${kid(0, 0, skin, hair, shirt, style)}</g>`).join('')}`) }
     }
   };
 

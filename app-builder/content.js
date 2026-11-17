@@ -171,12 +171,29 @@ window.AP_UNITS = [
           'List any images, music, characters, or data you planned to use. For each, ask: did I make it, or do I have the right to use it?',
           'Replace anything you do not have the right to use with your own work or with free-to-use material.',
           'If your app stores information about people, write down what it stores and why. Store as little as possible.',
-          'Start a credits list. Write down every library, tool, and AI assistant as you use them.'
+          'Start a credits list in the second box below. Write down every library, tool, and AI assistant as you use them.',
+          'Answer the five idea check questions for your own app in the first box below, one on each line, like the example.'
         ],
+        together: {
+          title: 'Okay or not okay?',
+          time: 'About 15 minutes',
+          steps: [
+            'Get into a small group. For each case, everyone votes thumbs up (okay) or thumbs down (not okay) at the same time. Then one person says why.',
+            'Case A: A student uses a hit song by a famous singer as the background music in their app.',
+            'Case B: A student uses a free-to-use icon set and lists it on their credits page.',
+            'Case C: A homework list app asks every user for their full name, home address, and birthday.',
+            'Case D: A student has an AI tool write the whole app and cannot explain how the code works.',
+            'Check your votes. A is not okay: the song belongs to someone else. B is okay: free to use, with credit. C is not okay: it collects much more than it needs. D is not okay: AI can help, but the work and the understanding must be yours.',
+            'Now trade with a partner. Read each other\'s purpose sentence and idea check. Look for one thing that could be a problem, and tell them kindly.',
+            'Write what your partner found in the last box below.'
+          ]
+        },
         example: { title: 'Idea check', text: `Respectful and decent for all ages?  Yes\nMy own idea and my own work?  Yes\nUses only images and sounds I made or may use?  Yes, I drew the icons\nCollects private information?  Only a first name, saved on the device\nCredits list started?  Yes` },
         cac: 'The rules require apps to be decent and respectful and to respect intellectual property and privacy. Libraries, tools, and AI are allowed only if you clearly document them, AI cannot be the whole build, and you must understand your own code.',
         fields: [
-          { key: 'rulescheck', label: 'My idea check', hint: 'Anything you need to change or replace? Write "nothing" if it all passes.', rows: 3 }
+          { key: 'rulescheck', label: 'My idea check', hint: 'Answer the five questions from the example for your own app, one on each line.', rows: 6, lines: 5 },
+          { key: 'credits', label: 'My credits list', hint: 'Everything you plan to use that you did not make: images, sounds, libraries, tools, AI. One on each line. Write "nothing yet" if you have none.', rows: 3 },
+          { key: 'partnercheck', label: 'What my partner found', hint: 'What could be a problem with your idea, and what will you do about it? If they found nothing, say what they checked.', rows: 3, min: 12 }
         ],
         quiz: [
           { q: 'A student wants to use a famous cartoon character as their app\'s mascot. What is the problem?', a: ['Cartoons are not allowed in apps', 'The character is someone else\'s intellectual property', 'Mascots slow the app down', 'There is no problem'], c: 1, why: 'You need the owner\'s permission to use their character. Draw your own mascot instead.' },
