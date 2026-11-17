@@ -246,6 +246,28 @@ textarea.code,.output,.stim,.example,.lesson p,.terms,.choice,.todo{font-variant
 .plan-head{font-size:18px;margin:22px 0 4px}
 .plan-head:first-child{margin-top:0}
 .plan-head + .plan-row{border-top:0}
+.field input{width:100%;padding:10px 12px;border:2px solid var(--line);border-radius:10px;background:var(--panel);color:var(--ink)}
+.field input:focus{border-color:var(--accent);outline:none}
+#slCode,#joinCode{font-family:var(--f-mono);letter-spacing:.12em;text-transform:uppercase;max-width:220px}
+/* Teacher page (teacher.html) */
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:12px;margin-top:10px}
+.stats div{display:grid;gap:2px}
+.stats b{font-family:var(--f-display);font-size:30px;line-height:1}
+.stats span{font-size:14px}
+table.progress{font-size:15px;font-variant-numeric:tabular-nums}
+table.progress th,table.progress td{padding:10px 12px;white-space:nowrap}
+table.progress tr.on{background:var(--accent-soft)}
+.who{border:0;background:none;padding:0;font-weight:700;color:var(--accent);text-decoration:underline;text-align:left}
+.cellp{display:inline-block;min-width:44px;text-align:center;padding:2px 8px;border-radius:8px;background:var(--panel-2);border:1px solid var(--line);color:var(--muted)}
+.cellp.part{background:color-mix(in srgb, var(--u) 16%, var(--panel));border-color:transparent;color:var(--ink)}
+.cellp.full{background:var(--u);border-color:transparent;color:#fff;font-weight:700}
+.dmod{border-left:4px solid var(--u);padding-left:12px;margin-top:14px}
+.dmod:first-of-type{margin-top:0}
+.dmod ul{list-style:none;margin:6px 0 0;padding:0;display:grid;gap:6px;font-size:15px}
+.dmod li{display:grid;grid-template-columns:20px minmax(0,1fr) auto;gap:8px;align-items:start}
+.dmod .chk{width:20px;height:20px;border-radius:50%;border:2px solid var(--line);display:grid;place-items:center;font-size:12px}
+.dmod li.done .chk{background:var(--u);border-color:var(--u);color:#fff}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}
 </style>
 </head><body>
 <div class="wrap">
@@ -259,12 +281,13 @@ textarea.code,.output,.stim,.example,.lesson p,.terms,.choice,.todo{font-variant
       <a href="#home" data-nav="home">Modules</a>
       <a href="#challenge" data-nav="challenge">App Challenge</a>
       <a href="#plan" data-nav="plan">My plan</a>
+      <a href="#class" data-nav="class">My class</a>
       <a href="#teachers" data-nav="teachers">Teachers</a>
       <a href="../">All courses</a>
     </nav>
   </header>
   <main id="app"></main>
-  <div class="foot"><span>Your progress and notes are saved in this browser.</span><span>CyberTeaches is not affiliated with the Congressional App Challenge. Check the official rules at congressionalappchallenge.us.</span></div>
+  <div class="foot"><span>Your progress and notes are saved in this browser, and to your account when you sign in.</span><span>CyberTeaches is not affiliated with the Congressional App Challenge. Check the official rules at congressionalappchallenge.us.</span></div>
 </div>
 <script src="../academy/firebase-config.js"></script>
 <script src="../academy/cloud.js?v=16"></script>
@@ -282,7 +305,8 @@ textarea.code,.output,.stim,.example,.lesson p,.terms,.choice,.todo{font-variant
   const write = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} };
   let progress = read(KEY, {});
   const work = read(WKEY, {}); work.steps = work.steps || {}; work.fields = work.fields || {}; work.code = work.code || {};
-  const save = () => { write(KEY, progress); if (window.Account) Account.push(); };
+  const save = () => { write(KEY, progress); if (window.Account) Account.push(); syncSoon(1500); };
+  let current = 'home';
   if (window.Account) Account.attach(KEY, () => progress, merged => { progress = merged; write(KEY, progress); route(); });
   const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
   const isDone = id => progress[id] && progress[id].passed;
@@ -292,15 +316,16 @@ textarea.code,.output,.stim,.example,.lesson p,.terms,.choice,.todo{font-variant
   const ulabel = u => u.track ? 'App Challenge track' : `Module ${u.num}`;
   const umark = u => u.track ? '★' : u.num;
 
-  // Routes are plain names (#home, #challenge, #rules, #plan, #teachers, #lesson-1-1, #lesson-c-1).
+  // Routes are plain names (#home, #challenge, #rules, #plan, #class, #teachers, #lesson-1-1, #lesson-c-1).
   // #/topic/1.1 also works, for links from the lesson pages.
   function route(){
     const h = location.hash.replace(/^#\/?/, '');
     const m = h.match(/^lesson-(\d+|c)-(\d+)$/i) || h.match(/^topic\/(\d+|c)\.(\d+)$/i);
     const t = m && LIVE.find(x => x.id === m[1].toUpperCase() + '.' + m[2]);
-    const page = t ? (t.unit.track ? 'challenge' : '') : ['rules', 'plan', 'challenge', 'teachers'].includes(h) ? h : 'home';
+    const page = t ? (t.unit.track ? 'challenge' : '') : ['rules', 'plan', 'challenge', 'teachers', 'class'].includes(h) ? h : 'home';
+    current = page;
     document.querySelectorAll('[data-nav]').forEach(a => a.classList.toggle('on', a.dataset.nav === (page === 'rules' ? 'challenge' : page)));
-    if (t) renderTopic(t.id); else if (page === 'rules') renderRules(); else if (page === 'plan') renderPlan(); else if (page === 'challenge') renderChallenge(); else if (page === 'teachers') renderTeachers(); else renderHome();
+    if (t) renderTopic(t.id); else if (page === 'rules') renderRules(); else if (page === 'plan') renderPlan(); else if (page === 'challenge') renderChallenge(); else if (page === 'teachers') renderTeachers(); else if (page === 'class') renderClass(); else renderHome();
     window.scrollTo(0, 0);
   }
   window.addEventListener('hashchange', route);
@@ -392,7 +417,7 @@ textarea.code,.output,.stim,.example,.lesson p,.terms,.choice,.todo{font-variant
         </tbody></table></div></section>
       <div class="two" style="margin-top:16px">
         <section class="card"><h2 style="font-size:20px;margin-bottom:10px">Seeing student work</h2>
-          <p style="margin:0">Students can copy their whole plan from the My plan page and turn it in. Signed-in students keep their lesson progress on any device. Class progress on the Teacher Dashboard, like in CyberTeaches Academy, is planned for this course.</p></section>
+          <p style="margin:0 0 12px">Use the same classes as CyberTeaches Academy. Students sign in and join with your class code. You see which lessons each student finished and everything they wrote: their problem, purpose sentence, feature list, test report, and more.</p><div class="row"><a class="btn primary" href="teacher.html">Open class progress</a><a class="btn" href="../academy/teacher.html">Create a class</a></div></section>
         <section class="card"><h2 style="font-size:20px;margin-bottom:10px">A real audience</h2>
           <p style="margin:0">Students who want to compete can enter their app in the Congressional App Challenge. The <a href="#challenge">App Challenge track</a> covers eligibility, the rules, the demo video, and submitting.</p></section>
       </div>`;
@@ -464,11 +489,11 @@ textarea.code,.output,.stim,.example,.lesson p,.terms,.choice,.todo{font-variant
         </aside>
       </div>`;
     app.querySelectorAll('[data-step]').forEach(c => c.addEventListener('change', () => {
-      const a = work.steps[t.id] = work.steps[t.id] || []; a[+c.dataset.step] = c.checked; write(WKEY, work);
+      const a = work.steps[t.id] = work.steps[t.id] || []; a[+c.dataset.step] = c.checked; write(WKEY, work); syncSoon(20000);
     }));
     app.querySelectorAll('[data-field]').forEach(x => x.addEventListener('input', () => {
-      work.fields[x.dataset.field] = x.value; write(WKEY, work);
-      const n = document.getElementById('savedNote'); if (n) n.textContent = 'Saved.';
+      work.fields[x.dataset.field] = x.value; write(WKEY, work); syncSoon(20000);
+      const n = document.getElementById('savedNote'); if (n) n.textContent = inClass() ? 'Saved. Your teacher can see this.' : 'Saved.';
     }));
     app.querySelectorAll('[data-try]').forEach(box => {
       const k = +box.dataset.try, x = t.tries[k], ta = box.querySelector('textarea'), ck = t.id + '/' + k;
@@ -504,6 +529,120 @@ textarea.code,.output,.stim,.example,.lesson p,.terms,.choice,.todo{font-variant
       r.innerHTML = `<div class="result ${all ? 'ok' : 'no'}">${all ? `${score} of ${t.quiz.length} correct. Lesson ${t.id} complete. ` : `${score} of ${t.quiz.length} correct. Read the explanations, then try again. `}<button class="btn small" id="retry">${all ? 'Take it again' : 'Try again'}</button></div>`;
       r.querySelector('#retry').addEventListener('click', () => { renderTopic(t.id); document.getElementById('quiz').scrollIntoView(); });
     }
+  }
+
+  // ---- Classes: the same sign-in, classes and roster as CyberTeaches Academy (academy/cloud.js). ----
+  // A signed-in student's written work is saved to their own record (users/{uid}.courses[WKEY]).
+  // If they are in a class, their finished lessons and written work are also copied to the class roster
+  // (classes/{code}/students/{uid}.appBuilder), which only that student and the class's teacher can read.
+  // Writes are held back and skipped when nothing changed, to stay inside the free Firebase plan.
+  const Cloud = window.Cloud && window.Cloud.enabled ? window.Cloud : null;
+  const signedIn = () => !!(Cloud && Cloud.user);
+  function inClass(){ return !!(signedIn() && Cloud.profile && Cloud.profile.classCode); }
+  let syncTimer = null, lastSync = '', syncState = '', syncUid = null;
+  function snapshot(){
+    const done = {}, steps = {}, text = {};
+    LIVE.forEach(t => { if (isDone(t.id)) done[t.id] = progress[t.id].at || 1; const n = (work.steps[t.id] || []).filter(Boolean).length; if (n) steps[t.id] = n; });
+    FIELDS.forEach(f => { const v = (work.fields[f.key] || '').trim(); if (v) text[f.key] = v.slice(0, 2000); });
+    return { done, steps, work: text };
+  }
+  async function syncNow(){
+    clearTimeout(syncTimer);
+    if (!signedIn() || !Cloud.db || !window.firebase) return;
+    const uid = Cloud.user.uid, snap = snapshot(), code = inClass() ? Cloud.profile.classCode : '', key = uid + code + JSON.stringify(snap);
+    if (key === lastSync) return;
+    lastSync = key;
+    try {
+      const fs = firebase.firestore, at = fs.FieldValue.serverTimestamp();
+      await Cloud.db.collection('users').doc(uid).set({ courses: { [WKEY]: { fields: work.fields, steps: Object.fromEntries(Object.entries(work.steps).map(([k, v]) => [k, Array.from(v || [], Boolean)])) } } }, { mergeFields: [new fs.FieldPath('courses', WKEY)] });
+      if (code) await Cloud.db.collection('classes').doc(code).collection('students').doc(uid).set({ appBuilder: Object.assign(snap, { updatedAt: at }) }, { mergeFields: ['appBuilder'] });
+      syncState = 'ok';
+    } catch (e) { console.error('Could not save to your account', e); lastSync = ''; syncState = 'error'; }
+    if (current === 'class') renderClass();
+  }
+  function syncSoon(ms){ if (!signedIn()) return; clearTimeout(syncTimer); syncTimer = setTimeout(syncNow, ms); }
+  document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden' && syncTimer) syncNow(); });
+  if (Cloud) Cloud.onChange(() => {
+    const uid = Cloud.user ? Cloud.user.uid : null;
+    if (uid !== syncUid) {
+      const was = syncUid; syncUid = uid; lastSync = '';
+      if (!uid && was) {
+        // Signing out clears this browser's copy, so the next person on a shared computer starts fresh.
+        work.fields = {}; work.steps = {}; work.code = {}; write(WKEY, work);
+      } else if (uid) {
+        // Bring back work saved from another device. What is already typed here wins.
+        const remote = (Cloud.profile && Cloud.profile.courses && Cloud.profile.courses[WKEY]) || {};
+        Object.entries(remote.fields || {}).forEach(([k, v]) => { if (!(work.fields[k] || '').trim()) work.fields[k] = v; });
+        Object.entries(remote.steps || {}).forEach(([k, v]) => { if (!work.steps[k]) work.steps[k] = v; });
+        write(WKEY, work); syncSoon(3000);
+      }
+    }
+    if (current === 'class' || current === 'plan') route();
+  });
+
+  function renderClass(){
+    const head = (t, p) => `<div class="page-head"><span class="label">My class</span><h1>${t}</h1><p>${p}</p></div>`;
+    const wanted = (new URLSearchParams(location.search).get('class') || '').toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 6);
+    if (!Cloud) { app.innerHTML = head('Class sign-in is not available here', 'You can still do every lesson. Your progress and notes are saved in this browser.'); return; }
+    if (!Cloud.ready) { app.innerHTML = head('Checking your account…', 'One moment.'); return; }
+    const msg = (id, text, bad) => { const n = document.getElementById(id); if (n) { n.textContent = text; n.className = 'result ' + (bad ? 'no' : 'ok'); n.hidden = !text; } };
+    if (!Cloud.user) {
+      app.innerHTML = head('Sign in to join your class', 'Signing in saves your progress and your writing to your account. If your teacher gave you a class code, you can join the class after you sign in. You do not need an account to do the lessons.') + `
+        <div class="two">
+          <section class="card"><h2 style="font-size:20px;margin-bottom:8px">I have a Google account</h2><p class="muted" style="margin:0 0 14px">Use your school or personal Google account.</p>
+            <button class="btn primary" type="button" id="googleIn">Sign in with Google</button><div class="result" id="googleMsg" hidden></div></section>
+          <form class="card" id="studentForm" novalidate><h2 style="font-size:20px;margin-bottom:8px">My teacher gave me a login</h2><p class="muted" style="margin:0 0 14px">Type the class code, username and password from your login card.</p>
+            <div class="field"><label for="slCode">Class code</label><input type="text" id="slCode" maxlength="6" autocomplete="off" autocapitalize="characters" value="${esc(wanted)}"></div>
+            <div class="field"><label for="slUser">Username</label><input type="text" id="slUser" autocomplete="username" autocapitalize="off"></div>
+            <div class="field"><label for="slPass">Password</label><input type="password" id="slPass" autocomplete="current-password"></div>
+            <button class="btn primary" style="margin-top:14px">Sign in</button><div class="result" id="studentMsg" hidden></div></form>
+        </div>`;
+      document.getElementById('googleIn').addEventListener('click', () => Cloud.signIn().catch(e => { console.error(e); msg('googleMsg', 'Sign-in did not work. If you use a school account, your school may block it. Try again or ask your teacher.', true); }));
+      document.getElementById('studentForm').addEventListener('submit', e => {
+        e.preventDefault();
+        const code = document.getElementById('slCode').value.trim().toUpperCase(), user = document.getElementById('slUser').value.trim(), pass = document.getElementById('slPass').value;
+        if (!code || !user || !pass) return msg('studentMsg', 'Fill in the class code, username and password.', true);
+        msg('studentMsg', 'Signing in…');
+        Cloud.signInStudent(code, user, pass).catch(err => { console.error(err); msg('studentMsg', 'That did not match. Check the class code, username and password on your login card.', true); });
+      });
+      return;
+    }
+    const name = esc(Cloud.user.displayName || Cloud.user.email || 'Student');
+    if (!inClass()) {
+      app.innerHTML = head('Join your class', `You are signed in as ${name}. Your progress and writing are saved to your account. If your teacher gave you a class code, type it here.`) + `
+        <form class="card" id="joinForm" novalidate style="max-width:520px">
+          <div class="field"><label for="joinCode">Class code</label><span class="hint">Six letters and numbers, like K7M2QX.</span><input type="text" id="joinCode" maxlength="6" autocomplete="off" autocapitalize="characters" value="${esc(wanted)}"></div>
+          <div class="row" style="margin-top:14px"><button class="btn primary">Join class</button><button class="btn" type="button" id="signOut">Sign out</button></div>
+          <div class="result" id="joinMsg" hidden></div></form>`;
+      document.getElementById('signOut').addEventListener('click', () => Cloud.signOut());
+      document.getElementById('joinForm').addEventListener('submit', async e => {
+        e.preventDefault();
+        const code = document.getElementById('joinCode').value.trim().toUpperCase();
+        if (!/^[A-Z0-9]{6}$/.test(code)) return msg('joinMsg', 'A class code has six letters and numbers.', true);
+        msg('joinMsg', 'Looking for your class…');
+        try {
+          const cls = await Cloud.findClass(code);
+          if (!cls) return msg('joinMsg', 'No class has that code. Check it with your teacher.', true);
+          // joinClass also saves Academy stars, so pass along what the account already has.
+          const p = Cloud.profile || {};
+          await Cloud.joinClass(cls, { progress: p.progress || {}, bonus: p.bonus || {}, programs: p.programs || '{}' });
+          await syncNow();
+        } catch (err) { console.error(err); msg('joinMsg', 'Could not join the class. Check your internet connection and try again.', true); }
+      });
+      return;
+    }
+    const d = LIVE.filter(t => isDone(t.id)).length;
+    app.innerHTML = head(`You are in ${esc(Cloud.profile.className || Cloud.profile.classCode)}`, `Signed in as ${name}.`) + `
+      <div class="two">
+        <section class="card"><h2 style="font-size:20px;margin-bottom:10px">What your teacher can see</h2>
+          <ul class="plain"><li>Which lessons you have finished (${d} of ${LIVE.length} so far).</li><li>How many "Do this" steps you checked off.</li><li>What you wrote in the lessons, the same text as your <a href="#plan">My plan</a> page.</li></ul>
+          <p class="muted" style="margin:12px 0 0">Your teacher cannot see the code you type in Try it boxes.</p></section>
+        <section class="card"><h2 style="font-size:20px;margin-bottom:10px">Saving</h2>
+          <p style="margin:0 0 14px">${syncState === 'error' ? 'Your last save did not go through. It will try again the next time you change something.' : 'Your work is saved to your account a few seconds after you change it, so it follows you to any device.'}</p>
+          <div class="row"><button class="btn" type="button" id="saveNow">Save now</button><button class="btn" type="button" id="signOut">Sign out</button></div><div class="result" id="saveMsg" hidden></div></section>
+      </div>`;
+    document.getElementById('signOut').addEventListener('click', () => Cloud.signOut());
+    document.getElementById('saveNow').addEventListener('click', async () => { lastSync = ''; await syncNow(); msg('saveMsg', syncState === 'error' ? 'Could not save. Check your internet connection.' : 'Saved.', syncState === 'error'); });
   }
 
   // Runs student JavaScript in a Web Worker, so a loop that never ends cannot freeze the page.
@@ -555,7 +694,7 @@ textarea.code,.output,.stim,.example,.lesson p,.terms,.choice,.todo{font-variant
     app.innerHTML = `
       <div class="page-head"><span class="label">Your work so far</span>
         <h1>My plan</h1>
-        <p>Everything you write in the lessons shows up here. It is saved only in this browser on this device, so copy it into your build journal now and then.</p></div>
+        <p>${inClass() ? `Everything you write in the lessons shows up here. It is saved to your account, and your teacher in ${esc(Cloud.profile.className || Cloud.profile.classCode)} can see it.` : signedIn() ? 'Everything you write in the lessons shows up here. It is saved to your account, so it follows you to any device.' : 'Everything you write in the lessons shows up here. It is saved only in this browser on this device, so copy it into your build journal now and then.'}</p></div>
       <section class="card plan">
         <div class="row" style="justify-content:space-between"><span class="pill">${filled} of ${FIELDS.length} filled in</span><button class="btn small" id="copyPlan" type="button">Copy my plan</button></div>
         <div>${FIELDS.map((f, k) => { const v = (work.fields[f.key] || '').trim(); const head = !k || FIELDS[k - 1].topic.unit !== f.topic.unit ? `<h2 class="plan-head">${f.topic.unit.track ? 'App Challenge track' : `Module ${f.topic.unit.num}: ${esc(f.topic.unit.title)}`}</h2>` : ''; return `${head}<div class="plan-row"><span class="label">${esc(f.label)}</span><div class="v${v ? '' : ' empty'}">${v ? esc(v) : 'Not written yet.'}</div><a href="#${slug(f.topic.id)}" style="font-size:14px">${v ? 'Edit' : 'Write this'} in lesson ${f.topic.id}</a></div>`; }).join('')}</div>
@@ -568,7 +707,7 @@ textarea.code,.output,.stim,.example,.lesson p,.terms,.choice,.todo{font-variant
     });
   }
 
-  route();
+  if (!location.hash && new URLSearchParams(location.search).get('class')) location.hash = 'class'; else route();
 })();
 </script>
 </body></html>

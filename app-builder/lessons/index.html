@@ -246,6 +246,28 @@ textarea.code,.output,.stim,.example,.lesson p,.terms,.choice,.todo{font-variant
 .plan-head{font-size:18px;margin:22px 0 4px}
 .plan-head:first-child{margin-top:0}
 .plan-head + .plan-row{border-top:0}
+.field input{width:100%;padding:10px 12px;border:2px solid var(--line);border-radius:10px;background:var(--panel);color:var(--ink)}
+.field input:focus{border-color:var(--accent);outline:none}
+#slCode,#joinCode{font-family:var(--f-mono);letter-spacing:.12em;text-transform:uppercase;max-width:220px}
+/* Teacher page (teacher.html) */
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:12px;margin-top:10px}
+.stats div{display:grid;gap:2px}
+.stats b{font-family:var(--f-display);font-size:30px;line-height:1}
+.stats span{font-size:14px}
+table.progress{font-size:15px;font-variant-numeric:tabular-nums}
+table.progress th,table.progress td{padding:10px 12px;white-space:nowrap}
+table.progress tr.on{background:var(--accent-soft)}
+.who{border:0;background:none;padding:0;font-weight:700;color:var(--accent);text-decoration:underline;text-align:left}
+.cellp{display:inline-block;min-width:44px;text-align:center;padding:2px 8px;border-radius:8px;background:var(--panel-2);border:1px solid var(--line);color:var(--muted)}
+.cellp.part{background:color-mix(in srgb, var(--u) 16%, var(--panel));border-color:transparent;color:var(--ink)}
+.cellp.full{background:var(--u);border-color:transparent;color:#fff;font-weight:700}
+.dmod{border-left:4px solid var(--u);padding-left:12px;margin-top:14px}
+.dmod:first-of-type{margin-top:0}
+.dmod ul{list-style:none;margin:6px 0 0;padding:0;display:grid;gap:6px;font-size:15px}
+.dmod li{display:grid;grid-template-columns:20px minmax(0,1fr) auto;gap:8px;align-items:start}
+.dmod .chk{width:20px;height:20px;border-radius:50%;border:2px solid var(--line);display:grid;place-items:center;font-size:12px}
+.dmod li.done .chk{background:var(--u);border-color:var(--u);color:#fff}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}
 
 .static-q{border-top:1px solid var(--line);padding-top:16px}
 .static-q ol{margin:10px 0;padding-left:0;list-style:none;display:grid;gap:6px}

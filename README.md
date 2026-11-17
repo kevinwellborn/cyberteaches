@@ -34,7 +34,14 @@ Congressional App Challenge (lessons `C.1` to `C.6` and a plain-words rules page
 - Main lessons do not depend on the contest. Contest facts go in a lesson's `cac` note or in the track.
 - The track is based on the official 2026 rules. When the 2027 rules and dates are published, update `CAC_INFO`,
   `CAC_RULES` and the `C.` lessons.
-- Routes are plain names (`#lesson-3-5`, `#challenge`, `#rules`, `#plan`, `#teachers`); `#/topic/3.5` also works.
+- Routes are plain names (`#lesson-3-5`, `#challenge`, `#rules`, `#plan`, `#class`, `#teachers`); `#/topic/3.5` also works.
+- Classes: App Builder uses the Academy's sign-in, classes and roster (`academy/cloud.js`), with no change to
+  `firestore.rules`. Students sign in and join on the My class page (`#class`, or the join link
+  `app-builder/?class=CODE`). A signed-in student's writing is saved to `users/{uid}.courses['ctcac-work-v1']`.
+  For a student in a class, finished lessons, step counts and writing are also copied to
+  `classes/{code}/students/{uid}.appBuilder`, which only that student and the class's teacher can read.
+- `app-builder/teacher.html` shows a teacher each class's progress by module, each student's lessons and written work,
+  and a CSV download. It only reads. Classes and student logins are still made on `academy/teacher.html`, which links to it.
 
 ## AP Networking (high school)
 
