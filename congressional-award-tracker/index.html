@@ -87,6 +87,9 @@ code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:14px;background
 details{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:0 18px;margin-bottom:10px}
 summary{cursor:pointer;font-family:var(--f-h);font-weight:700;font-size:16px;padding:16px 0;list-style-position:outside}
 details p{margin:0 0 16px;color:var(--muted)}
+.video{position:relative;aspect-ratio:16/9;border-radius:14px;overflow:hidden;background:#0B1B2E;box-shadow:var(--shadow);border:1px solid var(--line)}
+.video iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.vlink{color:var(--muted);font-size:14px;margin:12px 0 0}
 .cta{background:linear-gradient(120deg,#0F7B78,#0B5E8A);color:#fff;border-radius:20px;padding:40px;display:flex;justify-content:space-between;align-items:center;gap:24px;flex-wrap:wrap}
 .cta h2{font-size:28px}
 .cta p{margin:8px 0 0;color:#D5F1EE}
@@ -122,10 +125,17 @@ footer a{color:#fff;text-decoration:underline;text-underline-offset:3px}
     <div class="ctas">
       <a class="btn primary" href="../award-tracker/">Open the tracker on the web</a>
       <a class="btn ghost" href="https://apps.apple.com/us/app/congressional-award-tracker/id6828575876" target="_blank" rel="noopener">Get the iPhone app</a>
+      <a class="btn ghost" href="#video">▶ Watch the intro</a>
     </div>
     <p class="note">Made by teacher Kevin Wellborn. Not made or endorsed by The Congressional Award.</p>
   </div>
   <img class="appicon" src="../award-tracker-icon.png" alt="Congressional Award Tracker app icon: a gold medal on a navy background" width="200" height="200">
+</div></section>
+
+<section class="block" id="video" style="padding-bottom:0"><div class="wrap" style="max-width:860px">
+  <div class="head"><span class="eyebrow">Intro video</span><h2>Watch how the tracker works</h2><p>A short video that shows how to use the tracker.</p></div>
+  <div class="video"><iframe src="https://www.youtube-nocookie.com/embed/6Q_NOSR5FbM?rel=0" title="Congressional Award Tracker intro video" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe></div>
+  <p class="vlink">Video not loading? <a href="https://www.youtube.com/watch?v=6Q_NOSR5FbM" target="_blank" rel="noopener">Watch it on YouTube</a>.</p>
 </div></section>
 
 <section class="block"><div class="wrap">
