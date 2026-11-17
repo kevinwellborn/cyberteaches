@@ -272,6 +272,8 @@ table.progress tr.on{background:var(--accent-soft)}
 .lw{margin-top:12px}
 .lw-head{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-bottom:6px}
 .lw-head h3{font-size:19px;margin:0}
+.courseswitch{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:0 0 18px;padding-bottom:14px;border-bottom:1px solid var(--line)}
+.courseswitch .muted{font-size:14px}
 </style>
 </head><body>
 <div class="wrap">
@@ -316,6 +318,7 @@ table.progress tr.on{background:var(--accent-soft)}
   const avgOf = (s, list) => { const g = list.map(t => G(s, t)).filter(x => x.started); return g.length ? Math.round(g.reduce((a, x) => a + x.pct, 0) / g.length) : null; };
   const pc = v => v == null ? '<span class="cellp">–</span>' : `<span class="cellp ${v >= 90 ? 'full' : 'part'}">${v}%</span>`;
   const parts = g => `Quick check ${g.tried ? g.first + '/' + g.questions + ' first try' : 'not taken'} · Steps ${g.steps}/${g.stepsOf}${g.writtenOf ? ` · Boxes ${g.written}/${g.writtenOf}` : ''}`;
+  const pick = { get(){ try { return localStorage.getItem('cyberteaches:teacherClass'); } catch (e) { return null; } }, set(v){ try { localStorage.setItem('cyberteaches:teacherClass', v); } catch (e) {} } };
   let mode = 'grades', gmod = OPENU[0], lesson = null;
   let classes = [], current = null, roster = [], open = null, stopClasses = null, stopRoster = null, stopStatus = null, gateUid;
 
@@ -340,7 +343,8 @@ table.progress tr.on{background:var(--accent-soft)}
   });
 
   function start(){
-    app.innerHTML = `<div class="page-head"><span class="label">For teachers</span><h1>App Builder class progress</h1>
+    app.innerHTML = `<nav class="courseswitch" aria-label="Course to manage"><span class="label">Course</span><a class="btn small" href="../academy/teacher.html">Coding Academy</a><span class="btn small primary" aria-current="page">App Builder</span><span class="muted">Your classes work in both courses. Pick the course you want to manage.</span></nav>
+      <div class="page-head"><span class="label">For teachers</span><h1>App Builder class progress</h1>
       <p>See each student's automatic lesson scores, which lessons they finished, and what they wrote. To create a class or make student logins, use the <a href="../academy/teacher.html">Teacher Dashboard</a>.</p></div>
       <div class="row" id="tabs" role="tablist" aria-label="Your classes"></div><div id="classview"></div>`;
     stopClasses = Cloud.watchClasses((list, err) => {
@@ -348,7 +352,8 @@ table.progress tr.on{background:var(--accent-soft)}
       const tabs = document.getElementById('tabs'), view = document.getElementById('classview');
       if (err) { view.innerHTML = '<div class="card">Could not load your classes. Check your internet connection and reload.</div>'; return; }
       if (!classes.length) { tabs.innerHTML = ''; view.innerHTML = '<div class="card"><h2 style="font-size:20px;margin-bottom:8px">No classes yet</h2><p style="margin:0 0 14px">Create a class on the Teacher Dashboard. Then share the App Builder join link with your students.</p><a class="btn primary" href="../academy/teacher.html">Create a class</a></div>'; return; }
-      if (!current || !classes.find(c => c.code === current)) select(classes[0].code); else tabsHtml();
+      // Open on the class last chosen here or on the Teacher Dashboard, so switching course keeps the same class.
+      if (!current || !classes.find(c => c.code === current)) select((classes.find(c => c.code === pick.get()) || classes[0]).code); else tabsHtml();
     });
   }
   function tabsHtml(){
@@ -356,7 +361,7 @@ table.progress tr.on{background:var(--accent-soft)}
     document.querySelectorAll('#tabs [data-code]').forEach(b => b.addEventListener('click', () => select(b.dataset.code)));
   }
   function select(code){
-    current = code; open = null; lesson = null; roster = []; if (stopRoster) stopRoster();
+    current = code; pick.set(code); open = null; lesson = null; roster = []; if (stopRoster) stopRoster();
     tabsHtml(); render();
     stopRoster = Cloud.watchRoster(code, (list, err) => { roster = list.sort((a, b) => (a.name || '').localeCompare(b.name || '')); render(err); });
   }
