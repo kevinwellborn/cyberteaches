@@ -203,7 +203,7 @@ window.AP_UNITS = [
       { id: '1.5', title: 'Set up your project and build journal',
         summary: `A little setup now saves a lot of stress later. You need two things: a project folder where your code and notes live, and a build journal. The journal is a simple dated list of what you did, what broke, and how you fixed it. Professional developers keep notes like this, and it is the fastest way to remember how you solved a problem.`,
         more: [
-          `Keep the journal short. Three lines per work session is enough: what you did, what went wrong, and what comes next. Write it at the end of each session while it is fresh.`,
+          `Keep the journal short. Four short lines per work session is enough: what you did, what went wrong, how you fixed it, and what comes next. Write it at the end of each session while it is fresh.`,
           `Later you will want to explain your app to other people, such as a class, a family member, or a judge. Your journal already holds the story of how you built it.`
         ],
         terms: [
@@ -218,10 +218,28 @@ window.AP_UNITS = [
           'Inside it, create a file named journal.txt (or a document). Write today\'s date and "Started my app."',
           'Create a file named CREDITS.txt and copy in your credits list from the last lesson.',
           'Copy your problem, audience, and purpose sentence from the My plan page into your journal.',
-          'Put two work sessions on your calendar for this week.'
+          'Put two work sessions on your calendar for this week, and write them in the second box below.',
+          'After the class activity, write your first full journal entry in the first box below. Use the four lines from the example: Did, Problem, Fix, Next.'
         ],
+        together: {
+          title: 'Module 1 share-out',
+          time: 'About 20 minutes',
+          steps: [
+            'Get into a group of four. Open your My plan page so your work is in front of you.',
+            'The first presenter takes one minute to share three things: the problem, the target audience, and the one-sentence purpose.',
+            'Each listener gives two things back: "One thing I like is..." and "One question I have is...".',
+            'The presenter writes down the feedback. Do not argue with it. Just say thank you.',
+            'Rotate until everyone has presented.',
+            'Write the most useful feedback you got in the last box below.'
+          ]
+        },
         example: { title: 'A build journal entry', text: `Nov 17\nDid: sketched 3 app ideas, picked the homework planner.\nProblem: could not decide between a website and a phone app.\nFix: chose a website because it works on my Chromebook and my phone.\nNext: sketch the main screen.` },
         cac: 'One written question asks what technical difficulty you faced and how you solved it. Your journal holds the answer. Judges may also ask to see your source code, so keep your project folder organized.',
+        fields: [
+          { key: 'journal1', label: 'My first journal entry', hint: 'Start with today\'s date. Then one line each for Did, Problem, Fix, and Next.', rows: 6, lines: 4 },
+          { key: 'sessions', label: 'My two work sessions this week', hint: 'One on each line: the day, the time, and the place.', rows: 2, lines: 2 },
+          { key: 'sharefeedback', label: 'The most useful feedback from my group', hint: 'What did someone like or ask about, and what will you do with it?', rows: 3, min: 12 }
+        ],
         quiz: [
           { q: 'What is the main reason to keep a build journal?', a: ['It must be 10 pages long', 'It makes your code run faster', 'It records problems and fixes so you can remember and explain how you built your app', 'It replaces testing'], c: 2, why: 'A journal is your memory. It helps you fix similar problems later and explain your work to others.' },
           { q: 'When is the best time to write a journal entry?', a: ['Once, when the app is finished', 'At the end of each work session', 'Only when something breaks', 'Never, code explains itself'], c: 1, why: 'Short entries written right after each session are accurate and take only a minute.' },

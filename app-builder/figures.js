@@ -122,6 +122,32 @@
           ${[[150, false, A, '#3B2A20', 'long', ''], [360, false, C, '#1E1A18', 'curly', PAPER], [570, true, Bn, '#6B4A2B', 'short', '']].map(([x, ok, skin, hair, style, shirt]) => `<path d="M${x + 62} 150V92" ${line}/><circle cx="${x + 62}" cy="62" r="32" fill="${ok ? U : PAPER}" stroke="${INK}" stroke-width="3"/>
             ${ok ? `<path d="M${x + 48} 62l10 11 20-23" fill="none" stroke="#fff" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>` : `<path d="M${x + 50} 50l24 24m0-24-24 24" stroke="var(--bad, #C8402F)" stroke-width="6" stroke-linecap="round"/>`}
             <g transform="translate(${x - 14} 160) scale(.8)">${kid(0, 0, skin, hair, shirt, style)}</g>`).join('')}`) }
+    },
+    '1.5': {
+      hero: { cap: 'One folder for everything: your app files, your journal, and your credits list.',
+        html: svg(720, 300, 'A project folder holding three files: journal, credits, and the app.',
+          `<rect x="4" y="4" width="712" height="292" rx="22" fill="${SOFT}"/>
+          <path d="M60 96a14 14 0 0 1 14-14h92l22 26h160a14 14 0 0 1 14 14v124a14 14 0 0 1-14 14H74a14 14 0 0 1-14-14z" fill="${U}" stroke="${INK}" stroke-width="3" stroke-linejoin="round"/>
+          <path d="M60 136h302" stroke="${INK}" stroke-width="3"/>
+          ${text(211, 206, 'my-app', 30, 'fill="#fff" font-weight="700"').replace(`fill="${INK}"`, '')}
+          <path d="M378 170h40m-14-12 14 12-14 12" ${line}/>
+          ${[['journal.txt', 62], ['CREDITS.txt', 140], ['index.html', 218]].map(([n, y]) => `<g transform="translate(446 ${y - 24})"><path d="M0 0h34l14 14v46H0z" fill="${PAPER}" stroke="${INK}" stroke-width="3" stroke-linejoin="round"/><path d="M34 0v14h14" ${line}/><path d="M10 28h28M10 40h28" ${line} opacity=".6"/></g><text x="512" y="${y + 14}" font-family="var(--f-mono, monospace)" font-size="24" font-weight="600" fill="${INK}">${n}</text>`).join('')}`) },
+      example: { cap: 'Four short lines after each work session. That is the whole journal.',
+        html: svg(720, 230, 'A notebook page with four lines: did, problem, fix, next.',
+          `<rect x="150" y="6" width="420" height="218" rx="16" fill="${PAPER}" stroke="${INK}" stroke-width="3"/>
+          <path d="M150 52h420" stroke="${INK}" stroke-width="3"/><rect x="150" y="6" width="420" height="46" rx="16" fill="${U}" stroke="${INK}" stroke-width="3"/>
+          <text x="360" y="38" text-anchor="middle" font-family="var(--f-display, sans-serif)" font-weight="800" font-size="22" fill="#fff">Build journal · Nov 17</text>
+          ${[['Did', 'what I worked on'], ['Problem', 'what went wrong'], ['Fix', 'how I solved it'], ['Next', 'where to start next time']].map(([k, v], i) => `<text x="180" y="${92 + i * 38}" font-family="var(--f-body, sans-serif)" font-size="21" font-weight="700" fill="${INK}">${k}</text><text x="290" y="${92 + i * 38}" font-family="var(--f-body, sans-serif)" font-size="20" fill="${INK}">${v}</text><path d="M180 ${104 + i * 38}h360" stroke="${INK}" stroke-width="1.5" opacity=".25"/>`).join('')}`) },
+      together: { cap: 'One minute to share. Then each listener gives one thing they like and one question.',
+        html: svg(720, 250, 'One student presents to two classmates, who answer with I like and One question.',
+          `<rect x="4" y="4" width="712" height="242" rx="22" fill="${SOFT}"/>
+          ${bubble(150, 60, 232, 58, 130, ['"My app helps…"'])}
+          ${bubble(424, 60, 150, 58, 424, ['"I like…"'])}
+          ${bubble(606, 60, 172, 58, 606, ['"One question…"']).replace('font-size="21"', 'font-size="19"')}
+          <g transform="translate(130 166) scale(.8)">${kid(0, 0, C, '#1E1A18', '', 'curly')}</g>
+          <g transform="translate(424 166) scale(.8)">${kid(0, 0, A, '#7A4B2A', PAPER, 'long')}</g>
+          <g transform="translate(606 166) scale(.8)">${kid(0, 0, Bn, '#2A1E18', PAPER, 'short')}</g>
+          <path d="M214 176h110m-16-13 16 13-16 13" ${line}/>`) }
     }
   };
 
