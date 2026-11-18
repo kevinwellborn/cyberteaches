@@ -195,6 +195,14 @@ service cloud.firestore {
         function namesOnlyMine() {
           return request.resource.data.names.diff(resource.data.names).affectedKeys().hasOnly([request.auth.uid]);
         }
+        function posOk() {
+          let before = resource.data.get('pos', {});
+          let p = request.resource.data.pos;
+          let v = p.get(request.auth.uid, null);
+          return p.diff(before).affectedKeys().hasOnly([request.auth.uid])
+            && v is map && v.keys().hasOnly(['x', 'y', 'd'])
+            && v.x is int && v.y is int && v.d is int && v.x >= 0 && v.y >= 0 && v.x < 20 && v.y < 20 && v.d >= 0 && v.d <= 3;
+        }
         allow read: if signedIn() && (classMember() || teacherOf(code));
         // Open a waiting room.
         allow create: if signedIn() && classMember() && racesOn()
@@ -234,10 +242,15 @@ service cloud.firestore {
         // The first player to reach the flag (in time) becomes the winner, once. The raceBoard star write is in the same transaction.
         allow update: if signedIn() && resource.data.state == 'playing' && request.auth.uid in resource.data.players
           && resource.data.winner == ''
-          && rchanged().hasOnly(['winner', 'winBlocks', 'winMs'])
+          && rchanged().hasOnly(['winner', 'winBlocks', 'winMs', 'pos'])
+          && (!('pos' in request.resource.data) || posOk())
           && request.resource.data.winner == request.auth.uid
           && request.resource.data.winBlocks is int && request.resource.data.winBlocks >= 1 && request.resource.data.winBlocks <= 60
           && request.resource.data.winMs is int && request.resource.data.winMs >= 0 && request.resource.data.winMs <= 220000
+          && request.time < resource.data.startedAt + duration.value(210, 's');
+        // Racing: a player shares where their rover stopped after a run (only their own spot), so classmates see it on the map.
+        allow update: if signedIn() && resource.data.state == 'playing' && request.auth.uid in resource.data.players
+          && rchanged().hasOnly(['pos']) && posOk()
           && request.time < resource.data.startedAt + duration.value(210, 's');
         allow delete: if signedIn() && (teacherOf(code)
           || (resource.data.state == 'waiting' && (resource.data.players == [request.auth.uid]

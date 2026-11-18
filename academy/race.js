@@ -10,6 +10,10 @@ const RACE_CUTOFF = 190;        // read the final result this long after the sta
 const RACE_STALE = 100000;      // a waiting room not refreshed for this long is treated as abandoned
 const RACE_SLACK = {easy:3, medium:2, hard:2};   // blocks allowed above our own solution
 const RSTAR = '⭐';
+// Each racer drives their own color, by their spot in the room (1st orange, 2nd blue, 3rd green, 4th purple).
+const RACE_COLORS = [{name:'Orange', c:'#F2A93B'}, {name:'Blue', c:'#3D8BFD'}, {name:'Green', c:'#2DB36F'}, {name:'Purple', c:'#A066E8'}];
+const raceColor = i => RACE_COLORS[i % RACE_COLORS.length];
+const miniRover = (i, cls='race-car') => `<span class="${cls}" style="--rover:${raceColor(i).c}">${ROVER_SVG}</span>`;
 
 let race=null;          // the race on screen: {code, id, me, data, puzzle, localStart, timer, over}
 let raceWait=null;      // in the waiting room: {code, id, data, stop, beat, merge, tick, countEnd}
@@ -131,8 +135,8 @@ function waitRoom(code, id){
     const x=w.data; if(!x) return;
     const slots=$('#raceSlots');
     if(slots) slots.innerHTML=[...Array(RACE_MAX)].map((_,i)=>{ const u=x.players[i];
-      return u ? `<div class="race-slot on${u===me?' me':''}"><span class="race-car">🚙</span><b>${esc(u===me?'You':(x.names||{})[u]||'Racer')}</b></div>`
-               : `<div class="race-slot"><span class="race-car">·</span><span>Open spot</span></div>` }).join('');
+      return u ? `<div class="race-slot on${u===me?' me':''}" style="--rc:${raceColor(i).c}">${miniRover(i)}<b>${esc(u===me?'You':(x.names||{})[u]||'Racer')}</b><small>${raceColor(i).name}</small></div>`
+               : `<div class="race-slot"><span class="race-car race-empty"></span><span>Open spot</span></div>` }).join('');
     const n=x.players.length, cnt=$('#raceCount'), sb=$('#raceStart');
     if(n>=2){ if(!w.countEnd) w.countEnd=Date.now()+RACE_COUNTDOWN*1000 } else w.countEnd=0;
     if(sb) sb.hidden=n<2;
@@ -177,10 +181,25 @@ function startRace(code, id, x){
   r.timer=setInterval(()=>tickRace(r), 250);
 }
 function racersHtml(x, me){
-  return x.players.map(u=>`<span class="racer${u===x.winner?' won':''}${u===me?' me':''}">${u===x.winner?'🏁':'🚙'} ${esc(u===me?'You':(x.names||{})[u]||'Racer')}</span>`).join('');
+  return x.players.map((u,i)=>`<span class="racer${u===x.winner?' won':''}${u===me?' me':''}" style="--rc:${raceColor(i).c}">${miniRover(i,'racer-car')}${u===x.winner?'🏁 ':''}${esc(u===me?'You':(x.names||{})[u]||'Racer')}</span>`).join('');
+}
+function moveGhosts(r){
+  const pos=(r.data&&r.data.pos)||{};
+  Object.entries(r.ghosts||{}).forEach(([u,g])=>{ const p=pos[u]; if(!p) return;
+    world.place(g.el, p.x, p.y);
+    let t=g.turns; while(((t%4)+4)%4!==p.d) t+= (((p.d-t)%4)+4)%4===3 ? -1 : 1;   // turn the short way round
+    g.turns=t; g.inner.style.transform='rotate('+(t*90)+'deg)' });
+}
+// Called by finish() in index.html when a race run ends (at the flag or not): share where my rover stopped (1 small write per run).
+function raceMoved(){
+  const r=race; if(!r||r.over||!world) return;
+  const p={x:world.x, y:world.y, d:((world.turns%4)+4)%4}, k=p.x+','+p.y+','+p.d;
+  if(r.lastPos===k) return; r.lastPos=k;
+  raceCol(r.code).doc(r.id).update({['pos.'+r.me]:p}).catch(e=>console.error(e));
 }
 function onRaceData(r){
   const x=r.data, el=$('#raceRacers'); if(el) el.innerHTML=racersHtml(x, r.me);
+  moveGhosts(r);
   if(x.winner) endRace(r);
 }
 function tickRace(r){
@@ -201,11 +220,21 @@ function raceBench(r){
   const bp=h('section','pane');
   bp.innerHTML=`<div class="goal">${FLAG_SVG}<p><b>Goal:</b> ${P.goal}</p></div>`;
   world=buildBoard(P); if(world.hud) bp.appendChild(world.hud); bp.appendChild(world.board);
+  const mine=Math.max(0, r.data.players.indexOf(r.me)), col=raceColor(mine);
+  world.rover.style.setProperty('--rover', col.c);
+  world.rover.appendChild(h('span','rname',esc(duelName())));
+  // Classmates' rovers share the map, each in its own color with the name underneath. They move when their driver's run ends.
+  r.ghosts={};
+  r.data.players.forEach((u,i)=>{ if(u===r.me) return;
+    const g=h('div','sprite rover ghost'), gi=h('div','rover-in',ROVER_SVG); g.style.setProperty('--rover', raceColor(i).c);
+    gi.style.transform='rotate('+(P.dir*90)+'deg)'; g.appendChild(gi); g.appendChild(h('span','rname',esc((r.data.names||{})[u]||'Racer')));
+    world.place(g, world.m.start.x, world.m.start.y); world.board.insertBefore(g, world.rover); r.ghosts[u]={el:g, inner:gi, turns:P.dir} });
+  moveGhosts(r);
   const ctr=h('div','controls');
   ctr.innerHTML=`<button class="btn primary" id="runBtn">▶ Run</button><button class="btn" id="resetBtn">↺ Reset</button><div class="spacer"></div>
     <label class="speed" for="spd">Speed <select id="spd"><option value="650">Slow</option><option value="380">Normal</option><option value="150" selected>Fast</option></select></label>`;
   bp.appendChild(ctr);
-  const fb=h('div','feedback info',`Build a program with up to ${P.maxBlocks} blocks, then press Run. Fast speed gets you there first!`); fb.id='fb'; bp.appendChild(fb);
+  const fb=h('div','feedback info',`You drive the <b style="color:${col.c}">${col.name}</b> rover. Build a program with up to ${P.maxBlocks} blocks, then press Run. Fast speed gets you there first!`); fb.id='fb'; bp.appendChild(fb);
   bench.appendChild(bp);
   const sh=h('section','pane shelf'); sh.innerHTML='<h3>Blocks</h3><span class="label">Tap or drag to add</span>';
   const list=h('div','shelf-list');
@@ -240,7 +269,7 @@ async function raceSolved(blocks){
     await Cloud.db.runTransaction(async tx=>{
       const s=await tx.get(ref), x=s.exists&&s.data();
       if(!x || x.winner) return;
-      tx.update(ref, {winner:me, winBlocks:blocks, winMs:Date.now()-r.localStart});
+      tx.update(ref, {winner:me, winBlocks:blocks, winMs:Date.now()-r.localStart, ['pos.'+me]:{x:world.x, y:world.y, d:((world.turns%4)+4)%4}});
       tx.update(rRowRef(r.code,me), {name:duelName(), stars:FV_().increment(x.players.length), wins:FV_().increment(1), lastRace:r.id, updatedAt:FV_().serverTimestamp()});
     });
   }catch(e){ console.error(e); if(race===r && !r.over) setFb('bad','Your finish could not be saved. Check your connection and run it again.') }

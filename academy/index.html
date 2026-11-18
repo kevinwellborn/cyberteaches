@@ -310,13 +310,20 @@ body{border-top:8px solid var(--lv,var(--accent))}
 /* ---------- Flag Race ---------- */
 .race-slots{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin:12px 0}
 .race-slot{border:2px dashed var(--line);border-radius:14px;padding:12px;display:flex;flex-direction:column;align-items:center;gap:4px;color:var(--muted);text-align:center}
-.race-slot.on{border-style:solid;border-color:var(--accent);background:var(--accent-soft);color:inherit}
-.race-slot.me{box-shadow:0 0 0 3px var(--accent) inset}
-.race-car{font-size:30px;line-height:1}
+.race-slot.on{border-style:solid;border-color:var(--rc);background:color-mix(in srgb,var(--rc) 14%,var(--panel));color:inherit}
+.race-slot.on small{color:var(--muted);font-weight:700}
+.race-slot.me{box-shadow:0 0 0 3px var(--rc) inset}
+.race-car{width:44px;height:44px;display:block}
+.race-car svg,.racer-car svg{width:100%;height:100%;display:block}
+.race-empty{border-radius:50%;background:var(--line);width:14px;height:14px;margin:15px}
+.rover .rname{position:absolute;left:50%;bottom:1px;transform:translateX(-50%);max-width:180%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:clamp(9px,1.3vw,12px);font-weight:800;line-height:1.1;padding:1px 5px;border-radius:6px;background:var(--rover);color:#fff;text-shadow:0 1px 1px rgba(0,0,0,.35);pointer-events:none;z-index:2}
+.rover.ghost{opacity:.85;--spd:.6s}
+.rover.ghost .rover-in svg{width:74%;height:74%}
+.racer-car{width:20px;height:20px;display:inline-block;vertical-align:-4px;margin-right:4px}
 .race-racers{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0 0}
-.racer{background:var(--panel-2);border:1px solid var(--line);border-radius:999px;padding:3px 12px;font-weight:700;font-size:15px}
-.racer.me{border-color:var(--accent)}
-.racer.won{background:var(--accent);color:#fff;border-color:var(--accent)}
+.racer{background:var(--panel-2);border:2px solid var(--rc,var(--line));border-radius:999px;padding:3px 12px 3px 8px;font-weight:700;font-size:15px}
+.racer.me{background:color-mix(in srgb,var(--rc) 18%,var(--panel))}
+.racer.won{background:var(--rc);color:#fff}
 </style>
 
 <div class="wrap">
@@ -341,7 +348,7 @@ body{border-top:8px solid var(--lv,var(--accent))}
 <script src="cloud.js?v=17"></script>
 <script src="sound.js?v=1"></script>
 <script src="duel.js?v=3"></script>
-<script src="race.js?v=1"></script>
+<script src="race.js?v=3"></script>
 <script>
 const sfx=n=>{ if(window.Sfx) Sfx.play(n) };
 if(window.Sfx) document.getElementById('soundSlot').replaceWith(Sfx.button());
@@ -1042,10 +1049,11 @@ function stopRun(manual){
 }
 function finish(ok,msg){
   stopRun(); world.over=true;
+  if(L.race && !ok) raceMoved();   // Flag Race: classmates see where my rover stopped (see race.js)
   if(!ok){ sfx('fail'); setFb('bad',msg); return }
   sfx('win');
   if(L.duel){ duelSolved(countBlocks()); return }   // duels count blocks, not stars (see duel.js)
-  if(L.race){ raceSolved(countBlocks()); return }   // Flag Race: first to the flag wins race stars (see race.js)
+  if(L.race){ raceSolved(countBlocks()); return }   // (the rover's spot is shared in the same save)   // Flag Race: first to the flag wins race stars (see race.js)
   const allCoins = world.m.coins>0 && world.coins===world.m.coins;
   const target = allCoins && L.idealBonus ? L.idealBonus : L.ideal;
   const used=countBlocks(), stars = used<=target ? 3 : used<=target+(L.maxBlocks?Math.ceil((L.maxBlocks-target)/2):3) ? 2 : 1;
