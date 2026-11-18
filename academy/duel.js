@@ -14,13 +14,14 @@ const TROPHY = '🏆';
 // ---------- the puzzle: made from a seed, so both players get exactly the same map ----------
 function duelRng(seed){ let a=seed>>>0; return ()=>{ a=a+0x6D2B79F5|0; let t=Math.imul(a^a>>>15,1|a); t=t+Math.imul(t^t>>>7,61|t)^t; return ((t^t>>>14)>>>0)/4294967296 } }
 // Builds the map from a short program with a repeating pattern, so it can always be solved and a repeat block pays off.
-function makeDuelPuzzle(seed, level){
+// opts.noGems: the same map without crystals (Flag Race, academy/race.js). The random draws stay the same, so duels are unchanged.
+function makeDuelPuzzle(seed, level, opts){
   const R=duelRng(seed), ri=(a,b)=>a+Math.floor(R()*(b-a+1)), pick=a=>a[Math.floor(R()*a.length)];
   const size={easy:6, medium:7, hard:8}[level]||8, W=size, H=size, D_X=[0,1,0,-1], D_Y=[-1,0,1,0];
   for(let t=0;t<3000;t++){
     const segs=[], ns = level==='easy' ? 1 : ri(1,2);
     for(let i=0;i<ns;i++) segs.push({a:ri(1, level==='easy'?2:3), turn:pick(['left','right'])});
-    const reps=ri(level==='easy'?2:3, level==='hard'?5:4), tail=ri(0,2), gems = R() < (level==='easy'?.5:.8);
+    const reps=ri(level==='easy'?2:3, level==='hard'?5:4), tail=ri(0,2), gems = R() < (level==='easy'?.5:.8) && !(opts&&opts.noGems);
     let x=ri(0,W-1), y=ri(0,H-1), dir=ri(0,3), ok=true;
     const sx=x, sy=y, sdir=dir, seen=new Set([x+','+y]), gemCells=[];
     const step=()=>{ x+=D_X[dir]; y+=D_Y[dir]; const k=x+','+y; if(x<0||y<0||x>=W||y>=H||seen.has(k)) return false; seen.add(k); return true };

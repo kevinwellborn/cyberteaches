@@ -171,13 +171,13 @@ body{border-top:6px solid var(--lv,var(--accent))}
 </div>
 <script src="course.js?v=13"></script>
 <script src="firebase-config.js"></script>
-<script src="cloud.js?v=16"></script>
+<script src="cloud.js?v=17"></script>
 <script>
 const $=(s,r=document)=>r.querySelector(s);
 const esc=t=>String(t==null?'':t).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const app=$('#app'), acct=$('#acct');
 const openUnits=new Set();  // lessons expanded in the progress table
-let classes=[], showArchived=false, keepArchived=false, current=null, roster=[], stopRoster=null, stopClasses=null, uid=null, tw0=null, duelRows=[], stopDuel=null, boardRows=[], stopBoard=null, lbTab='all';
+let classes=[], showArchived=false, keepArchived=false, current=null, roster=[], stopRoster=null, stopClasses=null, uid=null, tw0=null, duelRows=[], stopDuel=null, raceRows=[], stopRace=null, boardRows=[], stopBoard=null, lbTab='all';
 const LEVEL_HELP={easy:'Small maps, short programs', medium:'Mid-size maps, a step up', hard:'The full challenge'};
 const pick={ get(){ try{ return localStorage.getItem('cyberteaches:teacherClass') }catch(e){ return null } }, set(v){ try{ localStorage.setItem('cyberteaches:teacherClass',v) }catch(e){} } };
 
@@ -264,7 +264,7 @@ function dashboard(admin){
   });
   if(stopClasses) stopClasses();
   stopClasses=Cloud.watchClasses((list,err)=>{
-    const snap=c=>JSON.stringify([c.locked||[], c.level||'', c.levels||{}, !!c.duels]);
+    const snap=c=>JSON.stringify([c.locked||[], c.level||'', c.levels||{}, !!c.duels, !!c.races]);
     const was=snap(classes.find(c=>c.code===current)||{});
     classes=list.sort((a,b)=>(a.name||'').localeCompare(b.name||''));
     const now=classes.find(c=>c.code===current); if(now && snap(now)!==was && $('#locks')) renderClass();
@@ -298,6 +298,8 @@ function selectClass(code){
   stopBoard=Cloud.watchBoard(code,(rows)=>{ if(current!==code) return; boardRows=rows||[]; const b=$('#lbBox'); if(b&&lbTab==='today') b.innerHTML=leaderboard() });
   if(stopDuel) stopDuel(); duelRows=[];
   stopDuel=Cloud.db.collection('classes').doc(code).collection('duelBoard').onSnapshot(s=>{ if(current!==code) return; duelRows=s.docs.map(d=>({uid:d.id, ...d.data()})); const b=$('#duelBox'); if(b) b.innerHTML=duelTable() }, e=>console.error(e));
+  if(stopRace) stopRace(); raceRows=[];
+  stopRace=Cloud.db.collection('classes').doc(code).collection('raceBoard').onSnapshot(s=>{ if(current!==code) return; raceRows=s.docs.map(d=>({uid:d.id, ...d.data()})); const b=$('#raceBox'); if(b) b.innerHTML=raceTable() }, e=>console.error(e));
   renderLogins();
 }
 
@@ -471,6 +473,10 @@ function renderClass(err){
     <p class="muted" style="margin:0 0 8px">Two students get the same new puzzle and 2 minutes. The program with the fewest blocks wins; a faster time breaks a tie. Each player puts in 1 Duel trophy and the winner takes both; if nobody solves it, both get theirs back. Everyone starts with 3 trophies and gets 1 more for every 10 lesson stars. A student at 0 gets 1 free trophy the next day. Duel trophies never change stars, scores or the CSV.</p>
     <section class="panel lbpanel" id="duelPanel"><h2 class="lbtitle">${esc(c.name||c.code)} Duel scoreboard</h2><div id="duelBox">${duelTable()}</div>
       <p class="muted" style="margin:10px 0 0;font-size:14px">Updates live. <button class="linkbtn" id="duelReset" style="font-size:14px">Reset Duel scores</button></p></section>
+    <div class="toolbar"><h2>Flag Race</h2><span class="lvtag" style="--c:${c.races?'#2E9363':'#5C6B6B'};--cs:transparent">${c.races?'On':'Off'}</span><div class="spacer"></div><button class="btn${c.races?'':' primary'}" id="raceToggle">${c.races?'Turn Flag Race off':'Turn Flag Race on'}</button>${n&&!err?'<button class="btn" id="raceFull">Show full screen</button>':''}</div>
+    <p class="muted" style="margin:0 0 8px">Up to 4 students get the same new map and only a few blocks, so they have to plan their program (a repeat helps). The first rover to reach the flag wins 1 race star for every player in the race (up to 4). A race starts when 4 students are in, or 20 seconds after the second one joins, and lasts 3 minutes. Nobody loses anything. Race stars never change lesson stars, scores or the CSV.</p>
+    <section class="panel lbpanel" id="racePanel"><h2 class="lbtitle">${esc(c.name||c.code)} Flag Race scoreboard</h2><div id="raceBox">${raceTable()}</div>
+      <p class="muted" style="margin:10px 0 0;font-size:14px">Updates live. <button class="linkbtn" id="raceReset" style="font-size:14px">Reset race stars</button></p></section>
     <div class="toolbar"><h2>Class settings</h2></div>
     <div class="settings">
       <div><b>${c.archived?'Archived class':'Archive this class'}</b><p class="muted">${c.archived?'This class is hidden from your class list. Students can still sign in and play. Unarchive it to bring it back.':'Hides the class from your list at the end of the year. Nothing is deleted and students can still play. You can unarchive it any time.'}</p><button class="btn" id="archiveBtn">${c.archived?'Unarchive':'Archive'}</button></div>
@@ -526,6 +532,12 @@ function renderClass(err){
     if(!confirm('Reset the Duel scoreboard for '+(c.name||c.code)+'?\n\nEvery student goes back to 3 trophies plus 1 for every 10 lesson stars, with no wins or losses. Stars and scores are not changed.')) return;
     try{ for(const sub of ['duelBoard','duels']){ const s=await cref.collection(sub).get(); await Promise.all(s.docs.map(d=>d.ref.delete())) } }
     catch(e){ console.error(e); alert('Could not reset everything. Check your connection and try again.') } };
+  $('#raceToggle').onclick=()=>save({races: !c.races});
+  const rfs=$('#raceFull'); if(rfs) rfs.onclick=()=>{ const el=$('#racePanel'); (el.requestFullscreen||el.webkitRequestFullscreen||(()=>{})).call(el) };
+  $('#raceReset').onclick=async()=>{
+    if(!confirm('Reset the Flag Race scoreboard for '+(c.name||c.code)+'?\n\nEvery student goes back to 0 race stars and 0 wins. Lesson stars and scores are not changed.')) return;
+    try{ for(const sub of ['raceBoard','races']){ const s=await cref.collection(sub).get(); await Promise.all(s.docs.map(d=>d.ref.delete())) } }
+    catch(e){ console.error(e); alert('Could not reset everything. Check your connection and try again.') } };
   const lbt=$('#lbPanel .lbtabs'); if(lbt) lbt.onclick=e=>{ const b=e.target.closest('[data-tab]'); if(!b) return; lbTab=b.dataset.tab;
     lbt.querySelectorAll('[data-tab]').forEach(x=>x.setAttribute('aria-pressed',String(x.dataset.tab===lbTab))); $('#lbBox').innerHTML=leaderboard() };
   const fs=$('#lbFull'); if(fs) fs.onclick=()=>{ const el=$('#lbPanel'); (el.requestFullscreen||el.webkitRequestFullscreen||(()=>{})).call(el) };
@@ -566,6 +578,18 @@ function duelTable(){
     if(r.trophies!==prev){ place=i+1; prev=r.trophies }
     return `<tr class="${place<=3?'place'+place:''}"><td><b>${place}</b></td><td class="l"><b>${esc(r.name)}</b></td><td><b>${r.trophies}</b> 🏆</td><td>${r.wins}</td><td>${r.losses}</td><td>${r.ties}</td></tr>` }).join('')}</tbody></table>`;
 }
+// Flag Race scoreboard: students who have won races, by race stars, then wins (same as race.js).
+function raceTable(){
+  const short=n=>{ const w=String(n||'Student').trim().split(/\s+/); return w.length>1 ? w[0]+' '+w[w.length-1][0]+'.' : w[0] };
+  const names={}; roster.forEach(s=>{ names[s.uid]=short(s.name) });
+  const rows=raceRows.map(r=>({name:names[r.uid]||r.name||'Student', stars:r.stars||0, wins:r.wins||0})).filter(r=>r.stars>0||r.wins>0)
+    .sort((a,b)=>b.stars-a.stars || b.wins-a.wins || a.name.localeCompare(b.name));
+  if(!rows.length) return '<p class="muted">No races won yet. Turn Flag Race on and the board fills in live.</p>';
+  let place=0, prev=null;
+  return `<table class="lb"><thead><tr><th>#</th><th class="l">Student</th><th>Race stars</th><th>Wins</th></tr></thead><tbody>${rows.map((r,i)=>{
+    if(r.stars!==prev){ place=i+1; prev=r.stars }
+    return `<tr class="${place<=3?'place'+place:''}"><td><b>${place===1?'👑':place}</b></td><td class="l"><b>${esc(r.name)}</b></td><td><b>${r.stars}</b> ⭐</td><td>${r.wins}</td></tr>` }).join('')}</tbody></table>`;
+}
 function table(){
   // Lessons start collapsed to just their Score (out of 100, see lessonScore in course.js). Clicking a lesson shows its puzzles.
   // Columns show the class level's puzzles; a student on another level gets their own level's score and a note.
@@ -598,7 +622,7 @@ else Cloud.onChange(c=>{
   const u=c.user?c.user.uid:null;
   if(u===uid && app.dataset.ready) return;
   uid=u; app.dataset.ready='1';
-  if(stopRoster){ stopRoster(); stopRoster=null } if(stopDuel){ stopDuel(); stopDuel=null } if(stopBoard){ stopBoard(); stopBoard=null } if(stopClasses){ stopClasses(); stopClasses=null } if(stopLogins){ stopLogins(); stopLogins=null }
+  if(stopRoster){ stopRoster(); stopRoster=null } if(stopDuel){ stopDuel(); stopDuel=null } if(stopRace){ stopRace(); stopRace=null } if(stopBoard){ stopBoard(); stopBoard=null } if(stopClasses){ stopClasses(); stopClasses=null } if(stopLogins){ stopLogins(); stopLogins=null }
   current=null;
   if(stopStatus){ stopStatus(); stopStatus=null }
   if(!u) signInView(); else if(Cloud.isStudentLogin(c.user)) studentAccount(); else if(Cloud.isAdmin(c.user)) dashboard(true); else gate(c.user);
