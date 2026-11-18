@@ -28,8 +28,10 @@ test, and share a web app. It works for a student alone or for a class. Six modu
 Congressional App Challenge (lessons `C.1` to `C.6` and a plain-words rules page). All lesson text is in
 `app-builder/content.js`; the comment at the top of that file explains each field.
 
-- Only the modules listed in `AB_OPEN` at the bottom of `content.js` are open. The rest show as "Coming soon".
-  To open one, add its id there and run `node tools/build-lesson-pages.js`.
+- All modules are open. `AB_OPEN` at the bottom of `content.js` lists the open modules; take an id out to show that
+  module as "Coming soon", then run `node tools/build-lesson-pages.js`.
+- Class activities and box lengths for Modules 2 to 6 and the track are kept in one table, `CLASSWORK`, near the bottom
+  of `content.js` (Module 1 has them inside each lesson). A box with `paste: true` allows pasting, for links.
 - Lessons can have Try it boxes (`tries`). `mode: 'js'` runs the student's JavaScript in a Web Worker and stops it after
   3 seconds, so an endless loop cannot freeze the page. `mode: 'html'` shows the student's page in a sandboxed frame.
 - Fill-in boxes (`fields`) are saved in the browser and collected on the My plan page (`#plan`).
@@ -53,7 +55,8 @@ Congressional App Challenge (lessons `C.1` to `C.6` and a plain-words rules page
   Students in that class see a lock and cannot open those lessons. Students not in a class are never locked out.
 - Pasting and dropping text into the fill-in boxes is turned off so answers are typed. Try it code boxes still allow it.
 - Pictures are inline SVG in `app-builder/figures.js`. `AB_ART(lessonId, slot)` returns the picture for the `hero`,
-  `example` or `together` slot of a lesson, and lessons without pictures show none.
+  `example` or `together` slot of a lesson. Module 1 lessons have all three. The other lessons have a hero made of
+  three icon cards, listed in `SCENES`.
 - `app-builder/teacher.html` shows a teacher each class's gradebook (scores by lesson, with everyone's writing for one
   lesson on one page), progress by module, each student's lessons and written work, and a CSV download. It only reads. Classes and student logins are still made on `academy/teacher.html`, which links to it.
 

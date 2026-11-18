@@ -282,6 +282,17 @@ table.progress tr.on{background:var(--accent-soft)}
 .lw{margin-top:12px}
 .lw-head{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-bottom:6px}
 .lw-head h3{font-size:19px;margin:0}
+.courseswitch{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:0 0 18px;padding-bottom:14px;border-bottom:1px solid var(--line)}
+.courseswitch .muted{font-size:14px}
+/* Lesson locks on the teacher page */
+.locks{display:grid;gap:12px}
+.lockmod{display:grid;gap:8px;padding:12px;border:1px solid var(--line);border-radius:16px;background:var(--panel)}
+.locklessons{display:grid;gap:8px;grid-template-columns:repeat(auto-fill,minmax(210px,1fr))}
+.lockbtn{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:10px;align-items:center;text-align:left;padding:8px 12px;border:2px solid var(--u, var(--accent));border-radius:12px;background:color-mix(in srgb, var(--u, var(--accent)) 10%, var(--panel));color:var(--ink);font-size:15px}
+.lockbtn.mod{grid-template-columns:minmax(0,1fr) auto;font-size:16px}
+.lockbtn .lt{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lockbtn.off{border-color:var(--line);border-style:dashed;background:transparent;color:var(--muted)}
+.lockbtn:disabled{opacity:.6;cursor:not-allowed}
 
 .static-q{border-top:1px solid var(--line);padding-top:16px}
 .static-q ol{margin:10px 0;padding-left:0;list-style:none;display:grid;gap:6px}
@@ -362,7 +373,7 @@ Next: sketch the main screen.</pre></section>
         <p style="margin-top:20px"><a class="btn primary" href="../../#/topic/1.5">Open 1.5 in the interactive course</a></p>
         <nav class="pager">
           <a class="btn" href="../1-4-make-sure-your-idea-is-safe-and-your-own/">← 1.4 Make sure your idea is safe and your own</a>
-          <a class="btn" href="../">All lessons</a>
+          <a class="btn" href="../2-1-user-stories-and-your-one-core-feature/">2.1 User stories and your one core feature →</a>
         </nav>
       </article>
       <aside class="side">

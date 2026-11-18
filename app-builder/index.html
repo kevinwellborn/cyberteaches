@@ -554,6 +554,7 @@ table.progress tr.on{background:var(--accent-soft)}
     // Answers must be typed. Pasting and dropping text into an answer box is turned off, so answers are not copied
     // from other pages. This stops ordinary copy and paste; it is not a lock a determined student could never get past.
     app.querySelectorAll('[data-field]').forEach(x => {
+      if ((t.fields.find(f => f.key === x.dataset.field) || {}).paste) return; // boxes for links allow pasting
       const stop = e => { e.preventDefault(); const n = document.getElementById('savedNote'); if (n) n.textContent = 'Pasting is turned off here. Type your answer in your own words.'; };
       x.addEventListener('paste', stop); x.addEventListener('drop', stop);
       x.addEventListener('beforeinput', e => { if (e.inputType === 'insertFromPaste' || e.inputType === 'insertFromDrop') stop(e); });
