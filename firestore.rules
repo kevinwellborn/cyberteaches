@@ -185,6 +185,103 @@ service cloud.firestore {
         allow delete: if signedIn() && teacherOf(code);
       }
 
+      // ---- Flag Race (academy/race.js): 2 to 4 classmates, same map, few blocks; first to the flag wins 1 race star per player. ----
+      // The teacher turns it on with classes/{code}.races == true. Nobody loses anything.
+      function racesOn() {
+        return get(/databases/$(database)/documents/classes/$(code)).data.get('races', false) == true;
+      }
+      match /races/{id} {
+        function rchanged() { return request.resource.data.diff(resource.data).affectedKeys(); }
+        function namesOnlyMine() {
+          return request.resource.data.names.diff(resource.data.names).affectedKeys().hasOnly([request.auth.uid]);
+        }
+        function posOk() {
+          let before = resource.data.get('pos', {});
+          let p = request.resource.data.pos;
+          let v = p.get(request.auth.uid, null);
+          return p.diff(before).affectedKeys().hasOnly([request.auth.uid])
+            && v is map && v.keys().hasOnly(['x', 'y', 'd'])
+            && v.x is int && v.y is int && v.d is int && v.x >= 0 && v.y >= 0 && v.x < 20 && v.y < 20 && v.d >= 0 && v.d <= 3;
+        }
+        allow read: if signedIn() && (classMember() || teacherOf(code));
+        // Open a waiting room.
+        allow create: if signedIn() && classMember() && racesOn()
+          && request.resource.data.keys().hasOnly(['level', 'seed', 'state', 'players', 'names', 'createdAt', 'winner'])
+          && request.resource.data.state == 'waiting'
+          && request.resource.data.players == [request.auth.uid]
+          && request.resource.data.level in ['easy', 'medium', 'hard']
+          && request.resource.data.seed is int
+          && request.resource.data.createdAt == request.time
+          && request.resource.data.winner == ''
+          && request.resource.data.names.keys().hasOnly([request.auth.uid])
+          && request.resource.data.names[request.auth.uid] is string && request.resource.data.names[request.auth.uid].size() <= 40;
+        // The first player keeps the room fresh.
+        allow update: if signedIn() && resource.data.state == 'waiting' && resource.data.players[0] == request.auth.uid
+          && rchanged().hasOnly(['createdAt']) && request.resource.data.createdAt == request.time;
+        // A classmate joins (the 4th player starts the race).
+        allow update: if signedIn() && classMember() && racesOn()
+          && resource.data.state == 'waiting' && resource.data.players.size() < 4
+          && !(request.auth.uid in resource.data.players)
+          && request.resource.data.players == resource.data.players.concat([request.auth.uid])
+          && namesOnlyMine()
+          && request.resource.data.names[request.auth.uid] is string && request.resource.data.names[request.auth.uid].size() <= 40
+          && ((rchanged().hasOnly(['players', 'names']))
+            || (rchanged().hasOnly(['players', 'names', 'state', 'startedAt']) && request.resource.data.players.size() == 4
+                && request.resource.data.state == 'playing' && request.resource.data.startedAt == request.time));
+        // A player leaves the waiting room (the last one deletes it instead).
+        allow update: if signedIn() && resource.data.state == 'waiting' && request.auth.uid in resource.data.players
+          && rchanged().hasOnly(['players', 'names'])
+          && request.resource.data.players == resource.data.players.removeAll([request.auth.uid])
+          && request.resource.data.players.size() >= 1
+          && namesOnlyMine() && !(request.auth.uid in request.resource.data.names);
+        // Any player starts the race once at least 2 are in.
+        allow update: if signedIn() && resource.data.state == 'waiting' && request.auth.uid in resource.data.players
+          && resource.data.players.size() >= 2
+          && rchanged().hasOnly(['state', 'startedAt'])
+          && request.resource.data.state == 'playing' && request.resource.data.startedAt == request.time;
+        // The first player to reach the flag (in time) becomes the winner, once. The raceBoard star write is in the same transaction.
+        allow update: if signedIn() && resource.data.state == 'playing' && request.auth.uid in resource.data.players
+          && resource.data.winner == ''
+          && rchanged().hasOnly(['winner', 'winBlocks', 'winMs', 'pos'])
+          && (!('pos' in request.resource.data) || posOk())
+          && request.resource.data.winner == request.auth.uid
+          && request.resource.data.winBlocks is int && request.resource.data.winBlocks >= 1 && request.resource.data.winBlocks <= 60
+          && request.resource.data.winMs is int && request.resource.data.winMs >= 0 && request.resource.data.winMs <= 220000
+          && request.time < resource.data.startedAt + duration.value(210, 's');
+        // Racing: a player shares where their rover stopped after a run (only their own spot), so classmates see it on the map.
+        allow update: if signedIn() && resource.data.state == 'playing' && request.auth.uid in resource.data.players
+          && rchanged().hasOnly(['pos']) && posOk()
+          && request.time < resource.data.startedAt + duration.value(210, 's');
+        allow delete: if signedIn() && (teacherOf(code)
+          || (resource.data.state == 'waiting' && (resource.data.players == [request.auth.uid]
+                || (classMember() && request.time > resource.data.createdAt + duration.value(100, 's'))))
+          || (resource.data.state == 'playing' && request.auth.uid in resource.data.players && resource.data.winner != '')
+          || (resource.data.state == 'playing' && classMember() && request.time > resource.data.startedAt + duration.value(300, 's')));
+      }
+
+      // Race stars. They only go up when this student wins a race: + the number of players in that race.
+      match /raceBoard/{uid} {
+        function racePath() { return /databases/$(database)/documents/classes/$(code)/races/$(request.resource.data.lastRace); }
+        function rn() { return request.resource.data; }
+        function ro() { return resource.data; }
+        function rKeysOk() {
+          return rn().keys().hasOnly(['name', 'stars', 'wins', 'lastRace', 'updatedAt'])
+            && rn().name is string && rn().name.size() <= 40 && rn().updatedAt == request.time
+            && rn().stars is int && rn().wins is int && rn().lastRace is string;
+        }
+        allow read: if signedIn() && (teacherOf(code) || classMember());
+        allow create: if signedIn() && request.auth.uid == uid && classMember() && rKeysOk()
+          && rn().stars == 0 && rn().wins == 0 && rn().lastRace == '';
+        allow update: if signedIn() && request.auth.uid == uid && rKeysOk()
+          && rn().lastRace != ro().lastRace
+          && rn().wins == ro().wins + 1
+          && getAfter(racePath()).data.winner == uid
+          && get(racePath()).data.winner == ''
+          && rn().stars == ro().stars + getAfter(racePath()).data.players.size();
+        // The teacher can reset the Flag Race scoreboard.
+        allow delete: if signedIn() && teacherOf(code);
+      }
+
       // Student logins the teacher made (name, username, password). Only the class's teacher can see or change them.
       match /logins/{uid} {
         allow read, write: if signedIn() && teacherOf(code);
