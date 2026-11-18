@@ -1283,11 +1283,256 @@ window.CAC_RULES = [
 window.CAC_VIDEO = ['The name of each participant', 'The name of the app', 'The purpose of the app, in one clear sentence', 'The target audience: who the app is for', 'The tools and coding languages you used', 'The app working: show what it does'];
 window.CAC_QUESTIONS = ['What is the title of your app?', 'Explain the app\'s purpose.', 'What inspired you to create this app?', 'What technical or coding difficulty did you face, and how did you address it?', 'What did you learn while participating? What was your biggest takeaway?', 'What would you change if you made a 2.0 version?'];
 
+// Class activities and auto-graded boxes for Modules 2 to 6 and the App Challenge track.
+// Module 1 has these written inside each lesson above. For the other lessons they are kept in this one table and
+// added to the lessons by the loop underneath it:
+//   together: the "With your class" activity ({ title, time, steps })
+//   set:      length needed for full credit on boxes the lesson already has ({ key: { min: words } or { lines: n } })
+//   first, add: new boxes shown before or after the lesson's own boxes. paste: true lets students paste (for links).
+const CLASSWORK = {
+  '2.1': { together: { title: 'Story swap', time: 'About 15 minutes', steps: [
+      'Pair up. Read your five user stories to your partner.',
+      'Your partner picks the one story they would keep if the app could only do one thing. Compare it with the one you starred.',
+      'Your partner sorts your other four stories into "must have" and "if there is time" without seeing how you sorted them.',
+      'Talk about every story you sorted differently. Decide together, then switch roles.',
+      'Class share: name one feature you moved down to "if there is time" and say why.' ] },
+    first: [{ key: 'userstories', label: 'My five user stories', hint: 'One on each line: As a ___, I want to ___ so that ___.', rows: 6, lines: 5 }],
+    set: { corefeature: { min: 10 }, features: { min: 10 } },
+    add: [{ key: 'storyswap', label: 'What my partner would keep and what they would cut', hint: 'Which story did they pick as the core, and where did you disagree?', rows: 3, min: 12 }] },
+  '2.2': { together: { title: 'Gallery walk', time: 'About 20 minutes', steps: [
+      'Put your sketches on your desk with a blank sheet of paper next to them for notes.',
+      'Walk around the room. At three desks, write one thing that is clear and one question you have.',
+      'Go back to your desk and read your notes.',
+      'Pair up for "guess the button." Your partner points at each button on your sketch and says what they think it does.',
+      'Fix any button your partner guessed wrong. Change its label or move it.' ] },
+    set: { screens: { min: 12 } },
+    add: [{ key: 'gallerynotes', label: 'Notes my classmates left', hint: 'What was clear, what questions did they ask, and which button did your partner guess wrong?', rows: 3, min: 12 }] },
+  '2.3': { together: { title: 'Data detectives', time: 'About 15 minutes', steps: [
+      'Warm up as a class. Thumbs up or thumbs down: should a homework app store your home address? Should a quiz game store your birthday? Should a scoreboard store a nickname?',
+      'Trade data plans with a partner. You are now a privacy detective.',
+      'For each thing your partner\'s app stores, ask: "Why does the app need this?"',
+      'If your partner cannot answer in one sentence, they cross it out or store less.',
+      'Switch roles. Then write what changed in the last box below.' ] },
+    set: { data: { lines: 3 } },
+    add: [{ key: 'datacut', label: 'What I cut or changed after my partner\'s questions', hint: 'If nothing changed, write the hardest question they asked and your answer.', rows: 3, min: 10 }] },
+  '2.4': { together: { title: 'Paper prototype test', time: 'About 20 minutes', steps: [
+      'Get into a group of three: a designer, a user, and an observer.',
+      'The designer gives the user one task and the paper sketches. Then the designer stays silent.',
+      'The user does the task by pointing at the paper and says out loud what they are thinking.',
+      'The observer writes down every pause, wrong guess, and question, then gives the notes to the designer.',
+      'Rotate until everyone has been the designer.',
+      'Fix the biggest problem on your sketch before you leave.' ] },
+    first: [{ key: 'testtask', label: 'The task I asked my testers to do', hint: 'One sentence. Example: Add a new assignment due on Friday.', rows: 2, min: 6 }],
+    set: { designfeedback: { min: 15 } } },
+  '3.1': { together: { title: 'Four corners', time: 'About 10 minutes', steps: [
+      'The corners of the room are: web app, phone app, block coding, and not sure yet. Walk to the corner that fits your app today.',
+      'In your corner, agree on one good reason for your choice. One person shares it with the class.',
+      'If you are in "not sure yet," ask the other corners one question each, then pick a corner.',
+      'Pair up with someone from a different corner. Explain your choice in 30 seconds each.' ] },
+    set: { platform: { min: 10 } } },
+  '3.2': { together: { title: 'Driver and navigator', time: 'About 15 minutes', steps: [
+      'Pair up at one computer. One person is the driver, who types. The other is the navigator, who says what to type.',
+      'Build a page for the navigator\'s app in the Try it box: a heading with the app name and a paragraph with the purpose sentence.',
+      'The navigator picks a color. The driver changes the CSS.',
+      'After five minutes, switch jobs and build the other person\'s page.',
+      'Show your pages to another pair.' ] },
+    add: [{ key: 'htmlparts', label: 'HTML elements my first screen needs', hint: 'One on each line. Example: a heading for the app name.', rows: 4, lines: 3 }] },
+  '3.3': { together: { title: 'Human events', time: 'About 10 minutes', steps: [
+      'Pair up. One of you is the app. The other is the user.',
+      'The app writes down three secret rules, such as "When you clap, I stand up."',
+      'The user tries events: clap, snap, wave, say a word. The app responds only when an event matches a rule.',
+      'The user guesses the three rules. Then switch.',
+      'Now look at each other\'s screen sketches and say what should happen for each button.' ] },
+    add: [{ key: 'events', label: 'What my buttons do', hint: 'One on each line: When the user clicks ___, the app ___.', rows: 3, lines: 2 }] },
+  '3.4': { together: { title: 'Predict, then run', time: 'About 10 minutes', steps: [
+      'Pair up, each at your own Try it box.',
+      'Change two values in your code. Do not run it yet.',
+      'Trade seats. Read your partner\'s code and write down exactly what you think it will print.',
+      'Run it. Score one point for every line you predicted correctly.',
+      'Play three rounds. Tell your partner how you worked out your best prediction.' ] },
+    set: { variables: { lines: 3 } } },
+  '3.5': { together: { title: 'Stand up if', time: 'About 10 minutes', steps: [
+      'One person is the caller and reads a rule to the class, such as "If you have a pet, stand up. Otherwise, put a hand on your desk."',
+      'Everyone follows the rule. Notice that each person does exactly one of the two things.',
+      'Take turns being the caller. Try a rule with three branches: "If..., else if..., else...".',
+      'Pair up. Give your partner a score, and they say what the Try it code would print without running it.',
+      'Run it to check. Then switch.' ] },
+    set: { decision: { min: 8 } } },
+  '3.6': { together: { title: 'Loop choreographer', time: 'About 10 minutes', steps: [
+      'Pair up. Write a three-step move on paper, such as "clap, turn, snap."',
+      'Add a for loop on top: "Repeat 4 times." Your partner performs it and counts out loud.',
+      'Now write a while loop: "While the teacher is standing, tap your desk." Try it as a class.',
+      'Talk about it: which loop did you know the count for before it started?',
+      'Do the second Try it challenge together. One person types and the other checks.' ] },
+    add: [{ key: 'loopspot', label: 'Where my app repeats something', hint: 'What repeats, and how many times or until when?', rows: 2, min: 8 }] },
+  '3.7': { together: { title: 'The human list', time: 'About 10 minutes', steps: [
+      'Five students stand in a line at the front. They are a list called students.',
+      'The class calls out positions: "students[0]", "students[3]". That person waves. Remember that counting starts at 0.',
+      'Call "push". One more student joins the end of the line. What is the length now?',
+      'Loop through the list: each person says their name in order.',
+      'Back in pairs, do the Try it challenge and check each other\'s output.' ] },
+    set: { lists: { min: 6 } } },
+  '3.8': { together: { title: 'Function cards', time: 'About 10 minutes', steps: [
+      'On a card, write a function: a name with brackets, such as doTheWave(), and three steps under it.',
+      'Hold up your card and "call" your function. Your group performs the steps.',
+      'Add a parameter, such as greet(name). Call it with two different names.',
+      'Trade cards with another group and call their function twice.',
+      'In pairs, do the Try it challenge.' ] },
+    add: [{ key: 'functions', label: 'Two functions my app needs', hint: 'One on each line: the name and what it does. Example: addTask() puts a new task on the list.', rows: 3, lines: 2 }] },
+  '3.9': { together: { title: 'Hello app showcase', time: 'About 20 minutes', steps: [
+      'Trade seats with a partner and use their hello app for two minutes.',
+      'Scavenger hunt: in your partner\'s code, find the variable, the list, the if / else, the loop, and the function. Point to each one.',
+      'Tell your partner one thing you like and one thing you would add.',
+      'Go back to your seat and make one change your partner suggested.',
+      'Class share: two or three volunteers show their app on the big screen.' ] },
+    add: [{ key: 'helloapp', label: 'What I changed in my hello app, and what my partner said', hint: 'Your changes, their compliment, and their suggestion.', rows: 3, min: 15 }] },
+  '4.1': { together: { title: 'Be the computer', time: 'About 15 minutes', steps: [
+      'Trade pseudocode with a partner.',
+      'Your partner is now the computer. They read your lines one at a time and do exactly what each line says, nothing more.',
+      'Any time the computer has to guess, they say "stuck." Mark that line.',
+      'Rewrite the marked lines so no guessing is needed. Then switch roles.',
+      'Turn your fixed pseudocode into your list of build steps.' ] },
+    set: { buildsteps: { lines: 5 } },
+    add: [{ key: 'stuck', label: 'Where my partner got stuck', hint: 'Which line was unclear, and how did you rewrite it?', rows: 2, min: 8 }] },
+  '4.2': { together: { title: 'Break it and bring it back', time: 'About 10 minutes', steps: [
+      'Trade seats with a partner.',
+      'Add three things to your partner\'s app. Close the tab. Open the file again. Are all three still there?',
+      'Try to break it: add something empty, something very long, and something with symbols in it.',
+      'Tell your partner exactly what you did and what happened.',
+      'Go back and fix what your partner found.' ] },
+    add: [{ key: 'savetest', label: 'What my partner tested and what happened', hint: 'Did the data come back? What broke, if anything?', rows: 3, min: 10 }] },
+  '4.3': { together: { title: 'Bug hunt', time: 'About 15 minutes', steps: [
+      'Press Start over in the Try it box and fix it so it runs. Then hide one new bug in it: delete a quote mark, misspell a variable, or flip a sign.',
+      'Trade seats. Find and fix your partner\'s bug. Read the error message first.',
+      'Tell your partner how you found it.',
+      'Rubber duck time: explain a real bug from your own app to your partner, one line at a time. Often you will spot it while you talk.',
+      'Write the bug and the fix in the box below and in your journal.' ] },
+    add: [{ key: 'bugfix', label: 'A bug I fixed', hint: 'What went wrong, how you found the cause, and what you changed.', rows: 3, min: 12 }] },
+  '4.4': { together: { title: 'Explain it to me', time: 'About 15 minutes', steps: [
+      'Pair up. Your partner picks any function in your app.',
+      'Explain it line by line. Your partner asks "why?" at least twice.',
+      'Put a mark next to any line you could not explain. Look it up or ask, then rewrite it yourself.',
+      'Trade CREDITS.txt files. Look at your partner\'s app and check that nothing is missing from their list.',
+      'Switch roles.' ] },
+    add: [{ key: 'explain', label: 'The code I explained, and what I had to look up', hint: 'Which function did your partner pick? Was there a line you could not explain?', rows: 3, min: 12 }] },
+  '4.5': { together: { title: 'Commit message clinic', time: 'About 10 minutes', steps: [
+      'Write three commit messages for work you have already done, one on each line of the box below.',
+      'Read them to a partner. For each one, your partner says what they think changed in the code.',
+      'If your partner could not tell, the message is too vague. Rewrite it.',
+      'Class share: read out the clearest message you heard.' ] },
+    add: [{ key: 'commits', label: 'Three commit messages for my work so far', hint: 'One on each line. Say what changed. Example: Add save button and keep tasks after reload.', rows: 4, lines: 3 }] },
+  '5.1': { together: { title: 'Feature auction', time: 'About 15 minutes', steps: [
+      'List your "if there is time" features on paper.',
+      'You have 10 points. Spend them on the features that would help users most, and write the points next to each.',
+      'Trade lists with a partner. They spend their own 10 points as a user of your app, without seeing yours.',
+      'Compare. The feature with the most points from both of you is the one to think about first.',
+      'Check it against how hard it is to build. Then choose your next feature.' ] },
+    add: [{ key: 'nextfeature', label: 'The feature I will add next, and why', hint: 'How did you and your partner spend your points? Add your feature freeze date.', rows: 3, min: 12 }] },
+  '5.2': { together: { title: 'Squint, read, and tab', time: 'About 15 minutes', steps: [
+      'Trade seats with a partner and open their app.',
+      'Squint test: stand two steps back and squint. Can you still tell which button is the main one?',
+      'Read test: read each button label out loud and say what you think will happen. Then press it. Were you right?',
+      'Keyboard test: do the main task using only Tab and Enter.',
+      'Tell your partner the two biggest problems you found. Then switch.' ] },
+    add: [{ key: 'usability', label: 'Two problems my partner found, and my fixes', hint: 'One on each line: the problem, then what you changed.', rows: 3, lines: 2 }] },
+  '5.3': { together: { title: 'Test lab', time: 'About 25 minutes', steps: [
+      'Half the class are developers and stay at their computers. The other half are testers.',
+      'Each developer gives every tester the same task, then stays silent and takes notes.',
+      'Testers rotate to a new app every four minutes. Try three apps.',
+      'Testers: try at least one edge case in each app, such as leaving a box empty.',
+      'Switch halves so everyone gets tested.',
+      'Write a bug report for each problem your testers hit.' ] },
+    first: [{ key: 'testcases', label: 'My test cases', hint: 'One on each line: what to do, and what should happen. Include three edge cases.', rows: 7, lines: 6 }],
+    set: { testreport: { min: 20 } } },
+  '5.4': { together: { title: 'Code review', time: 'About 15 minutes', steps: [
+      'Trade code with a partner.',
+      'Read the comment at the top. Can you say what the app is for without running it?',
+      'Put a question mark next to every name you cannot understand.',
+      'Pick one function. Using only its comment, tell your partner what it does. They say if you are right.',
+      'Fix every question mark in your own code. Then switch.' ] },
+    add: [{ key: 'codereview', label: 'What my reviewer could not understand, and what I renamed', hint: 'List the names or comments you changed.', rows: 3, min: 10 }] },
+  '6.1': { together: { title: 'Launch party', time: 'About 15 minutes', steps: [
+      'Add your app link to the class list your teacher shares.',
+      'Open two classmates\' apps on your own device.',
+      'For each one, tell the developer one thing you like and one bug or confusing spot, if you find one.',
+      'Open your own app on a classmate\'s device or a phone. Does it still work?',
+      'Write what you heard in the last box below.' ] },
+    add: [{ key: 'applink', label: 'My app link', hint: 'The address of your live app. You can paste it here.', rows: 1, paste: true },
+          { key: 'launchnotes', label: 'What classmates said about my live app', hint: 'What they liked and any bug they found.', rows: 3, min: 10 }] },
+  '6.2': { together: { title: 'Demo day rehearsal', time: 'About 20 minutes', steps: [
+      'Get into a group of four. Pick a timekeeper for each round.',
+      'Give your demo. The timekeeper raises a hand at 1 minute 30 and stops you at 2 minutes.',
+      'Each listener tells you one thing they liked and one thing that was unclear.',
+      'Rotate until everyone has presented.',
+      'Change your script to fix what was unclear.' ] },
+    set: { demoscript: { min: 60 } },
+    add: [{ key: 'demofeedback', label: 'What my group liked and what was unclear', hint: 'And what you changed in your script because of it.', rows: 3, min: 12 }] },
+  '6.3': { together: { title: 'Video check partners', time: 'About 15 minutes', steps: [
+      'Pair up with headphones. Watch your partner\'s ten-second test recording.',
+      'Check three things: Can you hear every word? Can you read the screen? Is there anything private showing?',
+      'After the real recording, watch each other\'s whole video with the checklist from the example.',
+      'Tell your partner one part to keep and one part to record again.' ] },
+    add: [{ key: 'videocheck', label: 'What my partner noticed in my recording', hint: 'Sound, screen, timing, and anything to record again.', rows: 3, min: 10 }] },
+  '6.4': { together: { title: 'Showcase and shout-outs', time: 'About 20 minutes', steps: [
+      'Sit in a circle or stand by your computers for a showcase.',
+      'Each person takes 30 seconds: your hardest problem and how you solved it.',
+      'Give a shout-out to one classmate who helped you, and say exactly what they did.',
+      'Ask two classmates what they would want in version 2.0 of your app.',
+      'Write your version 2.0 list.' ] },
+    set: { learned: { min: 20 }, v2: { lines: 2 } },
+    add: [{ key: 'shoutout', label: 'A classmate who helped me, and how', hint: 'First name only, and what they did.', rows: 2, min: 8 }] },
+  'C.1': { together: { title: 'Watch party', time: 'About 15 minutes', steps: [
+      'As a class or in small groups, watch one winning demo video from a past year.',
+      'While you watch, write down the app\'s purpose and who it is for. Compare notes with a partner.',
+      'Look at what judges score. Talk about where this video was strongest.',
+      'Watch a second video. Vote: which one explained its app more clearly, and why?' ] },
+    add: [{ key: 'winnernotes', label: 'What I noticed in past winners', hint: 'One thing you liked and one thing you would do differently.', rows: 3, min: 12 }] },
+  'C.2': { together: { title: 'Eligibility partners', time: 'About 10 minutes', steps: [
+      'Pair up. Classmates at the same school can live in different districts, so do not assume yours match.',
+      'Go through the eligibility checklist in the example together, one line at a time.',
+      'Check that each of you has found a district that is hosting a challenge.',
+      'If either of you is stuck on a line, ask your teacher before you move on.' ] },
+    set: { district: { min: 3 } } },
+  'C.3': { together: { title: 'Team agreement', time: 'About 15 minutes', steps: [
+      'Sit with your team. If you are entering solo, pair up with another solo student as check-in buddies.',
+      'Agree on each person\'s main role. Everyone should write some code.',
+      'Agree on when you will work, and how you will decide when you disagree.',
+      'Agree on what happens if someone misses a work session.',
+      'Everyone writes the same agreement in their own box below.' ] },
+    set: { team: { min: 12 } } },
+  'C.4': { together: { title: 'Disclosure check', time: 'About 15 minutes', steps: [
+      'Trade disclosure paragraphs with a partner.',
+      'After reading, can you say what they built themselves, what libraries and tools they used, and exactly how they used AI? If not, tell them which part is missing.',
+      'Your partner picks one function in your app. Explain it line by line.',
+      'Fix your paragraph. Then switch roles.' ] },
+    set: { disclosure: { min: 25 } } },
+  'C.5': { together: { title: 'Six-item check', time: 'About 15 minutes', steps: [
+      'Pair up. Your partner writes the six required items on paper and starts a timer.',
+      'Read your script out loud. Your partner ticks each item when they hear it.',
+      'Your partner tells you the time and which items were missing or hard to catch.',
+      'Fix your script. Then switch roles.',
+      'After you record, watch each other\'s video with the same six-item list.' ] },
+    set: { videoscript: { min: 60 }, videolink: { paste: true } } },
+  'C.6': { together: { title: 'Proofreading pairs', time: 'About 15 minutes', steps: [
+      'Trade written answers with a partner.',
+      'Underline any sentence you had to read twice. Circle spelling mistakes.',
+      'Check that each answer really answers its question.',
+      'Go through the final submission checklist in the example for each other.',
+      'Fix your answers before you paste them into the application.' ] },
+    set: { inspired: { min: 20 }, difficulty: { min: 25 } } }
+};
+window.AP_UNITS.forEach(u => u.topics.forEach(t => {
+  const c = CLASSWORK[t.id]; if (!c) return;
+  t.together = c.together;
+  (t.fields || []).forEach(f => Object.assign(f, (c.set || {})[f.key]));
+  if (c.first || c.add) t.fields = (c.first || []).concat(t.fields || [], c.add || []);
+}));
+
 // Modules that are open to students. Every lesson in a module that is not listed here is marked soon: true,
 // which shows it as "Coming soon" and leaves it out of lesson pages, My plan, scores and the teacher page.
 // To open a module, add its id here ('m2' to 'm6', and 'c' for the App Challenge track), then run
 // node tools/build-lesson-pages.js.
-window.AB_OPEN = ['m1'];
+window.AB_OPEN = ['m1', 'm2', 'm3', 'm4', 'm5', 'm6', 'c'];
 window.AP_UNITS.forEach(u => { if (!window.AB_OPEN.includes(u.id)) u.topics.forEach(t => { t.soon = true; }); });
 
 // A quiz question written as "Question?\n\ncode" is split into q (the question) and st (the code shown with it),
