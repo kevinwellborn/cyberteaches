@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Unit 6: Linux Hardening | CyberPatriot | CyberTeaches</title>
+<meta name="description" content="CyberPatriot high school course, Unit 6: Apply the same audit method from Windows to Ubuntu: users and sudo, hidden root accounts, password aging, the ufw firewall, SSH, services, prohibited software, file permissions, and updates.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link rel="icon" type="image/png" href="/favicon.png"><link rel="stylesheet" href="../assets/site.css">
+</head><body>
+<header class="site"><div class="wrap"><a class="brand" href="/"><img src="/logo.png" alt="" width="32" height="32">CyberTeaches</a><span class="brand course">CyberPatriot</span>
+<nav aria-label="Course"><a href="../">Course home</a><a href="../#units" aria-current="page">Units</a><a href="../#calendar">Calendar</a><a href="../teachers/">Teachers</a><a href="/">All courses</a></nav></div></header>
+<div class="hero small"><div class="wrap">
+<div class="crumbs"><a href="../">CyberPatriot</a> / Unit 6</div>
+<span class="eyebrow">Unit 6 of 10 · 2 weeks</span>
+<h1>Linux Hardening</h1>
+<p class="lead">Apply the same audit method from Windows to Ubuntu: users and sudo, hidden root accounts, password aging, the ufw firewall, SSH, services, prohibited software, file permissions, and updates.</p>
+<div class="facts"><span><b>Time:</b> 4 lessons (50 min) and 2 practice sessions (90 min)</span><span><b>Platform:</b> Ubuntu</span></div>
+</div></div>
+<main class="wrap">
+
+<section>
+<div class="grid two">
+<div class="card"><span class="eyebrow">Goals</span><h3>By the end of this unit, students can</h3><ol class="goals"><li>Audit Linux users, sudo rights, and hidden root (UID 0) accounts against a README.</li><li>Set password aging and minimum length rules.</li><li>Turn on the ufw firewall and secure the SSH server.</li><li>Remove unneeded services and prohibited software, fix risky file permissions, and install updates.</li></ol></div>
+<div class="card"><span class="eyebrow">Signature lab</span><h3>Lab 6: Full Linux Practice Image</h3><p>A fresh Ubuntu image with planted problems: forensics question, users and sudo, a hidden UID 0 account, password policy, ufw, SSH settings, unneeded services, prohibited tools, /etc/shadow permissions, and updates. The last run is timed at 55 minutes.</p><div class="meta"><span>CSTA 3A-NI-06, 3B-NI-04 · NICE: Systems Administration, Cyber Defense Infrastructure Support</span></div></div>
+</div>
+</section>
+
+<section>
+<div class="sec-head"><span class="eyebrow">Materials</span><h2>Student materials</h2><p>Open them in Google Drive, make your own editable copy, or download a PDF to print.</p></div>
+<div class="files">
+<div class="file"><span class="kind">Slides</span><h3>Slide deck</h3><p>Every lesson in order, with speaker notes.</p><div class="acts"><a class="btn line sm" href="https://docs.google.com/presentation/d/13HO3ekjBe74NWWEv-cZzvdTI1RFSHQehIDkBDuPhvHI/edit?usp=sharing" target="_blank" rel="noopener">Open</a><a class="btn line sm" href="https://docs.google.com/presentation/d/13HO3ekjBe74NWWEv-cZzvdTI1RFSHQehIDkBDuPhvHI/copy" target="_blank" rel="noopener">Make a copy</a><a class="btn line sm" href="https://docs.google.com/presentation/d/13HO3ekjBe74NWWEv-cZzvdTI1RFSHQehIDkBDuPhvHI/export/pdf">PDF</a></div></div>
+<div class="file"><span class="kind">Lab</span><h3>Lab student handout</h3><p>The README, steps, and a table to record fixes.</p><div class="acts"><a class="btn line sm" href="https://docs.google.com/document/d/1fOwyDkV-3CqBG4tuxFVb6JRIcwEb4oOqoHyOw4g-bt0/edit?usp=sharing" target="_blank" rel="noopener">Open</a><a class="btn line sm" href="https://docs.google.com/document/d/1fOwyDkV-3CqBG4tuxFVb6JRIcwEb4oOqoHyOw4g-bt0/copy" target="_blank" rel="noopener">Make a copy</a><a class="btn line sm" href="https://docs.google.com/document/d/1fOwyDkV-3CqBG4tuxFVb6JRIcwEb4oOqoHyOw4g-bt0/export?format=pdf">PDF</a></div></div>
+</div>
+<p style="margin-top:14px;color:var(--muted);font-size:15px">Teachers: the lesson plan, quiz, and answer keys for this unit are in the <a href="../teachers/#unit-6">teacher area</a>.</p>
+</section>
+
+<section>
+<div class="sec-head"><span class="eyebrow">Unit at a glance</span><h2>Sessions</h2><p>Lessons are 50 minutes and practice sessions are 90 minutes.</p></div>
+<div class="tbl-scroll"><table class="tbl"><thead><tr><th>Session</th><th>Topic</th><th>Students make</th></tr></thead><tbody>
+<tr><td>Lesson 1</td><td>Auditing Linux users and sudo</td><td>User audit practice</td></tr>
+<tr><td>Lesson 2</td><td>Password policy on Linux</td><td>Policy edits</td></tr>
+<tr><td>Practice 1</td><td>Lab part A: forensics, users, passwords</td><td>Fixes on the VM</td></tr>
+<tr><td>Lesson 3</td><td>The ufw firewall and SSH</td><td>Firewall and SSH set</td></tr>
+<tr><td>Lesson 4</td><td>Services, software, file permissions, updates</td><td>Service audit</td></tr>
+<tr><td>Practice 2</td><td>Lab part B: full timed run, then quiz</td><td>Full lab score, quiz</td></tr>
+</tbody></table></div>
+</section>
+
+<section>
+<div class="sec-head"><span class="eyebrow">Hardening checklist</span><h2>Add these to your checklist</h2><p>At the end of the unit, every student adds these lines. Always check the README first: it decides what is required.</p></div>
+<div class="tbl-scroll"><table class="tbl"><thead><tr><th>Check</th><th>How</th></tr></thead><tbody>
+<tr><td>Delete unauthorized users; remove extra sudo members</td><td><code>sudo deluser NAME, sudo gpasswd -d NAME sudo</code></td></tr>
+<tr><td>No UID 0 accounts except root</td><td><code>awk -F: '$3==0' /etc/passwd</code></td></tr>
+<tr><td>Strong passwords for all users</td><td><code>sudo passwd NAME</code></td></tr>
+<tr><td>Password aging 90/1/7 and minlen 10</td><td><code>/etc/login.defs, chage, /etc/security/pwquality.conf</code></td></tr>
+<tr><td>Firewall on</td><td><code>sudo ufw enable</code></td></tr>
+<tr><td>SSH root login off (if SSH is required)</td><td><code>PermitRootLogin no in /etc/ssh/sshd_config, then restart ssh</code></td></tr>
+<tr><td>Purge unneeded services and prohibited tools</td><td><code>sudo apt purge NAME</code></td></tr>
+<tr><td>/etc/shadow is 640</td><td><code>sudo chmod 640 /etc/shadow</code></td></tr>
+<tr><td>Install updates</td><td><code>sudo apt update &amp;&amp; sudo apt upgrade -y</code></td></tr>
+</tbody></table></div>
+</section>
+
+<section>
+<div class="grid two">
+<div><span class="eyebrow">Key vocabulary</span><h2 style="font-size:22px;margin:6px 0 14px">Words to know</h2><ul class="chips"><li>/etc/passwd</li><li>/etc/shadow</li><li>/etc/group</li><li>UID 0</li><li>sudo group</li><li>chage</li><li>login.defs</li><li>pwquality</li><li>ufw</li><li>SSH</li><li>sshd_config</li><li>PermitRootLogin</li><li>purge</li></ul></div>
+<div><span class="eyebrow">Ethics discussion · 10 minutes</span><h2 style="font-size:22px;margin:6px 0 14px">What would you do?</h2><div class="ethics">You find john (a password cracker) on a school computer. A classmate says it is fine because you are learning security.</div></div>
+</div>
+</section>
+
+<nav class="pager" aria-label="Units">
+<a href="../unit-5/"><small>← Unit 5</small>Linux fundamentals</a>
+<a href="../unit-7/" style="text-align:right"><small>Unit 7 →</small>Networking and Cisco basics</a>
+</nav>
+</main>
+<footer class="site"><div class="wrap">
+<div><a href="/">CyberTeaches</a> · free courses from teacher Kevin Wellborn · <a href="https://www.youtube.com/@cyberteaches" target="_blank" rel="noopener">YouTube @CyberTeaches</a></div>
+<div>CyberPatriot is the National Youth Cyber Defense Competition of the Air &amp; Space Forces Association (AFA). CyberTeaches is not affiliated with or endorsed by AFA or CyberPatriot. All lessons, labs, and scenarios here are original; the organizations in them are fictional. Check the current CyberPatriot rules book each season.</div>
+</div></footer>
+</body></html>

@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Unit 2: Computer and Security Foundations | CyberPatriot | CyberTeaches</title>
+<meta name="description" content="CyberPatriot high school course, Unit 2: Learn the vocabulary every later unit uses: hardware, operating systems, users, permissions, least privilege, and common threats. Then build the virtual machine you will practice on all year.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link rel="icon" type="image/png" href="/favicon.png"><link rel="stylesheet" href="../assets/site.css">
+</head><body>
+<header class="site"><div class="wrap"><a class="brand" href="/"><img src="/logo.png" alt="" width="32" height="32">CyberTeaches</a><span class="brand course">CyberPatriot</span>
+<nav aria-label="Course"><a href="../">Course home</a><a href="../#units" aria-current="page">Units</a><a href="../#calendar">Calendar</a><a href="../teachers/">Teachers</a><a href="/">All courses</a></nav></div></header>
+<div class="hero small"><div class="wrap">
+<div class="crumbs"><a href="../">CyberPatriot</a> / Unit 2</div>
+<span class="eyebrow">Unit 2 of 10 · 1 week</span>
+<h1>Computer and Security Foundations</h1>
+<p class="lead">Learn the vocabulary every later unit uses: hardware, operating systems, users, permissions, least privilege, and common threats. Then build the virtual machine you will practice on all year.</p>
+<div class="facts"><span><b>Time:</b> 2 lessons (50 min) and 1 practice session (90 min)</span><span><b>Platform:</b> Windows or Ubuntu</span></div>
+</div></div>
+<main class="wrap">
+
+<section>
+<div class="grid two">
+<div class="card"><span class="eyebrow">Goals</span><h3>By the end of this unit, students can</h3><ol class="goals"><li>Name the main parts of a computer and explain what an operating system does.</li><li>Explain user accounts, administrator rights, and file permissions, and why least privilege matters.</li><li>Describe common threats: malware, phishing, weak passwords, and unpatched software.</li><li>Create, start, snapshot, and restore a virtual machine in VirtualBox or VMware.</li></ol></div>
+<div class="card"><span class="eyebrow">Signature lab</span><h3>Lab 2: Build Your Own Virtual Machine</h3><p>Each student or pair creates a VM, installs Windows or Ubuntu, takes a snapshot, breaks something on purpose, and restores the snapshot. If installs are slow, import a ready-made .ova and focus on snapshots.</p><div class="meta"><span>CSTA 3A-CS-02, 3A-CS-03, 3A-NI-05 · NICE: Systems Administration</span></div></div>
+</div>
+</section>
+
+<section>
+<div class="sec-head"><span class="eyebrow">Materials</span><h2>Student materials</h2><p>Open them in Google Drive, make your own editable copy, or download a PDF to print.</p></div>
+<div class="files">
+<div class="file"><span class="kind">Slides</span><h3>Slide deck</h3><p>Every lesson in order, with speaker notes.</p><div class="acts"><a class="btn line sm" href="https://docs.google.com/presentation/d/15HqV4VBiAV347mmDojr-iNu20F_LsEKwXeCAZkVPtO4/edit?usp=sharing" target="_blank" rel="noopener">Open</a><a class="btn line sm" href="https://docs.google.com/presentation/d/15HqV4VBiAV347mmDojr-iNu20F_LsEKwXeCAZkVPtO4/copy" target="_blank" rel="noopener">Make a copy</a><a class="btn line sm" href="https://docs.google.com/presentation/d/15HqV4VBiAV347mmDojr-iNu20F_LsEKwXeCAZkVPtO4/export/pdf">PDF</a></div></div>
+<div class="file"><span class="kind">Lab</span><h3>Lab student handout</h3><p>The README, steps, and a table to record fixes.</p><div class="acts"><a class="btn line sm" href="https://docs.google.com/document/d/1Hhs4kwH1CjLv4ICnDXkChkyzDR6D8tcZZJpSNaznxWY/edit?usp=sharing" target="_blank" rel="noopener">Open</a><a class="btn line sm" href="https://docs.google.com/document/d/1Hhs4kwH1CjLv4ICnDXkChkyzDR6D8tcZZJpSNaznxWY/copy" target="_blank" rel="noopener">Make a copy</a><a class="btn line sm" href="https://docs.google.com/document/d/1Hhs4kwH1CjLv4ICnDXkChkyzDR6D8tcZZJpSNaznxWY/export?format=pdf">PDF</a></div></div>
+</div>
+<p style="margin-top:14px;color:var(--muted);font-size:15px">Teachers: the lesson plan, quiz, and answer keys for this unit are in the <a href="../teachers/#unit-2">teacher area</a>.</p>
+</section>
+
+<section>
+<div class="sec-head"><span class="eyebrow">Unit at a glance</span><h2>Sessions</h2><p>Lessons are 50 minutes and practice sessions are 90 minutes.</p></div>
+<div class="tbl-scroll"><table class="tbl"><thead><tr><th>Session</th><th>Topic</th><th>Students make</th></tr></thead><tbody>
+<tr><td>Lesson 1</td><td>Hardware, operating systems, users, and permissions</td><td>Least-privilege exit ticket</td></tr>
+<tr><td>Lesson 2</td><td>Common threats and how defenders respond</td><td>Threat match-up</td></tr>
+<tr><td>Practice</td><td>Lab: build your own virtual machine</td><td>A working VM with a snapshot</td></tr>
+</tbody></table></div>
+</section>
+
+<section>
+<div class="sec-head"><span class="eyebrow">Hardening checklist</span><h2>Add these to your checklist</h2><p>At the end of the unit, every student adds these lines. Always check the README first: it decides what is required.</p></div>
+<div class="tbl-scroll"><table class="tbl"><thead><tr><th>Check</th><th>How</th></tr></thead><tbody>
+<tr><td>Take a snapshot before you start practicing</td><td><code>VirtualBox: Machine, Take Snapshot</code></td></tr>
+<tr><td>Check who has administrator rights</td><td><code>Only the people the README names</code></td></tr>
+<tr><td>Make sure antivirus is on</td><td><code>Windows Security, Virus and threat protection</code></td></tr>
+</tbody></table></div>
+</section>
+
+<section>
+<div class="grid two">
+<div><span class="eyebrow">Key vocabulary</span><h2 style="font-size:22px;margin:6px 0 14px">Words to know</h2><ul class="chips"><li>CPU</li><li>RAM</li><li>operating system</li><li>virtual machine</li><li>hypervisor</li><li>snapshot</li><li>administrator</li><li>permission</li><li>least privilege</li><li>malware</li><li>ransomware</li><li>phishing</li><li>patch</li></ul></div>
+<div><span class="eyebrow">Ethics discussion · 10 minutes</span><h2 style="font-size:22px;margin:6px 0 14px">What would you do?</h2><div class="ethics">You find a USB stick in the parking lot labeled Teacher Grades. Do you plug it in?</div></div>
+</div>
+</section>
+
+<nav class="pager" aria-label="Units">
+<a href="../unit-1/"><small>← Unit 1</small>Welcome to CyberPatriot</a>
+<a href="../unit-3/" style="text-align:right"><small>Unit 3 →</small>Windows hardening, part 1</a>
+</nav>
+</main>
+<footer class="site"><div class="wrap">
+<div><a href="/">CyberTeaches</a> · free courses from teacher Kevin Wellborn · <a href="https://www.youtube.com/@cyberteaches" target="_blank" rel="noopener">YouTube @CyberTeaches</a></div>
+<div>CyberPatriot is the National Youth Cyber Defense Competition of the Air &amp; Space Forces Association (AFA). CyberTeaches is not affiliated with or endorsed by AFA or CyberPatriot. All lessons, labs, and scenarios here are original; the organizations in them are fictional. Check the current CyberPatriot rules book each season.</div>
+</div></footer>
+</body></html>

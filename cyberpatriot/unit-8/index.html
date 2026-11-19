@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Unit 8: Windows Server and Active Directory | CyberPatriot | CyberTeaches</title>
+<meta name="description" content="CyberPatriot high school course, Unit 8: Server images usually run Active Directory, so students work at the domain level. Learn Server Manager, audit domain users and privileged groups, set the domain password policy with Group Policy, and secure DNS, SMB, and server roles.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link rel="icon" type="image/png" href="/favicon.png"><link rel="stylesheet" href="../assets/site.css">
+</head><body>
+<header class="site"><div class="wrap"><a class="brand" href="/"><img src="/logo.png" alt="" width="32" height="32">CyberTeaches</a><span class="brand course">CyberPatriot</span>
+<nav aria-label="Course"><a href="../">Course home</a><a href="../#units" aria-current="page">Units</a><a href="../#calendar">Calendar</a><a href="../teachers/">Teachers</a><a href="/">All courses</a></nav></div></header>
+<div class="hero small"><div class="wrap">
+<div class="crumbs"><a href="../">CyberPatriot</a> / Unit 8</div>
+<span class="eyebrow">Unit 8 of 10 · 3 weeks</span>
+<h1>Windows Server and Active Directory</h1>
+<p class="lead">Server images usually run Active Directory, so students work at the domain level. Learn Server Manager, audit domain users and privileged groups, set the domain password policy with Group Policy, and secure DNS, SMB, and server roles.</p>
+<div class="facts"><span><b>Time:</b> 6 lessons (50 min) and 3 practice sessions (90 min)</span><span><b>Platform:</b> Windows Server 2022</span></div>
+</div></div>
+<main class="wrap">
+
+<section>
+<div class="grid two">
+<div class="card"><span class="eyebrow">Goals</span><h3>By the end of this unit, students can</h3><ol class="goals"><li>Explain what a server, a domain, and a domain controller are, and use Server Manager.</li><li>Use Active Directory Users and Computers and PowerShell to audit domain users, groups, and OUs.</li><li>Find and fix dangerous account settings and members of privileged groups.</li><li>Set the domain password and lockout policy with Group Policy or PowerShell.</li><li>Secure server roles: DNS zone transfers, SMBv1, the firewall, and unneeded features.</li></ol></div>
+<div class="card"><span class="eyebrow">Signature lab</span><h3>Lab 8: Full Windows Server Practice Image</h3><p>On a Windows Server 2022 domain controller, students answer the forensics question, audit domain users and privileged groups, clear risky account flags, set the domain password and lockout policy, lock down DNS zone transfers, remove SMBv1, and check the firewall. The last run is timed at 55 minutes.</p><div class="meta"><span>CSTA 3B-NI-03, 3B-NI-04 · NICE: Systems Administration, Network Operations</span></div></div>
+</div>
+</section>
+
+<section>
+<div class="sec-head"><span class="eyebrow">Materials</span><h2>Student materials</h2><p>Open them in Google Drive, make your own editable copy, or download a PDF to print.</p></div>
+<div class="files">
+<div class="file"><span class="kind">Slides</span><h3>Slide deck</h3><p>Every lesson in order, with speaker notes.</p><div class="acts"><a class="btn line sm" href="https://docs.google.com/presentation/d/123a2dnUrKFLJ-ic9L2S1dcca8iZrxmCAWdAEVGDH1t8/edit?usp=sharing" target="_blank" rel="noopener">Open</a><a class="btn line sm" href="https://docs.google.com/presentation/d/123a2dnUrKFLJ-ic9L2S1dcca8iZrxmCAWdAEVGDH1t8/copy" target="_blank" rel="noopener">Make a copy</a><a class="btn line sm" href="https://docs.google.com/presentation/d/123a2dnUrKFLJ-ic9L2S1dcca8iZrxmCAWdAEVGDH1t8/export/pdf">PDF</a></div></div>
+<div class="file"><span class="kind">Lab</span><h3>Lab student handout</h3><p>The README, steps, and a table to record fixes.</p><div class="acts"><a class="btn line sm" href="https://docs.google.com/document/d/1Ce8FNTUsy0ddDV_LkJR0MOA-0wWbUBYRudK9J8nTGpc/edit?usp=sharing" target="_blank" rel="noopener">Open</a><a class="btn line sm" href="https://docs.google.com/document/d/1Ce8FNTUsy0ddDV_LkJR0MOA-0wWbUBYRudK9J8nTGpc/copy" target="_blank" rel="noopener">Make a copy</a><a class="btn line sm" href="https://docs.google.com/document/d/1Ce8FNTUsy0ddDV_LkJR0MOA-0wWbUBYRudK9J8nTGpc/export?format=pdf">PDF</a></div></div>
+</div>
+<p style="margin-top:14px;color:var(--muted);font-size:15px">Teachers: the lesson plan, quiz, and answer keys for this unit are in the <a href="../teachers/#unit-8">teacher area</a>.</p>
+</section>
+
+<section>
+<div class="sec-head"><span class="eyebrow">Unit at a glance</span><h2>Sessions</h2><p>Lessons are 50 minutes and practice sessions are 90 minutes.</p></div>
+<div class="tbl-scroll"><table class="tbl"><thead><tr><th>Session</th><th>Topic</th><th>Students make</th></tr></thead><tbody>
+<tr><td>Lesson 1</td><td>What servers do: Server Manager, roles, features</td><td>Server Manager tour</td></tr>
+<tr><td>Lesson 2</td><td>Active Directory: domains, users, groups, OUs</td><td>AD diagram</td></tr>
+<tr><td>Practice 1</td><td>Lab part A: forensics and domain accounts</td><td>Account fixes</td></tr>
+<tr><td>Lesson 3</td><td>Privileged groups and risky account settings</td><td>Privileged group audit</td></tr>
+<tr><td>Lesson 4</td><td>Group Policy and the domain password policy</td><td>Policy set</td></tr>
+<tr><td>Practice 2</td><td>Lab part B: policy and server roles</td><td>Policy and role fixes</td></tr>
+<tr><td>Lesson 5</td><td>Securing server roles: DNS, SMB, firewall</td><td>Role checklist</td></tr>
+<tr><td>Lesson 6</td><td>The full server workflow</td><td>Server checklist</td></tr>
+<tr><td>Practice 3</td><td>Full timed lab and quiz</td><td>Lab score, quiz</td></tr>
+</tbody></table></div>
+</section>
+
+<section>
+<div class="sec-head"><span class="eyebrow">Hardening checklist</span><h2>Add these to your checklist</h2><p>At the end of the unit, every student adds these lines. Always check the README first: it decides what is required.</p></div>
+<div class="tbl-scroll"><table class="tbl"><thead><tr><th>Check</th><th>How</th></tr></thead><tbody>
+<tr><td>Audit domain users against the README</td><td><code>Get-ADUser -Filter * | Select Name,Enabled</code></td></tr>
+<tr><td>Privileged groups contain only README admins</td><td><code>Get-ADGroupMember &quot;Domain Admins&quot; (also Enterprise, Schema, Administrators)</code></td></tr>
+<tr><td>No risky account flags</td><td><code>Get-ADUser -Filter * -Properties PasswordNotRequired,DoesNotRequirePreAuth,PasswordNeverExpires</code></td></tr>
+<tr><td>Domain password and lockout policy</td><td><code>Set-ADDefaultDomainPasswordPolicy, or Default Domain Policy in gpmc.msc</code></td></tr>
+<tr><td>DNS zone transfers off or to listed servers only</td><td><code>DNS Manager, zone Properties, Zone Transfers</code></td></tr>
+<tr><td>Remove SMBv1</td><td><code>Uninstall-WindowsFeature FS-SMB1</code></td></tr>
+<tr><td>Never remove AD DS or DNS on a domain controller</td><td><code>Read the README</code></td></tr>
+</tbody></table></div>
+</section>
+
+<section>
+<div class="grid two">
+<div><span class="eyebrow">Key vocabulary</span><h2 style="font-size:22px;margin:6px 0 14px">Words to know</h2><ul class="chips"><li>server</li><li>role</li><li>feature</li><li>Server Manager</li><li>Active Directory</li><li>domain</li><li>domain controller</li><li>OU</li><li>Domain Admins</li><li>Group Policy</li><li>GPO</li><li>Kerberos preauthentication</li><li>DNS zone transfer</li><li>SMBv1</li></ul></div>
+<div><span class="eyebrow">Ethics discussion · 10 minutes</span><h2 style="font-size:22px;margin:6px 0 14px">What would you do?</h2><div class="ethics">As a student helper, you have Domain Admin rights to fix printers. A teacher asks you to reset another teacher's password so they can read their email.</div></div>
+</div>
+</section>
+
+<nav class="pager" aria-label="Units">
+<a href="../unit-7/"><small>← Unit 7</small>Networking and Cisco basics</a>
+<a href="../unit-9/" style="text-align:right"><small>Unit 9 →</small>Advanced hardening and forensics</a>
+</nav>
+</main>
+<footer class="site"><div class="wrap">
+<div><a href="/">CyberTeaches</a> · free courses from teacher Kevin Wellborn · <a href="https://www.youtube.com/@cyberteaches" target="_blank" rel="noopener">YouTube @CyberTeaches</a></div>
+<div>CyberPatriot is the National Youth Cyber Defense Competition of the Air &amp; Space Forces Association (AFA). CyberTeaches is not affiliated with or endorsed by AFA or CyberPatriot. All lessons, labs, and scenarios here are original; the organizations in them are fictional. Check the current CyberPatriot rules book each season.</div>
+</div></footer>
+</body></html>

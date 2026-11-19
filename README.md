@@ -10,6 +10,7 @@ and small ad spots (edit `CT_ADS` in `index.html`).
 | `apcsp/` | AP Computer Science Principles (high school) |
 | `networking/` | AP Networking (companion site for the book: labs, practice exams, syllabus, teacher keys) |
 | `academy/` | CyberTeaches Academy block coding (grades 6 to 12) |
+| `cyberpatriot/` | CyberPatriot High School course: 10 units, labs, teacher area (grades 9 to 12) |
 | `app-builder/` | App Builder: design and build your own app, with a Congressional App Challenge track (grades 6 to 12) |
 
 Old links keep working: `ap-cyber/` and `teacher.html` redirect, and the hub forwards `?class=CODE` join links
@@ -68,6 +69,15 @@ Congressional App Challenge (lessons `C.1` to `C.6` and a plain-words rules page
 editable sample syllabus, and a teacher area with lab keys, exam keys, and printable booklets. The teacher area is
 noindex and blocked in `robots.txt`. `apnetworking/` redirects to it. The pages are built from source files kept with the
 book project (exam JSON and page fragments), so edit there and copy the built folder in.
+
+## CyberPatriot (high school)
+
+`cyberpatriot/` is a full-year course for CyberPatriot teams: a course home, one page per unit (goals, sessions,
+signature lab, checklist lines, vocabulary, ethics scenario, student files) and a teacher area with lesson plans, quizzes,
+lab keys and quiz keys. The teacher area is noindex and blocked in `robots.txt`. The slides, handouts and keys live in
+Google Drive (folder "CyberPatriot High School Course") and the pages link to them, so each linked file must be shared as
+"Anyone with the link: Viewer". The pages are generated: edit `tools/cyberpatriot/units.js` (or the page templates in
+`tools/build-cyberpatriot.js`), then run `node tools/build-cyberpatriot.js` and commit the result.
 
 ## CyberTeaches Academy (grades 6 to 12)
 
