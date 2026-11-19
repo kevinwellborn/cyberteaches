@@ -141,6 +141,8 @@ header.top{display:flex;align-items:center;gap:12px;padding:12px 16px;max-width:
 .slide p,.slide li{font-size:18px;line-height:1.55}
 .slide code{font-family:var(--f-mono);background:var(--panel-2);border-radius:6px;padding:1px 6px;font-size:.92em}
 .slide code.bad{color:var(--bad);text-decoration:line-through;text-decoration-thickness:1px}
+.slide pre{font-family:var(--f-mono);background:var(--code-bg);color:var(--code-ink);border-radius:12px;padding:10px 14px;font-size:15px;line-height:1.6;overflow-x:auto}
+.slide pre .c{color:var(--code-com);font-style:italic}
 .mist{padding-left:20px;display:flex;flex-direction:column;gap:6px}
 .anat{display:flex;gap:4px;justify-content:center;flex-wrap:wrap;margin:22px 0 10px}
 .anat .part{display:flex;flex-direction:column;align-items:center;gap:6px}
@@ -260,7 +262,7 @@ header.top{display:flex;align-items:center;gap:12px;padding:12px 16px;max-width:
 <p class="foot">Python Quest is an original CyberTeaches game. Python runs right in your browser.</p>
 
 <script src="pyrun.js?v=1"></script>
-<script src="levels.js?v=2"></script>
+<script src="levels.js?v=3"></script>
 <script src="game.js?v=2"></script>
 <script src="../firebase-config.js"></script>
 <script src="../cloud.js?v=21"></script>
@@ -479,8 +481,8 @@ function openLevel(id){
   player.setLevel(cur); player.speed = speed;
   hideMsg(); $('#out').className = 'out'; $('#out').textContent = '';
   const cmds = $('#cmds'); cmds.innerHTML = '<div class="crumb">Commands (click to add a line)</div>';
-  PQ_COMMANDS.filter(c => c.from <= cur.k || cur.lesson > 1).forEach(c => {
-    const b = h('button', 'cmd' + (c.from === cur.k && cur.lesson === 1 ? ' new' : ''), `<code>${esc(c.code)}</code><span>${esc(c.say)}</span>`);
+  PQ_COMMANDS.filter(c => (c.lesson || 1) < cur.lesson || ((c.lesson || 1) === cur.lesson && c.from <= cur.k)).forEach(c => {
+    const b = h('button', 'cmd' + (c.from === cur.k && (c.lesson || 1) === cur.lesson ? ' new' : ''), `<code>${esc(c.code)}</code><span>${esc(c.say)}</span>`);
     b.onclick = () => insertCommand(c.insert || c.code); cmds.append(b);
   });
   drawDots(); refresh(); setRunning(false);
@@ -515,7 +517,7 @@ function finish(r){
     if(stars > before){ data.stars[cur.id] = stars; saveLocal(); cloudSave() }
     refresh(); drawDots(); render();
     $('#winStars').innerHTML = '★'.repeat(stars) + '<span class="off">' + '★'.repeat(3 - stars) + '</span>';
-    $('#winText').innerHTML = 'You used <b>' + r.lines + '</b> line' + (r.lines === 1 ? '' : 's') + ' of code.' + (stars < 3 ? ' Can you do it in ' + cur.par + '? Tip: hero.run(3) is shorter than three hero.run() lines.' : ' Perfect!');
+    $('#winText').innerHTML = 'You used <b>' + r.lines + '</b> line' + (r.lines === 1 ? '' : 's') + ' of code.' + (stars < 3 ? ' Can you do it in ' + cur.par + '? Tip: ' + (cur.lesson >= 2 ? 'put the part that repeats inside a for loop.' : 'hero.run(3) is shorter than three hero.run() lines.') : ' Perfect!');
     const next = LEVELS[LEVELS.indexOf(cur) + 1];
     $('#winNext').hidden = !next; $('#winHome').hidden = !!next;
     $('#winTitle').textContent = next ? 'Level complete!' : 'Lesson complete!';
