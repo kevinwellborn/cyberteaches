@@ -2,7 +2,7 @@
 //   #  stone block     .  open air          S  explorer start (facing right)   s  start facing left
 //   D  temple door     *  jade gem          k  key       |  locked gate (opens with a key)
 //   p  potion          G  stone guardian    ^  spikes
-//   W  temple guard    c  caged friend to rescue (next to the door)
+//   W  temple guard    c  caged friend to rescue (next to the door)    T  treasure chest (open with hero.take())
 // A gap in the bottom row is a pit: falling in ends the run.
 // par = lines of code for 3 stars (par + 2 lines = 2 stars). hearts = starting hearts (default 3), hp = guardian strength (default 2).
 window.PQ_GAME_NAME = 'Python Quest';
@@ -17,8 +17,9 @@ window.PQ_LESSONS = [
    intro: 'Your program can use more than one object. hero moves, sword attacks, shield blocks. Each one is object.method(value).'},
   {n: 4, title: 'Look before you leap', topic: 'if / elif / else', color: '#2F6FDE',
    intro: 'An if statement lets your program make a decision. if hero.ahead() == \'pit\': runs its body only when that is True.'},
-  {n: 5, title: 'Keep going', topic: 'while loops', soon: true, color: '#7A4BD6'},
-  {n: 6, title: 'Your own commands', topic: 'def functions', soon: true, color: '#C2417A'},
+  {n: 5, title: 'Keep going', topic: 'while loops · Lava Caves', color: '#D9480F',
+   intro: 'A while loop repeats as long as its condition is True. These lava caves change every time, so keep going while something is true instead of counting.'},
+  {n: 6, title: 'Your own commands', topic: 'def functions · Sunken Temple', soon: true, color: '#0E7490'},
 ];
 
 // The commands the hero knows, shown in the command list. `from` = first lesson/level where it appears.
@@ -37,6 +38,21 @@ window.PQ_COMMANDS = [
   {code: 'else:', insert: 'else:\n    ', say: 'Do the lines under it when the if was False. Line it up with its if.', lesson: 4, from: 1},
   {code: "if hero.here() == 'gem':", insert: "if hero.here() == 'gem':\n    ", say: 'hero.here() says what you are standing on: gem, key, potion or floor.', lesson: 4, from: 2},
   {code: "elif hero.ahead() == 'wall':", insert: "elif hero.ahead() == 'wall':\n    ", say: 'elif = else if: checked only when the ifs above were False.', lesson: 4, from: 4},
+  {code: "while hero.ahead() != 'pit':", insert: "while hero.ahead() != 'pit':\n    ", say: 'Repeat the lines pushed in under it as long as this is True. != means "is not".', lesson: 5, from: 1},
+  {code: 'hero.gems_left()', say: 'A number: how many gems are still to find. Use it like while hero.gems_left() > 0:', lesson: 5, from: 2},
+];
+
+// Gear: outfits and weapons. Unlocked when the level named in `level` is solved (chest levels need the chest opened to finish).
+window.PQ_GEAR = [
+  {id: 'explorer', kind: 'outfit', name: 'Explorer', how: 'Ready from the start'},
+  {id: 'sword', kind: 'weapon', name: 'Short sword', how: 'Ready from the start'},
+  {id: 'ranger', kind: 'outfit', name: 'Ranger outfit', level: '3-10', how: 'Rescue Niko (Lesson 3, level 10)'},
+  {id: 'golden', kind: 'weapon', name: 'Golden sword', level: '4-10', how: 'Finish Lesson 4 (level 10)'},
+  {id: 'flame', kind: 'weapon', name: 'Flame sword', level: '5-3', how: 'Chest in Lesson 5, level 3'},
+  {id: 'fire', kind: 'outfit', name: 'Fire suit', level: '5-7', how: 'Chest in Lesson 5, level 7'},
+  {id: 'axe', kind: 'weapon', name: 'Volcano axe', level: '5-10', how: 'Chest in Lesson 5, level 10'},
+  {id: 'diver', kind: 'outfit', name: 'Diver helmet', soon: true, how: 'Coming in Lesson 6'},
+  {id: 'trident', kind: 'weapon', name: 'Trident', soon: true, how: 'Coming in Lesson 6'},
 ];
 
 window.PQ_LEVELS = [
@@ -149,7 +165,7 @@ window.PQ_LEVELS = [
          '...#####',
          'S.######',
          '########']},
-  {id: '2-4', lesson: 2, k: 4, name: 'Spike rhythm', par: 3,
+  {id: '2-4', theme: 'river', lesson: 2, k: 4, name: 'Spike rhythm', par: 3,
    goal: 'Run and jump past 4 spike traps.',
    tip: 'Count the squares between the spikes. What do you do before each jump?',
    start: '',
@@ -292,7 +308,7 @@ window.PQ_LEVELS = [
          '#############']},  // ---------- Lesson 4: Look before you leap (if / elif / else) ----------
   // The dangers are placed unevenly, so a plain loop can't solve it: look with hero.ahead() / hero.here() and decide.
   // A big range( ) is fine: the program stops as soon as the explorer reaches the door.
-  {id: '4-1', lesson: 4, k: 1, name: 'Look before you jump', par: 5, rescue: {who: 'parrot', name: 'Zuri the parrot'},
+  {id: '4-1', theme: 'river', lesson: 4, k: 1, name: 'Look before you jump', par: 5, rescue: {who: 'parrot', name: 'Zuri the parrot'},
    goal: 'The pits are not evenly spaced. Look ahead each step: jump if there is a pit, otherwise run 1.',
    tip: 'Inside a for loop: if hero.ahead() == \'pit\': hero.jump()  else: hero.run(1). Use range(20): the program stops at the door.',
    start: 'for i in range(20):\n    if hero.ahead() == \'pit\':\n        hero.jump()\n',
@@ -332,7 +348,7 @@ window.PQ_LEVELS = [
          '..............',
          'S..W.W...W..Dc',
          '##############']},
-  {id: '4-6', lesson: 4, k: 6, name: 'Spikes or pits', par: 5, rescue: {who: 'monkey', name: 'Kiki\'s cousin'},
+  {id: '4-6', theme: 'river', lesson: 4, k: 6, name: 'Spikes or pits', par: 5, rescue: {who: 'monkey', name: 'Kiki\'s cousin'},
    goal: 'Jump over spikes and over pits. Can you do both with ONE if?',
    tip: 'Use or: if hero.ahead() == \'pit\' or hero.ahead() == \'spikes\': hero.jump()',
    start: '',
@@ -372,7 +388,81 @@ window.PQ_LEVELS = [
    map: ['....................',
          '....................',
          'S.*.W...#.*..W.*..Dc',
-         '######.#########.###']},
+         '######.#########.###']},  // ---------- Lesson 5: Keep going (while loops) in the Lava Caves ----------
+  // variants: these temples change every time you press Run, and the program must work on every version,
+  // so counting squares won't do: keep going WHILE something is true. T = treasure chest (unlocks gear, see PQ_GEAR).
+  {id: '5-1', lesson: 5, k: 1, name: 'Lava corridor', par: 3, theme: 'lava', rescue: {who: 'monkey', name: 'Tiko the monkey'},
+   goal: 'This corridor is a different length every time. Run while there is no lava ahead, then jump.',
+   tip: 'while hero.ahead() != \'pit\':  then hero.run(1) pushed in. After the loop, hero.jump() lands on the door.',
+   start: 'while hero.ahead() != \'pit\':\n    \n',
+   map: ['..........',
+         '..........',
+         'S......Dc.',
+         '######.###'],
+   variants: [['............', '............', 'S.........Dc', '#########.##'],
+              ['........', '........', 'S...Dc..', '###.####']]},
+  {id: '5-2', lesson: 5, k: 2, name: 'Gem count', par: 5, theme: 'lava', rescue: {who: 'parrot', name: 'Sunny the parrot'},
+   goal: 'Keep searching while there are gems left. The door is always one step after the last gem.',
+   tip: 'hero.gems_left() is a number. while hero.gems_left() > 0: run 1, and take a gem if you stand on one.',
+   start: '',
+   map: ['............', '............', 'S.*..*.*Dc..', '############'],
+   variants: [['............', '............', 'S..*.*Dc....', '############'],
+              ['............', '............', 'S*....**.*Dc', '############']]},
+  {id: '5-3', lesson: 5, k: 3, name: 'Treasure in the dark', par: 6, theme: 'lava', chest: 'flame', rescue: {who: 'kids', name: 'the miners\' children'},
+   goal: 'Find the treasure chest and open it. The door stays shut until you do!',
+   tip: 'while hero.here() != \'chest\': hero.run(1). Then hero.take(). Then run while the door is not ahead, and one more step.',
+   start: '',
+   map: ['...........', '...........', 'S...T....Dc', '###########'],
+   variants: [['............', '............', 'S.T.....Dc..', '############'],
+              ['...........', '...........', 'S......T.Dc', '###########']]},
+  {id: '5-4', lesson: 5, k: 4, name: 'Stone giant', par: 5, theme: 'lava', rescue: {who: 'cub', name: 'Pip\'s uncle'},
+   goal: 'A stone giant stands somewhere ahead, and its hit points change too. Attack WHILE it is still there.',
+   tip: 'Two loops: walk while no guard is ahead, then sword.attack(3) while a guard is ahead. The door is 4 steps on.',
+   start: '',
+   map: ['........', '........', 'S..W..Dc', '########'], foes: [{hp: 6}],
+   variants: [{map: ['...........', '...........', 'S.....W..Dc', '###########'], foes: [{hp: 9}]},
+              {map: ['......', '......', 'SW..Dc', '######'], foes: [{hp: 12}]}]},
+  {id: '5-5', lesson: 5, k: 5, name: 'Climb the volcano', par: 3, theme: 'lava', rescue: {who: 'cub', name: 'Nala the jaguar cub'},
+   goal: 'The volcano steps are a different height every time. Climb while there is a wall ahead.',
+   tip: 'while hero.ahead() == \'wall\': hero.climb(). Then one step to the door.',
+   start: '',
+   map: ['........', '........', '....Dc..', '...#####', '..######', 'S#######', '########'],
+   variants: [['.........', '.....Dc..', '....#####', '...######', '..#######', 'S########', '#########'],
+              ['.......', '.......', '.......', '...Dc..', '..#####', 'S######', '#######']]},
+  {id: '5-6', lesson: 5, k: 6, name: 'Lava steps', par: 6, theme: 'lava', rescue: {who: 'parrot', name: 'Kiko the parrot'},
+   goal: 'Keep going while the door is not ahead. Jump the lava, otherwise run.',
+   tip: 'Put an if / else inside the while loop. After the loop, one more hero.run(1) reaches the door.',
+   start: '',
+   map: ['.............', '.............', 'S..........Dc', '##.##.#.#####'],
+   variants: [['............', '............', 'S.........Dc', '###.#.###.##'],
+              ['..........', '..........', 'S.......Dc', '#.##.##.##']]},
+  {id: '5-7', lesson: 5, k: 7, name: 'The fire suit', par: 7, theme: 'lava', chest: 'fire', rescue: {who: 'kids', name: 'the cave kids'},
+   goal: 'A chest waits past the lava. Get there, open it, and step through the door right behind it.',
+   tip: 'while hero.here() != \'chest\': jump or run. Then hero.take() and hero.run(1).',
+   start: '',
+   map: ['..........', '..........', 'S.....TDc.', '##.##.####'],
+   variants: [['...........', '...........', 'S.......TDc', '####.#.####'],
+              ['..........', '..........', 'S..TDc....', '#.########']]},
+  {id: '5-8', lesson: 5, k: 8, name: 'Guard gauntlet', par: 6, theme: 'lava', hp: 2, rescue: {who: 'monkey', name: 'Bobo the monkey'},
+   goal: 'Guards with 2 hit points stand in different spots each time. Keep going until the door is ahead.',
+   tip: 'while hero.ahead() != \'door\': if a guard is ahead attack, else run 1.',
+   start: '',
+   map: ['............', '............', 'S.W..W.W..Dc', '############'],
+   variants: [['............', '............', 'SW.W......Dc', '############'],
+              ['.........', '.........', 'S....W.Dc', '#########']]},
+  {id: '5-9', lesson: 5, k: 9, name: 'Shield of fire', par: 6, theme: 'lava', hearts: 2, shield: 2, rescue: {who: 'brother', name: 'the guide\'s son'},
+   goal: 'A fire guard strikes for 2 and you have 2 hearts. Its hit points change. Shield up every round!',
+   tip: 'Walk while no guard is ahead. Then while a guard is ahead: shield.defend(2) and sword.attack(3). The door is 4 steps on.',
+   start: '',
+   map: ['........', '........', 'S.W..Dc.', '########'], foes: [{hp: 6, power: 2}],
+   variants: [{map: ['..........', '..........', 'S....W..Dc', '##########'], foes: [{hp: 9, power: 2}]},
+              {map: ['......', '......', 'SW..Dc', '######'], foes: [{hp: 12, power: 2}]}]},
+  {id: '5-10', lesson: 5, k: 10, name: 'Heart of the volcano', par: 12, theme: 'lava', hp: 2, chest: 'axe', rescue: {who: 'brother', name: 'your best friend Ari'},
+   goal: 'Everything at once, in a different order each time. Open the chest, then reach the door.',
+   tip: 'while hero.ahead() != \'door\': first take the chest if you stand on it, then pit / wall / guard / else. One more step after the loop.',
+   start: '',
+   map: ['..............', '..............', 'S.W..#..T...Dc', '#######.##.###'],
+   variants: [['.............', '.............', 'S...T.W..#.Dc', '##.##########']]},
 ];
 
 // "Learn" step for each lesson: short slides that teach the idea first, then a quick check, then practice in the game.
@@ -532,6 +622,42 @@ window.PQ_LEARN = {
           why: 'else means "otherwise": it runs only when nothing above it was True.'},
          {q: 'Ahead is a wall. Which line runs?   if ahead is pit: jump / elif ahead is wall: climb / else: run', a: ['hero.climb()', 'hero.jump()', 'hero.run(1)', 'All three'], ok: 0,
           why: 'The if is False (not a pit), the elif is True (a wall), so only climb runs.'}]},
+    ]
+  },
+  5: {
+    title: 'Learn: while loops',
+    vocab: [['while loop', 'repeats its body as long as its condition is True'], ['condition', 'a question that is True or False'],
+            ['!=', '"is not equal to": True when the two sides are different'], ['endless loop', 'a loop whose condition never becomes False, so it never stops'],
+            ['for vs while', 'for repeats a set number of times; while repeats until something changes']],
+    slides: [
+      {kind: 'text', title: 'When you can\'t count',
+       html: '<p>Welcome to the <b>Lava Caves</b>! The caves shift every time you enter: a corridor might be 3 squares long, or 9. A <code>for</code> loop needs a number, like <code>range(5)</code>, but here you don\'t know the number.</p><p>A <b>while loop</b> doesn\'t count. It keeps going <i>as long as</i> something is true:</p><pre>while hero.ahead() != \'pit\':\n    hero.run(1)\nhero.jump()</pre><p><i>"While there is no lava ahead, run 1 step."</i> When lava appears, the loop stops and the next line jumps.</p>'},
+      {kind: 'anatomy', title: 'How a while loop is built',
+       html: '<p>Read it like a sentence: <i>"While what is ahead is not a pit, keep doing the lines below."</i></p>',
+       parts: [['while', 'loop word', 'repeat as long as...'], ['hero.ahead()', 'sensor', 'looks ahead every time'], ["!= 'pit'", 'condition', 'is not a pit? True or False'], [':', 'colon', 'the body comes next, pushed in']],
+       note: '<code>!=</code> means "is not equal to". Python checks the condition <b>before every round</b>. As soon as it is False, the loop stops.'},
+      {kind: 'demo', title: 'One program, any cave',
+       html: '<p>Here are two caves of different lengths. Run the same while loop in each one.</p>',
+       map: ['..........', '..........', 'S......Dc.', '######.###'], theme: 'lava', rescue: {who: 'monkey', name: 'Tiko'},
+       programs: [{label: 'Short cave', code: "while hero.ahead() != 'pit':\n    hero.run(1)\nhero.jump()", map: ['........', '........', 'S...Dc..', '###.####']},
+                  {label: 'Long cave', code: "while hero.ahead() != 'pit':\n    hero.run(1)\nhero.jump()", map: ['............', '............', 'S.........Dc', '#########.##']}],
+       note: 'A for loop with a fixed number would work in only one of these caves. The while loop works in both.'},
+      {kind: 'text', title: 'for or while?',
+       html: '<ul><li>Use <b>for</b> when you know <i>how many times</i>: "jump 4 pits": <code>for i in range(4):</code></li><li>Use <b>while</b> when you know <i>when to stop</i>: "run until the lava": <code>while hero.ahead() != \'pit\':</code></li></ul><p>Sensors make great conditions:</p><pre>while hero.gems_left() > 0:        <span class="c"># still gems to find</span>\nwhile hero.ahead() == \'wall\':     <span class="c"># more steps to climb</span>\nwhile hero.ahead() == \'guard\':    <span class="c"># the guard is still there</span></pre><p>You can put an <code>if</code> inside a <code>while</code>, just like inside a <code>for</code>.</p>'},
+      {kind: 'text', title: 'Watch out: endless loops',
+       html: '<p>A while loop stops only when its condition becomes False. If nothing in the body changes it, the loop never ends:</p><pre>while hero.ahead() != \'pit\':\n    hero.take()       <span class="c"># the explorer never moves!</span></pre><p>The explorer never moves, so the lava never appears ahead. Make sure each round brings you closer to stopping. If you forget, Python Quest will tell you the explorer is worn out.</p>'},
+      {kind: 'text', title: 'Treasure chests and gear',
+       html: '<p>Some caves hide a <b>treasure chest</b>. Stand on it and use <code>hero.take()</code> to open it. The door stays shut until you do!</p><p>Each chest holds new gear for your explorer, like a <b>Flame sword</b>, a <b>Fire suit</b> or a <b>Volcano axe</b>. Finishing big levels unlocks gear too. Choose what your explorer wears in <b>🎒 My gear</b> on the lessons page.</p>'},
+      {kind: 'quiz', title: 'Check your understanding',
+       questions: [
+         {q: 'When does a while loop stop?', a: ['When its condition becomes False', 'After 10 rounds', 'When it reaches the end of the screen', 'Never'], ok: 0,
+          why: 'Python checks the condition before every round and stops as soon as it is False.'},
+         {q: 'What does  !=  mean?', a: ['is not equal to', 'is equal to', 'store a value', 'greater than'], ok: 0,
+          why: '!= is True when the two sides are different.'},
+         {q: 'The corridor length changes every time. Which loop fits best?', a: ["while hero.ahead() != 'pit':", 'for i in range(5):', "if hero.ahead() != 'pit':", 'hero.run(5)'], ok: 0,
+          why: 'You don\'t know the number, but you know when to stop: when lava is ahead.'},
+         {q: 'Why does this never end?   while hero.gems_left() > 0:  hero.run(1)', a: ['The gems are never taken, so gems_left() never goes down', 'run needs a bigger number', 'while needs range()', 'It needs a colon'], ok: 0,
+          why: 'Nothing in the body changes the condition. Add: if hero.here() == \'gem\': hero.take()'}]},
     ]
   },
 };

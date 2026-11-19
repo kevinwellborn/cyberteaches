@@ -8,7 +8,7 @@
   function load(level){
     const rows = level.map, H = rows.length, W = Math.max(...rows.map(r => r.length));
     const w = {W, H, solid: [], items: {}, gates: {}, guards: {}, spikes: {}, door: null, hero: null,
-      hearts: level.hearts || 3, maxHearts: 5, keys: 0, gems: 0, gemsTotal: 0,
+      hearts: level.hearts || 3, maxHearts: 5, keys: 0, gems: 0, gemsTotal: 0, chests: 0, opened: [],
       sword: level.sword || 3, shieldMax: level.shield || 0, block: 0, captive: null, freed: false, armed: false};
     let fi = 0;
     for(let y = 0; y < H; y++){
@@ -20,6 +20,7 @@
         if(c === 'D') w.door = {x, y};
         if(c === '*'){ w.items[k] = 'gem'; w.gemsTotal++ }
         if(c === 'k') w.items[k] = 'key';
+        if(c === 'T'){ w.items[k] = 'chest'; w.chests++ }   // treasure chest: open it with hero.take() (the door stays shut until you do)
         if(c === 'p') w.items[k] = 'potion';
         if(c === '|') w.gates[k] = true;
         if(c === 'G') w.guards[k] = {hp: level.hp || 2, max: level.hp || 2, power: 1};
@@ -34,7 +35,9 @@
     return w;
   }
   const snap = w => ({hero: {...w.hero}, items: {...w.items}, gates: {...w.gates}, guards: JSON.parse(JSON.stringify(w.guards)),
-    hearts: w.hearts, keys: w.keys, gems: w.gems, block: w.block, freed: w.freed});
+    hearts: w.hearts, keys: w.keys, gems: w.gems, block: w.block, freed: w.freed, chests: w.chests, opened: w.opened.slice()});
+  const doorOpen = w => w.gems === w.gemsTotal && !w.chests;
+  PQ.doorOpen = doorOpen;
   PQ.load = load;
 
   // ---------- simulation ----------
@@ -54,13 +57,13 @@
       const h = w.hero; let n = 0;
       while(!S(h.x, h.y + 1) && h.y < w.H){ h.y++; n++ }
       if(n) ev('fall', line, {n});
-      if(h.y >= w.H){ ev('die', line, {why: 'pit'}); end('lose', 'Aaah! The explorer fell into a pit. Stop at the edge and use hero.jump().', line) }
+      if(h.y >= w.H){ ev('die', line, {why: 'pit'}); end('lose', (level.theme === 'lava' ? 'Too hot! The explorer fell into the lava.' : level.theme === 'sea' ? 'Whoosh! The explorer sank into a deep trench.' : 'Aaah! The explorer fell into a pit.') + ' Stop at the edge and use hero.jump().', line) }
     };
     const arrive = line => {
       const h = w.hero, k = key(h.x, h.y);
       fall(line);
       if(w.spikes[key(h.x, h.y)]){ ev('die', line, {why: 'spikes'}); end('lose', 'Ouch, spikes! Stop before them and use hero.jump().', line) }
-      if(w.door && h.x === w.door.x && h.y === w.door.y && w.gems === w.gemsTotal) win(line);
+      if(w.door && h.x === w.door.x && h.y === w.door.y){ if(doorOpen(w)) win(line); else w.shutSeen = true }
       return k;
     };
     const num = (v, line, def, like) => {
@@ -112,10 +115,11 @@
       take(line){
         act(line);
         const h = w.hero, k = key(h.x, h.y), it = w.items[k];
-        if(it === 'gem' || it === 'key'){
+        if(it === 'chest'){ delete w.items[k]; w.chests--; w.opened.push(k); ev('take', line, {item: it, reward: level.chest || null}) }
+        else if(it === 'gem' || it === 'key'){
           delete w.items[k]; if(it === 'gem') w.gems++; else w.keys++;
           ev('take', line, {item: it});
-          if(w.door && h.x === w.door.x && h.y === w.door.y && w.gems === w.gemsTotal) win(line);
+          if(w.door && h.x === w.door.x && h.y === w.door.y && doorOpen(w)) win(line);
         } else ev('shrug', line, {say: it === 'potion' ? 'Drink potions with hero.drink()' : 'Nothing to take here'});
         return null;
       },
@@ -195,8 +199,9 @@
     try {
       PyRun.run(source, {globals: {hero, sword, shield}, maxSteps: 20000, print: (s, line) => { prints.push(s); ev('print', line, {text: s}) }});
       const h = w.hero;
-      if(w.door && h.x === w.door.x && h.y === w.door.y && w.gems < w.gemsTotal)
-        result = {result: 'fail', msg: 'The door is still shut: take every gem first (' + (w.gemsTotal - w.gems) + ' left).'};
+      if(w.door && h.x === w.door.x && h.y === w.door.y && !doorOpen(w))
+        result = {result: 'fail', msg: w.chests ? 'The door is still shut: open the treasure chest first with hero.take().' : 'The door is still shut: take every gem first (' + (w.gemsTotal - w.gems) + ' left).'};
+      else if(w.shutSeen) result = {result: 'fail', msg: w.chests ? 'The explorer passed the door, but it was shut: open the treasure chest first with hero.take().' : 'The explorer passed the door, but it was shut: take every gem first.'};
       else result = {result: 'fail', msg: events.length <= 1 ? 'Write some commands, then press Run.' : 'The program ended before the explorer reached the door.'};
     } catch(e){
       if(e instanceof PyRun.Stop) result = e.reason;
@@ -213,6 +218,16 @@
     return {events, result, prints, lines: PyRun.countLines(source)};
   };
 
+  // Some levels change every time: level.variants = [map, map...] or [{map, foes, hp}...]. The program must win on every version.
+  PQ.versions = level => [level].concat((level.variants || []).map(v => Array.isArray(v) ? {...level, map: v} : {...level, ...v}));
+  PQ.simulateAll = (level, source, pick) => {
+    const vs = PQ.versions(level), runs = vs.map(v => PQ.simulate(v, source));
+    let i = runs.findIndex(r => r.result.result !== 'win');
+    if(i < 0) i = pick != null ? pick % vs.length : Math.floor(Math.random() * vs.length);
+    const run = runs[i];
+    if(vs.length > 1 && run.result.result !== 'win' && run.result.result !== 'error' && i > 0) run.result.msg = 'Version ' + (i + 1) + ' of this temple: ' + run.result.msg + ' Your code has to work on every version, so let the explorer look with hero.ahead() instead of counting.';
+    return {run, level: vs[i], index: i, count: vs.length};
+  };
   PQ.starsFor = (level, lines) => lines <= level.par ? 3 : lines <= level.par + 2 ? 2 : 1;
 
   // ---------- drawing ----------
@@ -227,6 +242,19 @@
     hat: '#7B5530', hatLo: '#5A3C20', skin: '#C98B5B', scarf: '#F07F2D', shirt: '#2B8C8C', pants: '#C9B48A', boot: '#4A3020', blade: '#DDE6EA'
   };
   PQ.colors = C;
+  // World themes: each one swaps some colors and the background details. level.theme = 'jungle' (default) | 'lava' | 'river' | 'sea'
+  const BASE = {...C};
+  const THEMES = {
+    jungle: {},
+    river: {water: '#2A86A8', waterHi: '#8FD8EE', pit: '#0D2A33', riverHigh: true},
+    lava: {sky1: '#140706', sky2: '#3B1209', far: '#26100B', far2: '#3A160D', stone: '#5E5250', stoneHi: '#7D6E6A', stoneLo: '#3A302E', mortar: '#2A211F',
+           moss: '#B9410E', moss2: '#F2702A', vine: '#6B2A12', leaf: '#C2410C', pit: '#2A0A04', water: '#F26B1D', waterHi: '#FFD54A', guard: '#6E6560', guardLo: '#4A423E'},
+    sea: {sky1: '#04263B', sky2: '#0B5470', far: '#0A3A52', far2: '#0E4B66', stone: '#5C8A8C', stoneHi: '#86B3B0', stoneLo: '#3E6466', mortar: '#2F5052',
+          moss: '#D9705A', moss2: '#F29E7E', vine: '#2E8B57', leaf: '#3FAE6B', pit: '#021521', water: '#032336', waterHi: '#0C4A6E'},
+  };
+  PQ.themes = Object.keys(THEMES);
+  let theme = 'jungle';
+  function useTheme(name){ theme = THEMES[name] ? name : 'jungle'; Object.assign(C, BASE, THEMES[theme]) }
 
   function drawBackground(g, W, H, t){
     const gr = g.createLinearGradient(0, 0, 0, H * T); gr.addColorStop(0, C.sky1); gr.addColorStop(1, C.sky2);
@@ -242,6 +270,27 @@
     for(let x = -T; x < W * T + T; x += T * 0.9){
       const y = T * 0.15 + Math.sin(x * 0.07) * 6;
       g.beginPath(); g.ellipse(x, y, T * 0.7, T * 0.35, Math.sin(x) * 0.4, 0, Math.PI * 2); g.fill();
+    }
+    if(theme === 'lava'){
+      // rock spikes hanging from the ceiling, a red glow from below and drifting embers
+      g.fillStyle = '#1E0A06';
+      for(let x = 0; x < W * T; x += T * 0.8){ const len = T * (0.3 + ((x * 7) % 5) / 9); g.beginPath(); g.moveTo(x, 0); g.lineTo(x + T * 0.4, 0); g.lineTo(x + T * 0.2, len); g.fill() }
+      const glow = g.createLinearGradient(0, H * T * 0.5, 0, H * T); glow.addColorStop(0, 'rgba(255,90,20,0)'); glow.addColorStop(1, 'rgba(255,90,20,.28)');
+      g.fillStyle = glow; g.fillRect(0, 0, W * T, H * T);
+      for(let i = 0; i < W * 2; i++){ const x = (i * 97) % (W * T), y = H * T - ((t / 14 + i * 53) % (H * T)); g.fillStyle = i % 3 ? '#FFB347' : '#FF6A2A'; g.globalAlpha = 0.5 + 0.5 * Math.sin(t / 200 + i); g.fillRect(x + Math.sin(t / 400 + i) * 6, y, 3, 3) }
+      g.globalAlpha = 1; return;
+    }
+    if(theme === 'sea'){
+      // swaying seaweed and rising bubbles, light ripples on top
+      g.strokeStyle = 'rgba(160,220,255,.12)'; g.lineWidth = 3;
+      for(let x = 0; x < W * T; x += T * 1.5){ g.beginPath(); g.moveTo(x, 8 + Math.sin(t / 600 + x) * 3); g.quadraticCurveTo(x + T * 0.4, 2, x + T, 8 + Math.sin(t / 600 + x + 1) * 3); g.stroke() }
+      for(let x = T * 0.3; x < W * T; x += T * 1.7){
+        g.strokeStyle = C.vine; g.lineWidth = 4; g.beginPath(); g.moveTo(x, H * T);
+        for(let k = 1; k <= 5; k++) g.lineTo(x + Math.sin(t / 500 + x + k) * 6, H * T - k * T * 0.28); g.stroke();
+      }
+      g.fillStyle = 'rgba(200,240,255,.55)';
+      for(let i = 0; i < W * 1.5; i++){ const x = (i * 131) % (W * T) + Math.sin(t / 300 + i) * 4, y = H * T - ((t / 10 + i * 71) % (H * T)); g.beginPath(); g.arc(x, y, 2 + (i % 3), 0, Math.PI * 2); g.fill() }
+      return;
     }
     // hanging vines from the top
     g.strokeStyle = C.vine; g.lineWidth = 2;
@@ -281,10 +330,12 @@
   function drawPit(g, w, x, t){
     const px = x * T, py = (w.H - 1) * T;
     g.fillStyle = C.pit; g.fillRect(px, py, T, T);
-    g.fillStyle = C.water; g.fillRect(px, py + T * 0.62, T, T * 0.38);
+    const top = theme === 'lava' ? 0.45 : C.riverHigh ? 0.35 : 0.62;
+    g.fillStyle = C.water; g.fillRect(px, py + T * top, T, T * (1 - top));
     g.strokeStyle = C.waterHi; g.lineWidth = 2; g.beginPath();
-    for(let i = 0; i <= T; i += 4) g.lineTo(px + i, py + T * 0.62 + Math.sin((i + t / 120) * 0.35) * 2);
+    for(let i = 0; i <= T; i += 4) g.lineTo(px + i, py + T * top + Math.sin((i + t / 120) * 0.35) * 2);
     g.stroke();
+    if(theme === 'lava'){ g.fillStyle = '#FFE08A'; for(let i = 0; i < 2; i++){ const bx = px + ((t / 9 + i * 23 + x * 17) % T), r = 2 + Math.sin(t / 150 + i + x) * 1.5; g.beginPath(); g.arc(bx, py + T * (top + 0.2), Math.max(0.5, r), 0, Math.PI * 2); g.fill() } }
   }
   function drawSpikes(g, x, y){
     const px = x * T, py = y * T + T;
@@ -313,6 +364,16 @@
     } else if(kind === 'key'){
       g.strokeStyle = C.gold; g.lineWidth = 4; g.beginPath(); g.arc(cx - 7, by - 14, 6, 0, Math.PI * 2); g.stroke();
       g.beginPath(); g.moveTo(cx - 1, by - 14); g.lineTo(cx + 13, by - 14); g.moveTo(cx + 9, by - 14); g.lineTo(cx + 9, by - 8); g.moveTo(cx + 13, by - 14); g.lineTo(cx + 13, by - 9); g.stroke();
+    } else if(kind === 'chest' || kind === 'open'){
+      const y0 = y * T + T, open = kind === 'open';
+      if(open){ g.save(); g.globalAlpha = 0.35 + 0.2 * Math.sin(t / 200); g.fillStyle = '#FFE9A0'; g.beginPath(); g.arc(cx, y0 - 22, 20, 0, Math.PI * 2); g.fill(); g.restore() }
+      g.fillStyle = C.woodLo; g.fillRect(cx - 16, y0 - 20, 32, 20);
+      g.fillStyle = C.wood; g.fillRect(cx - 14, y0 - 18, 28, 16);
+      g.fillStyle = C.gold; g.fillRect(cx - 16, y0 - 12, 32, 3); g.fillRect(cx - 3, y0 - 15, 6, 7);
+      g.fillStyle = C.woodLo;
+      if(open){ g.fillRect(cx - 16, y0 - 34, 32, 8); g.fillStyle = C.gold; g.fillRect(cx - 16, y0 - 28, 32, 2) }
+      else { g.beginPath(); g.moveTo(cx - 16, y0 - 20); g.quadraticCurveTo(cx, y0 - 34, cx + 16, y0 - 20); g.fill(); g.fillStyle = C.gold; g.fillRect(cx - 2, y0 - 27, 4, 8) }
+      if(!open && Math.sin(t / 220 + x) > 0.8){ g.fillStyle = '#fff'; g.fillRect(cx + 9, y0 - 31, 2, 6); g.fillRect(cx + 7, y0 - 29, 6, 2) }
     } else if(kind === 'potion'){
       g.fillStyle = C.glass; g.fillRect(cx - 4, by - 30, 8, 8);
       g.fillStyle = C.wood; g.fillRect(cx - 5, by - 33, 10, 4);
@@ -422,7 +483,21 @@
   }
 
   // The explorer: wide-brim hat, orange scarf, teal shirt, short sword. pose: idle | run | jump | climb | attack | drink | hurt | win | fall
-  function drawHero(g, x, y, dir, pose, ph, t, shield){
+  // Gear the student unlocked: outfit changes colors (and adds goggles or a helmet), weapon changes the blade.
+  const OUTFITS = {
+    explorer: {},
+    ranger: {shirt: '#4D7C0F', hat: '#3F4A1F', hatLo: '#2C3415', scarf: '#FACC15', pants: '#8A7A55'},
+    fire: {shirt: '#B91C1C', hat: '#27272A', hatLo: '#18181B', scarf: '#F59E0B', pants: '#44403C', boot: '#7C2D12', goggles: true},
+    diver: {shirt: '#0E7490', hat: '#0E7490', hatLo: '#155E75', scarf: '#FBBF24', pants: '#164E63', helmet: true},
+  };
+  const WEAPONS = {sword: {blade: '#DDE6EA'}, golden: {blade: '#F2C14A', glow: 'rgba(255,215,90,.45)'}, flame: {blade: '#FF7A1A', glow: 'rgba(255,120,30,.55)'}, axe: {blade: '#9CA3AF', axe: true}, trident: {blade: '#7DD3FC', trident: true}};
+  PQ.outfits = Object.keys(OUTFITS); PQ.weapons = Object.keys(WEAPONS);
+  function drawHero(g, x, y, dir, pose, ph, t, shield, gear){
+    const saved = {...C}, wp = WEAPONS[(gear && gear.weapon) || 'sword'] || WEAPONS.sword, of = OUTFITS[(gear && gear.outfit) || 'explorer'] || {};
+    Object.assign(C, of, {blade: wp.blade});
+    try { drawHeroBody(g, x, y, dir, pose, ph, t, shield, wp, of) } finally { Object.assign(C, saved) }
+  }
+  function drawHeroBody(g, x, y, dir, pose, ph, t, shield, wp, of){
     const cx = x * T + T / 2, by = y * T + T;
     g.save(); g.translate(cx, by); g.scale(dir, 1);
     const swing = pose === 'run' ? Math.sin(ph * Math.PI * 2) : 0;
@@ -452,6 +527,8 @@
     // hat
     g.fillStyle = C.hat; g.beginPath(); g.ellipse(1, -47, 13, 3.2, 0, 0, Math.PI * 2); g.fill();
     g.fillStyle = C.hatLo; g.fillRect(-6, -55, 13, 8); g.fillStyle = C.hat; g.fillRect(-6, -55, 13, 3);
+    if(of.goggles){ g.fillStyle = '#FBBF24'; g.fillRect(-4, -51, 12, 3); g.fillStyle = '#7DD3FC'; g.fillRect(3, -51, 4, 3) }
+    if(of.helmet){ g.strokeStyle = 'rgba(200,240,255,.9)'; g.lineWidth = 2; g.fillStyle = 'rgba(160,220,255,.25)'; g.beginPath(); g.arc(1, -44, 12, 0, Math.PI * 2); g.fill(); g.stroke(); g.fillStyle = C.gold; g.fillRect(-11, -35, 24, 3) }
     // front arm + sword
     let armF = pose === 'attack' ? (-2.4 + ph * 3.4) : pose === 'climb' ? -2.9 : pose === 'drink' ? -2.4 : pose === 'win' ? -2.8 : swing * 0.7 + 0.2;
     if(pose === 'jump') armF = 1.6;
@@ -460,7 +537,12 @@
     if(pose === 'drink'){ g.fillStyle = C.potion; g.beginPath(); g.arc(hx, hy - 2, 4, 0, Math.PI * 2); g.fill() }
     else {
       const sa = pose === 'attack' ? armF + 0.3 : pose === 'climb' ? 0.4 : 0.9;
-      g.strokeStyle = C.blade; g.lineWidth = 3; g.beginPath(); g.moveTo(hx, hy); g.lineTo(hx + Math.sin(sa) * 18, hy + Math.cos(sa) * -18 * -1 * -1 + (pose === 'attack' ? 0 : -14)); g.stroke();
+      const tx = hx + Math.sin(sa) * 18, ty = hy + Math.cos(sa) * -18 * -1 * -1 + (pose === 'attack' ? 0 : -14);
+      if(wp.glow){ g.strokeStyle = wp.glow; g.lineWidth = 8; g.beginPath(); g.moveTo(hx, hy); g.lineTo(tx, ty); g.stroke() }
+      if(wp.axe || wp.trident){ g.strokeStyle = '#7A4E2A'; g.lineWidth = 3; g.beginPath(); g.moveTo(hx, hy); g.lineTo(tx, ty); g.stroke() }
+      else { g.strokeStyle = C.blade; g.lineWidth = 3; g.beginPath(); g.moveTo(hx, hy); g.lineTo(tx, ty); g.stroke() }
+      if(wp.axe){ const dx = tx - hx, dy = ty - hy, L = Math.hypot(dx, dy) || 1, nx = -dy / L, ny = dx / L; g.fillStyle = C.blade; g.beginPath(); g.moveTo(tx - dx / L * 2, ty - dy / L * 2); g.lineTo(tx + nx * 9 - dx / L * 6, ty + ny * 9 - dy / L * 6); g.lineTo(tx + nx * 9 + dx / L * 3, ty + ny * 9 + dy / L * 3); g.closePath(); g.fill() }
+      if(wp.trident){ const dx = tx - hx, dy = ty - hy, L = Math.hypot(dx, dy) || 1, ux = dx / L, uy = dy / L, nx = -uy, ny = ux; g.strokeStyle = C.blade; g.lineWidth = 2; g.beginPath(); g.moveTo(tx - nx * 5, ty - ny * 5); g.lineTo(tx + nx * 5, ty + ny * 5); [-5, 0, 5].forEach(o => { g.moveTo(tx + nx * o, ty + ny * o); g.lineTo(tx + nx * o + ux * 6, ty + ny * o + uy * 6) }); g.stroke() }
       g.fillStyle = C.goldLo; g.fillRect(hx - 3, hy - 2, 6, 3);
     }
     if(shield || pose === 'defend' || pose === 'block'){
@@ -493,6 +575,7 @@
       const e = this.events[this.i++], prev = this.state;
       const base = e.a === 'attack' ? DUR.attack * (0.6 + 0.4 * (e.swings || 1)) : e.a === 'hurt' && e.from ? 520 : (DUR[e.a] || 250);
       this.cur = {e, prev, start: performance.now(), dur: base / this.speed};
+      if(e.a === 'take' && e.reward){ const gi = (root.PQ_GEAR || []).find(x => x.id === e.reward); this.say = {text: '🎁 ' + (gi ? gi.name : 'Treasure') + '!', until: performance.now() + 1800 / this.speed, x: prev.hero.x, y: prev.hero.y} }
       if(e.a === 'shrug' && e.say) this.say = {text: e.say, until: performance.now() + 1400 / this.speed, x: prev.hero.x, y: prev.hero.y};
       if(this.hooks.onEvent) this.hooks.onEvent(e);
     }
@@ -506,11 +589,13 @@
       const g = this.g, w = this.world; if(!w) return;
       const s = this.cur ? this.cur.prev : this.state;
       g.save(); g.translate(0, 34);
+      useTheme(this.level && this.level.theme);
       drawBackground(g, w.W, w.H, t);
       for(let x = 0; x < w.W; x++) if(!w.solid[w.H - 1][x]) drawPit(g, w, x, t);
       for(let y = 0; y < w.H; y++) for(let x = 0; x < w.W; x++) if(w.solid[y][x]) drawStone(g, w, x, y);
       Object.keys(w.spikes).forEach(k => { const [x, y] = k.split(',').map(Number); drawSpikes(g, x, y) });
-      if(w.door) drawDoor(g, w.door.x, w.door.y, s.gems === w.gemsTotal, t);
+      if(w.door) drawDoor(g, w.door.x, w.door.y, s.gems === w.gemsTotal && !s.chests, t);
+      (s.opened || []).forEach(k => { const [x, y] = k.split(',').map(Number); drawItem(g, 'open', x, y, t) });
       Object.keys(s.gates).forEach(k => { const [x, y] = k.split(',').map(Number); drawGate(g, x, y) });
       Object.entries(s.items).forEach(([k, it]) => { const [x, y] = k.split(',').map(Number); drawItem(g, it, x, y, t) });
       const hitKey = this.cur && this.cur.e.a === 'attack' && this.cur.e.hit;
@@ -541,7 +626,7 @@
         else if(e.a === 'take'){ pose = 'idle'; hy = s.hero.y + Math.sin(p * Math.PI) * 0.12 }
       } else if(this.events === null && this.lastPose) pose = this.lastPose;
       const shieldUp = (this.cur ? this.cur.e.s.block : this.state.block) > 0;
-      if(!(this.cur && this.cur.e.a === 'die' && this.cur.e.why === 'pit')) drawHero(g, hx, hy, dir, pose, ph, t, shieldUp);
+      if(!(this.cur && this.cur.e.a === 'die' && this.cur.e.why === 'pit')) drawHero(g, hx, hy, dir, pose, ph, t, shieldUp, this.gear);
       if(this.cur && ((this.cur.e.a === 'hurt' && this.cur.e.dmg) || this.cur.e.a === 'block')){
         const p = Math.min(1, (t - this.cur.start) / this.cur.dur), blk = this.cur.e.a === 'block';
         g.font = 'bold 15px system-ui, sans-serif'; g.textAlign = 'center'; g.globalAlpha = 1 - p * 0.7;
