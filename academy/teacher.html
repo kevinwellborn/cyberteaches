@@ -268,10 +268,10 @@ function dashboard(admin){
   });
   if(stopClasses) stopClasses();
   stopClasses=Cloud.watchClasses((list,err)=>{
-    const snap=c=>JSON.stringify([c.locked||[], c.unlocked||[], c.published||[], c.level||'', c.levels||{}, !!c.duels, !!c.races]);
+    const snap=c=>JSON.stringify([c.locked||[], c.unlocked||[], c.published||[], c.level||'', c.levels||{}, !!c.duels, !!c.races, c.pyLocked||[]]);
     const was=snap(classes.find(c=>c.code===current)||{});
     classes=list.sort((a,b)=>(a.name||'').localeCompare(b.name||''));
-    const now=classes.find(c=>c.code===current); if(now && snap(now)!==was && $('#locks')) renderClass();
+    const now=classes.find(c=>c.code===current); if(now && snap(now)!==was && ($('#locks')||$('#pyLocks'))) renderClass();
     renderTabs(err);
     const cur=classes.find(c=>c.code===current);
     if(!cur || (cur.archived && !showArchived && !keepArchived)){
@@ -457,6 +457,18 @@ const PY_LEVELS=(window.PQ_LEVELS||[]), PY_LESSONS=(window.PQ_LESSONS||[]).filte
 const pyStars=s=>((s.py||{}).stars)||{};
 const pyTotal=s=>Object.values(pyStars(s)).map(Number).filter(v=>v>0).reduce((a,b)=>a+b,0);
 const pySolved=s=>PY_LEVELS.filter(l=>pyStars(s)[l.id]).length;
+const pyOpen=new Set();   // Python lessons expanded in the progress table
+// Python Quest progress table. Lessons start collapsed to their Score; clicking a lesson shows each level.
+function pyTable(){
+  const lv=u=>pyOpen.has(u.n)?PY_LEVELS.filter(l=>l.lesson===u.n):[];
+  const rows=roster.map(s=>{
+    const cells=PY_LESSONS.map(u=>lv(u).map(l=>{ const st=pyStars(s)[l.id]||0; return `<td><span class="cell s${st}" title="${esc(l.name)}: ${st?st+' star'+(st>1?'s':''):'not solved'}">${st?'★'.repeat(st):'·'}</span></td>` }).join('')+`<td class="score"><b>${pyScore(s,u.n)}</b></td>`).join('');
+    return `<tr><td class="name"><b>${esc(s.name)}</b><small>${esc(s.email||(s.username?'Username: '+s.username:''))}</small></td>${cells}<td><b>${pySolved(s)}</b>/${PY_LEVELS.length}</td><td><b>${pyTotal(s)}</b> ★</td><td class="muted">${ago(s.updatedAt)}</td></tr>`;
+  }).join('');
+  const head1=PY_LESSONS.map(u=>{ const o=pyOpen.has(u.n); return `<th class="lesson" colspan="${lv(u).length+1}" style="background:${u.color}"><button class="lessonbtn" data-pyunit="${u.n}" aria-expanded="${o}" title="${o?'Hide':'Show'} each level">${o?'▾':'▸'} L${u.n}${o?': '+esc(u.title):''}</button></th>` }).join('');
+  const head2=PY_LESSONS.map(u=>lv(u).map(l=>`<th title="${esc(l.name)}">${l.lesson}.${l.k}</th>`).join('')+`<th class="score" title="Lesson ${u.n}: ${esc(u.title)}. Score out of 100">Score</th>`).join('');
+  return `<table><thead><tr><th class="name" rowspan="2">Student</th>${head1}<th rowspan="2">Solved</th><th rowspan="2">Stars</th><th rowspan="2">Last active</th></tr><tr>${head2}</tr></thead><tbody>${rows}</tbody></table>`;
+}
 const pyScore=(s,n)=>{ const lv=PY_LEVELS.filter(l=>l.lesson===n); if(!lv.length) return 0; return Math.round(lv.reduce((t,l)=>{ const st=pyStars(s)[l.id]||0; return t+(st===3?100:st===2?90:st===1?80:0) },0)/lv.length) };
 function renderPython(err){
   const view=$('#classview'); if(!view) return;
@@ -466,12 +478,6 @@ function renderPython(err){
   const n=roster.length, avg=n?roster.reduce((t,s)=>t+pySolved(s),0)/n:0;
   const lessonDone=PY_LESSONS.map(u=>({u, done:roster.filter(s=>PY_LEVELS.filter(l=>l.lesson===u.n).every(l=>pyStars(s)[l.id])).length}));
   const started=roster.filter(s=>pySolved(s)>0).length;
-  const rows=roster.map(s=>{
-    const cells=PY_LESSONS.map(u=>PY_LEVELS.filter(l=>l.lesson===u.n).map(l=>{ const st=pyStars(s)[l.id]||0; return `<td><span class="cell s${st}" title="${esc(l.name)}: ${st?st+' star'+(st>1?'s':''):'not solved'}">${st?'★'.repeat(st):'·'}</span></td>` }).join('')+`<td class="score"><b>${pyScore(s,u.n)}</b></td>`).join('');
-    return `<tr><td class="name"><b>${esc(s.name)}</b><small>${esc(s.email||(s.username?'Username: '+s.username:''))}</small></td>${cells}<td><b>${pySolved(s)}</b>/${PY_LEVELS.length}</td><td><b>${pyTotal(s)}</b> ★</td><td class="muted">${ago(s.updatedAt)}</td></tr>`;
-  }).join('');
-  const head1=PY_LESSONS.map(u=>`<th class="lesson" colspan="${PY_LEVELS.filter(l=>l.lesson===u.n).length+1}" style="background:${u.color}">L${u.n}: ${esc(u.title)}</th>`).join('');
-  const head2=PY_LESSONS.map(u=>PY_LEVELS.filter(l=>l.lesson===u.n).map(l=>`<th title="${esc(l.name)}">${l.lesson}.${l.k}</th>`).join('')+'<th class="score" title="Score out of 100">Score</th>').join('');
   const board=roster.map(s=>({name:short(s.name), stars:pyTotal(s), solved:pySolved(s)})).filter(r=>r.stars>0).sort((a,b)=>b.stars-a.stars||b.solved-a.solved||a.name.localeCompare(b.name));
   let place=0, prev=-1;
   view.innerHTML=`<div class="top2">
@@ -482,11 +488,34 @@ function renderPython(err){
       <div class="stats"><div class="stat"><b>${started}</b><span class="muted">of ${n} students started</span></div>
       <div class="stat"><b>${avg.toFixed(1)}</b><span class="muted">levels solved on average, of ${PY_LEVELS.length}</span></div>
       ${lessonDone.map(x=>`<div class="stat"><b>${x.done}</b><span class="muted">finished Lesson ${x.u.n}</span><div class="bar"><i style="width:${n?x.done/n*100:0}%;background:${x.u.color}"></i></div></div>`).join('')}</div></section></div>
+    <div class="toolbar"><h2>Python lessons open to students</h2><div class="spacer"></div><button class="btn" id="pyUnlockAll">Unlock all</button><button class="btn" id="pyLockAll">Lock all</button></div>
+    <p class="muted" style="margin:0 0 8px">Tap a lesson to lock or unlock it for this class. Students see a lock and can't open its Learn step or levels. Their stars are kept.</p>
+    <div class="locks" id="pyLocks">${PY_LESSONS.map(u=>{ const off=(c.pyLocked||[]).map(Number).includes(u.n); return `<button class="lockbtn${off?' off':''}" data-unit="${u.n}" aria-pressed="${!off}"><span class="lnum" style="background:${off?'var(--line)':u.color}">L${u.n}</span><span class="ltitle">${esc(u.title)}</span><span class="lstate">${off?'🔒 Locked':'Open'}</span></button>` }).join('')}</div>
+    <p class="err" id="pyLockErr" role="alert"></p>
     <div class="toolbar"><h2>🐍 Python Quest progress</h2><div class="spacer"></div><button class="btn" id="csv" ${n?'':'disabled'}>Download CSV</button></div>
-    <div class="legend"><span><i class="cell s3">★★★</i> 3 stars (fewest lines of code)</span><span><i class="cell s2">★★</i> 2 stars</span><span><i class="cell s1">★</i> 1 star</span><span><i class="cell s0">·</i> not solved</span><span><b>Score</b> out of 100: 3 stars = 100, 2 stars = 90, 1 star = 80 per level</span><span>Each lesson starts with a 📖 Learn step, then 10 practice levels.</span></div>
-    <div class="tablewrap">${err?'<div class="empty err">Could not load students.</div>':n?`<table><thead><tr><th class="name" rowspan="2">Student</th>${head1}<th rowspan="2">Solved</th><th rowspan="2">Stars</th><th rowspan="2">Last active</th></tr><tr>${head2}</tr></thead><tbody>${rows}</tbody></table>`:'<div class="empty">No students yet. Share the class code from the Coding Academy tab.</div>'}</div>
+    <div class="legend"><span><i class="cell s3">★★★</i> 3 stars (fewest lines of code)</span><span><i class="cell s2">★★</i> 2 stars</span><span><i class="cell s1">★</i> 1 star</span><span><i class="cell s0">·</i> not solved</span><span>Click a lesson to show or hide each level.</span><span><b>Score</b> per lesson out of 100: 3 stars = 100, 2 stars = 90, 1 star = 80 per level, unsolved = 0</span><span>Each lesson starts with a 📖 Learn step, then 10 practice levels.</span></div>
+    <div class="tablewrap" id="pyTable">${err?'<div class="empty err">Could not load students.</div>':n?pyTable():'<div class="empty">No students yet. Share the class code from the Coding Academy tab.</div>'}</div>
     ${board.length?`<div class="toolbar"><h2>Python Quest leaderboard</h2></div><section class="panel"><div class="tablewrap"><table><thead><tr><th>#</th><th class="l">Student</th><th>Stars</th><th>Levels</th></tr></thead><tbody>${board.map((r,i)=>{ if(r.stars!==prev){ place=i+1; prev=r.stars } return `<tr><td><b>${place===1?'👑':place}</b></td><td class="l"><b>${esc(r.name)}</b></td><td><b>${r.stars}</b> ⭐</td><td>${r.solved}</td></tr>` }).join('')}</tbody></table></div></section>`:''}`;
   $('#copy').onclick=async()=>{ try{ await navigator.clipboard.writeText($('#jl').textContent); $('#copy').textContent='Copied' }catch(e){} };
+  const tw=$('#pyTable'); tw.onclick=e=>{ const b=e.target.closest('[data-pyunit]'); if(!b) return; const u=+b.dataset.pyunit;
+    pyOpen.has(u)?pyOpen.delete(u):pyOpen.add(u); const x=tw.scrollLeft; tw.innerHTML=pyTable(); tw.scrollLeft=x;
+    const nb=tw.querySelector(`[data-pyunit="${u}"]`); if(nb) nb.focus() };
+  // Lesson locks: classes/{code}.pyLocked = [lesson numbers]. Saved through the SDK and the REST route (school filters), like the rover locks.
+  const FV=firebase.firestore.FieldValue, cref=Cloud.db.collection('classes').doc(c.code); let saves=0;
+  const save=(data, rest)=>{ const k=++saves; let done=false;
+    const say=(t,ok)=>{ const e=$('#pyLockErr'); if(e && k===saves){ e.textContent=t; e.style.color=ok?'#0B5E3C':'' } };
+    const ok=()=>{ if(done) return; done=true; clearTimeout(slow); say('Saved ✓ Students will see it when they reload or within a minute.',true) };
+    say('Saving…',true);
+    const slow=setTimeout(()=>{ if(!done) say('Still saving… Keep this page open until it says Saved.') },8000);
+    cref.update(data).then(ok, e=>{ console.error(e); if(!done) say('Could not save ('+(e.code||e.message)+'). Try again.') });
+    Cloud.restUpdate('classes/'+c.code, rest).then(ok, e=>{ console.error(e) }) };
+  const lockedNow=()=>[...document.querySelectorAll('#pyLocks .lockbtn.off')].map(b=>+b.dataset.unit);
+  $('#pyLocks').onclick=e=>{ const b=e.target.closest('.lockbtn'); if(!b) return; const u=+b.dataset.unit, off=b.classList.contains('off');
+    b.classList.toggle('off'); const nowOff=!off;
+    b.setAttribute('aria-pressed',String(!nowOff)); b.querySelector('.lstate').textContent=nowOff?'🔒 Locked':'Open'; b.querySelector('.lnum').style.background=nowOff?'var(--line)':(PY_LESSONS.find(x=>x.n===u)||{}).color;
+    save({pyLocked: off ? FV.arrayRemove(u) : FV.arrayUnion(u)}, {pyLocked: lockedNow()}) };
+  $('#pyUnlockAll').onclick=()=>save({pyLocked: []}, {pyLocked: []});
+  $('#pyLockAll').onclick=()=>{ const all=PY_LESSONS.map(u=>u.n); save({pyLocked: all}, {pyLocked: all}) };
   $('#csv').onclick=()=>{
     const q=v=>'"'+String(v==null?'':v).replace(/"/g,'""')+'"';
     const lines=[['Student','Email or username',...PY_LEVELS.map(l=>'L'+l.lesson+'.'+l.k+' '+l.name),...PY_LESSONS.map(u=>'Lesson '+u.n+' score'),'Solved','Stars'].map(q).join(',')];
