@@ -344,9 +344,9 @@ body{border-top:8px solid var(--lv,var(--accent))}
 </div>
 <div id="modal"></div>
 
-<script src="course.js?v=15"></script>
+<script src="course.js?v=16"></script>
 <script src="firebase-config.js"></script>
-<script src="cloud.js?v=20"></script>
+<script src="cloud.js?v=21"></script>
 <script src="sound.js?v=1"></script>
 <script src="duel.js?v=3"></script>
 <script src="race.js?v=3"></script>
@@ -423,7 +423,8 @@ if(typeof matchMedia==='function') matchMedia('(prefers-color-scheme: dark)').ad
 const myLevels = unit => levelsOf(curLevel, unit);   // this level's puzzles for one lesson (or all lessons), in play order
 const doneCount = ()=>myLevels().filter(l=>progress[l.n]).length;
 // Lessons the student's teacher has locked for their class (classes/{code}.locked). Empty when not in a class.
-let lockedUnits=new Set(), classStop=null, watchedCode=null, teacherStop=null;   // teacherStop: watcher that frees the level tabs for approved teachers
+let lockedUnits=new Set(REVIEWS.map(r=>r.quizId)), classStop=null, watchedCode=undefined, teacherStop=null;   // quizzes count as locked until we know who is signed in
+   // teacherStop: watcher that frees the level tabs for approved teachers
 // Visitors who are not signed in can try Lesson 1 only; every other lesson needs a Google or student login.
 const FREE_UNIT = 1;
 const guestLocked = unit => !!Cloud && !Cloud.user && unit !== FREE_UNIT;
@@ -445,7 +446,8 @@ function reviewCards(r){
   const base=r.name.replace(/ review$/,'');
   return [
     one(r.guideId, '📖', base+' study guide', 'Study guide', r.guideBlurb, r.path, `<a class="btn primary" href="${r.path}">📖 Open the study guide</a>`, 'Study guide'),
-    one(r.quizId, '✏️', base+' quiz', sc?`Your best score: ${sc.best}/${sc.total}`:'Not taken yet', r.quizBlurb, r.path+'quiz.html', `<a class="btn primary" href="${r.path}quiz.html">✏️ Take the quiz</a>`, 'Quiz') ];
+    // Quizzes are hidden, not just locked, until the teacher opens them.
+    ...(isLocked(r.quizId) ? [] : [one(r.quizId, '✏️', base+' quiz', sc?'Turned in ✓':'Not taken yet', r.quizBlurb, r.path+'quiz.html', `<a class="btn primary" href="${r.path}quiz.html">✏️ ${sc?'See my quiz':'Take the quiz'}</a>`, 'Quiz')]) ];
 }
 function lockedMsg(unit){ if(guestLocked(unit)) return signInMsg(unit); showMsg('Lesson locked', `<p>${LOCK_ICO} Your teacher has locked <b>Lesson ${unit}</b> for now. Pick a lesson that is open, or ask your teacher.</p>`) }
 
@@ -1211,15 +1213,19 @@ if(Cloud) Cloud.onChange(c=>{
   const rb=$('.rankbar'); if(rb) rb.replaceWith(rankBar());
   // Approved teachers (and the admin) always get every level tab, even if they joined a class to try it as a student.
   const code = u && c.profile ? c.profile.classCode : null;
-  if(u && code && !Cloud.isStudentLogin(u)){
+  // They also see every review quiz; for everyone else a quiz stays hidden until their class's teacher unlocks it.
+  if(u && c.profile && !Cloud.isStudentLogin(u)){
     if(teacherStop) teacherStop();
-    teacherStop = Cloud.isAdmin(u) ? (watchLocks(null), null) : Cloud.watchTeacherStatus(t => watchLocks(t && t.status==='approved' ? null : code));
-  } else { if(teacherStop){ teacherStop(); teacherStop=null } watchLocks(code) }
+    teacherStop = Cloud.isAdmin(u) ? (watchLocks(null, true), null) : Cloud.watchTeacherStatus(t => watchLocks(code, !!(t && t.status==='approved')));
+  } else if(c.ready && (!u || c.profile)){ if(teacherStop){ teacherStop(); teacherStop=null } watchLocks(code) }
 });
 // Follow the class's locked lessons and difficulty level live, so a teacher's change reaches students right away.
-function watchLocks(code){
-  if(code===watchedCode) return;
-  watchedCode=code||null; if(classStop){ classStop(); classStop=null }
+// staff (approved teachers and the admin): no locks at all. No class: only the review quizzes are locked.
+function watchLocks(code, staff){
+  const key=staff ? '#staff' : code||null;
+  if(key===watchedCode) return;
+  watchedCode=key; if(classStop){ classStop(); classStop=null }
+  if(staff) code=null;
   const apply=(list, level)=>{
     const next=new Set((list||[]).map(Number)); const sameLocks=next.size===lockedUnits.size && [...next].every(x=>lockedUnits.has(x));
     lockedUnits=next;
@@ -1231,7 +1237,7 @@ function watchLocks(code){
     }
     if(sameLocks) return;
     if(m ? isLocked(LEVELS[+m[1]-1].unit) : location.hash!=='#duel' && location.hash!=='#race') route() };
-  if(!code){ levelByTeacher=false; apply([], store.get('level',DEFAULT_LEVEL)); return }
+  if(!code){ levelByTeacher=false; apply(staff ? [] : REVIEWS.map(r=>r.quizId), store.get('level',DEFAULT_LEVEL)); return }
   levelByTeacher=true;
   const ref=Cloud.db.collection('classes').doc(code);
   const fromData=d=>{ if(watchedCode!==code) return; d=d||{};
