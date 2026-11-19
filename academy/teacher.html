@@ -172,6 +172,7 @@ body{border-top:6px solid var(--lv,var(--accent))}
 <script src="course.js?v=13"></script>
 <script src="firebase-config.js"></script>
 <script src="cloud.js?v=18"></script>
+<script src="python/levels.js?v=2"></script>
 <script>
 const $=(s,r=document)=>r.querySelector(s);
 const esc=t=>String(t==null?'':t).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -244,7 +245,7 @@ function renderAcct(c){
 }
 
 function dashboard(admin){
-  app.innerHTML=`${admin?'<section id="adminview" class="panel" style="margin-top:6px"></section>':''}<nav class="courseswitch" aria-label="Course to manage"><span class="label">Course</span><span class="tab" aria-current="page" aria-pressed="true">Coding Academy</span><a class="tab" href="../app-builder/teacher.html">App Builder</a><span class="muted">Your classes work in both courses. Pick the course you want to manage.</span></nav>
+  app.innerHTML=`${admin?'<section id="adminview" class="panel" style="margin-top:6px"></section>':''}<nav class="courseswitch" aria-label="Course to manage"><span class="label">Course</span><button class="tab" id="crsRover" aria-pressed="${course!=='python'}">Coding Academy</button><button class="tab" id="crsPy" aria-pressed="${course==='python'}">🐍 Python Quest</button><a class="tab" href="../app-builder/teacher.html">App Builder</a><span class="muted">Your classes work in both courses. Pick the course you want to manage.</span></nav>
     <div class="toolbar" style="margin-top:6px"><h2>Your classes</h2></div>
     <div class="classes" id="classes"></div>
     <form class="newclass" id="newclass"><label class="label" for="cname" style="align-self:center">New class</label><input id="cname" placeholder="e.g. Period 3 Coding" maxlength="60" required><button class="btn primary" id="cbtn">Create class</button><span class="err" id="cerr" role="alert"></span></form>
@@ -439,7 +440,62 @@ function ago(ts){
 // Difficulty: the class has one level (Easy / Medium / Hard); a student can be moved to another level on their own.
 const classLevel=c=>LEVELS_AVAILABLE.includes(c&&c.level)?c.level:DEFAULT_LEVEL;
 const studentLevel=(c,s)=>{ const v=(c&&c.levels||{})[s.uid]; return LEVELS_AVAILABLE.includes(v)?v:classLevel(c) };
+// Course tab: Coding Academy (rover puzzles) or Python Quest. The class, code and student list are shared;
+// Python Quest stars are kept in their own field (students/{uid}.py.stars = {'1-1': 3, ...}).
+let course=(()=>{ try{ return localStorage.getItem('ct-teacher-course')||'rover' }catch(e){ return 'rover' } })();
+function setCourse(v){
+  course=v; try{ localStorage.setItem('ct-teacher-course',v) }catch(e){}
+  [['crsRover','rover'],['crsPy','python']].forEach(([id,k])=>{ const b=$('#'+id); if(b) b.setAttribute('aria-pressed',String(course===k)) });
+  ['#resview','#keyview'].forEach(q=>{ const e=$(q); if(e) e.hidden=course==='python' });
+  renderClass(lastRosterErr);
+}
+let lastRosterErr=null;
+const PY_LEVELS=(window.PQ_LEVELS||[]), PY_LESSONS=(window.PQ_LESSONS||[]).filter(l=>!l.soon);
+const pyStars=s=>((s.py||{}).stars)||{};
+const pyTotal=s=>Object.values(pyStars(s)).map(Number).filter(v=>v>0).reduce((a,b)=>a+b,0);
+const pySolved=s=>PY_LEVELS.filter(l=>pyStars(s)[l.id]).length;
+const pyScore=(s,n)=>{ const lv=PY_LEVELS.filter(l=>l.lesson===n); if(!lv.length) return 0; return Math.round(lv.reduce((t,l)=>{ const st=pyStars(s)[l.id]||0; return t+(st===3?100:st===2?90:st===1?80:0) },0)/lv.length) };
+function renderPython(err){
+  const view=$('#classview'); if(!view) return;
+  const short=n=>{ const w=String(n||'Student').trim().split(/\s+/); return w.length>1 ? w[0]+' '+w[w.length-1][0]+'.' : w[0] };
+  const c=classes.find(x=>x.code===current)||{code:current,name:current};
+  applyLevelTheme('easy');
+  const n=roster.length, avg=n?roster.reduce((t,s)=>t+pySolved(s),0)/n:0;
+  const lessonDone=PY_LESSONS.map(u=>({u, done:roster.filter(s=>PY_LEVELS.filter(l=>l.lesson===u.n).every(l=>pyStars(s)[l.id])).length}));
+  const started=roster.filter(s=>pySolved(s)>0).length;
+  const rows=roster.map(s=>{
+    const cells=PY_LESSONS.map(u=>PY_LEVELS.filter(l=>l.lesson===u.n).map(l=>{ const st=pyStars(s)[l.id]||0; return `<td><span class="cell s${st}" title="${esc(l.name)}: ${st?st+' star'+(st>1?'s':''):'not solved'}">${st?'★'.repeat(st):'·'}</span></td>` }).join('')+`<td class="score"><b>${pyScore(s,u.n)}</b></td>`).join('');
+    return `<tr><td class="name"><b>${esc(s.name)}</b><small>${esc(s.email||(s.username?'Username: '+s.username:''))}</small></td>${cells}<td><b>${pySolved(s)}</b>/${PY_LEVELS.length}</td><td><b>${pyTotal(s)}</b> ★</td><td class="muted">${ago(s.updatedAt)}</td></tr>`;
+  }).join('');
+  const head1=PY_LESSONS.map(u=>`<th class="lesson" colspan="${PY_LEVELS.filter(l=>l.lesson===u.n).length+1}" style="background:${u.color}">L${u.n}: ${esc(u.title)}</th>`).join('');
+  const head2=PY_LESSONS.map(u=>PY_LEVELS.filter(l=>l.lesson===u.n).map(l=>`<th title="${esc(l.name)}">${l.lesson}.${l.k}</th>`).join('')+'<th class="score" title="Score out of 100">Score</th>').join('');
+  const board=roster.map(s=>({name:short(s.name), stars:pyTotal(s), solved:pySolved(s)})).filter(r=>r.stars>0).sort((a,b)=>b.stars-a.stars||b.solved-a.solved||a.name.localeCompare(b.name));
+  let place=0, prev=-1;
+  view.innerHTML=`<div class="top2">
+    <section class="panel"><span class="label">${esc(c.name)} · class code</span><div class="code">${esc(c.code)}</div>
+      <p class="muted" style="margin:0 0 8px">Same class and code as the Coding Academy. Students open <b>Python Quest</b> from the Academy home page (or this link) while signed in:</p>
+      <div class="linkrow"><code id="jl">${esc(new URL('./python/', location.href).href)}</code><button class="btn" id="copy">Copy link</button></div></section>
+    <section class="panel"><span class="label">Python Quest summary</span>
+      <div class="stats"><div class="stat"><b>${started}</b><span class="muted">of ${n} students started</span></div>
+      <div class="stat"><b>${avg.toFixed(1)}</b><span class="muted">levels solved on average, of ${PY_LEVELS.length}</span></div>
+      ${lessonDone.map(x=>`<div class="stat"><b>${x.done}</b><span class="muted">finished Lesson ${x.u.n}</span><div class="bar"><i style="width:${n?x.done/n*100:0}%;background:${x.u.color}"></i></div></div>`).join('')}</div></section></div>
+    <div class="toolbar"><h2>🐍 Python Quest progress</h2><div class="spacer"></div><button class="btn" id="csv" ${n?'':'disabled'}>Download CSV</button></div>
+    <div class="legend"><span><i class="cell s3">★★★</i> 3 stars (fewest lines of code)</span><span><i class="cell s2">★★</i> 2 stars</span><span><i class="cell s1">★</i> 1 star</span><span><i class="cell s0">·</i> not solved</span><span><b>Score</b> out of 100: 3 stars = 100, 2 stars = 90, 1 star = 80 per level</span><span>Each lesson starts with a 📖 Learn step, then 10 practice levels.</span></div>
+    <div class="tablewrap">${err?'<div class="empty err">Could not load students.</div>':n?`<table><thead><tr><th class="name" rowspan="2">Student</th>${head1}<th rowspan="2">Solved</th><th rowspan="2">Stars</th><th rowspan="2">Last active</th></tr><tr>${head2}</tr></thead><tbody>${rows}</tbody></table>`:'<div class="empty">No students yet. Share the class code from the Coding Academy tab.</div>'}</div>
+    ${board.length?`<div class="toolbar"><h2>Python Quest leaderboard</h2></div><section class="panel"><div class="tablewrap"><table><thead><tr><th>#</th><th class="l">Student</th><th>Stars</th><th>Levels</th></tr></thead><tbody>${board.map((r,i)=>{ if(r.stars!==prev){ place=i+1; prev=r.stars } return `<tr><td><b>${place===1?'👑':place}</b></td><td class="l"><b>${esc(r.name)}</b></td><td><b>${r.stars}</b> ⭐</td><td>${r.solved}</td></tr>` }).join('')}</tbody></table></div></section>`:''}`;
+  $('#copy').onclick=async()=>{ try{ await navigator.clipboard.writeText($('#jl').textContent); $('#copy').textContent='Copied' }catch(e){} };
+  $('#csv').onclick=()=>{
+    const q=v=>'"'+String(v==null?'':v).replace(/"/g,'""')+'"';
+    const lines=[['Student','Email or username',...PY_LEVELS.map(l=>'L'+l.lesson+'.'+l.k+' '+l.name),...PY_LESSONS.map(u=>'Lesson '+u.n+' score'),'Solved','Stars'].map(q).join(',')];
+    roster.forEach(s=>lines.push([s.name,s.email||s.username,...PY_LEVELS.map(l=>pyStars(s)[l.id]||0),...PY_LESSONS.map(u=>pyScore(s,u.n)),pySolved(s),pyTotal(s)].map(q).join(',')));
+    const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([lines.join('\n')],{type:'text/csv'})); a.download=(c.name||c.code)+' Python Quest.csv'; a.click();
+  };
+}
 function renderClass(err){
+  lastRosterErr=err||null;
+  const cr=$('#crsRover'), cp=$('#crsPy');
+  if(cr && !cr.onclick){ cr.onclick=()=>setCourse('rover'); cp.onclick=()=>setCourse('python'); ['#resview','#keyview'].forEach(q=>{ const e=$(q); if(e) e.hidden=course==='python' }) }
+  if(course==='python') return renderPython(err);
   const view=$('#classview'); if(!view) return;
   const c=classes.find(x=>x.code===current)||{code:current,name:current};
   const solved=s=>levelsOf(studentLevel(c,s)).filter(l=>(s.progress||{})[l.n]).length;
@@ -590,9 +646,6 @@ function raceTable(){
     if(r.stars!==prev){ place=i+1; prev=r.stars }
     return `<tr class="${place<=3?'place'+place:''}"><td><b>${place===1?'👑':place}</b></td><td class="l"><b>${esc(r.name)}</b></td><td><b>${r.stars}</b> ⭐</td><td>${r.wins}</td></tr>` }).join('')}</tbody></table>`;
 }
-// Python Quest stars live in their own field (s.py.stars = {'1-1': 3, ...}), separate from the rover lessons.
-const PY_TOTAL=10;
-function pyCell(s){ const st=Object.values((s.py||{}).stars||{}).map(Number).filter(v=>v>0); return st.length?`<b>${st.length}</b>/${PY_TOTAL}<small class="muted"> ${st.reduce((a,b)=>a+b,0)} ★</small>`:'<span class="muted">–</span>' }
 function table(){
   // Lessons start collapsed to just their Score (out of 100, see lessonScore in course.js). Clicking a lesson shows its puzzles.
   // Columns show the class level's puzzles; a student on another level gets their own level's score and a note.
@@ -605,9 +658,9 @@ function table(){
     const cells=UNITS.map(u=>lv(u).map(l=>{ const st=p[l.n]||0; return other ? '<td><span class="cell s0" title="This student is on another level">–</span></td>' : `<td><span class="cell s${st}" title="${esc(l.title)}: ${st?st+' star'+(st>1?'s':''):'not solved'}">${st?'★'.repeat(st):'·'}</span></td>` }).join('')
       +`<td class="score"><b>${lessonScore(p,u.n,sl)}</b></td>`).join('');
     const pick=`<select class="stulvl" data-uid="${esc(s.uid)}" aria-label="Level for ${esc(s.name)}" style="${levelStyle(sl)}"><option value="">Class level (${LEVEL_NAMES[cl]})</option>${LEVELS_AVAILABLE.map(v=>`<option value="${v}"${(c.levels||{})[s.uid]===v?' selected':''}>${LEVEL_NAMES[v]}</option>`).join('')}</select>`;
-    return `<tr><td class="name"><b>${esc(s.name)}</b><small>${esc(s.email||(s.username?'Username: '+s.username:''))}</small>${pick} <button class="btn sm rmstu" data-uid="${esc(s.uid)}" title="Take this student off this class list">Remove</button></td>${cells}<td><b>${done}</b>/${levelsOf(sl).length}</td><td><b>${stars}</b> ★<small class="muted rank">${insigniaSvg(rankFor(stars).i,16)} ${rankFor(stars).title}</small></td><td>${pyCell(s)}</td><td class="muted">${ago(s.updatedAt)}</td></tr>`;
+    return `<tr><td class="name"><b>${esc(s.name)}</b><small>${esc(s.email||(s.username?'Username: '+s.username:''))}</small>${pick} <button class="btn sm rmstu" data-uid="${esc(s.uid)}" title="Take this student off this class list">Remove</button></td>${cells}<td><b>${done}</b>/${levelsOf(sl).length}</td><td><b>${stars}</b> ★<small class="muted rank">${insigniaSvg(rankFor(stars).i,16)} ${rankFor(stars).title}</small></td><td class="muted">${ago(s.updatedAt)}</td></tr>`;
   }).join('');
-  return `<table><thead><tr><th class="name" rowspan="2">Student</th>${head1}<th rowspan="2">Solved</th><th rowspan="2">Stars and rank</th><th rowspan="2" title="Python Quest (academy/python): levels solved and stars">🐍 Python</th><th rowspan="2">Last active</th></tr><tr>${head2}</tr></thead><tbody>${rows}</tbody></table>`;
+  return `<table><thead><tr><th class="name" rowspan="2">Student</th>${head1}<th rowspan="2">Solved</th><th rowspan="2">Stars and rank</th><th rowspan="2">Last active</th></tr><tr>${head2}</tr></thead><tbody>${rows}</tbody></table>`;
 }
 function downloadCsv(c){
   const q=v=>'"'+String(v==null?'':v).replace(/"/g,'""')+'"';
