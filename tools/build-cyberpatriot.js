@@ -41,6 +41,16 @@ const FILE_INFO = {
   quiz: { kind: 'Quiz', name: 'Unit quiz', desc: 'Print or copy into your LMS.', link: doc },
   quizkey: { kind: 'Answer key', name: 'Quiz answer key', desc: 'Answers with short explanations.', link: doc }
 };
+const PREP_STUDENT = [
+  ['1HjwOIqYFKooe1auBs8Ge61Xfbpg1fgdUXPrZcXO7VBE', 'Checklist', 'Team master hardening checklist', 'Every check from Units 1 to 9 in priority order, with the exact command.'],
+  ['1Zl0eGEhjnk0Ok_WS4W0XSEZLB5qC8zPAfJB8ZX0cMlA', 'Playbook', 'Team roles and round-day playbook', 'Who does what, the night before, the first 30 minutes, and the end of a round.'],
+  ['1IN-IP0gQ3NurBdFDlfmJ5VC-D9bi2idS9ZlqvhDO50k', 'Template', 'Debrief template and score tracker', 'Track scores across rounds and turn each debrief into next steps.']
+];
+const PREP_TEACHER = [
+  ['1PAgykPLQH9RkNlcYjp1DtVpvD3pZqAzb_UPI-A_n0Q0', 'Answer key', 'Practice image walkthroughs', 'Step-by-step solutions for the practice images.'],
+  ['1RvL8E6c3nlBLQ8ZRuRsSxwL_DSEVxvaqSq27OuHrSbg', 'Teacher guide', 'Mock round coach scripts and scenarios', 'What to say and do while running each mock round.']
+];
+const prepCard = ([id, kind, name, d]) => { const l = doc(id); return `<div class="file"><span class="kind">${kind} · Prep kit</span><h3>${name}</h3><p>${d}</p><div class="acts"><a class="btn line sm" href="${l.open}" target="_blank" rel="noopener">Open</a><a class="btn line sm" href="${l.copy}" target="_blank" rel="noopener">Make a copy</a><a class="btn line sm" href="${l.pdf}">PDF</a></div></div>`; };
 const STUDENT = ['slides', 'lab', 'checklist', 'handouts', 'runsheet'];
 const TEACHER = ['plan', 'labkey', 'mockguide', 'setup', 'quiz', 'quizkey'];
 
@@ -119,6 +129,13 @@ write('index.html', page({
 <div class="sec-head"><span class="eyebrow">Units</span><h2>Ten units, built around the competition</h2><p>Units 1 to 6 build Windows and Linux skills in the first 11 weeks, before the first scored round. Units 7 to 10 add Cisco and Windows Server and sharpen the team for later rounds.</p></div>
 <div class="grid">
 ${unitCards}
+</div>
+</section>
+
+<section id="prep">
+<div class="sec-head"><span class="eyebrow">Competition prep kit</span><h2>Ready for round day</h2><p>Use these all season, and from day one if your team is starting mid-season.</p></div>
+<div class="files">
+${PREP_STUDENT.map(prepCard).join('\n')}
 </div>
 </section>
 
@@ -256,7 +273,13 @@ write('teachers/index.html', page({
 <div class="note"><b>Before each lab</b>Build the lab VM from the setup steps in the lab key, take a snapshot, and test it once yourself. Then you can reset each pair in seconds.</div>
 <div class="note warn"><b>Check the rules each season</b>Round format, team size, and allowed notes can change. Read the current CyberPatriot rules book before the season and teach students those rules directly.</div>
 </div>
-<p style="margin-top:22px"><b>Jump to a unit:</b> ${UNITS.map(u => `<a href="#unit-${u.n}">${u.n}</a>`).join(' · ')}</p>
+<p style="margin-top:22px"><b>Jump to a unit:</b> ${UNITS.map(u => `<a href="#unit-${u.n}">${u.n}</a>`).join(' · ')} · <a href="#prep">Prep kit</a></p>
+</section>
+<section id="prep">
+<div class="sec-head"><span class="eyebrow">Competition prep kit</span><h2>Coach materials</h2><p><a href="../#prep">Student prep kit (master checklist, playbook, debrief tracker) →</a></p></div>
+<div class="files">
+${PREP_TEACHER.map(prepCard).join('\n')}
+</div>
 </section>
 ${teacherUnits}
 </main>`
