@@ -168,6 +168,17 @@
     Cloud.profile = {...Cloud.profile, progress, bonus, programs};
   };
 
+  // Python Quest progress: its own field (py), so the rover course's stars and leaderboard are unchanged.
+  // Written only when a level gets more stars (at most a few writes per level), never while typing.
+  Cloud.savePy = async ({stars, code}) => {
+    if(!Cloud.user) return;
+    const uid = Cloud.user.uid, base = who();
+    await db.collection('users').doc(uid).set({...base, py: {stars, code}}, {merge: true});
+    const cc = Cloud.profile && Cloud.profile.classCode;
+    if(cc) await db.collection('classes').doc(cc).collection('students').doc(uid).set({...base, py: {stars}}, {merge: true});
+    Cloud.profile = {...Cloud.profile, py: {stars, code}};
+  };
+
   // Class leaderboard: classmates can read each other's first name, last initial, stars and puzzles solved, nothing else.
   const shortName = n => { const w = String(n || 'Student').trim().split(/\s+/); return (w.length > 1 ? w[0] + ' ' + w[w.length-1][0] + '.' : w[0]).slice(0, 40) };
   // Today's stars: the row keeps the date (the computer's own day) and the star total it had before the first save that day

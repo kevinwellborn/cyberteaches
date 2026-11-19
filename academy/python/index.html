@@ -1,0 +1,626 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Python Quest: Learn Python with a Jungle Temple Adventure | CyberTeaches</title>
+<meta name="description" content="Free Python coding game for middle and high school: write real Python to guide an explorer through a jungle temple. Run, jump, climb, take gems, drink potions and fight stone guardians.">
+<link rel="canonical" href="https://cyberteaches.com/academy/python/">
+<meta property="og:title" content="Python Quest: The Jungle Temple">
+<meta property="og:description" content="Write real Python to guide an explorer through a jungle temple.">
+<meta property="og:image" content="https://cyberteaches.com/yt-banner.jpg">
+<link rel="icon" href="../../favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Atkinson+Hyperlegible:wght@400;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+:root{
+  --bg:#EEF1EC; --panel:#FFFFFF; --panel-2:#F6F8F4; --ink:#1C292C; --muted:#5C6B6B; --line:#D5DCD4;
+  --accent:#1F8A5B; --accent-ink:#FFFFFF; --accent-soft:#D7EFE2; --jungle:#123A2B; --jungle-2:#1F5A40; --gold:#E9B21B;
+  --good:#2E9363; --bad:#C8402F; --warn:#B7791F;
+  --code-bg:#0F1F19; --code-ink:#E4EFE9; --code-kw:#FF9F5A; --code-hero:#6FD3A0; --code-num:#F2C14A; --code-str:#9FD7FF; --code-com:#7C978A; --code-line:#5D7A6C;
+  --f-display:"Bricolage Grotesque", "Trebuchet MS", system-ui, sans-serif;
+  --f-body:"Atkinson Hyperlegible", "Segoe UI", system-ui, sans-serif;
+  --f-mono:"JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#111917; --panel:#1A2420; --panel-2:#202C27; --ink:#E6EEEC; --muted:#9AABA9; --line:#33403B;
+  --accent:#45C38A; --accent-ink:#08170F; --accent-soft:#1C3A2D; --good:#4CC28A; --bad:#EF6B57; --warn:#E3A73C; color-scheme:dark }
+}
+:root[data-theme="dark"]{
+  --bg:#111917; --panel:#1A2420; --panel-2:#202C27; --ink:#E6EEEC; --muted:#9AABA9; --line:#33403B;
+  --accent:#45C38A; --accent-ink:#08170F; --accent-soft:#1C3A2D; --good:#4CC28A; --bad:#EF6B57; --warn:#E3A73C; color-scheme:dark }
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg)}
+body{color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.5}
+h1,h2,h3{font-family:var(--f-display);margin:0;line-height:1.1;text-wrap:balance}
+button{font:inherit;color:inherit;cursor:pointer}
+a{color:var(--accent)}
+.wrap{max-width:1240px;margin:0 auto;padding:0 16px}
+header.top{display:flex;align-items:center;gap:12px;padding:12px 16px;max-width:1240px;margin:0 auto;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:10px;font-family:var(--f-display);font-weight:800;font-size:19px;text-decoration:none;color:var(--ink)}
+.brand img{width:30px;height:30px;border-radius:8px}
+.crumb{color:var(--muted);font-size:14px}
+.crumb a{color:var(--muted)}
+.spacer{flex:1}
+.who{font-size:14px;color:var(--muted);display:flex;gap:8px;align-items:center}
+.btn{border:2px solid var(--line);background:var(--panel);border-radius:12px;padding:8px 14px;font-weight:700;display:inline-flex;gap:6px;align-items:center;text-decoration:none;color:var(--ink)}
+.btn:hover{border-color:var(--accent)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn.small{padding:5px 10px;font-size:14px;border-radius:10px}
+.btn:disabled{opacity:.5;cursor:default}
+.iconbtn{border:2px solid var(--line);background:var(--panel);border-radius:10px;width:38px;height:38px;display:grid;place-items:center;font-size:17px}
+
+/* home */
+.hero-band{background:linear-gradient(135deg,var(--jungle),var(--jungle-2));color:#F2F7EE;border-radius:22px;padding:26px;display:grid;grid-template-columns:1.2fr 1fr;gap:20px;align-items:center;overflow:hidden;position:relative}
+.hero-band h1{font-size:clamp(32px,5vw,52px);font-weight:800}
+.hero-band h1 small{display:block;font-size:.45em;color:#B9E6C9;font-weight:600;margin-top:6px}
+.hero-band p{color:#D9EADF;max-width:52ch}
+.hero-band .btn.primary{background:var(--gold);border-color:var(--gold);color:#2A1E00;font-size:18px;padding:11px 20px}
+.hero-band canvas{width:100%;height:auto;border-radius:14px;box-shadow:0 10px 30px rgba(0,0,0,.35)}
+.sample{font-family:var(--f-mono);background:rgba(0,0,0,.28);border-radius:10px;padding:10px 14px;font-size:14px;margin:14px 0;color:#E4EFE9;white-space:pre;overflow-x:auto}
+.sample .h{color:#6FD3A0}.sample .n{color:#F2C14A}.sample .c{color:#8FB09F}
+.lessons{display:flex;flex-direction:column;gap:14px;margin:22px 0 40px}
+.lesson{background:var(--panel);border:2px solid var(--line);border-radius:18px;padding:16px 18px}
+.lesson-head{display:flex;gap:14px;align-items:center}
+.lesson-num{width:50px;height:50px;border-radius:14px;display:grid;place-items:center;color:#fff;font-family:var(--f-display);font-weight:800;font-size:15px;flex:none}
+.lesson h2{font-size:21px}
+.lesson .topic{color:var(--muted);font-size:14px;font-family:var(--f-mono)}
+.lesson.soon{opacity:.6}
+.stops{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
+.stop{width:58px;height:58px;border-radius:50%;border:2px solid var(--line);background:var(--panel-2);font-family:var(--f-display);font-weight:800;font-size:18px;display:grid;place-items:center;position:relative;transition:transform .15s}
+.stop:hover{transform:translateY(-2px);border-color:var(--accent)}
+.stop.done{background:var(--accent-soft);border-color:var(--accent)}
+.stop .st{position:absolute;bottom:-8px;font-size:11px;letter-spacing:-1px;background:var(--panel);border-radius:8px;padding:0 3px;color:var(--gold)}
+
+/* play */
+.play{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(330px,1fr);gap:16px;padding-bottom:30px}
+.panel{background:var(--panel);border:2px solid var(--line);border-radius:18px;padding:14px}
+.levelbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+.levelbar h2{font-size:22px}
+.lvl-tag{font-family:var(--f-mono);font-size:13px;background:var(--accent-soft);color:var(--ink);border-radius:8px;padding:2px 8px}
+.dots{display:flex;gap:5px;flex-wrap:wrap}
+.dot{width:26px;height:26px;border-radius:50%;border:2px solid var(--line);background:var(--panel-2);font-size:12px;font-weight:700;display:grid;place-items:center;padding:0}
+.dot.done{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.dot.cur{outline:3px solid var(--ink);outline-offset:1px}
+#stage{width:100%;height:auto;display:block;border-radius:12px;background:#0E2A22;image-rendering:auto}
+.goal{margin-top:10px;display:flex;gap:10px;align-items:flex-start}
+.goal b{font-family:var(--f-display)}
+.tipbox{margin-top:8px;font-size:15px;color:var(--muted)}
+.tipbox summary{cursor:pointer;color:var(--accent);font-weight:700}
+.intro{background:var(--accent-soft);border-radius:12px;padding:10px 14px;margin-top:10px;font-size:15px}
+.intro code{font-family:var(--f-mono);font-size:14px}
+.cmds{display:flex;flex-direction:column;gap:6px;margin-top:12px}
+.cmd{display:flex;gap:10px;align-items:center;text-align:left;border:2px solid var(--line);background:var(--panel-2);border-radius:10px;padding:6px 10px}
+.cmd:hover{border-color:var(--accent)}
+.cmd code{font-family:var(--f-mono);font-weight:600;color:var(--accent);white-space:nowrap;font-size:14px}
+.cmd span{font-size:13px;color:var(--muted)}
+.cmd.new code::after{content:'NEW';margin-left:6px;font-size:10px;background:var(--gold);color:#2A1E00;border-radius:5px;padding:1px 4px;vertical-align:2px}
+
+.editor-head{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.editor-head h3{font-size:17px}
+.linecount{font-family:var(--f-mono);font-size:13px;color:var(--muted)}
+.editor{position:relative;background:var(--code-bg);border-radius:12px;display:flex;font-family:var(--f-mono);font-size:16px;line-height:24px;min-height:300px;overflow:hidden}
+.gutter{padding:10px 0;width:40px;flex:none;text-align:right;color:var(--code-line);user-select:none;background:rgba(0,0,0,.18)}
+.gutter div{padding-right:8px;height:24px}
+.gutter div.err{background:var(--bad);color:#fff}
+.gutter div.run{background:var(--code-hero);color:#08170F}
+.code-area{position:relative;flex:1;min-width:0;overflow:auto}
+.code-area pre,.code-area textarea{margin:0;padding:10px 12px;font:inherit;line-height:inherit;white-space:pre;tab-size:4;border:0;min-height:300px;width:100%;letter-spacing:0;word-spacing:0}
+.code-area pre{position:absolute;inset:0;color:var(--code-ink);pointer-events:none;overflow:hidden}
+.code-area textarea{position:relative;display:block;background:transparent;color:transparent;caret-color:#fff;resize:none;outline:none;overflow:hidden}
+.code-area textarea::selection{background:rgba(111,211,160,.35);color:transparent}
+.code-area .ln{display:block;min-height:24px}
+.code-area .ln.err{background:rgba(239,91,80,.28)}
+.code-area .ln.run{background:rgba(111,211,160,.22)}
+.tk-kw{color:var(--code-kw);font-weight:600}.tk-hero{color:var(--code-hero)}.tk-num{color:var(--code-num)}.tk-str{color:var(--code-str)}.tk-com{color:var(--code-com);font-style:italic}
+.runbar{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;align-items:center}
+.runbar .btn.primary{font-size:17px;padding:9px 22px}
+.msg{margin-top:10px;border-radius:12px;padding:10px 14px;font-size:15px;display:none}
+.msg.show{display:block}
+.msg.error{background:rgba(200,64,47,.12);border:2px solid var(--bad)}
+.msg.fail{background:rgba(183,121,31,.12);border:2px solid var(--warn)}
+.msg.win{background:var(--accent-soft);border:2px solid var(--accent)}
+.msg b{font-family:var(--f-display)}
+.out{margin-top:10px;font-family:var(--f-mono);font-size:13px;background:var(--panel-2);border-radius:10px;padding:8px 12px;white-space:pre-wrap;display:none;max-height:120px;overflow:auto}
+.out.show{display:block}
+
+.modal-back{position:fixed;inset:0;background:rgba(5,15,10,.55);display:none;place-items:center;z-index:20;padding:16px}
+.modal-back.show{display:grid}
+.modal{background:var(--panel);border-radius:22px;padding:26px;max-width:420px;width:100%;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.4)}
+.modal h2{font-size:28px}
+.bigstars{font-size:46px;letter-spacing:6px;margin:10px 0;color:var(--gold)}
+.bigstars .off{color:var(--line)}
+.modal p{color:var(--muted)}
+.modal .row{display:flex;gap:10px;justify-content:center;margin-top:16px;flex-wrap:wrap}
+/* learn */
+.learn{max-width:860px;margin:0 auto 40px}
+.learn-top{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+.learn-top h1{font-size:clamp(22px,3.4vw,30px)}
+.sdots{display:flex;gap:6px}
+.sdot{width:12px;height:12px;border-radius:50%;background:var(--line);border:0;padding:0}
+.sdot.on{background:var(--accent)}
+.slide{background:var(--panel);border:2px solid var(--line);border-radius:20px;padding:22px 24px;min-height:340px}
+.slide h2{font-size:26px;margin-bottom:10px}
+.slide p,.slide li{font-size:18px;line-height:1.55}
+.slide code{font-family:var(--f-mono);background:var(--panel-2);border-radius:6px;padding:1px 6px;font-size:.92em}
+.slide code.bad{color:var(--bad);text-decoration:line-through;text-decoration-thickness:1px}
+.mist{padding-left:20px;display:flex;flex-direction:column;gap:6px}
+.anat{display:flex;gap:4px;justify-content:center;flex-wrap:wrap;margin:22px 0 10px}
+.anat .part{display:flex;flex-direction:column;align-items:center;gap:6px}
+.anat .tok{font-family:var(--f-mono);font-size:clamp(28px,6vw,46px);font-weight:600;padding:6px 12px;border-radius:12px;border:3px solid}
+.anat .lab{font-family:var(--f-display);font-weight:800;font-size:15px}
+.anat .exp{font-size:13px;color:var(--muted);max-width:130px;text-align:center}
+.note{background:var(--accent-soft);border-radius:12px;padding:10px 14px;margin-top:12px;font-size:16px}
+.demo-cv{width:100%;height:auto;border-radius:12px;display:block;margin:10px 0}
+.progs{display:flex;gap:12px;flex-wrap:wrap}
+.prog{flex:1;min-width:200px;background:var(--code-bg);color:var(--code-ink);border-radius:12px;padding:10px 12px;font-family:var(--f-mono);font-size:15px;white-space:pre}
+.prog button{margin-top:8px;font-family:var(--f-body)}
+.cmdgrid{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
+.cmdgrid button{font-family:var(--f-mono);font-weight:600;color:var(--accent)}
+.cmdgrid button.on{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.cmdsay{font-size:16px;color:var(--muted);min-height:24px}
+.q{margin:14px 0 18px}
+.q .qt{font-weight:700;font-size:18px;margin-bottom:8px}
+.q .opts{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.q .opt{text-align:left;border:2px solid var(--line);background:var(--panel-2);border-radius:12px;padding:9px 12px;font-family:var(--f-mono);font-size:15px}
+.q .opt.right{border-color:var(--good);background:rgba(46,147,99,.15)}
+.q .opt.wrong{border-color:var(--bad);background:rgba(200,64,47,.1)}
+.q .why{font-size:15px;margin-top:6px;color:var(--muted)}
+.vocab{display:grid;grid-template-columns:auto 1fr;gap:4px 14px;font-size:16px;margin-top:10px}
+.vocab b{font-family:var(--f-display)}
+.learn-nav{display:flex;gap:10px;margin-top:14px;align-items:center}
+.stop.learnstop{width:auto;border-radius:30px;padding:0 16px;font-size:15px;gap:6px;display:flex}
+@media (max-width:600px){ .q .opts{grid-template-columns:1fr} .slide{padding:16px} }
+.foot{color:var(--muted);font-size:13px;text-align:center;padding:20px}
+[hidden]{display:none!important}
+@media (max-width:900px){
+  .play{grid-template-columns:1fr}
+  .editor,.code-area pre,.code-area textarea{min-height:180px}
+  .hero-band{grid-template-columns:1fr}
+}
+</style>
+</head><body>
+<header class="top">
+  <a class="brand" href="../../"><img src="../../logo.png" alt="">CyberTeaches</a>
+  <span class="crumb"><a href="../">Academy</a> / <a href="#" id="homeLink">Python Quest</a></span>
+  <span class="spacer"></span>
+  <span class="who" id="who"></span>
+  <button class="iconbtn" id="soundBtn" title="Sound on/off" aria-label="Sound on or off">🔊</button>
+</header>
+
+<main id="home" class="wrap" hidden>
+  <section class="hero-band">
+    <div>
+      <h1 id="gameTitle">Python Quest<small>The Jungle Temple</small></h1>
+      <p>Guide an explorer through an ancient jungle temple by writing <b>real Python</b>. Run, jump pits, climb walls, grab jade gems, drink potions and outsmart stone guardians.</p>
+      <div class="sample"><span class="h">hero</span>.run(<span class="n">2</span>)
+<span class="h">hero</span>.jump()
+<span class="h">hero</span>.take()   <span class="c"># grab the gem!</span></div>
+      <button class="btn primary" id="startBtn">▶ Start playing</button>
+    </div>
+    <canvas id="heroArt" width="480" height="300" aria-label="The explorer in the jungle temple"></canvas>
+  </section>
+  <div class="lessons" id="lessons"></div>
+</main>
+
+<main id="learn" class="wrap" hidden>
+  <div class="learn">
+    <div class="learn-top"><button class="btn small" id="learnBack">← Lessons</button><h1 id="learnTitle"></h1><span class="spacer"></span><div class="sdots" id="sdots"></div></div>
+    <div class="slide" id="slide"></div>
+    <div class="learn-nav"><button class="btn" id="slPrev">← Back</button><span class="spacer"></span><span class="crumb" id="slCount"></span><button class="btn primary" id="slNext">Next →</button></div>
+  </div>
+</main>
+
+<main id="play" class="wrap" hidden>
+  <div class="play">
+    <section>
+      <div class="panel">
+        <div class="levelbar">
+          <button class="btn small" id="backBtn">← Lessons</button>
+          <span class="lvl-tag" id="lvlTag"></span>
+          <h2 id="lvlName"></h2>
+          <span class="spacer"></span>
+          <div class="dots" id="dots"></div>
+        </div>
+        <canvas id="stage"></canvas>
+        <div class="goal"><span>🎯</span><div><b>Goal:</b> <span id="goalText"></span></div></div>
+        <details class="tipbox" id="tipBox"><summary>Need a hint?</summary><div id="tipText"></div></details>
+        <div class="intro" id="introBox" hidden></div>
+      </div>
+    </section>
+    <section>
+      <div class="panel">
+        <div class="editor-head"><h3>🐍 Your Python code</h3><span class="spacer"></span><span class="linecount" id="lineCount"></span></div>
+        <div class="editor" id="editor">
+          <div class="gutter" id="gutter"></div>
+          <div class="code-area" id="codeArea">
+            <pre id="hl" aria-hidden="true"></pre>
+            <textarea id="code" spellcheck="false" autocapitalize="off" autocomplete="off" autocorrect="off" aria-label="Python code"></textarea>
+          </div>
+        </div>
+        <div class="runbar">
+          <button class="btn primary" id="runBtn">▶ Run</button>
+          <button class="btn" id="resetBtn">↺ Reset</button>
+          <button class="btn small" id="speedBtn" title="Animation speed">1×</button>
+          <span class="spacer"></span>
+          <button class="btn small" id="startOverBtn" title="Put back the starting code">Start over</button>
+        </div>
+        <div class="msg" id="msg"></div>
+        <div class="out" id="out"></div>
+        <div class="cmds" id="cmds"></div>
+      </div>
+    </section>
+  </div>
+</main>
+
+<div class="modal-back" id="winModal"><div class="modal">
+  <h2 id="winTitle">Level complete!</h2>
+  <div class="bigstars" id="winStars"></div>
+  <p id="winText"></p>
+  <div class="row"><button class="btn" id="winAgain">Try for more stars</button><button class="btn primary" id="winNext">Next level →</button><button class="btn primary" id="winHome" hidden>Back to lessons</button></div>
+</div></div>
+
+<p class="foot">Python Quest is an original CyberTeaches game. Python runs right in your browser.</p>
+
+<script src="pyrun.js?v=1"></script>
+<script src="levels.js?v=2"></script>
+<script src="game.js?v=2"></script>
+<script src="../firebase-config.js"></script>
+<script src="../cloud.js?v=18"></script>
+<script>
+(function(){
+const $ = s => document.querySelector(s);
+const h = (tag, cls, html) => { const e = document.createElement(tag); if(cls) e.className = cls; if(html != null) e.innerHTML = html; return e };
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;'})[c]);
+const LEVELS = PQ_LEVELS, Cloud = window.Cloud;
+$('#gameTitle').innerHTML = esc(PQ_GAME_NAME) + '<small>' + esc(PQ_WORLD) + '</small>';
+
+// ---------- saved progress (this browser + the student's account) ----------
+const KEY = 'cyberteaches:py';
+const load = () => { try { return JSON.parse(localStorage.getItem(KEY)) || {} } catch(e){ return {} } };
+let data = load(); data.stars = data.stars || {}; data.code = data.code || {}; data.learned = data.learned || {};
+const saveLocal = () => { try { localStorage.setItem(KEY, JSON.stringify(data)) } catch(e){} };
+let lastUid = null;
+function cloudSave(){
+  if(!Cloud || !Cloud.user || !Cloud.savePy) return;
+  Cloud.savePy({stars: data.stars, code: data.code}).catch(e => console.error('Could not save Python Quest progress', e));
+}
+if(Cloud) Cloud.onChange(c => {
+  const u = c.user, who = $('#who');
+  if(u && c.profile && lastUid !== u.uid){
+    lastUid = u.uid;
+    if(data.owner && data.owner !== u.uid) data = {stars: {}, code: {}, learned: {}};
+    const py = c.profile.py || {};
+    Object.entries(py.stars || {}).forEach(([id, s]) => { data.stars[id] = Math.max(data.stars[id] || 0, s) });
+    Object.entries(py.code || {}).forEach(([id, src]) => { if(!data.code[id]) data.code[id] = src });
+    data.owner = u.uid; saveLocal(); render();
+  }
+  if(!u && lastUid){ lastUid = null; data = {stars: {}, code: {}, learned: {}}; saveLocal(); render() }
+  who.innerHTML = '';
+  if(u) who.append(h('span', '', '👤 ' + esc(u.displayName || (Cloud.isStudentLogin(u) ? 'Student' : u.email || 'Signed in'))));
+  else if(c.ready){ const a = h('a', 'btn small', 'Sign in to save'); a.href = '../'; who.append(a) }
+});
+
+// ---------- sound (made on the fly, nothing to download) ----------
+let muted = false; try { muted = localStorage.getItem('academy.muted') === '1' } catch(e){}
+let ac = null;
+const tone = (type, f1, f2, dur, vol, delay = 0) => {
+  if(muted) return;
+  try {
+    ac = ac || new (window.AudioContext || window.webkitAudioContext)(); if(ac.state === 'suspended') ac.resume();
+    const t = ac.currentTime + delay, o = ac.createOscillator(), g = ac.createGain();
+    o.type = type; o.frequency.setValueAtTime(f1, t); if(f2) o.frequency.exponentialRampToValueAtTime(f2, t + dur);
+    g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(vol, t + 0.01); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    o.connect(g).connect(ac.destination); o.start(t); o.stop(t + dur + 0.02);
+  } catch(e){}
+};
+const SFX = {
+  step: () => tone('triangle', 180, 140, 0.06, 0.08),
+  jump: () => tone('square', 260, 620, 0.22, 0.07),
+  climb: () => { tone('triangle', 300, 420, 0.1, 0.08); tone('triangle', 420, 560, 0.1, 0.08, 0.15) },
+  take: () => { tone('sine', 880, 0, 0.12, 0.15); tone('sine', 1320, 0, 0.18, 0.12, 0.08) },
+  drink: () => { tone('sine', 400, 900, 0.35, 0.12) },
+  attack: () => tone('sawtooth', 900, 200, 0.12, 0.08),
+  hit: () => tone('square', 120, 60, 0.2, 0.15),
+  open: () => tone('triangle', 200, 500, 0.25, 0.1),
+  bump: () => tone('square', 90, 70, 0.15, 0.12),
+  win: () => [523, 659, 784, 1047].forEach((f, i) => tone('triangle', f, 0, 0.25, 0.14, i * 0.11)),
+  lose: () => [392, 330, 262].forEach((f, i) => tone('triangle', f, 0, 0.3, 0.12, i * 0.16)),
+};
+const setSoundBtn = () => { $('#soundBtn').textContent = muted ? '🔇' : '🔊' };
+setSoundBtn();
+$('#soundBtn').onclick = () => { muted = !muted; try { localStorage.setItem('academy.muted', muted ? '1' : '0') } catch(e){} setSoundBtn() };
+
+// ---------- home ----------
+function render(){
+  const box = $('#lessons'); box.innerHTML = '';
+  PQ_LESSONS.forEach(ls => {
+    const lv = LEVELS.filter(l => l.lesson === ls.n);
+    const card = h('div', 'lesson' + (ls.soon ? ' soon' : ''));
+    const head = h('div', 'lesson-head');
+    const num = h('div', 'lesson-num', 'L' + ls.n); num.style.background = ls.color;
+    const solved = lv.filter(l => data.stars[l.id]).length;
+    head.append(num, h('div', '', `<h2>${esc(ls.title)}</h2><div class="topic">${esc(ls.topic)}</div>`));
+    head.append(h('span', 'spacer'));
+    head.append(h('span', 'crumb', ls.soon ? 'Coming soon' : solved + ' / ' + lv.length + ' solved'));
+    card.append(head);
+    if(!ls.soon){
+      const stops = h('div', 'stops');
+      if(PQ_LEARN[ls.n]){
+        const b = h('button', 'stop learnstop' + (data.learned[ls.n] ? ' done' : ''), '📖 Learn' + (data.learned[ls.n] ? ' ✓' : ''));
+        b.title = 'Learn the idea first, then practice in the levels'; b.onclick = () => { location.hash = 'learn-' + ls.n }; stops.append(b);
+      }
+      lv.forEach(l => {
+        const s = data.stars[l.id] || 0, b = h('button', 'stop' + (s ? ' done' : ''), l.k);
+        b.title = l.name; if(s) b.append(h('span', 'st', '★'.repeat(s)));
+        b.onclick = () => go(l.id); stops.append(b);
+      });
+      card.append(stops);
+    }
+    box.append(card);
+  });
+  if(cur) drawDots();
+}
+const firstOpen = () => (LEVELS.find(l => !data.stars[l.id]) || LEVELS[0]).id;
+$('#startBtn').onclick = () => { const l = LEVELS.find(x => x.id === firstOpen()); if(PQ_LEARN[l.lesson] && !data.learned[l.lesson]) location.hash = 'learn-' + l.lesson; else go(l.id) };
+$('#homeLink').onclick = e => { e.preventDefault(); location.hash = '' };
+$('#backBtn').onclick = () => { location.hash = '' };
+
+// hero art on the home page: a small looping scene
+const artLevel = {map: ['..........', '..........', 'S..*..^.G.', '##########'], hp: 2};
+let art = null, artOn = false;
+function startArt(){
+  if(artOn) return; artOn = true;
+  if(!art){ art = new PQ.Player($('#heroArt')); art.setLevel(artLevel) }
+  const loop = () => { if($('#home').hidden){ art.stop(); artOn = false; return } art.reset(); const r = PQ.simulate(artLevel, 'hero.run(3)\nhero.take()\nhero.run(2)\nhero.jump()\nhero.attack()\nhero.attack()\nhero.run(2)'); art.play(r.events, () => setTimeout(loop, 1500)) };
+  loop();
+}
+
+// ---------- play ----------
+let cur = null, running = false;
+const player = new PQ.Player($('#stage'), {
+  onEvent(e){
+    markRun(e.line);
+    if(e.a === 'step') SFX.step(); else if(e.a === 'jump') SFX.jump(); else if(e.a === 'climb') SFX.climb();
+    else if(e.a === 'take') SFX.take(); else if(e.a === 'drink') SFX.drink(); else if(e.a === 'attack') SFX.attack();
+    else if(e.a === 'hurt') SFX.hit(); else if(e.a === 'open') SFX.open(); else if(e.a === 'bump') SFX.bump();
+    else if(e.a === 'win') SFX.win(); else if(e.a === 'die') SFX.lose();
+    else if(e.a === 'print') showOut(e.text);
+  }
+});
+const ta = $('#code'), hl = $('#hl'), gutter = $('#gutter');
+let errLine = 0, runLine = 0;
+const KW = /\b(if|elif|else|while|for|in|def|return|pass|break|continue|and|or|not|True|False|None|range|print)\b/;
+function highlight(src){
+  return src.split('\n').map((line, i) => {
+    let out = '', rest = line;
+    const re = /(#.*$)|("[^"]*"?|'[^']*'?)|\b(hero)\b|\b(\d+(?:\.\d+)?)\b|\b(if|elif|else|while|for|in|def|return|pass|break|continue|and|or|not|True|False|None|range|print)\b/g;
+    let last = 0, m;
+    while((m = re.exec(line))){
+      out += esc(line.slice(last, m.index));
+      const cls = m[1] ? 'com' : m[2] ? 'str' : m[3] ? 'hero' : m[4] ? 'num' : 'kw';
+      out += `<span class="tk-${cls}">${esc(m[0])}</span>`; last = m.index + m[0].length;
+    }
+    out += esc(line.slice(last));
+    const n = i + 1;
+    return `<span class="ln${n === errLine ? ' err' : ''}${n === runLine ? ' run' : ''}">${out || ' '}</span>`;
+  }).join('');
+}
+function refresh(){
+  const src = ta.value, n = src.split('\n').length;
+  hl.innerHTML = highlight(src);
+  ta.style.height = Math.max(innerWidth <= 900 ? 180 : 300, n * 24 + 20) + 'px';
+  hl.style.minHeight = ta.style.height;
+  let g = ''; for(let i = 1; i <= n; i++) g += `<div class="${i === errLine ? 'err' : i === runLine ? 'run' : ''}">${i}</div>`;
+  gutter.innerHTML = g;
+  const lines = PyRun.countLines(src);
+  $('#lineCount').textContent = lines + ' line' + (lines === 1 ? '' : 's') + ' · ★★★ at ' + cur.par + ' or fewer';
+}
+function markRun(line){ runLine = line || 0; refresh() }
+ta.addEventListener('input', () => {
+  errLine = 0; data.code[cur.id] = ta.value; saveLocal(); refresh();
+  if(!running){ hideMsg(); }
+});
+ta.addEventListener('scroll', () => { hl.scrollTop = ta.scrollTop; hl.scrollLeft = ta.scrollLeft });
+$('#codeArea').addEventListener('scroll', () => {});
+ta.addEventListener('keydown', e => {
+  const s = ta.selectionStart, v = ta.value;
+  if(e.key === 'Tab'){ e.preventDefault(); insertText('    ') }
+  else if(e.key === 'Enter' && (e.ctrlKey || e.metaKey)){ e.preventDefault(); runCode() }
+  else if(e.key === 'Enter'){
+    e.preventDefault();
+    const lineStart = v.lastIndexOf('\n', s - 1) + 1, line = v.slice(lineStart, s);
+    let ind = line.match(/^ */)[0];
+    if(/:\s*(#.*)?$/.test(line)) ind += '    ';
+    insertText('\n' + ind);
+  } else if(e.key === 'Backspace' && ta.selectionEnd === s){
+    const lineStart = v.lastIndexOf('\n', s - 1) + 1, before = v.slice(lineStart, s);
+    if(before.length && /^ +$/.test(before) && before.length % 4 === 0){ e.preventDefault(); ta.setSelectionRange(s - 4, s); insertText('') }
+  }
+});
+function insertText(t){
+  ta.focus();
+  if(!document.execCommand || !document.execCommand('insertText', false, t)){
+    const s = ta.selectionStart, e = ta.selectionEnd; ta.value = ta.value.slice(0, s) + t + ta.value.slice(e); ta.selectionStart = ta.selectionEnd = s + t.length;
+    ta.dispatchEvent(new Event('input'));
+  }
+}
+function insertCommand(code){
+  const v = ta.value, s = ta.selectionStart;
+  const lineStart = v.lastIndexOf('\n', s - 1) + 1, lineEnd = v.indexOf('\n', s) < 0 ? v.length : v.indexOf('\n', s);
+  const line = v.slice(lineStart, lineEnd), ind = line.match(/^ */)[0];
+  ta.focus();
+  if(line.trim() === ''){ ta.setSelectionRange(lineStart, lineEnd); insertText(ind + code) }
+  else { ta.setSelectionRange(lineEnd, lineEnd); insertText('\n' + ind + code) }
+}
+
+function showMsg(kind, html){ const m = $('#msg'); m.className = 'msg show ' + kind; m.innerHTML = html }
+function hideMsg(){ $('#msg').className = 'msg' }
+function showOut(text){ const o = $('#out'); o.classList.add('show'); o.textContent += text + '\n'; o.scrollTop = o.scrollHeight }
+
+function drawDots(){
+  const box = $('#dots'); box.innerHTML = '';
+  LEVELS.filter(l => l.lesson === cur.lesson).forEach(l => {
+    const d = h('button', 'dot' + (data.stars[l.id] ? ' done' : '') + (l.id === cur.id ? ' cur' : ''), l.k);
+    d.title = l.name; d.onclick = () => go(l.id); box.append(d);
+  });
+}
+function openLevel(id){
+  cur = LEVELS.find(l => l.id === id) || LEVELS[0];
+  running = false; errLine = runLine = 0;
+  $('#lvlTag').textContent = 'Lesson ' + cur.lesson + ' · Level ' + cur.k;
+  $('#lvlName').textContent = cur.name;
+  $('#goalText').textContent = cur.goal;
+  $('#tipText').textContent = cur.tip; $('#tipBox').open = false;
+  const ls = PQ_LESSONS.find(x => x.n === cur.lesson);
+  const intro = $('#introBox');
+  if(cur.k === 1 && ls.intro){
+    intro.hidden = false;
+    intro.innerHTML = '<b>New to Python?</b> ' + esc(ls.intro) + ' Example: <code>hero.run(3)</code> makes the explorer run 3 squares. Type your code on the right and press <b>Run</b>.' + (PQ_LEARN[ls.n] ? ' <a href="#learn-' + ls.n + '">📖 Review the lesson</a>' : '');
+  } else intro.hidden = true;
+  ta.value = data.code[cur.id] != null ? data.code[cur.id] : cur.start;
+  player.setLevel(cur); player.speed = speed;
+  hideMsg(); $('#out').className = 'out'; $('#out').textContent = '';
+  const cmds = $('#cmds'); cmds.innerHTML = '<div class="crumb">Commands (click to add a line)</div>';
+  PQ_COMMANDS.filter(c => c.from <= cur.k || cur.lesson > 1).forEach(c => {
+    const b = h('button', 'cmd' + (c.from === cur.k && cur.lesson === 1 ? ' new' : ''), `<code>${esc(c.code)}</code><span>${esc(c.say)}</span>`);
+    b.onclick = () => insertCommand(c.insert || c.code); cmds.append(b);
+  });
+  drawDots(); refresh(); setRunning(false);
+}
+function setRunning(on){
+  running = on; $('#runBtn').textContent = on ? '■ Stop' : '▶ Run';
+  ta.readOnly = on;
+}
+let speed = 1;
+$('#speedBtn').onclick = () => { speed = speed === 1 ? 2 : speed === 2 ? 3 : 1; player.speed = speed; $('#speedBtn').textContent = speed + '×' };
+$('#resetBtn').onclick = () => { player.stop(); player.reset(); setRunning(false); errLine = runLine = 0; refresh(); hideMsg() };
+$('#startOverBtn').onclick = () => { if(ta.value.trim() && !confirmReplace()) return; ta.value = cur.start; ta.dispatchEvent(new Event('input')); $('#resetBtn').onclick() };
+function confirmReplace(){ const b = $('#startOverBtn'); if(b.dataset.armed){ delete b.dataset.armed; b.textContent = 'Start over'; return true } b.dataset.armed = 1; b.textContent = 'Sure? Click again'; setTimeout(() => { delete b.dataset.armed; b.textContent = 'Start over' }, 3000); return false }
+$('#runBtn').onclick = () => running ? $('#resetBtn').onclick() : runCode();
+
+function runCode(){
+  if(running) return;
+  hideMsg(); errLine = runLine = 0; $('#out').className = 'out'; $('#out').textContent = '';
+  const src = ta.value, r = PQ.simulate(cur, src);
+  if(r.result.result === 'error' && !r.result.partial){
+    errLine = r.result.line || 0; refresh(); SFX.bump();
+    showMsg('error', '<b>🐍 Python says:</b> ' + esc(r.result.msg)); return;
+  }
+  player.reset(); player.speed = speed; setRunning(true);
+  player.play(r.events, () => finish(r));
+}
+function finish(r){
+  setRunning(false); runLine = 0;
+  const res = r.result;
+  if(res.result === 'win'){
+    const stars = PQ.starsFor(cur, r.lines), before = data.stars[cur.id] || 0;
+    if(stars > before){ data.stars[cur.id] = stars; saveLocal(); cloudSave() }
+    refresh(); drawDots(); render();
+    $('#winStars').innerHTML = '★'.repeat(stars) + '<span class="off">' + '★'.repeat(3 - stars) + '</span>';
+    $('#winText').innerHTML = 'You used <b>' + r.lines + '</b> line' + (r.lines === 1 ? '' : 's') + ' of code.' + (stars < 3 ? ' Can you do it in ' + cur.par + '? Tip: hero.run(3) is shorter than three hero.run() lines.' : ' Perfect!');
+    const next = LEVELS[LEVELS.indexOf(cur) + 1];
+    $('#winNext').hidden = !next; $('#winHome').hidden = !!next;
+    $('#winTitle').textContent = next ? 'Level complete!' : 'Lesson complete!';
+    $('#winModal').classList.add('show');
+    showMsg('win', '<b>Solved!</b> ' + '★'.repeat(stars) + ' with ' + r.lines + ' lines.');
+    return;
+  }
+  errLine = res.line || 0; refresh();
+  showMsg(res.result === 'error' ? 'error' : 'fail', (res.result === 'error' ? '<b>🐍 Python says:</b> ' : '<b>Not yet!</b> ') + esc(res.msg) + ' Press <b>Reset</b>, fix your code and try again.');
+}
+$('#winHome').onclick = () => { $('#winModal').classList.remove('show'); location.hash = '' };
+$('#winAgain').onclick = () => { $('#winModal').classList.remove('show'); $('#resetBtn').onclick() };
+$('#winNext').onclick = () => { $('#winModal').classList.remove('show'); const next = LEVELS[LEVELS.indexOf(cur) + 1]; if(next) go(next.id) };
+
+// ---------- learn: teach the idea first (slides + quick check), then practice in the levels ----------
+let L = null, sIdx = 0, demoPlayers = [];
+const mini = (cv, map, extra = {}) => { const p = new PQ.Player(cv); p.setLevel({map, ...extra}); demoPlayers.push(p); return p };
+const playOn = (p, code) => { p.stop(); p.reset(); const r = PQ.simulate(p.level, code); p.play(r.events) };
+function openLearn(n){ L = PQ_LEARN[n]; L.n = n; sIdx = 0; $('#learnTitle').textContent = 'Lesson ' + n + ' · ' + L.title.replace(/^Learn: /, ''); showSlide() }
+function showSlide(){
+  demoPlayers.forEach(p => p.destroy()); demoPlayers.length = 0;   // (old canvases are dropped with the slide)
+  const sl = L.slides[sIdx], box = $('#slide'); box.innerHTML = '<h2>' + esc(sl.title) + '</h2>' + (sl.html || '');
+  if(sl.kind === 'anatomy'){
+    const cols = ['#2E9363', '#7C8A78', '#2F6FDE', '#D97E16'], a = h('div', 'anat');
+    sl.parts.forEach(([tok, lab, exp], i) => a.append(h('div', 'part', `<span class="tok" style="border-color:${cols[i]};color:${cols[i]}">${esc(tok)}</span><span class="lab" style="color:${cols[i]}">${esc(lab)}</span><span class="exp">${esc(exp)}</span>`)));
+    box.append(a);
+  }
+  if(sl.kind === 'demo'){
+    const cv = h('canvas', 'demo-cv'); box.append(cv); const p = mini(cv, sl.map);
+    const pr = h('div', 'progs');
+    sl.programs.forEach(g => { const d = h('div', 'prog', esc(g.code) + '\n'); const b = h('button', 'btn small primary', '▶ Run ' + esc(g.label)); b.onclick = () => playOn(p, g.code); d.append(b); pr.append(d) });
+    box.append(pr);
+  }
+  if(sl.kind === 'commands'){
+    const grid = h('div', 'cmdgrid'), say = h('div', 'cmdsay', 'Pick a command.'), cv = h('canvas', 'demo-cv');
+    let p = null;
+    sl.demos.forEach(d => {
+      const b = h('button', 'btn small', esc(d.code));
+      b.onclick = () => {
+        grid.querySelectorAll('button').forEach(x => x.classList.remove('on')); b.classList.add('on');
+        const c = PQ_COMMANDS.find(x => x.code === d.code); say.textContent = c ? c.say : '';
+        demoPlayers.forEach(x => x.destroy()); demoPlayers.length = 0;
+        p = mini(cv, d.map, {hp: d.hp, hearts: d.hearts}); setTimeout(() => playOn(p, d.prog), 250);
+      };
+      grid.append(b);
+    });
+    box.append(grid, say, cv);
+    grid.firstChild.click();
+  }
+  if(sl.kind === 'quiz'){
+    sl.questions.forEach((q, qi) => {
+      const el = h('div', 'q'); el.append(h('div', 'qt', (qi + 1) + '. ' + esc(q.q)));
+      const opts = h('div', 'opts'), why = h('div', 'why');
+      const order = q.a.map((_, i) => i).sort((a, b) => ((a * 7 + qi * 3) % 5) - ((b * 7 + qi * 3) % 5));   // mixed, but the same every time
+      order.forEach(i => {
+        const b = h('button', 'opt', esc(q.a[i]));
+        b.onclick = () => {
+          if(i === q.ok){ opts.querySelectorAll('.opt').forEach(x => x.disabled = true); b.classList.add('right'); why.innerHTML = '✅ ' + esc(q.why); el.dataset.ok = 1; SFX.take() }
+          else { b.classList.add('wrong'); why.innerHTML = '❌ Not quite. Try again!'; SFX.bump() }
+          updateNav();
+        };
+        opts.append(b);
+      });
+      el.append(opts, why); box.append(el);
+    });
+  }
+  if(sl.note) box.append(h('div', 'note', sl.note));
+  if(sIdx === L.slides.length - 1 && L.vocab){
+    box.append(h('h3', '', 'Words to know'));
+    const v = h('div', 'vocab'); L.vocab.forEach(([w, m]) => v.append(h('b', '', esc(w)), h('span', '', esc(m)))); box.append(v);
+  }
+  const dots = $('#sdots'); dots.innerHTML = '';
+  L.slides.forEach((_, i) => { const d = h('button', 'sdot' + (i <= sIdx ? ' on' : ''), ''); d.title = L.slides[i].title; d.onclick = () => { sIdx = i; showSlide() }; dots.append(d) });
+  updateNav(); window.scrollTo(0, 0);
+}
+function updateNav(){
+  const last = sIdx === L.slides.length - 1, sl = L.slides[sIdx];
+  $('#slPrev').disabled = sIdx === 0;
+  $('#slCount').textContent = (sIdx + 1) + ' / ' + L.slides.length;
+  const quizLeft = sl.kind === 'quiz' ? sl.questions.length - $('#slide').querySelectorAll('.q[data-ok]').length : 0;
+  $('#slNext').textContent = last ? (quizLeft ? 'Answer all ' + sl.questions.length + ' to start' : '🎮 Start practicing') : 'Next →';
+  $('#slNext').disabled = last && quizLeft > 0;
+}
+$('#slPrev').onclick = () => { if(sIdx > 0){ sIdx--; showSlide() } };
+$('#slNext').onclick = () => {
+  if(sIdx < L.slides.length - 1){ sIdx++; showSlide(); return }
+  data.learned[L.n] = true; saveLocal();
+  const first = LEVELS.find(l => l.lesson === L.n && !data.stars[l.id]) || LEVELS.find(l => l.lesson === L.n); go(first.id);
+};
+$('#learnBack').onclick = () => { location.hash = '' };
+
+// ---------- routes: #level-1-3 opens a level, no hash = lesson list ----------
+function go(id){ location.hash = 'level-' + id }
+function route(){
+  const m = location.hash.match(/^#level-(\d+-\d+)$/);
+  $('#winModal').classList.remove('show');
+  const ln = location.hash.match(/^#learn-(\d+)$/);
+  demoPlayers.forEach(p => p.destroy()); demoPlayers.length = 0;
+  $('#learn').hidden = true;
+  if(m && LEVELS.some(l => l.id === m[1])){ $('#home').hidden = true; $('#play').hidden = false; openLevel(m[1]); window.scrollTo(0, 0) }
+  else if(ln && PQ_LEARN[ln[1]]){ player.stop(); $('#home').hidden = true; $('#play').hidden = true; $('#learn').hidden = false; cur = null; openLearn(Number(ln[1])) }
+  else { player.stop(); $('#play').hidden = true; $('#home').hidden = false; cur = null; render(); startArt() }
+}
+window.addEventListener('hashchange', route);
+route();
+})();
+</script>
+</body></html>
