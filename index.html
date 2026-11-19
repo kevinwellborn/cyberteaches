@@ -26,7 +26,7 @@
   --navy:#0B1B2E; --navy-2:#13294A; --ink:#0F1E2E; --ink-2:#33475B; --muted:#5A6B7D; --line:#E3E8EF;
   --bg:#F7F9FC; --panel:#FFFFFF; --panel-2:#F0F3F7; --teal:#0F7B78; --teal-ink:#FFFFFF; --teal-soft:#E3F4F2;
   --header:rgba(255,255,255,.92);
-  --c-cyber:#0F7B78; --c-csp:#2F6FDE; --c-sec:#C2417A; --c-net:#D97E16; --c-acad:#7A4FD0; --c-award:#A8741A;
+  --c-cyber:#0F7B78; --c-csp:#2F6FDE; --c-sec:#C2417A; --c-net:#D97E16; --c-acad:#7A4FD0; --c-award:#A8741A; --c-cp:#1F45C4;
   --easy:#1F9D55; --med:#E0A800; --hard:#D2412F;
   --f-h:"Plus Jakarta Sans","Segoe UI",system-ui,sans-serif; --f-b:"Inter","Segoe UI",system-ui,sans-serif;
   --r:14px; --shadow:0 1px 2px rgba(15,30,46,.06),0 8px 24px rgba(15,30,46,.06);
@@ -35,13 +35,13 @@
 @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
   --ink:#E8EEF5; --ink-2:#C3CFDD; --muted:#93A4B8; --line:#24364D; --bg:#0A1524; --panel:#111F33; --panel-2:#18293F;
   --teal:#2BB5AE; --teal-ink:#06201F; --teal-soft:#123A3B; --header:rgba(10,21,36,.9);
-  --c-cyber:#2FA8A1; --c-csp:#5B93F0; --c-sec:#DD6A9D; --c-net:#E39232; --c-acad:#A084E8; --c-award:#DDA93F;
+  --c-cyber:#2FA8A1; --c-csp:#5B93F0; --c-sec:#DD6A9D; --c-net:#E39232; --c-acad:#A084E8; --c-award:#DDA93F; --c-cp:#7D9DFF;
   --shadow:0 1px 2px rgba(0,0,0,.3); --shadow-up:0 12px 30px rgba(0,0,0,.45); color-scheme:dark }
 }
 :root[data-theme="dark"]{
   --ink:#E8EEF5; --ink-2:#C3CFDD; --muted:#93A4B8; --line:#24364D; --bg:#0A1524; --panel:#111F33; --panel-2:#18293F;
   --teal:#2BB5AE; --teal-ink:#06201F; --teal-soft:#123A3B; --header:rgba(10,21,36,.9);
-  --c-cyber:#2FA8A1; --c-csp:#5B93F0; --c-sec:#DD6A9D; --c-net:#E39232; --c-acad:#A084E8; --c-award:#DDA93F;
+  --c-cyber:#2FA8A1; --c-csp:#5B93F0; --c-sec:#DD6A9D; --c-net:#E39232; --c-acad:#A084E8; --c-award:#DDA93F; --c-cp:#7D9DFF;
   --shadow:0 1px 2px rgba(0,0,0,.3); --shadow-up:0 12px 30px rgba(0,0,0,.45); color-scheme:dark
 }
 *{box-sizing:border-box}
@@ -203,7 +203,7 @@ footer .legal{border-top:1px solid rgba(255,255,255,.1);padding:18px 0 28px;disp
   <div>
     <span class="pill"><i></i>Free for students and teachers</span>
     <h1>Computer science and cybersecurity, <em>taught clearly.</em></h1>
-    <p>Free AP Cybersecurity, AP Computer Science Principles (AP CSP), CompTIA Security+ and AP Networking courses, plus a block-coding Academy for middle and high school, from a computer science teacher.</p>
+    <p>Free AP Cybersecurity, AP Computer Science Principles (AP CSP), CompTIA Security+, AP Networking and CyberPatriot courses, plus a block-coding Academy for middle and high school, from a computer science teacher.</p>
     <div class="ctas"><a class="btn primary" href="#courses">Browse courses</a><a class="btn ghost" href="#teachers">I'm a teacher →</a></div>
     <div class="trust"><span><b>100% free</b> lessons</span><span>Follows the <b>College Board</b> units</span><span>Grades <b>6 to 12</b></span></div>
   </div>
@@ -260,6 +260,18 @@ footer .legal{border-top:1px solid rgba(255,255,255,.1);padding:18px 0 28px;disp
       <div class="facts"><span><b>4</b> labs</span><span><b>2</b> practice exams</span><span>Sample syllabus</span></div>
       <span class="go">Start the course →</span>
     </a>
+    <div class="card wide" style="--c:var(--c-cp)">
+      <div class="icon"><svg viewBox="0 0 24 24" style="width:46px;height:46px" fill="none" stroke="var(--c)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M8 11h8M8 14h5"/></svg></div>
+      <div class="text">
+        <span class="tag">Grades 9 to 12 · Competition course · 10 units</span>
+        <h3>CyberPatriot</h3>
+        <p>A full-year course for CyberPatriot teams: Windows, Linux, Windows Server, Cisco networking, forensics questions and cyber ethics, with slides, labs, quizzes and a teacher area.</p>
+      </div>
+      <div class="links">
+        <a class="go" href="cyberpatriot/">Start the course →</a>
+        <a class="go" href="cyberpatriot/teachers/">Teacher area →</a>
+      </div>
+    </div>
     <div class="card wide" style="--c:var(--c-csp)">
       <div class="icon"><svg viewBox="0 0 24 24" style="width:46px;height:46px" fill="none" stroke="var(--c)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6" y="2" width="12" height="20" rx="3"/><path d="M10 9l-2 2 2 2M14 9l2 2-2 2M11 18h2"/></svg></div>
       <div class="text">
@@ -317,7 +329,7 @@ footer .legal{border-top:1px solid rgba(255,255,255,.1);padding:18px 0 28px;disp
 <footer class="site"><div class="wrap">
   <div class="cols">
     <div><a class="brand" href="./"><img src="logo.png" alt="" width="34" height="34">CyberTeaches</a><p style="margin:14px 0 0;max-width:32ch">Free computer science and cybersecurity courses from teacher Kevin Wellborn.</p></div>
-    <div><h2>Courses</h2><ul><li><a href="apcybersecurity/">AP Cybersecurity</a></li><li><a href="apcsp/">AP CSP</a></li><li><a href="app-builder/">App Builder</a></li><li><a href="securityplus/">Security+</a></li><li><a href="networking/">AP Networking</a></li><li><a href="apcsp/exam/">AP CSP practice exam</a></li></ul></div>
+    <div><h2>Courses</h2><ul><li><a href="apcybersecurity/">AP Cybersecurity</a></li><li><a href="apcsp/">AP CSP</a></li><li><a href="app-builder/">App Builder</a></li><li><a href="securityplus/">Security+</a></li><li><a href="networking/">AP Networking</a></li><li><a href="cyberpatriot/">CyberPatriot</a></li><li><a href="apcsp/exam/">AP CSP practice exam</a></li></ul></div>
     <div><h2>Academy</h2><ul><li><a href="academy/">Start coding</a></li><li><a href="academy/quiz/">Join Quiz Battle</a></li><li><a href="academy/#duel">Duels</a></li></ul></div>
     <div><h2>Teachers</h2><ul><li><a href="academy/teacher.html">Teacher Dashboard</a></li><li><a href="academy/resources/">Teacher resources</a></li></ul></div>
     <div><h2>More</h2><ul><li><a href="#book">Books</a></li><li><a href="https://www.youtube.com/@cyberteaches" target="_blank" rel="noopener">YouTube</a></li><li><a href="congressional-award-tracker/">Congressional Award Tracker</a></li></ul></div>

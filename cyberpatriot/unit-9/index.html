@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Unit 9: Advanced Hardening and Forensics Questions | CyberPatriot | CyberTeaches</title>
+<meta name="description" content="CyberPatriot high school course, Unit 9: Forensics questions are often worth more than single fixes, and later rounds hide backdoors and scheduled tasks. Learn hashing and decoding, finding hidden files, removing persistence, tracing listening ports, reading logs, and spotting dangerous SUID files.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link rel="icon" type="image/png" href="/favicon.png"><link rel="stylesheet" href="../assets/site.css">
+</head><body>
+<header class="site"><div class="wrap"><a class="brand" href="/"><img src="/logo.png" alt="" width="32" height="32">CyberTeaches</a><span class="brand course">CyberPatriot</span>
+<nav aria-label="Course"><a href="../">Course home</a><a href="../#units" aria-current="page">Units</a><a href="../#calendar">Calendar</a><a href="../teachers/">Teachers</a><a href="/">All courses</a></nav></div></header>
+<div class="hero small"><div class="wrap">
+<div class="crumbs"><a href="../">CyberPatriot</a> / Unit 9</div>
+<span class="eyebrow">Unit 9 of 10 · 3 weeks</span>
+<h1>Advanced Hardening and Forensics Questions</h1>
+<p class="lead">Forensics questions are often worth more than single fixes, and later rounds hide backdoors and scheduled tasks. Learn hashing and decoding, finding hidden files, removing persistence, tracing listening ports, reading logs, and spotting dangerous SUID files.</p>
+<div class="facts"><span><b>Time:</b> 6 lessons (50 min) and 3 practice sessions (90 min)</span><span><b>Platform:</b> Ubuntu and Windows</span></div>
+</div></div>
+<main class="wrap">
+
+<section>
+<div class="grid two">
+<div class="card"><span class="eyebrow">Goals</span><h3>By the end of this unit, students can</h3><ol class="goals"><li>Answer forensics questions without destroying evidence, including hashing and decoding questions.</li><li>Find hidden, large, recently changed, and oddly owned files on Linux and Windows.</li><li>Find and remove persistence: cron jobs, systemd services, scheduled tasks, and Run keys.</li><li>Trace a listening port back to its program and file, and check the hosts file.</li><li>Read sign-in logs and find dangerous SUID files.</li></ol></div>
+<div class="card"><span class="eyebrow">Signature lab</span><h3>Lab 9: Forensics Question Challenge Set</h3><p>Ten items on an Ubuntu VM: five evidence questions (hashes, decoding, hidden files), then a cron job, a listening service, the hosts file, a log question, and a SUID file. Everything planted is harmless, but treat the VM as a lab machine only. The last run is timed at 55 minutes.</p><div class="meta"><span>CSTA 3B-NI-04, 3B-IC-26 · NICE: Digital Forensics, Cyber Defense Analysis</span></div></div>
+</div>
+</section>
+
+<section>
+<div class="sec-head"><span class="eyebrow">Materials</span><h2>Student materials</h2><p>Open them in Google Drive, make your own editable copy, or download a PDF to print.</p></div>
+<div class="files">
+<div class="file"><span class="kind">Slides</span><h3>Slide deck</h3><p>Every lesson in order, with speaker notes.</p><div class="acts"><a class="btn line sm" href="https://docs.google.com/presentation/d/1fudF25G0q0Sr3_uadFqJp0YszXiSpJO3mWWW38x4EuM/edit?usp=sharing" target="_blank" rel="noopener">Open</a><a class="btn line sm" href="https://docs.google.com/presentation/d/1fudF25G0q0Sr3_uadFqJp0YszXiSpJO3mWWW38x4EuM/copy" target="_blank" rel="noopener">Make a copy</a><a class="btn line sm" href="https://docs.google.com/presentation/d/1fudF25G0q0Sr3_uadFqJp0YszXiSpJO3mWWW38x4EuM/export/pdf">PDF</a></div></div>
+<div class="file"><span class="kind">Lab</span><h3>Lab student handout</h3><p>The README, steps, and a table to record fixes.</p><div class="acts"><a class="btn line sm" href="https://docs.google.com/document/d/1zUT660_wWKBXfXKUd2xbAabWecealdI12TwOwZXiY0U/edit?usp=sharing" target="_blank" rel="noopener">Open</a><a class="btn line sm" href="https://docs.google.com/document/d/1zUT660_wWKBXfXKUd2xbAabWecealdI12TwOwZXiY0U/copy" target="_blank" rel="noopener">Make a copy</a><a class="btn line sm" href="https://docs.google.com/document/d/1zUT660_wWKBXfXKUd2xbAabWecealdI12TwOwZXiY0U/export?format=pdf">PDF</a></div></div>
+</div>
+<p style="margin-top:14px;color:var(--muted);font-size:15px">Teachers: the lesson plan, quiz, and answer keys for this unit are in the <a href="../teachers/#unit-9">teacher area</a>.</p>
+</section>
+
+<section>
+<div class="sec-head"><span class="eyebrow">Unit at a glance</span><h2>Sessions</h2><p>Lessons are 50 minutes and practice sessions are 90 minutes.</p></div>
+<div class="tbl-scroll"><table class="tbl"><thead><tr><th>Session</th><th>Topic</th><th>Students make</th></tr></thead><tbody>
+<tr><td>Lesson 1</td><td>Forensics questions, hashing, and encoding</td><td>Hash and decode practice</td></tr>
+<tr><td>Lesson 2</td><td>Finding files that hide</td><td>Find challenges</td></tr>
+<tr><td>Practice 1</td><td>Lab part A: evidence questions 1 to 5</td><td>Answers 1 to 5</td></tr>
+<tr><td>Lesson 3</td><td>Persistence: how attackers stay</td><td>Persistence hunt</td></tr>
+<tr><td>Lesson 4</td><td>Network backdoors and the hosts file</td><td>Port tracing</td></tr>
+<tr><td>Practice 2</td><td>Lab part B: items 6 to 10</td><td>Backdoors removed</td></tr>
+<tr><td>Lesson 5</td><td>Logs and SUID files</td><td>Log questions</td></tr>
+<tr><td>Lesson 6</td><td>Windows forensics drill</td><td>Windows answers</td></tr>
+<tr><td>Practice 3</td><td>Full timed lab and quiz</td><td>Lab score, quiz</td></tr>
+</tbody></table></div>
+</section>
+
+<section>
+<div class="sec-head"><span class="eyebrow">Hardening checklist</span><h2>Add these to your checklist</h2><p>At the end of the unit, every student adds these lines. Always check the README first: it decides what is required.</p></div>
+<div class="tbl-scroll"><table class="tbl"><thead><tr><th>Check</th><th>How</th></tr></thead><tbody>
+<tr><td>Answer forensics questions before changing anything</td><td><code>Desktop files; exact format</code></td></tr>
+<tr><td>Hashes and decoding</td><td><code>sha256sum, Get-FileHash, base64 -d, certutil -decode</code></td></tr>
+<tr><td>Linux persistence</td><td><code>/etc/crontab, /etc/cron.d/, crontab -l -u USER, systemctl list-unit-files --state=enabled</code></td></tr>
+<tr><td>Windows persistence</td><td><code>Get-ScheduledTask, Run keys, Startup folders</code></td></tr>
+<tr><td>Trace listening ports to programs</td><td><code>sudo ss -tlnp, netstat -ano</code></td></tr>
+<tr><td>Check the hosts file</td><td><code>/etc/hosts, C:\Windows\System32\drivers\etc\hosts</code></td></tr>
+<tr><td>Find SUID files</td><td><code>find / -perm -4000 -type f 2&gt;/dev/null</code></td></tr>
+</tbody></table></div>
+</section>
+
+<section>
+<div class="grid two">
+<div><span class="eyebrow">Key vocabulary</span><h2 style="font-size:22px;margin:6px 0 14px">Words to know</h2><ul class="chips"><li>forensics question</li><li>evidence</li><li>hash</li><li>SHA-256</li><li>encoding</li><li>base64</li><li>persistence</li><li>cron</li><li>scheduled task</li><li>Run key</li><li>backdoor</li><li>PID</li><li>hosts file</li><li>event ID</li><li>SUID</li></ul></div>
+<div><span class="eyebrow">Ethics discussion · 10 minutes</span><h2 style="font-size:22px;margin:6px 0 14px">What would you do?</h2><div class="ethics">While answering a forensics question, you find a file of another student's private messages on a school computer.</div></div>
+</div>
+</section>
+
+<nav class="pager" aria-label="Units">
+<a href="../unit-8/"><small>← Unit 8</small>Windows Server and Active Directory</a>
+<a href="../unit-10/" style="text-align:right"><small>Unit 10 →</small>Competition strategy and team play</a>
+</nav>
+</main>
+<footer class="site"><div class="wrap">
+<div><a href="/">CyberTeaches</a> · free courses from teacher Kevin Wellborn · <a href="https://www.youtube.com/@cyberteaches" target="_blank" rel="noopener">YouTube @CyberTeaches</a></div>
+<div>CyberPatriot is the National Youth Cyber Defense Competition of the Air &amp; Space Forces Association (AFA). CyberTeaches is not affiliated with or endorsed by AFA or CyberPatriot. All lessons, labs, and scenarios here are original; the organizations in them are fictional. Check the current CyberPatriot rules book each season.</div>
+</div></footer>
+</body></html>

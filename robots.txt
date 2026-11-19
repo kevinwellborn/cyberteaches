@@ -1,5 +1,6 @@
 User-agent: *
 Allow: /
 Disallow: /networking/teachers/
+Disallow: /cyberpatriot/teachers/
 
 Sitemap: https://cyberteaches.com/sitemap.xml

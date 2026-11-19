@@ -110,7 +110,7 @@ function breadcrumbs(items) {
     itemListElement: items.map(([name, item], i) => ({ '@type': 'ListItem', position: i + 1, name, item })) };
 }
 
-const sitemap = ['', 'app-builder/', 'apcybersecurity/', 'apcsp/', 'apcsp/exam/', 'securityplus/', 'networking/', 'networking/exam-1/', 'networking/exam-2/', 'networking/lab-1/', 'networking/lab-2/', 'networking/lab-3/', 'networking/lab-4/', 'networking/syllabus/', 'networking/updates/', 'academy/', 'academy/review/unit-1/', 'academy/review/unit-1/quiz.html', 'congressional-award-tracker/', 'award-tracker/'];
+const sitemap = ['', 'app-builder/', 'apcybersecurity/', 'apcsp/', 'apcsp/exam/', 'securityplus/', 'networking/', 'networking/exam-1/', 'networking/exam-2/', 'networking/lab-1/', 'networking/lab-2/', 'networking/lab-3/', 'networking/lab-4/', 'networking/syllabus/', 'networking/updates/', 'cyberpatriot/', 'cyberpatriot/unit-1/', 'cyberpatriot/unit-2/', 'cyberpatriot/unit-3/', 'cyberpatriot/unit-4/', 'cyberpatriot/unit-5/', 'cyberpatriot/unit-6/', 'cyberpatriot/unit-7/', 'cyberpatriot/unit-8/', 'cyberpatriot/unit-9/', 'cyberpatriot/unit-10/', 'academy/', 'academy/review/unit-1/', 'academy/review/unit-1/quiz.html', 'congressional-award-tracker/', 'award-tracker/'];
 
 for (const course of COURSES) {
   const w = load(course);

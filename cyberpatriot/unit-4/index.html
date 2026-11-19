@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Unit 4: Windows Hardening, Part 2: Services, Firewall, Sharing, Software, and Auditing | CyberPatriot | CyberTeaches</title>
+<meta name="description" content="CyberPatriot high school course, Unit 4: Finish the Windows core: decide which services to stop, turn on the firewall, close remote access, remove unsafe shares and prohibited software, and turn on auditing. After this unit, students can work a full Windows practice image on their own.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link rel="icon" type="image/png" href="/favicon.png"><link rel="stylesheet" href="../assets/site.css">
+</head><body>
+<header class="site"><div class="wrap"><a class="brand" href="/"><img src="/logo.png" alt="" width="32" height="32">CyberTeaches</a><span class="brand course">CyberPatriot</span>
+<nav aria-label="Course"><a href="../">Course home</a><a href="../#units" aria-current="page">Units</a><a href="../#calendar">Calendar</a><a href="../teachers/">Teachers</a><a href="/">All courses</a></nav></div></header>
+<div class="hero small"><div class="wrap">
+<div class="crumbs"><a href="../">CyberPatriot</a> / Unit 4</div>
+<span class="eyebrow">Unit 4 of 10 · 2 weeks</span>
+<h1>Windows Hardening, Part 2: Services, Firewall, Sharing, Software, and Auditing</h1>
+<p class="lead">Finish the Windows core: decide which services to stop, turn on the firewall, close remote access, remove unsafe shares and prohibited software, and turn on auditing. After this unit, students can work a full Windows practice image on their own.</p>
+<div class="facts"><span><b>Time:</b> 4 lessons (50 min) and 2 practice sessions (90 min)</span><span><b>Platform:</b> Windows 10/11</span></div>
+</div></div>
+<main class="wrap">
+
+<section>
+<div class="grid two">
+<div class="card"><span class="eyebrow">Goals</span><h3>By the end of this unit, students can</h3><ol class="goals"><li>Explain what a service is and safely disable risky services the README does not require.</li><li>Turn on Windows Defender Firewall and turn off Remote Desktop when it is not needed.</li><li>Find and remove unsafe network shares, and set User Account Control and Microsoft Defender correctly.</li><li>Remove prohibited software and turn on security auditing.</li></ol></div>
+<div class="card"><span class="eyebrow">Signature lab</span><h3>Lab 4: Full Windows Practice Image</h3><p>A complete Windows image: forensics question, services, firewall and Remote Desktop, shares, UAC and Defender, prohibited software, and auditing. Students finish with a 50-minute timed run.</p><div class="meta"><span>CSTA 3A-NI-06, 3B-NI-04 · NICE: Systems Administration, Cyber Defense Infrastructure Support</span></div></div>
+</div>
+</section>
+
+<section>
+<div class="sec-head"><span class="eyebrow">Materials</span><h2>Student materials</h2><p>Open them in Google Drive, make your own editable copy, or download a PDF to print.</p></div>
+<div class="files">
+<div class="file"><span class="kind">Slides</span><h3>Slide deck</h3><p>Every lesson in order, with speaker notes.</p><div class="acts"><a class="btn line sm" href="https://docs.google.com/presentation/d/1kWQxSZw6DCaWyb5VdAjQq_Zn7CfTlpMg6wr-d-Av0tc/edit?usp=sharing" target="_blank" rel="noopener">Open</a><a class="btn line sm" href="https://docs.google.com/presentation/d/1kWQxSZw6DCaWyb5VdAjQq_Zn7CfTlpMg6wr-d-Av0tc/copy" target="_blank" rel="noopener">Make a copy</a><a class="btn line sm" href="https://docs.google.com/presentation/d/1kWQxSZw6DCaWyb5VdAjQq_Zn7CfTlpMg6wr-d-Av0tc/export/pdf">PDF</a></div></div>
+<div class="file"><span class="kind">Lab</span><h3>Lab student handout</h3><p>The README, steps, and a table to record fixes.</p><div class="acts"><a class="btn line sm" href="https://docs.google.com/document/d/1hNeGfsvBgBe9z5u8oBy8O9i6pH9D8x7LHS9I7fUvrsU/edit?usp=sharing" target="_blank" rel="noopener">Open</a><a class="btn line sm" href="https://docs.google.com/document/d/1hNeGfsvBgBe9z5u8oBy8O9i6pH9D8x7LHS9I7fUvrsU/copy" target="_blank" rel="noopener">Make a copy</a><a class="btn line sm" href="https://docs.google.com/document/d/1hNeGfsvBgBe9z5u8oBy8O9i6pH9D8x7LHS9I7fUvrsU/export?format=pdf">PDF</a></div></div>
+</div>
+<p style="margin-top:14px;color:var(--muted);font-size:15px">Teachers: the lesson plan, quiz, and answer keys for this unit are in the <a href="../teachers/#unit-4">teacher area</a>.</p>
+</section>
+
+<section>
+<div class="sec-head"><span class="eyebrow">Unit at a glance</span><h2>Sessions</h2><p>Lessons are 50 minutes and practice sessions are 90 minutes.</p></div>
+<div class="tbl-scroll"><table class="tbl"><thead><tr><th>Session</th><th>Topic</th><th>Students make</th></tr></thead><tbody>
+<tr><td>Lesson 1</td><td>Services: what to keep and what to stop</td><td>Service decision sheet</td></tr>
+<tr><td>Lesson 2</td><td>Firewall and remote access</td><td>Firewall check</td></tr>
+<tr><td>Practice 1</td><td>Lab part A: services, firewall, Remote Desktop, sharing</td><td>Fixes on the VM</td></tr>
+<tr><td>Lesson 3</td><td>File sharing, UAC, and Microsoft Defender</td><td>Settings check</td></tr>
+<tr><td>Lesson 4</td><td>Prohibited software and auditing</td><td>Audit policy set</td></tr>
+<tr><td>Practice 2</td><td>Lab part B: full timed run, then quiz</td><td>Full lab score, quiz</td></tr>
+</tbody></table></div>
+</section>
+
+<section>
+<div class="sec-head"><span class="eyebrow">Hardening checklist</span><h2>Add these to your checklist</h2><p>At the end of the unit, every student adds these lines. Always check the README first: it decides what is required.</p></div>
+<div class="tbl-scroll"><table class="tbl"><thead><tr><th>Check</th><th>How</th></tr></thead><tbody>
+<tr><td>Disable risky services the README does not require</td><td><code>services.msc: Remote Registry, FTP, Telnet, SNMP, Remote Desktop</code></td></tr>
+<tr><td>Never disable a service the README requires</td><td><code>Read the README first</code></td></tr>
+<tr><td>Firewall on for all profiles</td><td><code>netsh advfirewall set allprofiles state on</code></td></tr>
+<tr><td>Remote Desktop off unless required</td><td><code>Settings, System, Remote Desktop</code></td></tr>
+<tr><td>Remove unsafe shares (keep ADMIN$, C$, IPC$)</td><td><code>net share, then net share NAME /delete</code></td></tr>
+<tr><td>UAC at default or higher; Defender real-time protection on</td><td><code>Control Panel, User Accounts; Windows Security</code></td></tr>
+<tr><td>Uninstall prohibited software</td><td><code>Settings, Apps, Installed apps</code></td></tr>
+<tr><td>Audit success and failure</td><td><code>auditpol /set /category:* /success:enable /failure:enable</code></td></tr>
+</tbody></table></div>
+</section>
+
+<section>
+<div class="grid two">
+<div><span class="eyebrow">Key vocabulary</span><h2 style="font-size:22px;margin:6px 0 14px">Words to know</h2><ul class="chips"><li>service</li><li>startup type</li><li>Remote Registry</li><li>Remote Desktop</li><li>firewall profile</li><li>inbound rule</li><li>network share</li><li>UAC</li><li>real-time protection</li><li>prohibited software</li><li>audit policy</li><li>Event Viewer</li></ul></div>
+<div><span class="eyebrow">Ethics discussion · 10 minutes</span><h2 style="font-size:22px;margin:6px 0 14px">What would you do?</h2><div class="ethics">A friend asks you to turn on Remote Desktop on their school laptop so they can play games from home.</div></div>
+</div>
+</section>
+
+<nav class="pager" aria-label="Units">
+<a href="../unit-3/"><small>← Unit 3</small>Windows hardening, part 1</a>
+<a href="../unit-5/" style="text-align:right"><small>Unit 5 →</small>Linux fundamentals</a>
+</nav>
+</main>
+<footer class="site"><div class="wrap">
+<div><a href="/">CyberTeaches</a> · free courses from teacher Kevin Wellborn · <a href="https://www.youtube.com/@cyberteaches" target="_blank" rel="noopener">YouTube @CyberTeaches</a></div>
+<div>CyberPatriot is the National Youth Cyber Defense Competition of the Air &amp; Space Forces Association (AFA). CyberTeaches is not affiliated with or endorsed by AFA or CyberPatriot. All lessons, labs, and scenarios here are original; the organizations in them are fictional. Check the current CyberPatriot rules book each season.</div>
+</div></footer>
+</body></html>

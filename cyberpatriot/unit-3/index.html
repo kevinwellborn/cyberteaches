@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Unit 3: Windows Hardening, Part 1: Users, Passwords, and Updates | CyberPatriot | CyberTeaches</title>
+<meta name="description" content="CyberPatriot high school course, Unit 3: User accounts and password policy are the most reliable points in every Windows round. Learn the Windows admin tools, audit users and groups against a README, set password and lockout policy, and keep Windows Update working.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link rel="icon" type="image/png" href="/favicon.png"><link rel="stylesheet" href="../assets/site.css">
+</head><body>
+<header class="site"><div class="wrap"><a class="brand" href="/"><img src="/logo.png" alt="" width="32" height="32">CyberTeaches</a><span class="brand course">CyberPatriot</span>
+<nav aria-label="Course"><a href="../">Course home</a><a href="../#units" aria-current="page">Units</a><a href="../#calendar">Calendar</a><a href="../teachers/">Teachers</a><a href="/">All courses</a></nav></div></header>
+<div class="hero small"><div class="wrap">
+<div class="crumbs"><a href="../">CyberPatriot</a> / Unit 3</div>
+<span class="eyebrow">Unit 3 of 10 · 2 weeks</span>
+<h1>Windows Hardening, Part 1: Users, Passwords, and Updates</h1>
+<p class="lead">User accounts and password policy are the most reliable points in every Windows round. Learn the Windows admin tools, audit users and groups against a README, set password and lockout policy, and keep Windows Update working.</p>
+<div class="facts"><span><b>Time:</b> 4 lessons (50 min) and 2 practice sessions (90 min)</span><span><b>Platform:</b> Windows 10/11</span></div>
+</div></div>
+<main class="wrap">
+
+<section>
+<div class="grid two">
+<div class="card"><span class="eyebrow">Goals</span><h3>By the end of this unit, students can</h3><ol class="goals"><li>Find and use the main Windows admin tools: Settings, Computer Management, Command Prompt, and PowerShell as administrator.</li><li>Audit user accounts and groups against a README, and fix unauthorized users and administrators.</li><li>Set a secure password policy and account lockout policy.</li><li>Check that Windows Update is turned on and working.</li></ol></div>
+<div class="card"><span class="eyebrow">Signature lab</span><h3>Lab 3: Secure User Accounts and Local Security Policy</h3><p>On a Windows 10/11 Pro or Enterprise VM, students answer the forensics question, fix users and groups against the README, set the password and lockout policy, and check Windows Update. The last run is timed at 50 minutes.</p><div class="meta"><span>CSTA 3A-NI-06, 3B-NI-04 · NICE: Systems Administration, Cyber Defense Infrastructure Support</span></div></div>
+</div>
+</section>
+
+<section>
+<div class="sec-head"><span class="eyebrow">Materials</span><h2>Student materials</h2><p>Open them in Google Drive, make your own editable copy, or download a PDF to print.</p></div>
+<div class="files">
+<div class="file"><span class="kind">Slides</span><h3>Slide deck</h3><p>Every lesson in order, with speaker notes.</p><div class="acts"><a class="btn line sm" href="https://docs.google.com/presentation/d/1RT4SJBPgpiwvMcWpj8eXClVyT7UmhoeqrI-8l-rzPDA/edit?usp=sharing" target="_blank" rel="noopener">Open</a><a class="btn line sm" href="https://docs.google.com/presentation/d/1RT4SJBPgpiwvMcWpj8eXClVyT7UmhoeqrI-8l-rzPDA/copy" target="_blank" rel="noopener">Make a copy</a><a class="btn line sm" href="https://docs.google.com/presentation/d/1RT4SJBPgpiwvMcWpj8eXClVyT7UmhoeqrI-8l-rzPDA/export/pdf">PDF</a></div></div>
+<div class="file"><span class="kind">Lab</span><h3>Lab student handout</h3><p>The README, steps, and a table to record fixes.</p><div class="acts"><a class="btn line sm" href="https://docs.google.com/document/d/1pucmpcc2gjo4Rx6I6U4ndx_AQIMVbk9OeFCFzRC6iKs/edit?usp=sharing" target="_blank" rel="noopener">Open</a><a class="btn line sm" href="https://docs.google.com/document/d/1pucmpcc2gjo4Rx6I6U4ndx_AQIMVbk9OeFCFzRC6iKs/copy" target="_blank" rel="noopener">Make a copy</a><a class="btn line sm" href="https://docs.google.com/document/d/1pucmpcc2gjo4Rx6I6U4ndx_AQIMVbk9OeFCFzRC6iKs/export?format=pdf">PDF</a></div></div>
+</div>
+<p style="margin-top:14px;color:var(--muted);font-size:15px">Teachers: the lesson plan, quiz, and answer keys for this unit are in the <a href="../teachers/#unit-3">teacher area</a>.</p>
+</section>
+
+<section>
+<div class="sec-head"><span class="eyebrow">Unit at a glance</span><h2>Sessions</h2><p>Lessons are 50 minutes and practice sessions are 90 minutes.</p></div>
+<div class="tbl-scroll"><table class="tbl"><thead><tr><th>Session</th><th>Topic</th><th>Students make</th></tr></thead><tbody>
+<tr><td>Lesson 1</td><td>Tour of Windows admin tools</td><td>Tool scavenger hunt</td></tr>
+<tr><td>Lesson 2</td><td>Auditing users and groups</td><td>README user audit</td></tr>
+<tr><td>Practice 1</td><td>Lab part A: users and groups</td><td>Users fixed on the VM</td></tr>
+<tr><td>Lesson 3</td><td>Password and lockout policies</td><td>Policy settings table</td></tr>
+<tr><td>Lesson 4</td><td>Windows Update and patching</td><td>Update check</td></tr>
+<tr><td>Practice 2</td><td>Lab part B: full timed run, then quiz</td><td>Full lab score, quiz</td></tr>
+</tbody></table></div>
+</section>
+
+<section>
+<div class="sec-head"><span class="eyebrow">Hardening checklist</span><h2>Add these to your checklist</h2><p>At the end of the unit, every student adds these lines. Always check the README first: it decides what is required.</p></div>
+<div class="tbl-scroll"><table class="tbl"><thead><tr><th>Check</th><th>How</th></tr></thead><tbody>
+<tr><td>Delete users not in the README; remove extra admins</td><td><code>net user, net localgroup Administrators</code></td></tr>
+<tr><td>Check custom groups match the README</td><td><code>net localgroup, then net localgroup NAME</code></td></tr>
+<tr><td>No &quot;password never expires&quot; on users</td><td><code>Set-LocalUser -Name NAME -PasswordNeverExpires $false</code></td></tr>
+<tr><td>Password policy: length 10+, max age 90, min age 1, history 5+, complexity on</td><td><code>secpol.msc, Account Policies, Password Policy</code></td></tr>
+<tr><td>Lockout policy: threshold 5 to 10, duration 30, reset 30</td><td><code>secpol.msc, Account Lockout Policy</code></td></tr>
+<tr><td>Windows Update service is not disabled</td><td><code>services.msc, Windows Update</code></td></tr>
+</tbody></table></div>
+</section>
+
+<section>
+<div class="grid two">
+<div><span class="eyebrow">Key vocabulary</span><h2 style="font-size:22px;margin:6px 0 14px">Words to know</h2><ul class="chips"><li>Computer Management</li><li>Local Users and Groups</li><li>Local Security Policy</li><li>account policy</li><li>password history</li><li>complexity</li><li>lockout threshold</li><li>Windows Update</li><li>service</li></ul></div>
+<div><span class="eyebrow">Ethics discussion · 10 minutes</span><h2 style="font-size:22px;margin:6px 0 14px">What would you do?</h2><div class="ethics">As an IT helper, you can see that a teacher's password is Password1. Do you tell other students as a joke, tell the teacher privately, or say nothing?</div></div>
+</div>
+</section>
+
+<nav class="pager" aria-label="Units">
+<a href="../unit-2/"><small>← Unit 2</small>Computer and security foundations</a>
+<a href="../unit-4/" style="text-align:right"><small>Unit 4 →</small>Windows hardening, part 2</a>
+</nav>
+</main>
+<footer class="site"><div class="wrap">
+<div><a href="/">CyberTeaches</a> · free courses from teacher Kevin Wellborn · <a href="https://www.youtube.com/@cyberteaches" target="_blank" rel="noopener">YouTube @CyberTeaches</a></div>
+<div>CyberPatriot is the National Youth Cyber Defense Competition of the Air &amp; Space Forces Association (AFA). CyberTeaches is not affiliated with or endorsed by AFA or CyberPatriot. All lessons, labs, and scenarios here are original; the organizations in them are fictional. Check the current CyberPatriot rules book each season.</div>
+</div></footer>
+</body></html>

@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Unit 5: Linux Fundamentals | CyberPatriot | CyberTeaches</title>
+<meta name="description" content="CyberPatriot high school course, Unit 5: Many students have never used a terminal. Learn to move around the Linux file system, work with files, read and change permissions, use sudo responsibly, and manage packages and services on Ubuntu.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link rel="icon" type="image/png" href="/favicon.png"><link rel="stylesheet" href="../assets/site.css">
+</head><body>
+<header class="site"><div class="wrap"><a class="brand" href="/"><img src="/logo.png" alt="" width="32" height="32">CyberTeaches</a><span class="brand course">CyberPatriot</span>
+<nav aria-label="Course"><a href="../">Course home</a><a href="../#units" aria-current="page">Units</a><a href="../#calendar">Calendar</a><a href="../teachers/">Teachers</a><a href="/">All courses</a></nav></div></header>
+<div class="hero small"><div class="wrap">
+<div class="crumbs"><a href="../">CyberPatriot</a> / Unit 5</div>
+<span class="eyebrow">Unit 5 of 10 · 2 weeks</span>
+<h1>Linux Fundamentals</h1>
+<p class="lead">Many students have never used a terminal. Learn to move around the Linux file system, work with files, read and change permissions, use sudo responsibly, and manage packages and services on Ubuntu.</p>
+<div class="facts"><span><b>Time:</b> 4 lessons (50 min) and 2 practice sessions (90 min)</span><span><b>Platform:</b> Ubuntu or Linux Mint</span></div>
+</div></div>
+<main class="wrap">
+
+<section>
+<div class="grid two">
+<div class="card"><span class="eyebrow">Goals</span><h3>By the end of this unit, students can</h3><ol class="goals"><li>Move around the Linux file system with the terminal and explain what lives in /etc, /home, /var, and /opt.</li><li>Create, read, copy, move, search, and delete files from the terminal.</li><li>Read and change file permissions, and use sudo responsibly.</li><li>Install and remove software with apt, and check services and listening ports.</li></ol></div>
+<div class="card"><span class="eyebrow">Signature lab</span><h3>Lab 5: Command-Line Scavenger Hunt</h3><p>Ten terminal challenges on an Ubuntu VM. Each item leads to a flag or an answer: hidden files, searching with find and grep, reading permissions, users and sudo, packages, and listening ports.</p><div class="meta"><span>CSTA 3A-CS-03, 3B-NI-04 · NICE: Systems Administration</span></div></div>
+</div>
+</section>
+
+<section>
+<div class="sec-head"><span class="eyebrow">Materials</span><h2>Student materials</h2><p>Open them in Google Drive, make your own editable copy, or download a PDF to print.</p></div>
+<div class="files">
+<div class="file"><span class="kind">Slides</span><h3>Slide deck</h3><p>Every lesson in order, with speaker notes.</p><div class="acts"><a class="btn line sm" href="https://docs.google.com/presentation/d/157Z0RoxEoDZEqe-udIYBkSP1_OG13JfC2JPeaiYspVE/edit?usp=sharing" target="_blank" rel="noopener">Open</a><a class="btn line sm" href="https://docs.google.com/presentation/d/157Z0RoxEoDZEqe-udIYBkSP1_OG13JfC2JPeaiYspVE/copy" target="_blank" rel="noopener">Make a copy</a><a class="btn line sm" href="https://docs.google.com/presentation/d/157Z0RoxEoDZEqe-udIYBkSP1_OG13JfC2JPeaiYspVE/export/pdf">PDF</a></div></div>
+<div class="file"><span class="kind">Lab</span><h3>Lab student handout</h3><p>The README, steps, and a table to record fixes.</p><div class="acts"><a class="btn line sm" href="https://docs.google.com/document/d/1CjGodfUW1nUjC2GSAnOcK0KH9KQlxlOkzIDUr_IOMIY/edit?usp=sharing" target="_blank" rel="noopener">Open</a><a class="btn line sm" href="https://docs.google.com/document/d/1CjGodfUW1nUjC2GSAnOcK0KH9KQlxlOkzIDUr_IOMIY/copy" target="_blank" rel="noopener">Make a copy</a><a class="btn line sm" href="https://docs.google.com/document/d/1CjGodfUW1nUjC2GSAnOcK0KH9KQlxlOkzIDUr_IOMIY/export?format=pdf">PDF</a></div></div>
+</div>
+<p style="margin-top:14px;color:var(--muted);font-size:15px">Teachers: the lesson plan, quiz, and answer keys for this unit are in the <a href="../teachers/#unit-5">teacher area</a>.</p>
+</section>
+
+<section>
+<div class="sec-head"><span class="eyebrow">Unit at a glance</span><h2>Sessions</h2><p>Lessons are 50 minutes and practice sessions are 90 minutes.</p></div>
+<div class="tbl-scroll"><table class="tbl"><thead><tr><th>Session</th><th>Topic</th><th>Students make</th></tr></thead><tbody>
+<tr><td>Lesson 1</td><td>The terminal and the file system</td><td>Navigation practice</td></tr>
+<tr><td>Lesson 2</td><td>Working with files and searching</td><td>File practice</td></tr>
+<tr><td>Practice 1</td><td>Lab part A: scavenger hunt, items 1 to 5</td><td>Flags found</td></tr>
+<tr><td>Lesson 3</td><td>Users, groups, permissions, and sudo</td><td>Permissions practice</td></tr>
+<tr><td>Lesson 4</td><td>Packages, services, and ports</td><td>Package and service practice</td></tr>
+<tr><td>Practice 2</td><td>Lab part B: items 6 to 10, then quiz</td><td>All flags, quiz</td></tr>
+</tbody></table></div>
+</section>
+
+<section>
+<div class="sec-head"><span class="eyebrow">Hardening checklist</span><h2>Add these to your checklist</h2><p>At the end of the unit, every student adds these lines. Always check the README first: it decides what is required.</p></div>
+<div class="tbl-scroll"><table class="tbl"><thead><tr><th>Check</th><th>How</th></tr></thead><tbody>
+<tr><td>Update package lists and install updates</td><td><code>sudo apt update &amp;&amp; sudo apt upgrade -y</code></td></tr>
+<tr><td>List human users (UID 1000 or more)</td><td><code>awk -F: '$3&gt;=1000 &amp;&amp; $3&lt;65534 {print $1}' /etc/passwd</code></td></tr>
+<tr><td>List who can use sudo</td><td><code>getent group sudo</code></td></tr>
+<tr><td>List listening ports and programs</td><td><code>sudo ss -tlnp</code></td></tr>
+<tr><td>List installed packages</td><td><code>apt list --installed</code></td></tr>
+</tbody></table></div>
+</section>
+
+<section>
+<div class="grid two">
+<div><span class="eyebrow">Key vocabulary</span><h2 style="font-size:22px;margin:6px 0 14px">Words to know</h2><ul class="chips"><li>terminal</li><li>shell</li><li>root directory (/)</li><li>home directory (~)</li><li>absolute path</li><li>relative path</li><li>hidden file</li><li>chmod</li><li>sudo</li><li>root</li><li>apt</li><li>systemctl</li><li>port</li></ul></div>
+<div><span class="eyebrow">Ethics discussion · 10 minutes</span><h2 style="font-size:22px;margin:6px 0 14px">What would you do?</h2><div class="ethics">Your account has sudo on a shared lab computer. A friend asks you to use it to read another student's files.</div></div>
+</div>
+</section>
+
+<nav class="pager" aria-label="Units">
+<a href="../unit-4/"><small>← Unit 4</small>Windows hardening, part 2</a>
+<a href="../unit-6/" style="text-align:right"><small>Unit 6 →</small>Linux hardening</a>
+</nav>
+</main>
+<footer class="site"><div class="wrap">
+<div><a href="/">CyberTeaches</a> · free courses from teacher Kevin Wellborn · <a href="https://www.youtube.com/@cyberteaches" target="_blank" rel="noopener">YouTube @CyberTeaches</a></div>
+<div>CyberPatriot is the National Youth Cyber Defense Competition of the Air &amp; Space Forces Association (AFA). CyberTeaches is not affiliated with or endorsed by AFA or CyberPatriot. All lessons, labs, and scenarios here are original; the organizations in them are fictional. Check the current CyberPatriot rules book each season.</div>
+</div></footer>
+</body></html>
