@@ -36,7 +36,7 @@
   </section>
 </div>
 <script src="../../firebase-config.js"></script>
-<script src="../../cloud.js?v=21"></script>
+<script src="../../cloud.js?v=22"></script>
 <script src="../../resources/resources.js"></script>
 <script src="data.js?v=5"></script>
 <script src="../review.js?v=5"></script>
@@ -72,7 +72,7 @@ function showQuiz(){
   if (shown) return; shown = true; $('waitq').hidden = true;
   // (A quiz turned in before the mix-up existed keeps the normal order, so its answers still line up.)
   mixed = inClass && C && C.user && !new URLSearchParams(location.search).has('teacher') && (!prior || !!(prior.answers && prior.answers._mix));
-  if (mixed) mixUp(C.user.uid);
+  if (mixed) mixUp(C.user.uid + (seedN ? '/' + seedN : ''));
   $('quiz').innerHTML = `<h2 class="qsec">Part 1. Vocabulary <span class="pts">${sum(vocabQs)} points</span></h2><p class="sub">Pick the word that matches the meaning.</p>`
     + vocabQs.map((q, i) => V.question(q, i, 'quiz')).join('')
     + `<h2 class="qsec">Part 2. Finish the sentence <span class="pts">${sum(fillQs)} points</span></h2><p class="sub">Pick a word from the word bank for each blank.</p>`
@@ -81,15 +81,25 @@ function showQuiz(){
     + progQs.map((q, i) => V.question(q, i, 'quiz')).join('');
   document.querySelectorAll('.bank, .submitbar').forEach(e => e.hidden = false);
   drawBoards();
-  if (prior && prior.answers) restore();
+  if (prior && prior.answers) { restore(); return }
+  // Not turned in yet: fill in the earlier answers (teacher's "continue" redo), then this browser's unsent answers,
+  // and keep saving them as the student works, so closing the tab or reloading doesn't lose anything.
+  const draft = readDraft();
+  ITEMS.forEach(it => { const v = draft[it.id] !== undefined ? draft[it.id] : prefill ? prefill[it.id] : undefined; if (v !== undefined) V.write(el(it), it, v) });
+  $('quiz').addEventListener('input', saveDraft); $('quiz').addEventListener('change', saveDraft);
 }
+const draftKey = () => `ct-quiz-u${R.unit}-${C && C.user ? C.user.uid : 'guest'}-draft`;
+function readDraft(){ try { return JSON.parse(localStorage.getItem(draftKey()) || '{}') || {} } catch (e) { return {} } }
+function saveDraft(){ if ($('check').disabled) return; const d = {}; ITEMS.forEach(it => { const v = V.read(el(it), it); if (v !== null) d[it.id] = v });
+  try { localStorage.setItem(draftKey(), JSON.stringify(d)) } catch (e) {} }
+function clearDraft(){ try { localStorage.removeItem(draftKey()) } catch (e) {} }
 function hideQuiz(msg){ $('waitq').hidden = false; $('waitq').innerHTML = msg }
 const el = it => $('quiz').querySelector(`[data-id="${it.id}"]`);
 const esc = s => String(s).replace(/[&<>"]/g, c => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;'}[c]));
 
 // Students turn the quiz in once. They see no right or wrong and no score until the teacher publishes the answers
 // for their class (200 + unit in classes/{code}.published, Teacher Dashboard). Students without a class see them at once.
-let prior = null, published = false, inClass = false;
+let prior = null, published = false, inClass = false, prefill = null, seedN = 0;
 function restore(){
   ITEMS.forEach(it => { V.write(el(it), it, prior.answers[it.id]); V.lock(el(it)) });
   $('check').hidden = true; $('warn').textContent = '';
@@ -113,7 +123,7 @@ function showResults(answers){
 }
 $('check').onclick = async () => {
   const answers = {}; ITEMS.forEach(it => { answers[it.id] = V.read(el(it), it) });
-  if (mixed) answers._mix = 1;
+  if (mixed) { answers._mix = 1; if (seedN) answers._seed = seedN }
   const blank = ITEMS.map((it, i) => answers[it.id] === null ? it : null).filter(Boolean);
   if (blank.length && !$('check').dataset.sure) {
     $('warn').textContent = `You did not answer ${blank.length} question${blank.length > 1 ? 's' : ''}. Press again to turn it in anyway.`;
@@ -124,11 +134,11 @@ $('check').onclick = async () => {
   const score = ITEMS.reduce((t, it) => t + V.earnedOf(it, answers[it.id]), 0);
   ITEMS.forEach(it => V.lock(el(it))); $('check').disabled = true; $('warn').textContent = '';
   scrollTo({top: 0, behavior: 'smooth'});
-  if (!inClass) { prior = {answers}; restore(); return }
+  if (!inClass) { clearDraft(); prior = {answers}; restore(); return }
   $('score').classList.add('on'); $('score').innerHTML = '<p>Sending your quiz to your teacher…</p>';
   const missed = ITEMS.map((it, i) => V.earnedOf(it, answers[it.id]) === it.pts ? 0 : i + 1).filter(Boolean);
   const trySend = async () => {
-    try { await C.saveReview(R.unit, {score, total: TOTAL, missed, answers}); prior = {answers}; $('signin').lastChild && ($('signin').innerHTML = $('signin').innerHTML.replace('Your teacher gets your score when you turn the quiz in.', 'You turned this quiz in.')); restore() }
+    try { await C.saveReview(R.unit, {score, total: TOTAL, missed, answers}); clearDraft(); prior = {answers}; $('signin').lastChild && ($('signin').innerHTML = $('signin').innerHTML.replace('Your teacher gets your score when you turn the quiz in.', 'You turned this quiz in.')); restore() }
     catch (err) { console.error(err);
       $('score').innerHTML = `<p class="warn">Could not send your quiz (${esc(err.message)}). Your answers are still here.</p><div class="submitbar" style="margin:12px 0 0"><button class="btn primary" type="button" id="resend">Try again</button></div>`;
       $('resend').onclick = () => { $('score').innerHTML = '<p>Sending your quiz to your teacher…</p>'; trySend() } } };
@@ -188,8 +198,15 @@ function access(){
         hideQuiz('The questions appear here when your teacher opens the quiz.'); return }
       inClass = true; published = isPublished(c);
       const r = ((C.profile.review || {})['u' + R.unit]); if (r && r.answers) prior = r;
+      // Redo: the teacher let this student take the quiz again (classes/{code}.redo['{uid}_u1'] = their tries then; works once).
+      // '{tries}:keep' fills in their earlier answers to fix; '{tries}:new' (or a plain number) starts over.
+      const redo = (c.redo || {})[u.uid + '_u' + R.unit]; let again = false;
+      if (r && redo != null && +String(redo).split(':')[0] === r.tries) { again = true; prior = null;
+        if (String(redo).split(':')[1] === 'keep' && r.answers) { prefill = r.answers; seedN = r.answers._seed || 0 }
+        else seedN = r.tries }   // start over: a new mix (new order and other look-alike versions)
+      if (prior) seedN = prior.answers._seed || 0;
       box.className = 'signin noprint ok';
-      box.innerHTML = `✓ Signed in as <b>${esc(u.displayName || 'Student')}</b> · class <b>${esc(C.profile.className || cls)}</b>. ${prior ? 'You turned this quiz in.' : 'Your teacher gets your score when you turn the quiz in.'}`;
+      box.innerHTML = `✓ Signed in as <b>${esc(u.displayName || 'Student')}</b> · class <b>${esc(C.profile.className || cls)}</b>. ${prior ? 'You turned this quiz in.' : again ? (prefill ? 'Your teacher let you fix your quiz. Your earlier answers are filled in. Change what you need, then turn it in again.' : 'Your teacher let you take this quiz again.') + ' Your new score will replace the old one.' : 'Your teacher gets your score when you turn the quiz in.'}`;
       if (!$('name').value) $('name').value = u.displayName || '';
       if (!$('klass').value) $('klass').value = C.profile.className || cls;
       showQuiz();

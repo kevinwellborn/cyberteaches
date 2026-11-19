@@ -185,7 +185,7 @@
   Cloud.saveReview = async (unit, {score, total, missed, answers}) => {
     if(!Cloud.user) return null;
     const uid = Cloud.user.uid, key = 'u' + unit, prev = ((Cloud.profile || {}).review || {})[key] || {};
-    const entry = {score, total, missed: (missed || []).slice(0, 50), best: prev.answers ? Math.max(score, prev.best || 0) : score, tries: (prev.tries || 0) + 1,
+    const entry = {score, total, missed: (missed || []).slice(0, 50), best: answers ? score : Math.max(score, prev.best || 0), tries: (prev.tries || 0) + 1,
       at: firebase.firestore.FieldValue.serverTimestamp()};
     if(answers) entry.answers = answers;
     const base = who();
@@ -198,10 +198,10 @@
 
   // Unit review study guide (academy/review/unit-N/): score out of 100 when every question is answered.
   // review.g{unit} = {score (latest), first (the score the teacher sees), best, total, tries, at}.
-  Cloud.saveGuide = async (unit, {score, total}) => {
+  Cloud.saveGuide = async (unit, {score, total, reset}) => {
     if(!Cloud.user) return null;
     const uid = Cloud.user.uid, key = 'g' + unit, prev = ((Cloud.profile || {}).review || {})[key] || {};
-    const entry = {score, total, first: prev.first != null ? prev.first : score, best: Math.max(score, prev.best || 0), tries: (prev.tries || 0) + 1,
+    const entry = {score, total, first: !reset && prev.first != null ? prev.first : score, best: Math.max(score, prev.best || 0), tries: (prev.tries || 0) + 1,
       at: firebase.firestore.FieldValue.serverTimestamp()};
     const base = who();
     await db.collection('users').doc(uid).set({...base, review: {[key]: entry}}, {merge: true});

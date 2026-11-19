@@ -90,7 +90,7 @@ td.name small{color:var(--muted)}
 .s0{color:var(--line)}
 .qz{display:inline-block;border-radius:6px;padding:1px 6px}
 .qzlast{display:block;white-space:nowrap}
-th.revh{min-width:120px;font-size:12px;line-height:1.2;white-space:normal} th.revh a{color:#fff;text-decoration:none} td.revc{background:#F1ECFB;text-align:center}
+th.revh{min-width:120px;font-size:12px;line-height:1.2;white-space:normal} th.revh a{color:#fff;text-decoration:none} td.revc{background:#F1ECFB;text-align:center} td.revc .redobtns{display:flex;gap:4px;justify-content:center;flex-wrap:wrap;margin-top:4px} td.revc .redobtn{font-size:11px;padding:2px 6px} td.revc .redoon{display:block;margin-top:4px;color:#0B5E3C;font-weight:700}
 th.score,td.score{background:var(--panel-2);border-right:2px solid var(--line)}
 small.rank{display:block;font-size:11px}
 .insig{vertical-align:-0.25em;margin-right:2px}
@@ -174,7 +174,7 @@ body{border-top:6px solid var(--lv,var(--accent))}
 </div>
 <script src="course.js?v=16"></script>
 <script src="firebase-config.js"></script>
-<script src="cloud.js?v=21"></script>
+<script src="cloud.js?v=22"></script>
 <script src="python/levels.js?v=4"></script>
 <script>
 const $=(s,r=document)=>r.querySelector(s);
@@ -268,7 +268,7 @@ function dashboard(admin){
   });
   if(stopClasses) stopClasses();
   stopClasses=Cloud.watchClasses((list,err)=>{
-    const snap=c=>JSON.stringify([c.locked||[], c.unlocked||[], c.published||[], c.level||'', c.levels||{}, !!c.duels, !!c.races, c.pyLocked||[]]);
+    const snap=c=>JSON.stringify([c.locked||[], c.unlocked||[], c.published||[], c.redo||{}, c.level||'', c.levels||{}, !!c.duels, !!c.races, c.pyLocked||[]]);
     const was=snap(classes.find(c=>c.code===current)||{});
     classes=list.sort((a,b)=>(a.name||'').localeCompare(b.name||''));
     const now=classes.find(c=>c.code===current); if(now && snap(now)!==was && ($('#locks')||$('#pyLocks'))) renderClass();
@@ -611,6 +611,11 @@ function renderClass(err){
   $('#unlockAll').onclick=()=>save({locked: [], unlocked: REVIEWS.map(q=>q.quizId)});
   $('#lockAll').onclick=()=>save({locked: [...UNITS.map(u=>u.n), ...REVIEWS.map(q=>q.guideId)], unlocked: []});
   const tw=$('#progressTable'); tw.onclick=e=>{
+    const rd=e.target.closest('.redobtn');
+    if(rd){ const st=roster.find(x=>rd.dataset.key.startsWith(x.uid+'_'));
+      const what=/_g\d+$/.test(rd.dataset.key)?'study guide':'quiz', keep=rd.dataset.mode==='keep';
+      if(!confirm('Let '+((st&&st.name)||'this student')+' do this '+what+' again?\n\n'+(keep?(what==='quiz'?'Their earlier answers stay filled in so they can fix them.':'Their right answers stay; the questions they got wrong open again.'):'They start over with nothing filled in.')+' Their new score will replace this one.')) return;
+      rd.closest('.redobtns').innerHTML='<small class="redoon">Redo allowed · '+(keep?'continue':'start over')+'</small>'; const k='redo.'+rd.dataset.key; save({[k]: rd.dataset.tries+':'+rd.dataset.mode}); return }
     const rm=e.target.closest('.rmstu');
     if(rm){ const st=roster.find(x=>x.uid===rm.dataset.uid); if(!st) return;
       if(!confirm('Remove '+(st.name||'this student')+' from '+(c.name||c.code)+'?\n\nUse this when a student joined the wrong class. Their stars are kept in their own account. If they are still in this class, they will show up again the next time they play.')) return;
@@ -687,15 +692,22 @@ function raceTable(){
 }
 // Unit review study guides (academy/review/unit-N/): s.review.g1 = {score, first, best, total, tries, at}, out of 100, written when a
 // signed-in student has answered every study guide question. Only the first answer to each question counts; the column shows the first score.
+// Redo: lets one student do the quiz or study guide again (e.g. turned in by mistake). classes/{code}.redo['{uid}_{key}'] = '{tries}:{mode}'
+// holds the student's number of tries now, so the redo works once: their next turn-in raises tries and closes it.
+// mode keep = continue with their earlier answers (study guide: only the wrong ones open again); new = start over with nothing filled in.
+const redoOf=(c,k)=>{ const v=(c.redo||{})[k]; if(v==null) return null; const [t,m]=String(v).split(':'); return {tries:+t, mode:m||'new'} };
+function redoBtn(s,key,r){ const c=classes.find(x=>x.code===current)||{}, k=s.uid+'_'+key, d=redoOf(c,k), on=d&&d.tries===r.tries;
+  if(on) return `<small class="redoon" title="This student can do it again now. Their new score will replace this one.">Redo allowed · ${d.mode==='keep'?'continue':'start over'}</small>`;
+  return `<span class="redobtns"><button class="btn sm redobtn" type="button" data-key="${esc(k)}" data-tries="${r.tries}" data-mode="keep" title="Let this student do it again with their earlier answers filled in, to fix them. Their new score replaces this one.">↺ Continue</button><button class="btn sm redobtn" type="button" data-key="${esc(k)}" data-tries="${r.tries}" data-mode="new" title="Let this student do it again from the start, with nothing filled in. Their new score replaces this one.">↺ Start over</button></span>` }
 function guideCell(s,n){ const r=(s.review||{})['g'+n]; if(!r) return '<span class="muted">–</span>';
   const first=r.first!=null?r.first:r.score, pct=Math.round(100*first/r.total), cls=pct>=90?'s3':pct>=70?'s2':'s1';
   const tip=`Study guide: ${first}/${r.total}${r.tries>1?`. Did it ${r.tries} times; best ${r.best}, last ${r.score}`:''}.`;
-  return `<span class="qz ${cls}" title="${esc(tip)}"><b>${first}</b>/${r.total}</span><small class="muted qzlast">${r.at&&r.at.toDate?ago(r.at):''}</small>` }
+  return `<span class="qz ${cls}" title="${esc(tip)}"><b>${first}</b>/${r.total}</span><small class="muted qzlast">${r.at&&r.at.toDate?ago(r.at):''}</small>${redoBtn(s,'g'+n,r)}` }
 // Unit review quizzes (academy/review/unit-N/quiz.html): s.review.u1 = {score, total, best, tries, missed, at}, written when a signed-in student checks the quiz.
 function reviewCell(s,n){ const r=(s.review||{})['u'+n]; if(!r) return '<span class="muted">–</span>';
   const pct=Math.round(100*r.best/r.total), cls=pct>=90?'s3':pct>=70?'s2':'s1';
   const tip=`Best ${r.best}/${r.total} (${pct}%). Last try ${r.score}/${r.total}${r.missed&&r.missed.length?', missed question'+(r.missed.length>1?'s ':' ')+r.missed.join(', '):''}. ${r.tries} tr${r.tries>1?'ies':'y'}.`;
-  return `<span class="qz ${cls}" title="${esc(tip)}"><b>${r.best}</b>/${r.total}</span><small class="muted"> ${pct}%${r.tries>1?' · '+r.tries+' tries':''}</small><small class="muted qzlast">${[r.score!==r.best?'last '+r.score:'', r.at&&r.at.toDate?ago(r.at):''].filter(Boolean).join(' · ')}</small>` }
+  return `<span class="qz ${cls}" title="${esc(tip)}"><b>${r.best}</b>/${r.total}</span><small class="muted"> ${pct}%${r.tries>1?' · '+r.tries+' tries':''}</small><small class="muted qzlast">${[r.score!==r.best?'last '+r.score:'', r.at&&r.at.toDate?ago(r.at):''].filter(Boolean).join(' · ')}</small>${r.answers?redoBtn(s,'u'+n,r):''}` }
 function table(){
   // Lessons start collapsed to just their Score (out of 100, see lessonScore in course.js). Clicking a lesson shows its puzzles.
   // Columns show the class level's puzzles; a student on another level gets their own level's score and a note.
