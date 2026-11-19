@@ -266,9 +266,9 @@ header.top{display:flex;align-items:center;gap:12px;padding:12px 16px;max-width:
 
 <p class="foot">Python Quest is an original CyberTeaches game. Python runs right in your browser.</p>
 
-<script src="pyrun.js?v=1"></script>
-<script src="levels.js?v=3"></script>
-<script src="game.js?v=2"></script>
+<script src="pyrun.js?v=2"></script>
+<script src="levels.js?v=4"></script>
+<script src="game.js?v=3"></script>
 <script src="../firebase-config.js"></script>
 <script src="../cloud.js?v=21"></script>
 <script>
@@ -373,6 +373,7 @@ const player = new PQ.Player($('#stage'), {
     if(e.a === 'step') SFX.step(); else if(e.a === 'jump') SFX.jump(); else if(e.a === 'climb') SFX.climb();
     else if(e.a === 'take') SFX.take(); else if(e.a === 'drink') SFX.drink(); else if(e.a === 'attack') SFX.attack();
     else if(e.a === 'hurt') SFX.hit(); else if(e.a === 'open') SFX.open(); else if(e.a === 'bump') SFX.bump();
+    else if(e.a === 'defend') SFX.open(); else if(e.a === 'block') SFX.climb();
     else if(e.a === 'win') SFX.win(); else if(e.a === 'die') SFX.lose();
     else if(e.a === 'print') showOut(e.text);
   }
@@ -507,7 +508,7 @@ function finish(r){
     if(stars > before){ data.stars[cur.id] = stars; saveLocal(); cloudSave() }
     refresh(); drawDots(); render();
     $('#winStars').innerHTML = '★'.repeat(stars) + '<span class="off">' + '★'.repeat(3 - stars) + '</span>';
-    $('#winText').innerHTML = 'You used <b>' + r.lines + '</b> line' + (r.lines === 1 ? '' : 's') + ' of code.' + (stars < 3 ? ' Can you do it in ' + cur.par + '? Tip: ' + (cur.lesson >= 2 ? 'put the part that repeats inside a for loop.' : 'hero.run(3) is shorter than three hero.run() lines.') : ' Perfect!');
+    $('#winText').innerHTML = (cur.rescue ? '🎉 <b>' + esc(res.msg) + '</b><br>' : '') + 'You used <b>' + r.lines + '</b> line' + (r.lines === 1 ? '' : 's') + ' of code.' + (stars < 3 ? ' Can you do it in ' + cur.par + '? Tip: ' + (cur.lesson >= 2 && (cur.lesson === 2 || /loop/i.test(cur.goal + cur.tip)) ? 'put the part that repeats inside a for loop.' : cur.lesson === 3 ? 'one sword.attack( ) per guard with the right number, and hero.run( ) with a bigger number.' : 'hero.run(3) is shorter than three hero.run() lines.') : ' Perfect!');
     const next = LEVELS[LEVELS.indexOf(cur) + 1];
     $('#winNext').hidden = !next; $('#winHome').hidden = !!next;
     $('#winTitle').textContent = next ? 'Level complete!' : 'Lesson complete!';
@@ -536,7 +537,7 @@ function showSlide(){
     box.append(a);
   }
   if(sl.kind === 'demo'){
-    const cv = h('canvas', 'demo-cv'); box.append(cv); const p = mini(cv, sl.map);
+    const cv = h('canvas', 'demo-cv'); box.append(cv); const p = mini(cv, sl.map, sl);
     const pr = h('div', 'progs');
     sl.programs.forEach(g => { const d = h('div', 'prog', esc(g.code) + '\n'); const b = h('button', 'btn small primary', '▶ Run ' + esc(g.label)); b.onclick = () => playOn(p, g.code); d.append(b); pr.append(d) });
     box.append(pr);
@@ -550,7 +551,7 @@ function showSlide(){
         grid.querySelectorAll('button').forEach(x => x.classList.remove('on')); b.classList.add('on');
         const c = PQ_COMMANDS.find(x => x.code === d.code); say.textContent = c ? c.say : '';
         demoPlayers.forEach(x => x.destroy()); demoPlayers.length = 0;
-        p = mini(cv, d.map, {hp: d.hp, hearts: d.hearts}); setTimeout(() => playOn(p, d.prog), 250);
+        p = mini(cv, d.map, d); setTimeout(() => playOn(p, d.prog), 250);
       };
       grid.append(b);
     });

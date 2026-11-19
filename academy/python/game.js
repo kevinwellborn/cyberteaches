@@ -8,7 +8,9 @@
   function load(level){
     const rows = level.map, H = rows.length, W = Math.max(...rows.map(r => r.length));
     const w = {W, H, solid: [], items: {}, gates: {}, guards: {}, spikes: {}, door: null, hero: null,
-      hearts: level.hearts || 3, maxHearts: 5, keys: 0, gems: 0, gemsTotal: 0};
+      hearts: level.hearts || 3, maxHearts: 5, keys: 0, gems: 0, gemsTotal: 0,
+      sword: level.sword || 3, shieldMax: level.shield || 0, block: 0, captive: null, freed: false, armed: false};
+    let fi = 0;
     for(let y = 0; y < H; y++){
       w.solid.push([]);
       for(let x = 0; x < W; x++){
@@ -20,14 +22,19 @@
         if(c === 'k') w.items[k] = 'key';
         if(c === 'p') w.items[k] = 'potion';
         if(c === '|') w.gates[k] = true;
-        if(c === 'G') w.guards[k] = {hp: level.hp || 2, max: level.hp || 2};
+        if(c === 'G') w.guards[k] = {hp: level.hp || 2, max: level.hp || 2, power: 1};
+        if(c === 'W'){   // temple guard with a sword: level.foes = [{hp, power}, ...] in reading order
+          const f = (level.foes || [])[fi++] || {}, hp = f.hp || level.hp || 3;
+          w.guards[k] = {hp, max: hp, power: f.power != null ? f.power : (level.power || 0), warrior: true}; w.armed = true;
+        }
+        if(c === 'c') w.captive = {x, y, who: (level.rescue && level.rescue.who) || 'monkey'};
         if(c === '^') w.spikes[k] = true;
       }
     }
     return w;
   }
   const snap = w => ({hero: {...w.hero}, items: {...w.items}, gates: {...w.gates}, guards: JSON.parse(JSON.stringify(w.guards)),
-    hearts: w.hearts, keys: w.keys, gems: w.gems});
+    hearts: w.hearts, keys: w.keys, gems: w.gems, block: w.block, freed: w.freed});
   PQ.load = load;
 
   // ---------- simulation ----------
@@ -39,7 +46,10 @@
     const ev = (a, line, extra) => { events.push({a, line, ...extra, s: snap(w)}); };
     const end = (result, msg, line) => { throw new PyRun.Stop({result, msg, line}) };
     const act = line => { if(++actions > 300) end('fail', 'The explorer is worn out: more than 300 moves! Is there a loop that never stops?', line) };
-    const win = line => { ev('win', line); end('win', 'You made it through the door!', line) };
+    const win = line => {
+      if(w.captive){ w.freed = true; const r = level.rescue || {}; ev('win', line, {rescue: r.name || 'your friend'}); end('win', 'You rescued ' + (r.name || 'your friend') + '!', line) }
+      ev('win', line); end('win', 'You made it through the door!', line);
+    };
     const fall = line => {
       const h = w.hero; let n = 0;
       while(!S(h.x, h.y + 1) && h.y < w.H){ h.y++; n++ }
@@ -53,9 +63,9 @@
       if(w.door && h.x === w.door.x && h.y === w.door.y && w.gems === w.gemsTotal) win(line);
       return k;
     };
-    const num = (v, line, def) => {
+    const num = (v, line, def, like) => {
       if(v === undefined) return def;
-      if(typeof v !== 'number' || !Number.isInteger(v)) end('error', 'Line ' + line + ': put a whole number inside ( ), like hero.run(3).', line);
+      if(typeof v !== 'number' || !Number.isInteger(v)) end('error', 'Line ' + line + ': put a whole number inside ( ), like ' + (like || 'hero.run(3)') + '.', line);
       return v;
     };
     const hero = {
@@ -69,7 +79,7 @@
           const h = w.hero, nx = h.x + h.dir, k = key(nx, h.y);
           if(nx < 0 || nx >= w.W){ ev('bump', line, {what: 'edge'}); end('fail', 'Line ' + line + ': the explorer reached the edge of the map.', line) }
           if(S(nx, h.y)){ ev('bump', line, {what: 'wall'}); end('fail', 'Line ' + line + ': bonk! A stone block is in the way. Try hero.climb().', line) }
-          if(w.guards[k]){ ev('bump', line, {what: 'guard'}); end('fail', 'Line ' + line + ': a stone guardian blocks the way. Use hero.attack() to defeat it.', line) }
+          if(w.guards[k]){ const g = w.guards[k]; ev('bump', line, {what: 'guard'}); end('fail', g.warrior ? 'Line ' + line + ': a temple guard blocks the way. It has ' + g.hp + ' hit point' + (g.hp === 1 ? '' : 's') + ', so use sword.attack(' + Math.min(g.hp, w.sword) + ').' : 'Line ' + line + ': a stone guardian blocks the way. Use hero.attack() to defeat it.', line) }
           if(w.gates[k]){
             if(!w.keys){ ev('bump', line, {what: 'gate'}); end('fail', 'Line ' + line + ': the gate is locked. Take the key first with hero.take().', line) }
             w.keys--; delete w.gates[k]; ev('open', line, {x: nx, y: h.y});
@@ -116,17 +126,7 @@
         else ev('shrug', line, {say: 'No potion here'});
         return null;
       },
-      attack(line){
-        act(line);
-        const h = w.hero, k = key(h.x + h.dir, h.y), g = w.guards[k];
-        if(!g){ ev('attack', line, {miss: true}); return null }
-        g.hp--;
-        if(g.hp <= 0){ delete w.guards[k]; ev('attack', line, {hit: k, ko: true}); return null }
-        ev('attack', line, {hit: k});
-        w.hearts--; ev('hurt', line);
-        if(w.hearts <= 0){ ev('die', line, {why: 'guard'}); end('lose', 'The guardian won this time. Drink a potion first to get more hearts.', line) }
-        return null;
-      },
+      attack(line){ return hit(line, 1, 'hero.attack()') },
       // Sensors for later lessons (if / while)
       ahead(line){
         const h = w.hero, nx = h.x + h.dir, k = key(nx, h.y);
@@ -144,11 +144,56 @@
       has_key(line){ return w.keys > 0 },
       gems_left(line){ return w.gemsTotal - w.gems },
     };
+    // One attack of n sword swings at whatever stands in front. A guard that is still standing strikes back.
+    function hit(line, n, how){
+      act(line);
+      const h = w.hero, k = key(h.x + h.dir, h.y), g = w.guards[k];
+      if(!g){ ev('attack', line, {miss: true, swings: n}); return null }
+      if(n > g.hp){
+        ev('shrug', line, {say: 'Too many swings!'});
+        end('fail', 'Line ' + line + ': too many swings! That guard has only ' + g.hp + ' hit point' + (g.hp === 1 ? '' : 's') + ' left, so use sword.attack(' + g.hp + '). Count the red marks above the guard.', line);
+      }
+      g.hp -= n;
+      if(g.hp <= 0){ delete w.guards[k]; ev('attack', line, {hit: k, ko: true, swings: n}); return null }
+      ev('attack', line, {hit: k, swings: n});
+      if(g.power){
+        const blocked = Math.min(w.block, g.power), dmg = g.power - blocked; w.block = 0;
+        if(blocked) ev('block', line, {n: blocked, from: k});
+        if(dmg){ w.hearts -= dmg; ev('hurt', line, {dmg, from: k}) }
+        if(w.hearts <= 0){
+          ev('die', line, {why: 'guard'});
+          end('lose', g.warrior ? 'Line ' + line + ': the guard still had ' + g.hp + ' hit point' + (g.hp === 1 ? '' : 's') + ' and struck back for ' + g.power + '. ' + (w.shieldMax ? 'Raise your shield first: shield.defend(' + Math.min(g.power, w.shieldMax) + ')' + (w.shieldMax < g.power ? ', and get more hearts before the fight.' : '.') : 'Take away all its hit points in one attack.')
+            : 'The guardian won this time. Drink a potion first to get more hearts.', line);
+        }
+      }
+      return null;
+    }
+    const sword = {
+      __methods: true, __name: 'sword',
+      attack(line, n){
+        n = num(n, line, 1, 'sword.attack(3)');
+        if(n < 1) end('error', 'Line ' + line + ': swing at least 1 time, like sword.attack(1).', line);
+        if(n > w.sword) end('error', 'Line ' + line + ': your sword can swing at most ' + w.sword + ' times in one attack. Split it up: sword.attack(' + w.sword + ') and then sword.attack(' + (n - w.sword) + ').', line);
+        return hit(line, n, 'sword.attack(' + n + ')');
+      }
+    };
+    const shield = {
+      __methods: true, __name: 'shield',
+      defend(line, n){
+        act(line);
+        n = num(n, line, 1, 'shield.defend(2)');
+        if(!w.shieldMax) end('error', 'Line ' + line + ': you don\'t have a shield yet. You will find one in a later level.', line);
+        if(n < 1) end('error', 'Line ' + line + ': block at least 1, like shield.defend(1).', line);
+        if(n > w.shieldMax) end('error', 'Line ' + line + ': your shield can block at most ' + w.shieldMax + '. Use shield.defend(' + w.shieldMax + ').', line);
+        w.block = n; ev('defend', line, {n}); return null;
+      }
+    };
+    ['defence', 'defense'].forEach(n => Object.defineProperty(shield, n, {value: shield.defend}));   // common spellings work too (hidden from suggestions)
     const anyBelow = (x, y) => { for(let yy = y + 1; yy < w.H; yy++) if(S(x, yy)) return true; return false };
     ev('start', 0);
     let result;
     try {
-      PyRun.run(source, {globals: {hero}, maxSteps: 20000, print: (s, line) => { prints.push(s); ev('print', line, {text: s}) }});
+      PyRun.run(source, {globals: {hero, sword, shield}, maxSteps: 20000, print: (s, line) => { prints.push(s); ev('print', line, {text: s}) }});
       const h = w.hero;
       if(w.door && h.x === w.door.x && h.y === w.door.y && w.gems < w.gemsTotal)
         result = {result: 'fail', msg: 'The door is still shut: take every gem first (' + (w.gemsTotal - w.gems) + ' left).'};
@@ -297,8 +342,81 @@
     for(let i = 0; i < gd.max; i++){ g.fillStyle = i < gd.hp ? C.eye : 'rgba(0,0,0,.35)'; g.fillRect(px - gd.max * 5 + i * 10, by - 70, 8, 5) }
   }
 
+  // Temple guard: red tunic, bronze mask, jade crest, curved sword. Faces the explorer.
+  // Red marks above = hit points left. The blade badge = how hard it strikes back.
+  function drawWarrior(g, x, y, gd, t, hitFlash, face, lunge){
+    const px = x * T + T / 2, by = y * T + T;
+    g.save(); g.translate(px + (hitFlash ? Math.sin(t / 20) * 3 : 0) + lunge * face * 9, by); g.scale(face, 1);
+    g.fillStyle = '#3B2A1E'; g.fillRect(-9, -16, 6, 16); g.fillRect(3, -16, 6, 16);
+    g.fillStyle = '#2A1C12'; g.fillRect(-10, -3, 8, 3); g.fillRect(3, -3, 8, 3);
+    g.fillStyle = hitFlash ? '#F3D9B0' : '#A8322D'; g.beginPath(); g.moveTo(-12, -14); g.lineTo(12, -14); g.lineTo(9, -38); g.lineTo(-9, -38); g.closePath(); g.fill();
+    g.fillStyle = C.gold; g.fillRect(-12, -22, 24, 3); g.fillRect(-2, -38, 4, 16);
+    g.strokeStyle = '#7A2420'; g.lineWidth = 5; g.lineCap = 'round'; g.beginPath(); g.moveTo(-6, -35); g.lineTo(-10, -22); g.stroke();
+    g.fillStyle = C.jade; g.beginPath(); g.moveTo(-4, -54); g.lineTo(-16, -66); g.lineTo(-11, -52); g.closePath(); g.fill();
+    g.fillStyle = C.goldLo; g.fillRect(-8, -54, 16, 16);
+    g.fillStyle = C.gold; g.fillRect(-8, -54, 16, 4); g.fillRect(-8, -42, 16, 2);
+    g.fillStyle = '#1A0E08'; g.fillRect(1, -48, 5, 3); g.fillRect(-5, -48, 4, 3);
+    const ang = lunge ? -0.2 + lunge * 1.2 : -0.6 + Math.sin(t / 500) * 0.08;
+    g.strokeStyle = '#7A2420'; g.beginPath(); g.moveTo(6, -35); const hx = 6 + Math.cos(ang) * 11, hy = -35 + Math.sin(ang) * 11 + 8; g.lineTo(hx, hy); g.stroke();
+    g.strokeStyle = C.blade; g.lineWidth = 3.5; g.beginPath(); g.moveTo(hx, hy); g.quadraticCurveTo(hx + 10, hy - 6, hx + 14, hy - 20); g.stroke();
+    g.fillStyle = C.gold; g.fillRect(hx - 3, hy - 2, 6, 3);
+    g.restore();
+    const per = Math.min(gd.max, 6), rows = Math.ceil(gd.max / 6);
+    for(let i = 0; i < gd.max; i++){ const r = Math.floor(i / 6), c = i % 6; g.fillStyle = i < gd.hp ? '#EF5B50' : 'rgba(0,0,0,.35)'; g.fillRect(px - per * 4.5 + c * 9, by - 78 - (rows - 1 - r) * 7, 7, 5) }
+    if(gd.power){
+      const bx = px + per * 4.5 + 3, byy = by - 84 - (rows - 1) * 7;
+      g.fillStyle = 'rgba(11,26,20,.85)'; g.fillRect(bx, byy, 26, 15);
+      g.strokeStyle = C.blade; g.lineWidth = 2; g.beginPath(); g.moveTo(bx + 4, byy + 12); g.lineTo(bx + 11, byy + 4); g.stroke();
+      g.font = 'bold 12px system-ui, sans-serif'; g.fillStyle = '#FFD3CF'; g.textAlign = 'left'; g.fillText(gd.power, bx + 14, byy + 12);
+    }
+  }
+  // A friend waiting in a bamboo cage. who: monkey | parrot | brother | kids | cub
+  function drawCaptive(g, cp, freed, t){
+    const px = cp.x * T + T / 2, by = cp.y * T + T, hop = freed ? Math.abs(Math.sin(t / 160)) * 6 : 0;
+    g.save(); g.translate(px, by - hop);
+    const who = cp.who;
+    if(who === 'monkey' || who === 'cub'){
+      const fur = who === 'monkey' ? '#8A5A33' : '#D9A441', face = who === 'monkey' ? '#E3B98A' : '#F2DDA6';
+      g.strokeStyle = fur; g.lineWidth = 3; g.beginPath(); g.moveTo(8, -8); g.quadraticCurveTo(18, -14, 14, -24); g.stroke();
+      g.fillStyle = fur; g.beginPath(); g.ellipse(0, -10, 9, 9, 0, 0, Math.PI * 2); g.fill();
+      g.beginPath(); g.arc(0, -24, 8, 0, Math.PI * 2); g.fill();
+      g.beginPath(); g.arc(-8, -28, 3.5, 0, Math.PI * 2); g.arc(8, -28, 3.5, 0, Math.PI * 2); g.fill();
+      g.fillStyle = face; g.beginPath(); g.ellipse(0, -22, 5, 4, 0, 0, Math.PI * 2); g.fill();
+      if(who === 'cub'){ g.fillStyle = '#5A3A10'; [[-6, -12], [5, -8], [0, -14], [-3, -6]].forEach(([a, b]) => { g.beginPath(); g.arc(a, b, 1.6, 0, Math.PI * 2); g.fill() }) }
+      g.fillStyle = '#1C1410'; g.fillRect(-3, -26, 2, 2); g.fillRect(2, -26, 2, 2);
+    } else if(who === 'parrot'){
+      g.fillStyle = '#2E8BD6'; g.beginPath(); g.ellipse(2, -8, 4, 9, 0.3, 0, Math.PI * 2); g.fill();
+      g.fillStyle = '#E2445C'; g.beginPath(); g.ellipse(0, -16, 7, 10, 0, 0, Math.PI * 2); g.fill();
+      g.beginPath(); g.arc(0, -28, 6, 0, Math.PI * 2); g.fill();
+      g.fillStyle = C.gold; g.beginPath(); g.ellipse(-3, -16, 4, 7, -0.3, 0, Math.PI * 2); g.fill();
+      g.fillStyle = '#EDE3C8'; g.beginPath(); g.moveTo(-5, -29); g.lineTo(-11, -26); g.lineTo(-5, -24); g.fill();
+      g.fillStyle = '#1C1410'; g.fillRect(-3, -31, 2, 2);
+    } else {
+      const kids = who === 'kids' ? [[-8, 0.8, '#E07B9A'], [8, 0.75, '#6CA6E0']] : [[0, 0.85, C.scarf]];
+      kids.forEach(([ox, sc, shirt]) => {
+        g.save(); g.translate(ox, 0); g.scale(sc, sc);
+        g.strokeStyle = C.pants; g.lineWidth = 5; g.beginPath(); g.moveTo(-3, -16); g.lineTo(-4, 0); g.moveTo(3, -16); g.lineTo(4, 0); g.stroke();
+        g.fillStyle = shirt; g.fillRect(-7, -32, 14, 16);
+        g.strokeStyle = C.skin; g.lineWidth = 4; const wave = freed ? -2.6 + Math.sin(t / 120) * 0.4 : 0.3;
+        g.beginPath(); g.moveTo(6, -29); g.lineTo(6 + Math.sin(wave) * 10, -29 + Math.cos(wave) * 10); g.stroke();
+        g.fillStyle = C.skin; g.beginPath(); g.arc(0, -38, 7, 0, Math.PI * 2); g.fill();
+        g.fillStyle = '#2A1A10'; g.fillRect(-7, -45, 14, 4); g.fillStyle = '#1C292C'; g.fillRect(-3, -39, 2, 2); g.fillRect(2, -39, 2, 2);
+        if(who === 'brother'){ g.fillStyle = C.hat; g.beginPath(); g.ellipse(0, -44, 10, 2.5, 0, 0, Math.PI * 2); g.fill(); g.fillStyle = C.hatLo; g.fillRect(-5, -51, 10, 7) }
+        g.restore();
+      });
+    }
+    g.restore();
+    // bamboo cage: lifted up once the friend is freed
+    g.save(); g.translate(px, by);
+    if(freed){ g.globalAlpha = 0.8; g.translate(0, -T * 0.8) }   // cage lifted up
+    g.strokeStyle = '#C9A646'; g.lineWidth = 3;
+    for(let i = -2; i <= 2; i++){ g.beginPath(); g.moveTo(i * 9, 0); g.lineTo(i * 9, -T + 2); g.stroke() }
+    g.fillStyle = '#8A6A22'; g.fillRect(-21, -T, 42, 5); g.fillRect(-21, -4, 42, 4);
+    g.restore();
+  }
+
   // The explorer: wide-brim hat, orange scarf, teal shirt, short sword. pose: idle | run | jump | climb | attack | drink | hurt | win | fall
-  function drawHero(g, x, y, dir, pose, ph, t){
+  function drawHero(g, x, y, dir, pose, ph, t, shield){
     const cx = x * T + T / 2, by = y * T + T;
     g.save(); g.translate(cx, by); g.scale(dir, 1);
     const swing = pose === 'run' ? Math.sin(ph * Math.PI * 2) : 0;
@@ -339,13 +457,19 @@
       g.strokeStyle = C.blade; g.lineWidth = 3; g.beginPath(); g.moveTo(hx, hy); g.lineTo(hx + Math.sin(sa) * 18, hy + Math.cos(sa) * -18 * -1 * -1 + (pose === 'attack' ? 0 : -14)); g.stroke();
       g.fillStyle = C.goldLo; g.fillRect(hx - 3, hy - 2, 6, 3);
     }
+    if(shield || pose === 'defend' || pose === 'block'){
+      const up = pose === 'defend' || pose === 'block', sx = up ? 11 : 7, sy = up ? -34 : -27;
+      g.fillStyle = '#7A4E2A'; g.beginPath(); g.ellipse(sx, sy, 5, 11, 0, 0, Math.PI * 2); g.fill();
+      g.strokeStyle = C.gold; g.lineWidth = 2; g.stroke(); g.fillStyle = C.gold; g.beginPath(); g.arc(sx, sy, 2.5, 0, Math.PI * 2); g.fill();
+      if(pose === 'block' && ph < 0.6){ g.strokeStyle = 'rgba(255,255,255,' + (0.9 - ph) + ')'; g.lineWidth = 3; g.beginPath(); g.arc(sx + 4, sy, 10 + ph * 16, -1, 1); g.stroke() }
+    }
     if(pose === 'attack' && ph > 0.3 && ph < 0.8){ g.strokeStyle = 'rgba(255,255,255,.6)'; g.lineWidth = 2; g.beginPath(); g.arc(4, -33, 26, -1.2, 0.6); g.stroke() }
     g.restore();
   }
   PQ.drawHero = drawHero;
 
   // ---------- player: animates the events ----------
-  const DUR = {start: 200, step: 260, jump: 520, climb: 520, fall: 160, turn: 180, take: 380, drink: 600, attack: 420, hurt: 420, bump: 380, shrug: 600, open: 300, die: 900, win: 1200, print: 120};
+  const DUR = {start: 200, step: 260, jump: 520, climb: 520, fall: 160, turn: 180, take: 380, drink: 600, attack: 420, hurt: 420, bump: 380, shrug: 600, open: 300, die: 900, win: 1200, print: 120, defend: 380, block: 460};
   PQ.Player = class {
     constructor(canvas, hooks = {}){ this.cv = canvas; this.g = canvas.getContext('2d'); this.hooks = hooks; this.speed = 1; this.t0 = performance.now(); this.loop = this.loop.bind(this); requestAnimationFrame(this.loop) }
     setLevel(level){
@@ -361,7 +485,8 @@
       if(!this.events) return;
       if(this.i >= this.events.length){ const d = this.done; this.done = null; this.events = null; if(d) d(); return }
       const e = this.events[this.i++], prev = this.state;
-      this.cur = {e, prev, start: performance.now(), dur: (DUR[e.a] || 250) / this.speed};
+      const base = e.a === 'attack' ? DUR.attack * (0.6 + 0.4 * (e.swings || 1)) : e.a === 'hurt' && e.from ? 520 : (DUR[e.a] || 250);
+      this.cur = {e, prev, start: performance.now(), dur: base / this.speed};
       if(e.a === 'shrug' && e.say) this.say = {text: e.say, until: performance.now() + 1400 / this.speed, x: prev.hero.x, y: prev.hero.y};
       if(this.hooks.onEvent) this.hooks.onEvent(e);
     }
@@ -383,7 +508,14 @@
       Object.keys(s.gates).forEach(k => { const [x, y] = k.split(',').map(Number); drawGate(g, x, y) });
       Object.entries(s.items).forEach(([k, it]) => { const [x, y] = k.split(',').map(Number); drawItem(g, it, x, y, t) });
       const hitKey = this.cur && this.cur.e.a === 'attack' && this.cur.e.hit;
-      Object.entries(s.guards).forEach(([k, gd]) => { const [x, y] = k.split(',').map(Number); drawGuard(g, x, y, gd, t, hitKey === k && (t - this.cur.start) > this.cur.dur * 0.4) });
+      const strikeKey = this.cur && (this.cur.e.a === 'hurt' || this.cur.e.a === 'block') && this.cur.e.from;
+      const pNow = this.cur ? Math.min(1, (t - this.cur.start) / this.cur.dur) : 0;
+      Object.entries(s.guards).forEach(([k, gd]) => {
+        const [x, y] = k.split(',').map(Number), flash = hitKey === k && (t - this.cur.start) > this.cur.dur * 0.4;
+        if(gd.warrior) drawWarrior(g, x, y, gd, t, flash, s.hero.x < x ? -1 : 1, strikeKey === k ? Math.sin(pNow * Math.PI) : 0);
+        else drawGuard(g, x, y, gd, t, flash);
+      });
+      if(w.captive) drawCaptive(g, w.captive, s.freed || (this.cur && this.cur.e.a === 'win') || (!this.cur && this.state.freed), t);
       // hero position + pose
       let hx = s.hero.x, hy = s.hero.y, dir = s.hero.dir, pose = 'idle', ph = 0;
       if(this.cur){
@@ -392,7 +524,8 @@
         else if(e.a === 'jump'){ hx = s.hero.x + (to.x - s.hero.x) * p; hy = s.hero.y - Math.sin(p * Math.PI) * 1.1; pose = 'jump' }
         else if(e.a === 'climb'){ const a = Math.min(1, p * 1.6), b = Math.max(0, p * 2 - 1); hy = s.hero.y - a; hx = s.hero.x + (to.x - s.hero.x) * b; pose = 'climb' }
         else if(e.a === 'fall'){ hy = s.hero.y + (to.y - s.hero.y) * p * p; pose = 'jump' }
-        else if(e.a === 'attack') pose = 'attack';
+        else if(e.a === 'attack'){ pose = 'attack'; ph = (p * (e.swings || 1)) % 1 }
+        else if(e.a === 'defend' || e.a === 'block') pose = e.a;
         else if(e.a === 'drink') pose = 'drink';
         else if(e.a === 'hurt') pose = 'hurt';
         else if(e.a === 'win'){ pose = 'win'; hy = s.hero.y - Math.abs(Math.sin(p * Math.PI * 2)) * 0.25 }
@@ -401,7 +534,14 @@
         else if(e.a === 'die'){ if(e.why === 'pit'){ pose = 'jump' } else { pose = 'hurt' } }
         else if(e.a === 'take'){ pose = 'idle'; hy = s.hero.y + Math.sin(p * Math.PI) * 0.12 }
       } else if(this.events === null && this.lastPose) pose = this.lastPose;
-      if(!(this.cur && this.cur.e.a === 'die' && this.cur.e.why === 'pit')) drawHero(g, hx, hy, dir, pose, ph, t);
+      const shieldUp = (this.cur ? this.cur.e.s.block : this.state.block) > 0;
+      if(!(this.cur && this.cur.e.a === 'die' && this.cur.e.why === 'pit')) drawHero(g, hx, hy, dir, pose, ph, t, shieldUp);
+      if(this.cur && ((this.cur.e.a === 'hurt' && this.cur.e.dmg) || this.cur.e.a === 'block')){
+        const p = Math.min(1, (t - this.cur.start) / this.cur.dur), blk = this.cur.e.a === 'block';
+        g.font = 'bold 15px system-ui, sans-serif'; g.textAlign = 'center'; g.globalAlpha = 1 - p * 0.7;
+        g.fillStyle = blk ? '#CFE8F0' : '#FF6B5E'; g.fillText(blk ? 'blocked ' + this.cur.e.n : '-' + this.cur.e.dmg + (this.cur.e.dmg === 1 ? ' heart' : ' hearts'), hx * T + T / 2, hy * T - 30 - p * 18);
+        g.globalAlpha = 1; g.textAlign = 'left';
+      }
       if(this.cur && (this.cur.e.a === 'take' || this.cur.e.a === 'drink')){
         const p = (t - this.cur.start) / this.cur.dur; g.fillStyle = this.cur.e.a === 'drink' ? C.potion : C.gold;
         for(let i = 0; i < 6; i++){ const a = i / 6 * Math.PI * 2 + p * 3; g.globalAlpha = 1 - p; g.beginPath(); g.arc(hx * T + T / 2 + Math.cos(a) * p * 24, hy * T + T / 2 + Math.sin(a) * p * 24 - 6, 3, 0, Math.PI * 2); g.fill() }
@@ -420,6 +560,10 @@
       for(let i = 0; i < Math.max(st.hearts, 0); i++) heart(g, 18 + i * 22, 17, 6);
       g.fillStyle = 'rgba(255,255,255,.18)';
       for(let i = Math.max(st.hearts, 0); i < 3; i++) heart(g, 18 + i * 22, 17, 6);
+      if(w.armed){
+        g.font = 'bold 13px system-ui, sans-serif'; g.fillStyle = '#CFE0DA'; g.textAlign = 'left';
+        g.fillText('Sword: ' + w.sword + (w.shieldMax ? '   Shield: ' + w.shieldMax : ''), 18 + Math.max(3, st.hearts) * 22 + 6, 22);
+      }
       g.font = 'bold 15px system-ui, sans-serif'; g.fillStyle = '#E6EEEC'; g.textAlign = 'right';
       let rx = w.W * T - 12;
       if(w.gemsTotal){ g.fillText(st.gems + ' / ' + w.gemsTotal, rx, 23); rx -= g.measureText(st.gems + ' / ' + w.gemsTotal).width + 8; g.fillStyle = C.jade; g.beginPath(); g.moveTo(rx - 7, 8); g.lineTo(rx, 17); g.lineTo(rx - 7, 26); g.lineTo(rx - 14, 17); g.fill(); rx -= 28; g.fillStyle = '#E6EEEC' }
