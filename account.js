@@ -1,5 +1,5 @@
 // Shared sign-in for the course pages (AP Cybersecurity, AP CSP, Security+).
-// Uses the same Firebase project and Google sign-in as the Academy (academy/cloud.js).
+// Uses the same Firebase project and Google sign-in as the Code Lab (academy/cloud.js).
 // Progress for each course is stored in the student's own record: users/{uid}.courses[<storage key>].
 // Until academy/firebase-config.js has a config, this does nothing and progress stays in the browser.
 (function () {

@@ -1,8 +1,8 @@
 <!doctype html>
 <html lang="en"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Unit 1 Lesson 1-6 Review: Quiz · CyberTeaches Academy</title>
-<meta name="description" content="Quiz for CyberTeaches Academy Lessons 1 to 6: repeat loops, nested loops and repeat until. Vocabulary, sentences and program questions, 100 points.">
+<title>Unit 1 Lesson 1-6 Review: Quiz · CyberTeaches Code Lab</title>
+<meta name="description" content="Quiz for CyberTeaches Code Lab Lessons 1 to 6: repeat loops, nested loops and repeat until. Vocabulary, sentences and program questions, 100 points.">
 <link rel="icon" href="../../../favicon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Atkinson+Hyperlegible:wght@400;700&family=JetBrains+Mono:wght@400;600&display=swap">
@@ -190,11 +190,11 @@ function access(){
         showQuiz(); return }
       if (state === 'noclass') {
         box.className = 'signin noprint warn2';
-        box.innerHTML = `🔒 This quiz is locked. <a href="../../">Join your class on the Academy page</a>. Your teacher will open the quiz when it is time.`;
+        box.innerHTML = `🔒 This quiz is locked. <a href="../../">Join your class on the Code Lab page</a>. Your teacher will open the quiz when it is time.`;
         hideQuiz('The questions appear here when your teacher opens the quiz.'); return }
       if (state === 'locked') {
         box.className = 'signin noprint warn2';
-        box.innerHTML = `🔒 This quiz is locked for now. Study the <a href="index.html">study guide</a> first. Your teacher will open the quiz when it is time. <a href="../../">Back to the Academy</a>`;
+        box.innerHTML = `🔒 This quiz is locked for now. Study the <a href="index.html">study guide</a> first. Your teacher will open the quiz when it is time. <a href="../../">Back to the Code Lab</a>`;
         hideQuiz('The questions appear here when your teacher opens the quiz.'); return }
       inClass = true; published = isPublished(c);
       const r = ((C.profile.review || {})['u' + R.unit]); if (r && r.answers) prior = r;
@@ -219,7 +219,7 @@ function access(){
     hideQuiz('The questions appear here when your account loads.'); $('retry').onclick = () => location.reload();
   } else {
     box.className = 'signin noprint warn2';
-    box.innerHTML = `<b>Sign in to take the quiz.</b> <button class="btn sm" type="button" id="gsign">Sign in with Google</button> Have a student login? <a href="../../">Sign in on the Academy page</a>, then come back.`;
+    box.innerHTML = `<b>Sign in to take the quiz.</b> <button class="btn sm" type="button" id="gsign">Sign in with Google</button> Have a student login? <a href="../../">Sign in on the Code Lab page</a>, then come back.`;
     hideQuiz('The questions appear here after you sign in.');
     $('gsign').onclick = () => C.signIn().catch(e => { box.insertAdjacentHTML('beforeend', `<br><span class="warn">${esc(e.message)}</span>`) });
   }

@@ -117,7 +117,7 @@ function slidesPage(L, u) {
   const S = [];
   const add = (kicker, title, body, note, cls = '') => S.push({ kicker, title, body, note, cls });
   S.push({ raw: `<section class="slide title-slide">
-  <span class="label" style="font-size:22px">CyberTeaches Academy · Lesson ${u.n}${LV()}</span>
+  <span class="label" style="font-size:22px">CyberTeaches Code Lab · Lesson ${u.n}${LV()}</span>
   <h1 style="margin:18px 0 22px">${L.titleHtml}</h1>
   <p style="font-size:32px;max-width:900px">${L.tagline}</p>
   <div class="foot"><span>cyberteaches.com/academy</span><span>Press → to start</span></div>
@@ -195,7 +195,7 @@ function classworkPage(L, u) {
   rowsC.forEach(r => { if (r.check) { const s = simulate(r.check.map, r.check.dir, r.check.prog); check(s.won, `Lesson ${u.n} part C ${r.q}: answer does not solve ${JSON.stringify(s)}`) } });
   const page1 = `<section class="page">
   <div class="head">
-    <div><span class="label">CyberTeaches Academy · Lesson ${u.n} classwork${LV()}</span><h1>${esc(u.title)}</h1></div>
+    <div><span class="label">CyberTeaches Code Lab · Lesson ${u.n} classwork${LV()}</span><h1>${esc(u.title)}</h1></div>
     <div class="name">Name<div></div>Date<div></div></div>
   </div>
   <div class="key-ref">${NOTATION(L)}</div>
@@ -323,7 +323,7 @@ function planPage(L, u) {
 
 <article class="page">
   <header class="head">
-    <div><span class="label">CyberTeaches Academy · Block coding · Grades 6 to 12${LV()}</span><h1>Lesson ${u.n}: ${esc(u.title)}</h1></div>
+    <div><span class="label">CyberTeaches Code Lab · Rover Coding · Grades 6 to 12${LV()}</span><h1>Lesson ${u.n}: ${esc(u.title)}</h1></div>
     <div class="meta"><b>Time</b> 50 minutes<br><b>Unit</b> ${L.unitName}<br><b>Puzzles</b> ${u.n}.1 to ${u.n}.10</div>
   </header>
 
@@ -422,7 +422,7 @@ ${P.connections.map(c => `        <li>${c}</li>`).join('\n')}
       <p>${next ? `Lesson ${next.n}, ${esc(next.title)}: ${P.next}` : P.next}</p>
     </div>
   </section>
-  <footer class="pfoot">CyberTeaches Academy · cyberteaches.com/academy · Free to use and adapt for your classes.</footer>
+  <footer class="pfoot">CyberTeaches Code Lab · cyberteaches.com/academy · Free to use and adapt for your classes.</footer>
 </article>
 </body></html>
 `;

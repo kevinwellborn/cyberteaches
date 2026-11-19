@@ -460,7 +460,7 @@ table.progress tr.on{background:var(--accent-soft)}
         </tbody></table></div></section>
       <div class="two" style="margin-top:16px">
         <section class="card"><h2 style="font-size:20px;margin-bottom:10px">Grading and student work</h2>
-          <p style="margin:0 0 12px">Use the same classes as CyberTeaches Academy. Students sign in and join with your class code. Every lesson is scored automatically out of 10 points: 4 for the quick check (first try), 2 for steps checked off, and 4 for written work that is long enough. The gradebook shows each score, and you can read what everyone wrote for a lesson on one page. The score checks that work is complete, not how good it is.</p><div class="row"><a class="btn primary" href="teacher.html">Open class progress</a><a class="btn" href="../academy/teacher.html">Create a class</a></div></section>
+          <p style="margin:0 0 12px">Use the same classes as CyberTeaches Code Lab. Students sign in and join with your class code. Every lesson is scored automatically out of 10 points: 4 for the quick check (first try), 2 for steps checked off, and 4 for written work that is long enough. The gradebook shows each score, and you can read what everyone wrote for a lesson on one page. The score checks that work is complete, not how good it is.</p><div class="row"><a class="btn primary" href="teacher.html">Open class progress</a><a class="btn" href="../academy/teacher.html">Create a class</a></div></section>
         <section class="card"><h2 style="font-size:20px;margin-bottom:10px">A real audience</h2>
           <p style="margin:0">Students who want to compete can enter their app in the Congressional App Challenge. The <a href="#challenge">App Challenge track</a> covers eligibility, the rules, the demo video, and submitting.</p></section>
       </div>`;
@@ -484,7 +484,7 @@ table.progress tr.on{background:var(--accent-soft)}
           ${art(t.id, 'hero')}
           <p class="summary">${esc(t.summary)}</p>
           ${(t.more || []).map(p => `<p class="more">${esc(p)}</p>`).join('')}
-          ${t.blocks ? `<aside class="blocksnote block"><span class="label">You did this with blocks</span><p>${esc(t.blocks)} <a href="../academy/">Open the Academy</a></p></aside>` : ''}
+          ${t.blocks ? `<aside class="blocksnote block"><span class="label">You did this with blocks</span><p>${esc(t.blocks)} <a href="../academy/">Open the Code Lab</a></p></aside>` : ''}
           ${t.example ? `<section class="block"><h2>${esc(t.example.title)}</h2>${art(t.id, 'example')}<pre class="example">${esc(t.example.text)}</pre></section>` : ''}
           ${(t.tries || []).map((x, k) => `<section class="card block try" data-try="${k}">
             <span class="label u">Try it</span><h2>${esc(x.title)}</h2><p class="sub">${esc(x.intro)}</p>
@@ -602,7 +602,7 @@ table.progress tr.on{background:var(--accent-soft)}
     }
   }
 
-  // ---- Classes: the same sign-in, classes and roster as CyberTeaches Academy (academy/cloud.js). ----
+  // ---- Classes: the same sign-in, classes and roster as CyberTeaches Code Lab (academy/cloud.js). ----
   // A signed-in student's written work is saved to their own record (users/{uid}.courses[WKEY]).
   // If they are in a class, their finished lessons and written work are also copied to the class roster
   // (classes/{code}/students/{uid}.appBuilder), which only that student and the class's teacher can read.
@@ -706,7 +706,7 @@ table.progress tr.on{background:var(--accent-soft)}
         try {
           const cls = await Cloud.findClass(code);
           if (!cls) return msg('joinMsg', 'No class has that code. Check it with your teacher.', true);
-          // joinClass also saves Academy stars, so pass along what the account already has.
+          // joinClass also saves Code Lab stars, so pass along what the account already has.
           const p = Cloud.profile || {};
           await Cloud.joinClass(cls, { progress: p.progress || {}, bonus: p.bonus || {}, programs: p.programs || '{}' });
           await syncNow();
