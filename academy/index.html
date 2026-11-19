@@ -344,7 +344,7 @@ body{border-top:8px solid var(--lv,var(--accent))}
 </div>
 <div id="modal"></div>
 
-<script src="course.js?v=14"></script>
+<script src="course.js?v=15"></script>
 <script src="firebase-config.js"></script>
 <script src="cloud.js?v=19"></script>
 <script src="sound.js?v=1"></script>
@@ -430,17 +430,22 @@ const guestLocked = unit => !!Cloud && !Cloud.user && unit !== FREE_UNIT;
 const isLocked = unit => lockedUnits.has(unit) || guestLocked(unit);
 const nextLevel = ()=>{ const o=myLevels(); return (o.find(l=>!progress[l.n] && !isLocked(l.unit)) || o.find(l=>!isLocked(l.unit)) || o[o.length-1]).n };
 const LOCK_ICO='<svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" style="vertical-align:-2px"><rect x="5" y="10" width="14" height="11" rx="2" fill="currentColor"/><path d="M8 10V7a4 4 0 0 1 8 0v3" stroke="currentColor" stroke-width="2.2" fill="none"/></svg>';
-// A review (study guide + quiz) card after its last lesson. Teachers lock it like a lesson (classes/{code}.locked holds r.id).
-function reviewCard(r){
-  const lockedR=isLocked(r.id), guestR=guestLocked(r.id), sc=(((Cloud&&Cloud.profile)||{}).review||{})['u'+r.n];
-  const card=h('article','unit review'+(lockedR?' locked teacher-locked':''));
-  const status=guestR?'Sign in to unlock':lockedR?'Locked by your teacher':sc?`Your best quiz score: ${sc.best}/${sc.total}`:'Quiz not taken yet';
-  card.innerHTML=`<div class="unit-num" style="background:${lockedR?'':r.color}">${lockedR?LOCK_ICO:'📘'}</div>
-    <div><span class="label">Lessons ${r.lessons} · Review · ${status}</span><h2 style="margin-top:4px">${r.name}</h2><p class="concept">${r.blurb}</p>
-    <div class="hero-actions" style="margin:0">${lockedR?'':`<a class="btn" href="${r.path}">📖 Study guide</a><a class="btn primary" href="${r.path}quiz.html">✏️ Take the quiz</a>`}</div></div>`;
-  if(lockedR){ card.style.cursor='pointer'; card.onclick=()=> guestR ? signInMsg(r.id)
-    : showMsg('Review locked', `<p>${LOCK_ICO} Your teacher has locked the <b>${r.name}</b> for now. Ask your teacher when it opens.</p>`) }
-  return card;
+// After its last lesson, a review shows as two cards: the study guide, then the quiz. The teacher locks each one separately
+// (classes/{code}.locked). The quiz starts locked: it opens only when the teacher adds r.quizId to classes/{code}.unlocked.
+function reviewCards(r){
+  const sc=(((Cloud&&Cloud.profile)||{}).review||{})['u'+r.n];
+  const one=(id, icon, title, status, blurb, href, btn, lockedWhat)=>{
+    const L=isLocked(id), guest=guestLocked(id), card=h('article','unit review'+(L?' locked teacher-locked':''));
+    card.innerHTML=`<div class="unit-num" style="background:${L?'':r.color}">${L?LOCK_ICO:icon}</div>
+      <div><span class="label">Lessons ${r.lessons} · ${guest?'Sign in to unlock':L?'Locked by your teacher':status}</span><h2 style="margin-top:4px">${title}</h2><p class="concept">${blurb}</p>
+      ${L?'':`<div class="hero-actions" style="margin:0">${btn}</div>`}</div>`;
+    if(L){ card.style.cursor='pointer'; card.onclick=()=> guest ? signInMsg(id)
+      : showMsg(lockedWhat+' locked', `<p>${LOCK_ICO} Your teacher has locked the <b>${title}</b> for now. ${id===r.quizId?'Study the study guide first. Your teacher will open the quiz when it is time.':'Ask your teacher when it opens.'}</p>`) }
+    return card };
+  const base=r.name.replace(/ review$/,'');
+  return [
+    one(r.guideId, '📖', base+' study guide', 'Study guide', r.guideBlurb, r.path, `<a class="btn primary" href="${r.path}">📖 Open the study guide</a>`, 'Study guide'),
+    one(r.quizId, '✏️', base+' quiz', sc?`Your best score: ${sc.best}/${sc.total}`:'Not taken yet', r.quizBlurb, r.path+'quiz.html', `<a class="btn primary" href="${r.path}quiz.html">✏️ Take the quiz</a>`, 'Quiz') ];
 }
 function lockedMsg(unit){ if(guestLocked(unit)) return signInMsg(unit); showMsg('Lesson locked', `<p>${LOCK_ICO} Your teacher has locked <b>Lesson ${unit}</b> for now. Pick a lesson that is open, or ask your teacher.</p>`) }
 
@@ -698,7 +703,7 @@ function showHome(){
     });
     if(guestU){ card.style.cursor='pointer'; card.title='Sign in to unlock'; card.onclick=()=>signInMsg(u.n) }
     units.appendChild(card);
-    REVIEWS.filter(r=>r.after===u.n).forEach(r=>units.appendChild(reviewCard(r)));
+    REVIEWS.filter(r=>r.after===u.n).forEach(r=>reviewCards(r).forEach(c=>units.appendChild(c)));
   });
   UPCOMING.forEach((u,i)=>{
     const card=h('article','unit locked');
@@ -1230,7 +1235,9 @@ function watchLocks(code){
   levelByTeacher=true;
   const ref=Cloud.db.collection('classes').doc(code);
   const fromData=d=>{ if(watchedCode!==code) return; d=d||{};
-    apply(d.locked, (d.levels||{})[Cloud.user&&Cloud.user.uid] || d.level || DEFAULT_LEVEL) };
+    // Review quizzes start locked: they count as locked unless the teacher put them in d.unlocked.
+    const open=(d.unlocked||[]).map(Number), quizLocks=REVIEWS.map(r=>r.quizId).filter(id=>!open.includes(id));
+    apply([...(d.locked||[]), ...quizLocks], (d.levels||{})[Cloud.user&&Cloud.user.uid] || d.level || DEFAULT_LEVEL) };
   const live=ref.onSnapshot(s=>fromData(s.exists?s.data():{}), e=>console.error(e));
   // School filters can stall the live stream, so also ask the server with a plain HTTPS request
   // right away, every 3 minutes, and whenever the tab comes back into view (kept rare: the free plan

@@ -45,6 +45,8 @@
   <section class="card"><h2>Quiz tips</h2><ul class="tips" id="tips"></ul>
     <div class="submitbar noprint" style="justify-content:flex-start;margin:14px 0 0"><a class="btn primary big" href="quiz.html">I'm ready. Take the quiz →</a></div></section>
 </div>
+<script src="../../firebase-config.js"></script>
+<script src="../../cloud.js?v=19"></script>
 <script src="../../resources/resources.js"></script>
 <script src="data.js?v=2"></script>
 <script src="../review.js?v=1"></script>
@@ -63,5 +65,12 @@ drawBoards();
 $('printBtn').onclick = () => { document.body.classList.remove('show-key'); print() };
 $('printKey').onclick = () => { document.body.classList.add('show-key'); document.querySelectorAll('details.sol').forEach(d => d.open = true); print() };
 addEventListener('afterprint', () => document.body.classList.remove('show-key'));
+// The teacher can lock the study guide for a class (classes/{code}.locked holds 100 + unit; 200 + unit is the quiz).
+if (window.Cloud) { let checked = false; Cloud.onChange(C => {
+  const code = C.ready && C.user && C.profile && C.profile.classCode; if (!code || checked) return; checked = true;
+  C.findClass(code).then(c => { if (!c || !(c.locked || []).map(Number).includes(100 + R.unit)) return;
+    document.querySelectorAll('.sheet > section:not(.cover), #printBtn, #printKey').forEach(e => e.hidden = true);
+    document.querySelector('.cover').insertAdjacentHTML('beforeend', `<div class="signin warn2">🔒 Your teacher has locked the <b>study guide</b> of the ${R.name} for your class for now. Ask your teacher when it opens. <a href="../../">Back to the Academy</a></div>`);
+  }).catch(e => console.error(e)) }) }
 </script>
 </body></html>
