@@ -132,7 +132,7 @@
         const h = w.hero, nx = h.x + h.dir, k = key(nx, h.y);
         if(nx < 0 || nx >= w.W) return 'edge';
         if(S(nx, h.y)) return 'wall';
-        if(w.guards[k]) return 'guardian';
+        if(w.guards[k]) return w.guards[k].warrior ? 'guard' : 'guardian';
         if(w.gates[k]) return 'gate';
         if(w.spikes[k]) return 'spikes';
         if(!S(nx, h.y + 1) && (h.y + 1 >= w.H || !S(nx, h.y + 2))) return h.y + 1 >= w.H || !anyBelow(nx, h.y) ? 'pit' : 'drop';
@@ -204,6 +204,12 @@
       else { console.error(e); result = {result: 'error', msg: 'Something went wrong: ' + e.message} }
     }
     if(result.result === 'error' && events.length > 1) result.partial = true;
+    // A misspelled sensor word ('Pit', 'gaurd') is never equal, so the if silently does nothing. Point it out.
+    if(result.result === 'fail' || result.result === 'lose'){
+      const WORDS = ['pit', 'drop', 'wall', 'spikes', 'guard', 'guardian', 'gate', 'door', 'floor', 'edge', 'gem', 'key', 'potion'];
+      const bad = [...source.matchAll(/(?:==|!=)\s*(['"])([^'"\n]*)\1|(['"])([^'"\n]*)\3\s*(?:==|!=)/g)].map(m => m[2] != null ? m[2] : m[4]).find(q => q && !WORDS.includes(q) && /^[A-Za-z ]+$/.test(q));
+      if(bad){ const c = PyRun.closest && PyRun.closest(bad.toLowerCase().trim(), WORDS); result.msg += ' Check the word \'' + bad + '\': hero.ahead() and hero.here() never say that.' + (c ? ' Did you mean \'' + c + '\'?' : ' They say words like \'pit\', \'wall\', \'guard\' or \'gem\'.') }
+    }
     return {events, result, prints, lines: PyRun.countLines(source)};
   };
 
