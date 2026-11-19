@@ -54,8 +54,8 @@
 <script src="../../firebase-config.js"></script>
 <script src="../../cloud.js?v=21"></script>
 <script src="../../resources/resources.js"></script>
-<script src="data.js?v=4"></script>
-<script src="../review.js?v=4"></script>
+<script src="data.js?v=5"></script>
+<script src="../review.js?v=5"></script>
 <script>
 const R = REVIEW, V = Review, $ = id => document.getElementById(id);
 $('recap').innerHTML = R.recap.map(r => `<div class="row"><div class="ln${r.n > 3 ? ' u' : ''}">L${r.n}</div><div><h3>${r.title}</h3><p>${r.idea}</p></div>${V.prog(r.p)}</div>`).join('');

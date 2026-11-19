@@ -24,12 +24,14 @@
     const name = q.id || `${mode}${i}`;
     const pic = (q.map ? board(q.map, q.dir, q.map[0].length > 9 ? 34 : 40) : '') + (q.prog ? prog(q.prog) : '');
     const inputs = mode !== 'study';
+    // q.order shows the answer choices in another order (a list of option numbers); each radio keeps its option number as its value.
+    const ord = q.opts ? (q.order || q.opts.map((o, k) => k)) : [];
     const answer = q.kind === 'num'
       ? (inputs ? `<label class="numans">Answer: <input type="number" inputmode="numeric" min="0" name="${name}" aria-label="Answer for question ${i + 1}"></label>` : '<div class="numans">Answer: <span class="gap"></span></div>')
-      : `<div class="opts">${q.opts.map((o, k) => inputs
-          ? `<label class="opt"><input type="radio" name="${name}" value="${k}"><b class="let">${L[k]}</b>${opt(o)}</label>`
-          : `<div class="opt"><b class="let">${L[k]}</b>${opt(o)}</div>`).join('')}</div>`;
-    const right = q.kind === 'num' ? `<b>${q.a}</b>` : `<b>${L[q.a]}</b>`;
+      : `<div class="opts">${ord.map((k, pos) => inputs
+          ? `<label class="opt"><input type="radio" name="${name}" value="${k}"><b class="let">${L[pos]}</b>${opt(q.opts[k])}</label>`
+          : `<div class="opt"><b class="let">${L[pos]}</b>${opt(q.opts[k])}</div>`).join('')}</div>`;
+    const right = q.kind === 'num' ? `<b>${q.a}</b>` : `<b>${L[ord.indexOf(q.a)]}</b>`;
     return `<div class="q" id="${name}" data-i="${i}"${q.id ? ` data-id="${q.id}"` : ''}><div class="qn">${i + 1}</div><div class="qb">
       <p class="qt">${q.q} ${q.lesson ? lessonTag(q.lesson) : ''}${q.pts ? `<span class="pts">${q.pts} points</span>` : ''}</p>${pic ? `<div class="pic">${pic}</div>` : ''}${answer}
       ${mode === 'study' ? `<details class="sol"><summary>Check your answer</summary><p>Answer: ${right}. ${q.why}</p></details>`
@@ -58,7 +60,7 @@
       const right = it.a.map((x, k) => !!v && v[k] === x), n = right.filter(Boolean).length;
       el.querySelectorAll('select').forEach((x, k) => x.classList.add(right[k] ? 'right' : 'wrong'));
       html = (n === it.a.length ? '✓ All correct! ' : `${n ? '½ ' : '✗ '}You got ${n} of ${it.a.length} blanks. `) + `<b>+${pts(earned)}</b>. The answer${it.a.length > 1 ? 's are' : ' is'}: <b>${it.a.join('</b>, <b>')}</b>.`;
-    } else html = (earned ? '✓ Correct! ' : `✗ ${v === null || v === undefined ? 'No answer.' : 'Not quite.'} The answer is <b>${it.kind === 'num' ? it.a : L[it.a]}</b>. `) + `<b>+${pts(earned)}</b>. ${it.why || ''}`;
+    } else html = (earned ? '✓ Correct! ' : `✗ ${v === null || v === undefined ? 'No answer.' : 'Not quite.'} The answer is <b>${it.kind === 'num' ? it.a : L[it.order ? it.order.indexOf(it.a) : it.a]}</b>. `) + `<b>+${pts(earned)}</b>. ${it.why || ''}`;
     lock(el);
     el.classList.remove('ok', 'no', 'part'); el.classList.add(earned === it.pts ? 'ok' : earned ? 'part' : 'no');
     const fb = el.querySelector('.fb'); fb.hidden = false; fb.className = 'fb ' + (earned === it.pts ? 'ok' : earned ? 'part' : 'no'); fb.innerHTML = html;
@@ -96,5 +98,11 @@
     return {total, results: res};
   }
   const checkRow = pts => `<div class="checkrow noprint"><button class="btn sm primary check1" type="button">Check my answer</button><span class="pickmsg"></span></div>`;
-  window.Review = {parse, prog, board, blk, question, scored, checkRow, fillQuestion, read, write, earnedOf, lock, reveal, lessonTag, LETTERS: L};
+  // Shuffle that is the same every time for the same seed (so a student's quiz keeps its order when they reload).
+  function shuffler(seedText){
+    let h = 2166136261; for (const ch of String(seedText)) { h ^= ch.charCodeAt(0); h = Math.imul(h, 16777619) }
+    const rnd = () => { h = (h + 0x6D2B79F5) | 0; let t = Math.imul(h ^ (h >>> 15), 1 | h); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296 };
+    return list => { const a = list.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(rnd() * (i + 1)); [a[i], a[j]] = [a[j], a[i]] } return a };
+  }
+  window.Review = {parse, prog, board, blk, question, scored, checkRow, fillQuestion, read, write, earnedOf, lock, reveal, lessonTag, shuffler, LETTERS: L};
 })();
