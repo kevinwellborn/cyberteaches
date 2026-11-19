@@ -8,6 +8,8 @@
   <url><loc>https://cyberteaches.com/apcsp/</loc><lastmod>2026-11-19</lastmod></url>
   <url><loc>https://cyberteaches.com/apcsp/lessons/</loc><lastmod>2026-11-19</lastmod></url>
   <url><loc>https://cyberteaches.com/apcsp/exam/</loc><lastmod>2026-11-19</lastmod></url>
+  <url><loc>https://cyberteaches.com/apcsa/</loc><lastmod>2026-11-19</lastmod></url>
+  <url><loc>https://cyberteaches.com/apcsa/lessons/</loc><lastmod>2026-11-19</lastmod></url>
   <url><loc>https://cyberteaches.com/securityplus/</loc><lastmod>2026-11-19</lastmod></url>
   <url><loc>https://cyberteaches.com/securityplus/lessons/</loc><lastmod>2026-11-19</lastmod></url>
   <url><loc>https://cyberteaches.com/networking/</loc><lastmod>2026-11-19</lastmod></url>
@@ -83,6 +85,59 @@
   <url><loc>https://cyberteaches.com/apcsp/lessons/5-4-crowdsourcing/</loc><lastmod>2026-11-19</lastmod></url>
   <url><loc>https://cyberteaches.com/apcsp/lessons/5-5-legal-and-ethical-concerns/</loc><lastmod>2026-11-19</lastmod></url>
   <url><loc>https://cyberteaches.com/apcsp/lessons/5-6-safe-computing/</loc><lastmod>2026-11-19</lastmod></url>
+  <url><loc>https://cyberteaches.com/apcsa/lessons/1-1-introduction-to-algorithms-programming-and-compilers/</loc><lastmod>2026-11-19</lastmod></url>
+  <url><loc>https://cyberteaches.com/apcsa/lessons/1-2-variables-and-data-types/</loc><lastmod>2026-11-19</lastmod></url>
+  <url><loc>https://cyberteaches.com/apcsa/lessons/1-3-expressions-and-output/</loc><lastmod>2026-11-19</lastmod></url>
+  <url><loc>https://cyberteaches.com/apcsa/lessons/1-4-assignment-statements-and-input/</loc><lastmod>2026-11-19</lastmod></url>
+  <url><loc>https://cyberteaches.com/apcsa/lessons/1-5-casting-and-range-of-variables/</loc><lastmod>2026-11-19</lastmod></url>
+  <url><loc>https://cyberteaches.com/apcsa/lessons/1-6-compound-assignment-operators/</loc><lastmod>2026-11-19</lastmod></url>
+  <url><loc>https://cyberteaches.com/apcsa/lessons/1-7-application-program-interface-api-and-libraries/</loc><lastmod>2026-11-19</lastmod></url>
+  <url><loc>https://cyberteaches.com/apcsa/lessons/1-8-documentation-with-comments/</loc><lastmod>2026-11-19</lastmod></url>
+  <url><loc>https://cyberteaches.com/apcsa/lessons/1-9-method-signatures/</loc><lastmod>2026-11-19</lastmod></url>
+  <url><loc>https://cyberteaches.com/apcsa/lessons/1-10-calling-class-methods/</loc><lastmod>2026-11-19</lastmod></url>
+  <url><loc>https://cyberteaches.com/apcsa/lessons/1-11-math-class/</loc><lastmod>2026-11-19</lastmod></url>
+  <url><loc>https://cyberteaches.com/apcsa/lessons/1-12-objects-instances-of-classes/</loc><lastmod>2026-11-19</lastmod></url>
+  <url><loc>https://cyberteaches.com/apcsa/lessons/1-13-object-creation-and-storage-instantiation/</loc><lastmod>2026-11-19</lastmod></url>
+  <url><loc>https://cyberteaches.com/apcsa/lessons/1-14-calling-instance-methods/</loc><lastmod>2026-11-19</lastmod></url>
+  <url><loc>https://cyberteaches.com/apcsa/lessons/1-15-string-manipulation/</loc><lastmod>2026-11-19</lastmod></url>
+  <url><loc>https://cyberteaches.com/apcsa/lessons/2-1-algorithms-with-selection-and-repetition/</loc><lastmod>2026-11-19</lastmod></url>
+  <url><loc>https://cyberteaches.com/apcsa/lessons/2-2-boolean-expressions/</loc><lastmod>2026-11-19</lastmod></url>
+  <url><loc>https://cyberteaches.com/apcsa/lessons/2-3-if-statements/</loc><lastmod>2026-11-19</lastmod></url>
+  <url><loc>https://cyberteaches.com/apcsa/lessons/2-4-nested-if-statements/</loc><lastmod>2026-11-19</lastmod></url>
+  <url><loc>https://cyberteaches.com/apcsa/lessons/2-5-compound-boolean-expressions/</loc><lastmod>2026-11-19</lastmod></url>
+  <url><loc>https://cyberteaches.com/apcsa/lessons/2-6-comparing-boolean-expressions/</loc><lastmod>2026-11-19</lastmod></url>
+  <url><loc>https://cyberteaches.com/apcsa/lessons/2-7-while-loops/</loc><lastmod>2026-11-19</lastmod></url>
+  <url><loc>https://cyberteaches.com/apcsa/lessons/2-8-for-loops/</loc><lastmod>2026-11-19</lastmod></url>
+  <url><loc>https://cyberteaches.com/apcsa/lessons/2-9-implementing-selection-and-iteration-algorithms/</loc><lastmod>2026-11-19</lastmod></url>
+  <url><loc>https://cyberteaches.com/apcsa/lessons/2-10-implementing-string-algorithms/</loc><lastmod>2026-11-19</lastmod></url>
+  <url><loc>https://cyberteaches.com/apcsa/lessons/2-11-nested-iteration/</loc><lastmod>2026-11-19</lastmod></url>
+  <url><loc>https://cyberteaches.com/apcsa/lessons/2-12-informal-run-time-analysis/</loc><lastmod>2026-11-19</lastmod></url>
+  <url><loc>https://cyberteaches.com/apcsa/lessons/3-1-abstraction-and-program-design/</loc><lastmod>2026-11-19</lastmod></url>
+  <url><loc>https://cyberteaches.com/apcsa/lessons/3-2-impact-of-program-design/</loc><lastmod>2026-11-19</lastmod></url>
+  <url><loc>https://cyberteaches.com/apcsa/lessons/3-3-anatomy-of-a-class/</loc><lastmod>2026-11-19</lastmod></url>
+  <url><loc>https://cyberteaches.com/apcsa/lessons/3-4-constructors/</loc><lastmod>2026-11-19</lastmod></url>
+  <url><loc>https://cyberteaches.com/apcsa/lessons/3-5-methods-how-to-write-them/</loc><lastmod>2026-11-19</lastmod></url>
+  <url><loc>https://cyberteaches.com/apcsa/lessons/3-6-methods-passing-and-returning-references-of-an-object/</loc><lastmod>2026-11-19</lastmod></url>
+  <url><loc>https://cyberteaches.com/apcsa/lessons/3-7-class-variables-and-methods/</loc><lastmod>2026-11-19</lastmod></url>
+  <url><loc>https://cyberteaches.com/apcsa/lessons/3-8-scope-and-access/</loc><lastmod>2026-11-19</lastmod></url>
+  <url><loc>https://cyberteaches.com/apcsa/lessons/3-9-this-keyword/</loc><lastmod>2026-11-19</lastmod></url>
+  <url><loc>https://cyberteaches.com/apcsa/lessons/4-1-ethical-and-social-issues-around-data-collection/</loc><lastmod>2026-11-19</lastmod></url>
+  <url><loc>https://cyberteaches.com/apcsa/lessons/4-2-introduction-to-using-data-sets/</loc><lastmod>2026-11-19</lastmod></url>
+  <url><loc>https://cyberteaches.com/apcsa/lessons/4-3-array-creation-and-access/</loc><lastmod>2026-11-19</lastmod></url>
+  <url><loc>https://cyberteaches.com/apcsa/lessons/4-4-array-traversals/</loc><lastmod>2026-11-19</lastmod></url>
+  <url><loc>https://cyberteaches.com/apcsa/lessons/4-5-implementing-array-algorithms/</loc><lastmod>2026-11-19</lastmod></url>
+  <url><loc>https://cyberteaches.com/apcsa/lessons/4-6-using-text-files/</loc><lastmod>2026-11-19</lastmod></url>
+  <url><loc>https://cyberteaches.com/apcsa/lessons/4-7-wrapper-classes/</loc><lastmod>2026-11-19</lastmod></url>
+  <url><loc>https://cyberteaches.com/apcsa/lessons/4-8-arraylist-methods/</loc><lastmod>2026-11-19</lastmod></url>
+  <url><loc>https://cyberteaches.com/apcsa/lessons/4-9-arraylist-traversals/</loc><lastmod>2026-11-19</lastmod></url>
+  <url><loc>https://cyberteaches.com/apcsa/lessons/4-10-implementing-arraylist-algorithms/</loc><lastmod>2026-11-19</lastmod></url>
+  <url><loc>https://cyberteaches.com/apcsa/lessons/4-11-2d-array-creation-and-access/</loc><lastmod>2026-11-19</lastmod></url>
+  <url><loc>https://cyberteaches.com/apcsa/lessons/4-12-2d-array-traversals/</loc><lastmod>2026-11-19</lastmod></url>
+  <url><loc>https://cyberteaches.com/apcsa/lessons/4-13-implementing-2d-array-algorithms/</loc><lastmod>2026-11-19</lastmod></url>
+  <url><loc>https://cyberteaches.com/apcsa/lessons/4-14-searching-algorithms/</loc><lastmod>2026-11-19</lastmod></url>
+  <url><loc>https://cyberteaches.com/apcsa/lessons/4-15-sorting-algorithms/</loc><lastmod>2026-11-19</lastmod></url>
+  <url><loc>https://cyberteaches.com/apcsa/lessons/4-16-recursion/</loc><lastmod>2026-11-19</lastmod></url>
+  <url><loc>https://cyberteaches.com/apcsa/lessons/4-17-recursive-searching-and-sorting/</loc><lastmod>2026-11-19</lastmod></url>
   <url><loc>https://cyberteaches.com/securityplus/lessons/1-1-security-concepts-and-controls/</loc><lastmod>2026-11-19</lastmod></url>
   <url><loc>https://cyberteaches.com/securityplus/lessons/1-2-change-management-and-security/</loc><lastmod>2026-11-19</lastmod></url>
   <url><loc>https://cyberteaches.com/securityplus/lessons/1-3-cryptography-and-pki/</loc><lastmod>2026-11-19</lastmod></url>

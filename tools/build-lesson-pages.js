@@ -14,6 +14,8 @@ const COURSES = [
     files: ['content.js', 'missions.js', 'questions.js', 'images.js'], practice: 'AP-style practice questions' },
   { dir: 'apcsp', name: 'AP Computer Science Principles', short: 'AP CSP', unit: 'Big Idea', units: 'Big Ideas',
     files: ['content.js', 'questions.js', 'labs.js', 'figures.js', 'images.js'], practice: 'AP-style practice questions' },
+  { dir: 'apcsa', name: 'AP Computer Science A', short: 'AP CSA', unit: 'Unit', units: 'Units',
+    files: ['content.js', 'questions.js', 'labs.js', 'figures.js'], practice: 'AP-style practice questions' },
   { dir: 'securityplus', name: 'CompTIA Security+ SY0-801', short: 'Security+', unit: 'Domain', units: 'Domains',
     files: ['content.js', 'questions.js', 'figures.js', 'images.js'], practice: 'Exam-style practice questions' },
   { dir: 'app-builder', name: 'App Builder: Design and Build Your Own App', short: 'App Builder', unit: 'Module', units: 'Modules',
@@ -110,7 +112,7 @@ function breadcrumbs(items) {
     itemListElement: items.map(([name, item], i) => ({ '@type': 'ListItem', position: i + 1, name, item })) };
 }
 
-const sitemap = ['', 'app-builder/', 'apcybersecurity/', 'apcsp/', 'apcsp/exam/', 'securityplus/', 'networking/', 'networking/exam-1/', 'networking/exam-2/', 'networking/lab-1/', 'networking/lab-2/', 'networking/lab-3/', 'networking/lab-4/', 'networking/syllabus/', 'networking/updates/', 'academy/', 'academy/review/unit-1/', 'academy/review/unit-1/quiz.html', 'congressional-award-tracker/', 'award-tracker/'];
+const sitemap = ['', 'app-builder/', 'apcybersecurity/', 'apcsp/', 'apcsp/exam/', 'apcsa/', 'securityplus/', 'networking/', 'networking/exam-1/', 'networking/exam-2/', 'networking/lab-1/', 'networking/lab-2/', 'networking/lab-3/', 'networking/lab-4/', 'networking/syllabus/', 'networking/updates/', 'academy/', 'academy/review/unit-1/', 'academy/review/unit-1/quiz.html', 'congressional-award-tracker/', 'award-tracker/'];
 
 for (const course of COURSES) {
   const w = load(course);
