@@ -129,3 +129,7 @@ body.show-key .key{display:block}
 .print-only{display:none}
 @media print{.print-only{display:inline}}
 [hidden]{display:none!important}
+/* study guide practice: check one question at a time */
+.checkrow{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:10px}
+.pickmsg{color:#7A1D12;font-weight:700;font-size:14px}
+.tally{display:inline-block;margin:0 0 6px;font-weight:700;color:var(--muted)}

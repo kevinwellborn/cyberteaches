@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Atkinson+Hyperlegible:wght@400;700&family=JetBrains+Mono:wght@400;600&display=swap">
 <link rel="stylesheet" href="../../resources/resources.css">
-<link rel="stylesheet" href="../review.css?v=3">
+<link rel="stylesheet" href="../review.css?v=4">
 <style>body.gate .sheet > section:not(.cover){visibility:hidden}</style>
 </head><body class="gate">
 <div class="sheet">
@@ -40,8 +40,8 @@
   <section class="card"><h2>5. Say it and write it</h2><p class="sub">Use the word bank to finish each sentence. Say it to a partner, then write it.</p>
     <div class="bank" id="fbank"></div><ol class="frames" id="frames"></ol></section>
 
-  <section class="card pagebreak"><h2>6. Sample questions</h2><p class="sub">Try each question first. Then open <b>Check your answer</b> to see the answer and why.</p>
-    <div id="samples"></div></section>
+  <section class="card pagebreak"><h2>6. Sample questions</h2><p class="sub">Pick or type your answer first. Then press <b>Check my answer</b> to see if you are right, the right answer and why.</p>
+    <span class="tally noprint" id="tally" aria-live="polite"></span><div id="samples"></div></section>
 
   <section class="card"><h2>Quiz tips</h2><ul class="tips" id="tips"></ul>
     <div class="submitbar noprint" style="justify-content:flex-start;margin:14px 0 0"><a class="btn primary big" href="quiz.html">I'm ready. Take the quiz →</a></div></section>
@@ -50,7 +50,7 @@
 <script src="../../cloud.js?v=19"></script>
 <script src="../../resources/resources.js"></script>
 <script src="data.js?v=2"></script>
-<script src="../review.js?v=1"></script>
+<script src="../review.js?v=2"></script>
 <script>
 const R = REVIEW, V = Review, $ = id => document.getElementById(id);
 $('recap').innerHTML = R.recap.map(r => `<div class="row"><div class="ln${r.n > 3 ? ' u' : ''}">L${r.n}</div><div><h3>${r.title}</h3><p>${r.idea}</p></div>${V.prog(r.p)}</div>`).join('');
@@ -60,7 +60,8 @@ $('words').innerHTML = R.vocab.map(([w, m, es, pic]) => `<tr><td>${w}</td><td>${
 $('ideas').innerHTML = R.ideas.map(d => `<div class="idea"><h3>${d.title}</h3><p>${d.text}</p><div class="show">${d.map ? V.board(d.map, d.dir, 30) : ''}${V.prog(d.p)}</div><p class="note">${d.note}</p></div>`).join('');
 $('fbank').innerHTML = '<b>Word bank:</b> ' + ['moves forward', 'collects', 'turns', 'pattern', 'repeat', 'until', 'flag', 'how many times', 'crashes'].map(w => `<span>${w}</span>`).join('');
 $('frames').innerHTML = R.frames.map(([f, eg]) => `<li>${f.replace(/____/g, '<span class="gap" style="display:inline-block;min-width:1.4in;border-bottom:1.5px solid var(--ink)"></span>')}<span class="eg noprint">e.g. ${eg}</span></li>`).join('');
-$('samples').innerHTML = R.samples.map((q, i) => V.question(q, i, 'study')).join('');
+$('samples').innerHTML = R.samples.map((q, i) => V.question(q, i, 'practice')).join('');
+V.practice($('samples'), R.samples, (right, checked) => { $('tally').textContent = `Checked ${checked} of ${R.samples.length} · ${right} right` });
 $('tips').innerHTML = R.tips.map(t => `<li>${t}</li>`).join('');
 drawBoards();
 $('printBtn').onclick = () => { document.body.classList.remove('show-key'); print() };
