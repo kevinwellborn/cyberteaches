@@ -19,9 +19,9 @@
   const L = 'ABCD';
   const lessonTag = n => `<span class="ltag l${n}">Lesson ${n}</span>`;
   // One question. mode 'study' (answer in a details box), 'quiz' (radio buttons / number box, checked all at once at the end)
-  // or 'practice' (radio buttons / number box with its own Check my answer button; the answer shows only after the student answers).
+  // or 'practice' (radio buttons / number box with its own Check my answer button; the answer shows only after the student answers, see scored()).
   function question(q, i, mode){
-    const name = `${mode}${i}`;
+    const name = q.id || `${mode}${i}`;
     const pic = (q.map ? board(q.map, q.dir, q.map[0].length > 9 ? 34 : 40) : '') + (q.prog ? prog(q.prog) : '');
     const inputs = mode !== 'study';
     const answer = q.kind === 'num'
@@ -30,34 +30,61 @@
           ? `<label class="opt"><input type="radio" name="${name}" value="${k}"><b class="let">${L[k]}</b>${opt(o)}</label>`
           : `<div class="opt"><b class="let">${L[k]}</b>${opt(o)}</div>`).join('')}</div>`;
     const right = q.kind === 'num' ? `<b>${q.a}</b>` : `<b>${L[q.a]}</b>`;
-    return `<div class="q" id="${name}" data-i="${i}"><div class="qn">${i + 1}</div><div class="qb">
-      <p class="qt">${q.q} ${lessonTag(q.lesson)}</p>${pic ? `<div class="pic">${pic}</div>` : ''}${answer}
+    return `<div class="q" id="${name}" data-i="${i}"${q.id ? ` data-id="${q.id}"` : ''}><div class="qn">${i + 1}</div><div class="qb">
+      <p class="qt">${q.q} ${q.lesson ? lessonTag(q.lesson) : ''}${q.pts ? `<span class="pts">${q.pts} points</span>` : ''}</p>${pic ? `<div class="pic">${pic}</div>` : ''}${answer}
       ${mode === 'study' ? `<details class="sol"><summary>Check your answer</summary><p>Answer: ${right}. ${q.why}</p></details>`
-        : mode === 'practice' ? `<div class="checkrow noprint"><button class="btn sm check1" type="button">Check my answer</button><span class="pickmsg"></span></div><div class="fb" hidden></div><p class="key">Answer: ${right}. ${q.why}</p>`
+        : mode === 'practice' ? `${checkRow()}<div class="fb" hidden></div><p class="key">Answer: ${right}. ${q.why}</p>`
         : `<div class="fb" hidden></div><p class="key">Answer: ${right}. ${q.why}</p>`}
     </div></div>`;
   }
-  // Practice questions: the student answers first, then Check my answer shows right or wrong, the right answer and why.
-  // onChange(right, checked) reports the running tally.
-  function practice(root, qs, onChange){
-    const done = {};
-    const value = (el, i) => { const q = qs[i];
-      if (q.kind === 'num') { const f = el.querySelector('input[type=number]'); return f.value.trim() === '' ? null : +f.value }
+  // Scored practice (study guide): the student answers first, then Check my answer shows the points, the right answer and why.
+  // Only the first answer counts: after checking, the question is locked. Answers are kept in this browser (storeKey),
+  // so a reload keeps them. items: [{id, kind 'mc'|'num'|'fill', a, pts, why}], each drawn in root as an element with data-id.
+  // onUpdate({earned, done, count, total, restoring}) runs after each check.
+  function scored({root, items, storeKey, onUpdate}){
+    let saved = {}; try { saved = JSON.parse(localStorage.getItem(storeKey) || '{}') || {} } catch (e) {}
+    const res = {}, total = items.reduce((t, it) => t + it.pts, 0);
+    const read = (el, it) => {
+      if (it.kind === 'num') { const f = el.querySelector('input[type=number]'); return f.value.trim() === '' ? null : +f.value }
+      if (it.kind === 'fill') { const v = [...el.querySelectorAll('select')].map(x => x.value); return v.some(x => !x) ? null : v }
       const c = el.querySelector('input[type=radio]:checked'); return c ? +c.value : null };
-    root.querySelectorAll('.q').forEach(el => {
-      const i = +el.dataset.i, q = qs[i], fb = el.querySelector('.fb'), msg = el.querySelector('.pickmsg');
-      const check = () => { const a = value(el, i);
-        if (a === null) { msg.textContent = q.kind === 'num' ? 'Type a number first.' : 'Pick an answer first.'; return }
-        msg.textContent = ''; const ok = a === q.a; done[i] = ok;
-        el.classList.remove('ok', 'no'); el.classList.add(ok ? 'ok' : 'no');
-        fb.hidden = false; fb.className = 'fb ' + (ok ? 'ok' : 'no');
-        fb.innerHTML = (ok ? '✓ Correct! ' : `✗ Not quite. The answer is <b>${q.kind === 'num' ? q.a : L[q.a]}</b>. `) + q.why;
-        el.querySelector('.check1').textContent = 'Check again';
-        if (onChange) onChange(Object.values(done).filter(Boolean).length, Object.keys(done).length) };
+    const write = (el, it, v) => {
+      if (it.kind === 'num') el.querySelector('input[type=number]').value = v;
+      else if (it.kind === 'fill') el.querySelectorAll('select').forEach((x, k) => { x.value = v[k] });
+      else { const r = el.querySelector(`input[type=radio][value="${v}"]`); if (r) r.checked = true } };
+    const pts = n => `${n} point${n === 1 ? '' : 's'}`;
+    const report = restoring => onUpdate && onUpdate({earned: Object.values(res).reduce((t, x) => t + x, 0), done: Object.keys(res).length, count: items.length, total, restoring});
+    const finish = (el, it, v) => {
+      let earned, html;
+      if (it.kind === 'fill') {
+        const right = v.map((x, k) => x === it.a[k]), n = right.filter(Boolean).length; earned = n * it.pts / it.a.length;
+        el.querySelectorAll('select').forEach((x, k) => x.classList.add(right[k] ? 'right' : 'wrong'));
+        html = (n === it.a.length ? '✓ All correct! ' : `${n ? '½ ' : '✗ '}You got ${n} of ${it.a.length} blanks. `) + `<b>+${pts(earned)}</b>. The answer${it.a.length > 1 ? 's are' : ' is'}: <b>${it.a.join('</b>, <b>')}</b>.`;
+      } else {
+        earned = v === it.a ? it.pts : 0;
+        html = (earned ? '✓ Correct! ' : `✗ Not quite. The answer is <b>${it.kind === 'num' ? it.a : L[it.a]}</b>. `) + `<b>+${pts(earned)}</b>. ${it.why || ''}`;
+      }
+      res[it.id] = earned;
+      el.querySelectorAll('input, select').forEach(f => { f.disabled = true });
+      const row = el.querySelector('.checkrow'); if (row) row.remove();
+      el.classList.remove('ok', 'no', 'part'); el.classList.add(earned === it.pts ? 'ok' : earned ? 'part' : 'no');
+      const fb = el.querySelector('.fb'); fb.hidden = false; fb.className = 'fb ' + (earned === it.pts ? 'ok' : earned ? 'part' : 'no'); fb.innerHTML = html;
+    };
+    items.forEach(it => {
+      const el = root.querySelector(`[data-id="${it.id}"]`); if (!el) return;
+      const msg = el.querySelector('.pickmsg');
+      const check = () => { if (res[it.id] !== undefined) return; const v = read(el, it);
+        if (v === null) { msg.textContent = it.kind === 'num' ? 'Type a number first.' : it.kind === 'fill' ? 'Fill every blank first.' : 'Pick an answer first.'; return }
+        saved[it.id] = v; try { localStorage.setItem(storeKey, JSON.stringify(saved)) } catch (e) {}
+        finish(el, it, v); report(false) };
       el.querySelector('.check1').onclick = check;
-      el.querySelectorAll('input').forEach(f => { f.addEventListener('input', () => { msg.textContent = '' });
+      el.querySelectorAll('input, select').forEach(f => { f.addEventListener('input', () => { msg.textContent = '' });
         if (f.type === 'number') f.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); check() } }) });
+      if (saved[it.id] !== undefined && saved[it.id] !== null) { write(el, it, saved[it.id]); finish(el, it, saved[it.id]) }
     });
+    report(true);
+    return {total, results: res};
   }
-  window.Review = {parse, prog, board, blk, question, practice, lessonTag, LETTERS: L};
+  const checkRow = pts => `<div class="checkrow noprint"><button class="btn sm primary check1" type="button">Check my answer</button><span class="pickmsg"></span></div>`;
+  window.Review = {parse, prog, board, blk, question, scored, checkRow, lessonTag, LETTERS: L};
 })();
