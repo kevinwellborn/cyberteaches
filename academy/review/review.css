@@ -128,3 +128,4 @@ body.show-key .key{display:block}
 }
 .print-only{display:none}
 @media print{.print-only{display:inline}}
+[hidden]{display:none!important}

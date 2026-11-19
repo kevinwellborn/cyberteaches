@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Atkinson+Hyperlegible:wght@400;700&family=JetBrains+Mono:wght@400;600&display=swap">
 <link rel="stylesheet" href="../../resources/resources.css">
-<link rel="stylesheet" href="../review.css?v=2">
+<link rel="stylesheet" href="../review.css?v=3">
 </head><body>
 <div class="sheet">
   <div class="toolbar">
@@ -28,10 +28,11 @@
   </section>
 
   <section class="card">
-    <div class="bank"><b>Blocks:</b> <span><b class="code">F</b> move forward</span><span><b class="code">L</b> turn left</span><span><b class="code">R</b> turn right</span><span><b class="code">C</b> collect crystal</span></div>
-    <div class="bank" id="wbank"></div>
+    <p class="muted" id="waitq">Loading the quiz…</p>
+    <div class="bank" hidden><b>Blocks:</b> <span><b class="code">F</b> move forward</span><span><b class="code">L</b> turn left</span><span><b class="code">R</b> turn right</span><span><b class="code">C</b> collect crystal</span></div>
+    <div class="bank" id="wbank" hidden></div>
     <form id="quiz" autocomplete="off"></form>
-    <div class="submitbar"><span class="warn" id="warn"></span><button class="btn primary big" id="check" type="button">Check my answers</button></div>
+    <div class="submitbar" hidden><span class="warn" id="warn"></span><button class="btn primary big" id="check" type="button">Check my answers</button></div>
   </section>
 </div>
 <script src="../../firebase-config.js"></script>
@@ -43,8 +44,16 @@
 const R = REVIEW, V = Review, $ = id => document.getElementById(id), Q = R.quiz;
 $('qcount').textContent = Q.length;
 $('wbank').innerHTML = '<b>Word bank:</b> ' + R.vocab.slice(0, 10).map(([w, , es]) => `<span>${w} <small>${es}</small></span>`).join('');
-$('quiz').innerHTML = Q.map((q, i) => V.question(q, i, 'quiz')).join('');
-drawBoards();
+// The questions are only put on the page once we know this student may see them (see access() below),
+// so a locked quiz never flashes on screen.
+let shown = false;
+function showQuiz(){
+  if (shown) return; shown = true; $('waitq').hidden = true;
+  $('quiz').innerHTML = Q.map((q, i) => V.question(q, i, 'quiz')).join('');
+  document.querySelectorAll('.bank, .submitbar').forEach(e => e.hidden = false);
+  drawBoards();
+}
+function hideQuiz(msg){ $('waitq').hidden = false; $('waitq').innerHTML = msg }
 
 const answerOf = i => { const q = Q[i], f = $('quiz').elements['quiz' + i];
   if (q.kind === 'num') return f.value.trim() === '' ? null : +f.value;
@@ -79,33 +88,52 @@ $('check').onclick = () => {
 
 // Signed-in students: the score goes to their record and their class roster, where the Teacher Dashboard shows it.
 const C = window.Cloud;
-// In a class the quiz starts locked: it opens when the teacher adds 200 + unit to classes/{code}.unlocked (Teacher Dashboard).
-let lockChecked = false, lockedNow = false;
-function checkLock(code){
-  if (lockChecked) return; lockChecked = true;
-  C.findClass(code).then(c => { if (!c || (c.unlocked || []).map(Number).includes(200 + R.unit)) return;
-    lockedNow = true; document.querySelectorAll('#quiz, .submitbar, .bank').forEach(e => e.hidden = true);
-    const box = $('signin'); box.className = 'signin noprint warn2';
-    box.innerHTML = `🔒 This quiz is locked for your class for now. Study the <a href="index.html">study guide</a> first. Your teacher will open the quiz when it is time. <a href="../../">Back to the Academy</a>`;
-  }).catch(e => console.error(e));
+// Who may see the questions:
+// - in a class: only when the teacher has unlocked the quiz (200 + unit in classes/{code}.unlocked, Teacher Dashboard);
+// - signed in without a class (teachers, practice): yes; not signed in: sign in first, so signing out can't skip a lock.
+let checking = false, decided = false;
+async function classOpen(code){
+  for (let i = 0; i < 3; i++) {
+    try { const c = await C.findClass(code); if (c) return (c.unlocked || []).map(Number).includes(200 + R.unit) } catch (e) { console.error(e) }
+    try { const c = await C.restGet('classes/' + code); if (c) return (c.unlocked || []).map(Number).includes(200 + R.unit) } catch (e) { console.error(e) }
+    await new Promise(r => setTimeout(r, 1500 * (i + 1)));
+  }
+  throw new Error('network');
 }
-function signinBox(){
-  const box = $('signin'); if (!box || lockedNow) return;
-  if (!C || !C.enabled) { box.hidden = true; return }
+function access(){
+  const box = $('signin'); if (decided) return;
+  if (!C || !C.enabled) { box.hidden = true; decided = true; showQuiz(); return }
   if (!C.ready) { box.className = 'signin noprint'; box.textContent = 'Checking if you are signed in…'; return }
   const u = C.user, cls = C.profile && C.profile.classCode;
   if (u && cls) {
-    box.className = 'signin noprint ok';
-    box.innerHTML = `✓ Signed in as <b>${esc(u.displayName || 'Student')}</b> · class <b>${esc(C.profile.className || cls)}</b>. Your score goes to your teacher when you check your answers.`;
-    if (!$('name').value) $('name').value = u.displayName || '';
-    if (!$('klass').value) $('klass').value = C.profile.className || cls;
-    checkLock(cls);
+    if (checking) return; checking = true;
+    box.className = 'signin noprint'; box.textContent = 'Checking if your teacher has opened this quiz…'; hideQuiz('Checking if your teacher has opened this quiz…');
+    classOpen(cls).then(open => { decided = true;
+      if (!open) {
+        box.className = 'signin noprint warn2';
+        box.innerHTML = `🔒 This quiz is locked for your class for now. Study the <a href="index.html">study guide</a> first. Your teacher will open the quiz when it is time. <a href="../../">Back to the Academy</a>`;
+        hideQuiz('The questions appear here when your teacher opens the quiz.'); return }
+      box.className = 'signin noprint ok';
+      box.innerHTML = `✓ Signed in as <b>${esc(u.displayName || 'Student')}</b> · class <b>${esc(C.profile.className || cls)}</b>. Your score goes to your teacher when you check your answers.`;
+      if (!$('name').value) $('name').value = u.displayName || '';
+      if (!$('klass').value) $('klass').value = C.profile.className || cls;
+      showQuiz();
+    }, () => { checking = false; box.className = 'signin noprint warn2';
+      box.innerHTML = `Could not check if the quiz is open (the network may be slow). <button class="btn sm" type="button" id="retry">Try again</button>`;
+      $('retry').onclick = access });
+  } else if (u && C.profileFailed) {
+    box.className = 'signin noprint warn2';
+    box.innerHTML = `Could not load your account (the network may be slow). <button class="btn sm" type="button" id="retry">Reload</button>`;
+    hideQuiz('The questions appear here when your account loads.'); $('retry').onclick = () => location.reload();
   } else if (u) {
+    decided = true;
     box.className = 'signin noprint warn2';
     box.innerHTML = `You are signed in, but you have not joined a class. <a href="../../">Join your class on the Academy page</a>, then come back so your teacher sees your score.`;
+    showQuiz();
   } else {
     box.className = 'signin noprint warn2';
-    box.innerHTML = `<b>Not signed in.</b> Sign in first so your teacher sees your score. <button class="btn sm" type="button" id="gsign">Sign in with Google</button> Have a student login? <a href="../../">Sign in on the Academy page</a>, then come back. You can also take the quiz just for practice.`;
+    box.innerHTML = `<b>Sign in to take the quiz.</b> <button class="btn sm" type="button" id="gsign">Sign in with Google</button> Have a student login? <a href="../../">Sign in on the Academy page</a>, then come back.`;
+    hideQuiz('The questions appear here after you sign in.');
     $('gsign').onclick = () => C.signIn().catch(e => { box.insertAdjacentHTML('beforeend', `<br><span class="warn">${esc(e.message)}</span>`) });
   }
 }
@@ -118,7 +146,7 @@ async function sendScore(right, missed){
     el.innerHTML = `✓ Sent to your teacher · best score ${e.best} / ${e.total} · try ${e.tries}` + tail }
   catch (err) { console.error(err); el.innerHTML = `<span class="warn">Could not send your score (${esc(err.message)}). Show this screen to your teacher.</span>` + tail }
 }
-if (C) C.onChange(signinBox); else signinBox();
+if (C) C.onChange(access); else access();
 
 // Teachers open quiz.html?teacher=1 (linked from Teacher resources) to see and print the answer key.
 if (new URLSearchParams(location.search).has('teacher')) {
