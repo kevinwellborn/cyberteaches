@@ -94,6 +94,12 @@ body.show-key .key{display:block}
 .score p{margin:4px 0;color:var(--muted)}
 .submitbar{display:flex;gap:12px;align-items:center;flex-wrap:wrap;justify-content:center;margin:8px 0 20px}
 .warn{color:#7A1D12;font-weight:700}
+.signin{margin-top:14px;border-radius:10px;padding:10px 14px;font-size:15px;background:var(--panel-2);border:1px solid var(--line)}
+.signin.ok{background:#DDF2E6;border-color:#9FD6B6}
+.signin.warn2{background:#FBF0CC;border-color:#E7CF84}
+.signin a{color:inherit;font-weight:700}
+.btn.sm{padding:4px 10px;font-size:14px}
+.sent{font-size:13px}
 
 @media (max-width:640px){
   .ideas{grid-template-columns:1fr}

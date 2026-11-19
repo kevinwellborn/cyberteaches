@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Atkinson+Hyperlegible:wght@400;700&family=JetBrains+Mono:wght@400;600&display=swap">
 <link rel="stylesheet" href="../../resources/resources.css">
-<link rel="stylesheet" href="../review.css?v=1">
+<link rel="stylesheet" href="../review.css?v=2">
 </head><body>
 <div class="sheet">
   <div class="toolbar">
@@ -24,6 +24,7 @@
     <h1>Loops <em>quiz</em></h1>
     <p><b id="qcount"></b> questions. Pick one answer for each question, or type a number.<span class="screen-only"> Then press <b>Check my answers</b> at the bottom.</span><span class="print-only"> Circle the letter, or write the number on the line.</span></p>
     <div class="namebox"><label>Name<input id="name" autocomplete="name" placeholder="Type your name"></label><label>Class<input id="klass" placeholder="Period or class"></label></div>
+    <div class="signin noprint" id="signin" aria-live="polite"></div>
   </section>
 
   <section class="card">
@@ -33,8 +34,10 @@
     <div class="submitbar"><span class="warn" id="warn"></span><button class="btn primary big" id="check" type="button">Check my answers</button></div>
   </section>
 </div>
+<script src="../../firebase-config.js"></script>
+<script src="../../cloud.js?v=19"></script>
 <script src="../../resources/resources.js"></script>
-<script src="data.js?v=1"></script>
+<script src="data.js?v=2"></script>
 <script src="../review.js?v=1"></script>
 <script>
 const R = REVIEW, V = Review, $ = id => document.getElementById(id), Q = R.quiz;
@@ -46,7 +49,7 @@ drawBoards();
 const answerOf = i => { const q = Q[i], f = $('quiz').elements['quiz' + i];
   if (q.kind === 'num') return f.value.trim() === '' ? null : +f.value;
   const c = [...$('quiz').querySelectorAll(`input[name="quiz${i}"]`)].find(r => r.checked); return c ? +c.value : null };
-const esc = s => s.replace(/[&<>"]/g, c => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;'}[c]));
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;'}[c]));
 
 $('check').onclick = () => {
   const blank = Q.map((q, i) => answerOf(i) === null ? i + 1 : 0).filter(Boolean);
@@ -65,13 +68,46 @@ $('check').onclick = () => {
   $('score').innerHTML = `<span class="label">Your score${name ? ' · ' + esc(name) : ''}${klass ? ' · ' + esc(klass) : ''}</span>
     <div class="big">${right} / ${Q.length}</div><p><b>${pct}%</b> · ${msg}</p>
     ${review.length ? `<p>Review: ${review.join(', ')} in the <a href="index.html">study guide</a>.</p>` : ''}
-    <p style="font-size:13px">${new Date().toLocaleString()} · Show this screen to your teacher if they ask.</p>
+    <p class="sent" id="sent">${new Date().toLocaleString()} · Show this screen to your teacher if they ask.</p>
     <div class="submitbar" style="margin:12px 0 0"><button class="btn" type="button" id="again">Try again</button></div>`;
   $('score').classList.add('on'); $('warn').textContent = ''; delete $('check').dataset.sure;
   $('again').onclick = () => { $('quiz').reset(); $('score').classList.remove('on');
     document.querySelectorAll('.q').forEach(el => { el.classList.remove('ok', 'no'); el.querySelector('.fb').hidden = true }); scrollTo({top: 0, behavior: 'smooth'}) };
   scrollTo({top: 0, behavior: 'smooth'});
+  sendScore(right, Q.map((q, i) => answerOf(i) === q.a ? 0 : i + 1).filter(Boolean));
 };
+
+// Signed-in students: the score goes to their record and their class roster, where the Teacher Dashboard shows it.
+const C = window.Cloud;
+function signinBox(){
+  const box = $('signin'); if (!box) return;
+  if (!C || !C.enabled) { box.hidden = true; return }
+  if (!C.ready) { box.className = 'signin noprint'; box.textContent = 'Checking if you are signed in…'; return }
+  const u = C.user, cls = C.profile && C.profile.classCode;
+  if (u && cls) {
+    box.className = 'signin noprint ok';
+    box.innerHTML = `✓ Signed in as <b>${esc(u.displayName || 'Student')}</b> · class <b>${esc(C.profile.className || cls)}</b>. Your score goes to your teacher when you check your answers.`;
+    if (!$('name').value) $('name').value = u.displayName || '';
+    if (!$('klass').value) $('klass').value = C.profile.className || cls;
+  } else if (u) {
+    box.className = 'signin noprint warn2';
+    box.innerHTML = `You are signed in, but you have not joined a class. <a href="../../">Join your class on the Academy page</a>, then come back so your teacher sees your score.`;
+  } else {
+    box.className = 'signin noprint warn2';
+    box.innerHTML = `<b>Not signed in.</b> Sign in first so your teacher sees your score. <button class="btn sm" type="button" id="gsign">Sign in with Google</button> Have a student login? <a href="../../">Sign in on the Academy page</a>, then come back. You can also take the quiz just for practice.`;
+    $('gsign').onclick = () => C.signIn().catch(e => { box.insertAdjacentHTML('beforeend', `<br><span class="warn">${esc(e.message)}</span>`) });
+  }
+}
+async function sendScore(right, missed){
+  const el = $('sent'); if (!C || !C.enabled || !C.user) return;
+  const tail = ' · ' + new Date().toLocaleString();
+  if (!(C.profile && C.profile.classCode)) { el.innerHTML = 'Not sent: you have not joined a class.' + tail; return }
+  el.textContent = 'Sending your score to your teacher…';
+  try { const e = await C.saveReview(R.unit, {score: right, total: Q.length, missed});
+    el.innerHTML = `✓ Sent to your teacher · best score ${e.best} / ${e.total} · try ${e.tries}` + tail }
+  catch (err) { console.error(err); el.innerHTML = `<span class="warn">Could not send your score (${esc(err.message)}). Show this screen to your teacher.</span>` + tail }
+}
+if (C) C.onChange(signinBox); else signinBox();
 
 // Teachers open quiz.html?teacher=1 (linked from Teacher resources) to see and print the answer key.
 if (new URLSearchParams(location.search).has('teacher')) {

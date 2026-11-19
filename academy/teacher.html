@@ -88,6 +88,8 @@ td.name small{color:var(--muted)}
 .s2{background:color-mix(in srgb,var(--accent) 60%,var(--panel))}
 .s1{background:color-mix(in srgb,var(--accent) 30%,var(--panel))}
 .s0{color:var(--line)}
+.qz{display:inline-block;border-radius:6px;padding:1px 6px}
+.qzlast{display:block;white-space:nowrap}
 th.score,td.score{background:var(--panel-2);border-right:2px solid var(--line)}
 small.rank{display:block;font-size:11px}
 .insig{vertical-align:-0.25em;margin-right:2px}
@@ -171,7 +173,7 @@ body{border-top:6px solid var(--lv,var(--accent))}
 </div>
 <script src="course.js?v=13"></script>
 <script src="firebase-config.js"></script>
-<script src="cloud.js?v=18"></script>
+<script src="cloud.js?v=19"></script>
 <script>
 const $=(s,r=document)=>r.querySelector(s);
 const esc=t=>String(t==null?'':t).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -593,6 +595,12 @@ function raceTable(){
 // Python Quest stars live in their own field (s.py.stars = {'1-1': 3, ...}), separate from the rover lessons.
 const PY_TOTAL=10;
 function pyCell(s){ const st=Object.values((s.py||{}).stars||{}).map(Number).filter(v=>v>0); return st.length?`<b>${st.length}</b>/${PY_TOTAL}<small class="muted"> ${st.reduce((a,b)=>a+b,0)} ★</small>`:'<span class="muted">–</span>' }
+// Unit review quizzes (academy/review/unit-N/quiz.html): s.review.u1 = {score, total, best, tries, missed, at}, written when a signed-in student checks the quiz.
+const REVIEW_UNITS=[{n:1, lessons:'1-6'}];
+function reviewCell(s,n){ const r=(s.review||{})['u'+n]; if(!r) return '<span class="muted">–</span>';
+  const pct=Math.round(100*r.best/r.total), cls=pct>=90?'s3':pct>=70?'s2':'s1';
+  const tip=`Best ${r.best}/${r.total} (${pct}%). Last try ${r.score}/${r.total}${r.missed&&r.missed.length?', missed question'+(r.missed.length>1?'s ':' ')+r.missed.join(', '):''}. ${r.tries} tr${r.tries>1?'ies':'y'}.`;
+  return `<span class="qz ${cls}" title="${esc(tip)}"><b>${r.best}</b>/${r.total}</span><small class="muted"> ${pct}%${r.tries>1?' · '+r.tries+' tries':''}</small><small class="muted qzlast">${[r.score!==r.best?'last '+r.score:'', r.at&&r.at.toDate?ago(r.at):''].filter(Boolean).join(' · ')}</small>` }
 function table(){
   // Lessons start collapsed to just their Score (out of 100, see lessonScore in course.js). Clicking a lesson shows its puzzles.
   // Columns show the class level's puzzles; a student on another level gets their own level's score and a note.
@@ -605,15 +613,15 @@ function table(){
     const cells=UNITS.map(u=>lv(u).map(l=>{ const st=p[l.n]||0; return other ? '<td><span class="cell s0" title="This student is on another level">–</span></td>' : `<td><span class="cell s${st}" title="${esc(l.title)}: ${st?st+' star'+(st>1?'s':''):'not solved'}">${st?'★'.repeat(st):'·'}</span></td>` }).join('')
       +`<td class="score"><b>${lessonScore(p,u.n,sl)}</b></td>`).join('');
     const pick=`<select class="stulvl" data-uid="${esc(s.uid)}" aria-label="Level for ${esc(s.name)}" style="${levelStyle(sl)}"><option value="">Class level (${LEVEL_NAMES[cl]})</option>${LEVELS_AVAILABLE.map(v=>`<option value="${v}"${(c.levels||{})[s.uid]===v?' selected':''}>${LEVEL_NAMES[v]}</option>`).join('')}</select>`;
-    return `<tr><td class="name"><b>${esc(s.name)}</b><small>${esc(s.email||(s.username?'Username: '+s.username:''))}</small>${pick} <button class="btn sm rmstu" data-uid="${esc(s.uid)}" title="Take this student off this class list">Remove</button></td>${cells}<td><b>${done}</b>/${levelsOf(sl).length}</td><td><b>${stars}</b> ★<small class="muted rank">${insigniaSvg(rankFor(stars).i,16)} ${rankFor(stars).title}</small></td><td>${pyCell(s)}</td><td class="muted">${ago(s.updatedAt)}</td></tr>`;
+    return `<tr><td class="name"><b>${esc(s.name)}</b><small>${esc(s.email||(s.username?'Username: '+s.username:''))}</small>${pick} <button class="btn sm rmstu" data-uid="${esc(s.uid)}" title="Take this student off this class list">Remove</button></td>${cells}<td><b>${done}</b>/${levelsOf(sl).length}</td><td><b>${stars}</b> ★<small class="muted rank">${insigniaSvg(rankFor(stars).i,16)} ${rankFor(stars).title}</small></td><td>${pyCell(s)}</td>${REVIEW_UNITS.map(q=>`<td>${reviewCell(s,q.n)}</td>`).join('')}<td class="muted">${ago(s.updatedAt)}</td></tr>`;
   }).join('');
-  return `<table><thead><tr><th class="name" rowspan="2">Student</th>${head1}<th rowspan="2">Solved</th><th rowspan="2">Stars and rank</th><th rowspan="2" title="Python Quest (academy/python): levels solved and stars">🐍 Python</th><th rowspan="2">Last active</th></tr><tr>${head2}</tr></thead><tbody>${rows}</tbody></table>`;
+  return `<table><thead><tr><th class="name" rowspan="2">Student</th>${head1}<th rowspan="2">Solved</th><th rowspan="2">Stars and rank</th><th rowspan="2" title="Python Quest (academy/python): levels solved and stars">🐍 Python</th>${REVIEW_UNITS.map(q=>`<th rowspan="2" title="Unit ${q.n} review quiz (Lessons ${q.lessons}): best score. Hover a score for the last try and missed questions."><a href="review/unit-${q.n}/quiz.html?teacher=1" target="_blank" rel="noopener" style="color:inherit">📘 Unit ${q.n} quiz</a></th>`).join('')}<th rowspan="2">Last active</th></tr><tr>${head2}</tr></thead><tbody>${rows}</tbody></table>`;
 }
 function downloadCsv(c){
   const q=v=>'"'+String(v==null?'':v).replace(/"/g,'""')+'"';
   const cl=classLevel(c), cols=levelsOf(cl);
-  const lines=[['Student','Email or username','Level',...cols.map(l=>'L'+l.unit+'.'+l.k+' '+l.title),...UNITS.map(u=>'Lesson '+u.n+' score'),'Solved','Stars','Rank','Last active'].map(q).join(',')];
-  roster.forEach(s=>{ const p=s.progress||{}, stars=totalStars(p), sl=studentLevel(c,s); lines.push([s.name,s.email||s.username,LEVEL_NAMES[sl],...cols.map(l=>sl===cl?(p[l.n]||0):''),...UNITS.map(u=>lessonScore(p,u.n,sl)),levelsOf(sl).filter(l=>p[l.n]).length,stars,rankFor(stars).title,s.updatedAt&&s.updatedAt.toDate?s.updatedAt.toDate().toISOString():''].map(q).join(',')) });
+  const lines=[['Student','Email or username','Level',...cols.map(l=>'L'+l.unit+'.'+l.k+' '+l.title),...UNITS.map(u=>'Lesson '+u.n+' score'),'Solved','Stars','Rank',...REVIEW_UNITS.flatMap(u=>['Unit '+u.n+' quiz best','Unit '+u.n+' quiz last','Unit '+u.n+' quiz out of','Unit '+u.n+' quiz tries']),'Last active'].map(q).join(',')];
+  roster.forEach(s=>{ const p=s.progress||{}, stars=totalStars(p), sl=studentLevel(c,s); lines.push([s.name,s.email||s.username,LEVEL_NAMES[sl],...cols.map(l=>sl===cl?(p[l.n]||0):''),...UNITS.map(u=>lessonScore(p,u.n,sl)),levelsOf(sl).filter(l=>p[l.n]).length,stars,rankFor(stars).title,...REVIEW_UNITS.flatMap(u=>{ const r=(s.review||{})['u'+u.n]; return r?[r.best,r.score,r.total,r.tries]:['','','',''] }),s.updatedAt&&s.updatedAt.toDate?s.updatedAt.toDate().toISOString():''].map(q).join(',')) });
   const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([lines.join('\n')],{type:'text/csv'})); a.download=(c.name||c.code).replace(/[^a-z0-9]+/gi,'-')+'-progress.csv'; document.body.appendChild(a); a.click(); a.remove();
 }
 
