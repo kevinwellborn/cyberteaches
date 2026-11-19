@@ -44,6 +44,7 @@ const HELPERS = `
   // ---------- study guide ----------
   await p.goto(base); await p.waitForTimeout(700); await p.addScriptTag({content: HELPERS});
   await p.evaluate(() => document.querySelectorAll('.idea .board, .idea .prog').forEach(e => e.style.fontSize = '13px'));
+  await p.evaluate(() => document.querySelectorAll('.fb, .key, .checkrow, .pts, input').forEach(e => e.remove()));
   await picturize(p);
   write('study-guide-digital', await p.evaluate(() => {
     const R = REVIEW, t = s => document.querySelector(s);
@@ -56,11 +57,13 @@ const HELPERS = `
       + [...document.querySelectorAll('#blocks > div')].map(d => `<tr><td>${code(d.querySelector('.code').textContent)}</td><td>${d.querySelector('img').outerHTML}</td></tr>`).join('') + '</table>';
     h += '<h2>3. Word bank</h2><p>GRIDTABLE</p><table><tr><th>Word</th><th>Meaning</th><th>Español</th><th>Picture</th></tr>'
       + R.vocab.map(([w, m, es, pic]) => `<tr><td><b>${w}</b></td><td>${m}</td><td><i>${es}</i></td><td>${pic}</td></tr>`).join('') + '</table>';
+    h += '<h3>Vocabulary check</h3><p>What does each word mean? Type the letter in the shaded box.</p>'
+      + [...document.querySelectorAll('#vocabq .q')].map((q, i) => qHtml(q, i)).join('');
     h += '<h2>4. Big ideas</h2>' + [...document.querySelectorAll('#ideas .idea')].map(d =>
       `<h3>${d.querySelector('h3').textContent}</h3><p>${d.querySelector('p').innerHTML}</p><p>${[...d.querySelectorAll('img')].map(i => i.outerHTML).join(' &nbsp; ')}</p><p><i>${d.querySelector('.note').innerHTML}</i></p>`).join('');
     h += '<h2>5. Say it and write it</h2><p>Finish each sentence. Type the missing words in the box. Use the word bank.</p><p><b>Word bank:</b> '
-      + [...document.querySelectorAll('#fbank span')].map(s => `[ ${s.textContent} ]`).join(' ') + '</p>'
-      + R.frames.map(([f], i) => `<p>${i + 1}. ${f.replace(/____/g, '______')}</p>` + box(1)).join('');
+      + R.fillBank.map(w => `[ ${w} ]`).join(' ') + '</p>'
+      + R.fill.map((f, i) => `<p>${i + 1}. ${f.s.replace(/____/g, '______')}</p>` + box(1)).join('');
     h += '<p>PAGEBREAK</p><h2>6. Sample questions</h2><p>Try each question. Type the letter or the number in the shaded box. Check your answers in the online study guide.</p>'
       + [...document.querySelectorAll('#samples .q')].map((q, i) => qHtml(q, i)).join('');
     h += '<h2>Quiz tips</h2>' + R.tips.map(x => `<p>• ${x}</p>`).join('');

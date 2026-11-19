@@ -60,13 +60,17 @@ const REVIEW = {
      map: ['#######', '#S***.#', '#####.#', '#####G#', '#######'], dir: 1, p: 'repeat 3 [ F C ] F R until flag [ F ]', note: 'Count 3 crystals, move, turn, then go until the flag.'},
   ],
 
-  frames: [
-    ['First, the rover ____. Then it ____.', 'moves forward / collects'],
-    ['The pattern is ____. It happens ____ times.', 'F C / 4'],
-    ['I use a repeat because ____.', 'the same steps happen again and again'],
-    ['I use repeat until at flag because I don\'t know ____.', 'how many times'],
-    ['The program has a bug. The rover ____, so I ____.', 'crashes / add a turn'],
+  // Say it and write it: each blank is filled from the word bank (fillBank). The study guide checks them (1 point a blank).
+  fillBank: ['moves forward', 'collects', 'turns', 'pattern', 'repeat', 'until', 'flag', 'how many times', 'crashes'],
+  fill: [
+    {s: 'The rover ____ one square. Then it ____ the crystal.', a: ['moves forward', 'collects']},
+    {s: 'F C F C F C is a ____. I build F C once and ____ it 3 times.', a: ['pattern', 'repeat']},
+    {s: 'I use repeat ____ at flag because I don\'t know ____ the rover must move.', a: ['until', 'how many times']},
+    {s: 'The program has a bug: the rover ____ into a rock. To fix it, I add a block that ____ the rover.', a: ['crashes', 'turns']},
   ],
+
+  // Study guide points (total 100): each sample question, each vocabulary word, each sentence blank.
+  points: {sample: 4, vocab: 2, blank: 1},
 
   tips: ['Find the rover and the way it faces.', 'Trace the program with your finger, one block at a time.', 'Count crystals and steps before you pick a number.', 'Read every answer before you choose.'],
 
