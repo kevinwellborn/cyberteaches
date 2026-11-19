@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Unit 1 Quiz: Loops · CyberTeaches Academy</title>
+<meta name="description" content="Self-scored quiz for CyberTeaches Academy Lessons 1 to 6: repeat loops, nested loops and repeat until.">
+<link rel="icon" href="../../../favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Atkinson+Hyperlegible:wght@400;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<link rel="stylesheet" href="../../resources/resources.css">
+<link rel="stylesheet" href="../review.css?v=1">
+</head><body>
+<div class="sheet">
+  <div class="toolbar">
+    <a class="btn" href="index.html">← Study guide</a>
+    <span class="spacer"></span>
+    <button class="btn" id="printBtn">🖨 Print quiz</button>
+    <span id="teacherBtns" hidden><button class="btn" id="keyBtn">🔑 Show answer key</button> <button class="btn" id="printKey">🖨 Print answer key</button></span>
+  </div>
+
+  <section class="card score" id="score" aria-live="polite"></section>
+
+  <section class="card cover">
+    <span class="label">Unit 1 · Lessons 1 to 6 · Quiz</span>
+    <h1>Loops <em>quiz</em></h1>
+    <p><b id="qcount"></b> questions. Pick one answer for each question, or type a number.<span class="screen-only"> Then press <b>Check my answers</b> at the bottom.</span><span class="print-only"> Circle the letter, or write the number on the line.</span></p>
+    <div class="namebox"><label>Name<input id="name" autocomplete="name" placeholder="Type your name"></label><label>Class<input id="klass" placeholder="Period or class"></label></div>
+  </section>
+
+  <section class="card">
+    <div class="bank"><b>Blocks:</b> <span><b class="code">F</b> move forward</span><span><b class="code">L</b> turn left</span><span><b class="code">R</b> turn right</span><span><b class="code">C</b> collect crystal</span></div>
+    <div class="bank" id="wbank"></div>
+    <form id="quiz" autocomplete="off"></form>
+    <div class="submitbar"><span class="warn" id="warn"></span><button class="btn primary big" id="check" type="button">Check my answers</button></div>
+  </section>
+</div>
+<script src="../../resources/resources.js"></script>
+<script src="data.js?v=1"></script>
+<script src="../review.js?v=1"></script>
+<script>
+const R = REVIEW, V = Review, $ = id => document.getElementById(id), Q = R.quiz;
+$('qcount').textContent = Q.length;
+$('wbank').innerHTML = '<b>Word bank:</b> ' + R.vocab.slice(0, 10).map(([w, , es]) => `<span>${w} <small>${es}</small></span>`).join('');
+$('quiz').innerHTML = Q.map((q, i) => V.question(q, i, 'quiz')).join('');
+drawBoards();
+
+const answerOf = i => { const q = Q[i], f = $('quiz').elements['quiz' + i];
+  if (q.kind === 'num') return f.value.trim() === '' ? null : +f.value;
+  const c = [...$('quiz').querySelectorAll(`input[name="quiz${i}"]`)].find(r => r.checked); return c ? +c.value : null };
+const esc = s => s.replace(/[&<>"]/g, c => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;'}[c]));
+
+$('check').onclick = () => {
+  const blank = Q.map((q, i) => answerOf(i) === null ? i + 1 : 0).filter(Boolean);
+  if (blank.length && !$('check').dataset.sure) {
+    $('warn').textContent = `You did not answer question${blank.length > 1 ? 's' : ''} ${blank.join(', ')}. Press again to check anyway.`;
+    $('check').dataset.sure = '1'; document.getElementById('quiz' + (blank[0] - 1)).scrollIntoView({behavior: 'smooth', block: 'center'}); return }
+  let right = 0; const byLesson = {};
+  Q.forEach((q, i) => { const a = answerOf(i), ok = a === q.a, el = $('quiz' + i), fb = el.querySelector('.fb');
+    if (ok) right++; const b = byLesson[q.lesson] = byLesson[q.lesson] || [0, 0]; b[1]++; if (ok) b[0]++;
+    el.classList.remove('ok', 'no'); el.classList.add(ok ? 'ok' : 'no'); fb.hidden = false; fb.className = 'fb ' + (ok ? 'ok' : 'no');
+    const correct = q.kind === 'num' ? q.a : V.LETTERS[q.a];
+    fb.innerHTML = (ok ? '✓ Correct! ' : `✗ Not quite. The answer is <b>${correct}</b>. `) + q.why });
+  const pct = Math.round(100 * right / Q.length), name = $('name').value.trim(), klass = $('klass').value.trim();
+  const msg = pct >= 90 ? 'Excellent work! 🌟' : pct >= 70 ? 'Good job! Read the ✗ questions and their answers.' : 'Keep going! Read the study guide again, then try again.';
+  const review = Object.entries(byLesson).filter(([, [a, b]]) => a < b).map(([n]) => 'Lesson ' + n);
+  $('score').innerHTML = `<span class="label">Your score${name ? ' · ' + esc(name) : ''}${klass ? ' · ' + esc(klass) : ''}</span>
+    <div class="big">${right} / ${Q.length}</div><p><b>${pct}%</b> · ${msg}</p>
+    ${review.length ? `<p>Review: ${review.join(', ')} in the <a href="index.html">study guide</a>.</p>` : ''}
+    <p style="font-size:13px">${new Date().toLocaleString()} · Show this screen to your teacher if they ask.</p>
+    <div class="submitbar" style="margin:12px 0 0"><button class="btn" type="button" id="again">Try again</button></div>`;
+  $('score').classList.add('on'); $('warn').textContent = ''; delete $('check').dataset.sure;
+  $('again').onclick = () => { $('quiz').reset(); $('score').classList.remove('on');
+    document.querySelectorAll('.q').forEach(el => { el.classList.remove('ok', 'no'); el.querySelector('.fb').hidden = true }); scrollTo({top: 0, behavior: 'smooth'}) };
+  scrollTo({top: 0, behavior: 'smooth'});
+};
+
+// Teachers open quiz.html?teacher=1 (linked from Teacher resources) to see and print the answer key.
+if (new URLSearchParams(location.search).has('teacher')) {
+  $('teacherBtns').hidden = false;
+  $('keyBtn').onclick = () => { const on = document.body.classList.toggle('show-key'); $('keyBtn').textContent = on ? '🔑 Hide answer key' : '🔑 Show answer key' };
+  $('printKey').onclick = () => { document.body.classList.add('show-key'); print() };
+}
+$('printBtn').onclick = () => { document.body.classList.remove('show-key'); print() };
+</script>
+</body></html>
