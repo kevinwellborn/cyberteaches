@@ -129,6 +129,45 @@ header.top{display:flex;align-items:center;gap:12px;padding:12px 16px;max-width:
 .bigstars .off{color:var(--line)}
 .modal p{color:var(--muted)}
 .modal .row{display:flex;gap:10px;justify-content:center;margin-top:16px;flex-wrap:wrap}
+/* learn */
+.learn{max-width:860px;margin:0 auto 40px}
+.learn-top{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+.learn-top h1{font-size:clamp(22px,3.4vw,30px)}
+.sdots{display:flex;gap:6px}
+.sdot{width:12px;height:12px;border-radius:50%;background:var(--line);border:0;padding:0}
+.sdot.on{background:var(--accent)}
+.slide{background:var(--panel);border:2px solid var(--line);border-radius:20px;padding:22px 24px;min-height:340px}
+.slide h2{font-size:26px;margin-bottom:10px}
+.slide p,.slide li{font-size:18px;line-height:1.55}
+.slide code{font-family:var(--f-mono);background:var(--panel-2);border-radius:6px;padding:1px 6px;font-size:.92em}
+.slide code.bad{color:var(--bad);text-decoration:line-through;text-decoration-thickness:1px}
+.mist{padding-left:20px;display:flex;flex-direction:column;gap:6px}
+.anat{display:flex;gap:4px;justify-content:center;flex-wrap:wrap;margin:22px 0 10px}
+.anat .part{display:flex;flex-direction:column;align-items:center;gap:6px}
+.anat .tok{font-family:var(--f-mono);font-size:clamp(28px,6vw,46px);font-weight:600;padding:6px 12px;border-radius:12px;border:3px solid}
+.anat .lab{font-family:var(--f-display);font-weight:800;font-size:15px}
+.anat .exp{font-size:13px;color:var(--muted);max-width:130px;text-align:center}
+.note{background:var(--accent-soft);border-radius:12px;padding:10px 14px;margin-top:12px;font-size:16px}
+.demo-cv{width:100%;height:auto;border-radius:12px;display:block;margin:10px 0}
+.progs{display:flex;gap:12px;flex-wrap:wrap}
+.prog{flex:1;min-width:200px;background:var(--code-bg);color:var(--code-ink);border-radius:12px;padding:10px 12px;font-family:var(--f-mono);font-size:15px;white-space:pre}
+.prog button{margin-top:8px;font-family:var(--f-body)}
+.cmdgrid{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
+.cmdgrid button{font-family:var(--f-mono);font-weight:600;color:var(--accent)}
+.cmdgrid button.on{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.cmdsay{font-size:16px;color:var(--muted);min-height:24px}
+.q{margin:14px 0 18px}
+.q .qt{font-weight:700;font-size:18px;margin-bottom:8px}
+.q .opts{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.q .opt{text-align:left;border:2px solid var(--line);background:var(--panel-2);border-radius:12px;padding:9px 12px;font-family:var(--f-mono);font-size:15px}
+.q .opt.right{border-color:var(--good);background:rgba(46,147,99,.15)}
+.q .opt.wrong{border-color:var(--bad);background:rgba(200,64,47,.1)}
+.q .why{font-size:15px;margin-top:6px;color:var(--muted)}
+.vocab{display:grid;grid-template-columns:auto 1fr;gap:4px 14px;font-size:16px;margin-top:10px}
+.vocab b{font-family:var(--f-display)}
+.learn-nav{display:flex;gap:10px;margin-top:14px;align-items:center}
+.stop.learnstop{width:auto;border-radius:30px;padding:0 16px;font-size:15px;gap:6px;display:flex}
+@media (max-width:600px){ .q .opts{grid-template-columns:1fr} .slide{padding:16px} }
 .foot{color:var(--muted);font-size:13px;text-align:center;padding:20px}
 [hidden]{display:none!important}
 @media (max-width:900px){
@@ -159,6 +198,14 @@ header.top{display:flex;align-items:center;gap:12px;padding:12px 16px;max-width:
     <canvas id="heroArt" width="480" height="300" aria-label="The explorer in the jungle temple"></canvas>
   </section>
   <div class="lessons" id="lessons"></div>
+</main>
+
+<main id="learn" class="wrap" hidden>
+  <div class="learn">
+    <div class="learn-top"><button class="btn small" id="learnBack">← Lessons</button><h1 id="learnTitle"></h1><span class="spacer"></span><div class="sdots" id="sdots"></div></div>
+    <div class="slide" id="slide"></div>
+    <div class="learn-nav"><button class="btn" id="slPrev">← Back</button><span class="spacer"></span><span class="crumb" id="slCount"></span><button class="btn primary" id="slNext">Next →</button></div>
+  </div>
 </main>
 
 <main id="play" class="wrap" hidden>
@@ -213,8 +260,8 @@ header.top{display:flex;align-items:center;gap:12px;padding:12px 16px;max-width:
 <p class="foot">Python Quest is an original CyberTeaches game. Python runs right in your browser.</p>
 
 <script src="pyrun.js?v=1"></script>
-<script src="levels.js?v=1"></script>
-<script src="game.js?v=1"></script>
+<script src="levels.js?v=2"></script>
+<script src="game.js?v=2"></script>
 <script src="../firebase-config.js"></script>
 <script src="../cloud.js?v=18"></script>
 <script>
@@ -228,7 +275,7 @@ $('#gameTitle').innerHTML = esc(PQ_GAME_NAME) + '<small>' + esc(PQ_WORLD) + '</s
 // ---------- saved progress (this browser + the student's account) ----------
 const KEY = 'cyberteaches:py';
 const load = () => { try { return JSON.parse(localStorage.getItem(KEY)) || {} } catch(e){ return {} } };
-let data = load(); data.stars = data.stars || {}; data.code = data.code || {};
+let data = load(); data.stars = data.stars || {}; data.code = data.code || {}; data.learned = data.learned || {};
 const saveLocal = () => { try { localStorage.setItem(KEY, JSON.stringify(data)) } catch(e){} };
 let lastUid = null;
 function cloudSave(){
@@ -239,13 +286,13 @@ if(Cloud) Cloud.onChange(c => {
   const u = c.user, who = $('#who');
   if(u && c.profile && lastUid !== u.uid){
     lastUid = u.uid;
-    if(data.owner && data.owner !== u.uid) data = {stars: {}, code: {}};
+    if(data.owner && data.owner !== u.uid) data = {stars: {}, code: {}, learned: {}};
     const py = c.profile.py || {};
     Object.entries(py.stars || {}).forEach(([id, s]) => { data.stars[id] = Math.max(data.stars[id] || 0, s) });
     Object.entries(py.code || {}).forEach(([id, src]) => { if(!data.code[id]) data.code[id] = src });
     data.owner = u.uid; saveLocal(); render();
   }
-  if(!u && lastUid){ lastUid = null; data = {stars: {}, code: {}}; saveLocal(); render() }
+  if(!u && lastUid){ lastUid = null; data = {stars: {}, code: {}, learned: {}}; saveLocal(); render() }
   who.innerHTML = '';
   if(u) who.append(h('span', '', '👤 ' + esc(u.displayName || (Cloud.isStudentLogin(u) ? 'Student' : u.email || 'Signed in'))));
   else if(c.ready){ const a = h('a', 'btn small', 'Sign in to save'); a.href = '../'; who.append(a) }
@@ -296,6 +343,10 @@ function render(){
     card.append(head);
     if(!ls.soon){
       const stops = h('div', 'stops');
+      if(PQ_LEARN[ls.n]){
+        const b = h('button', 'stop learnstop' + (data.learned[ls.n] ? ' done' : ''), '📖 Learn' + (data.learned[ls.n] ? ' ✓' : ''));
+        b.title = 'Learn the idea first, then practice in the levels'; b.onclick = () => { location.hash = 'learn-' + ls.n }; stops.append(b);
+      }
       lv.forEach(l => {
         const s = data.stars[l.id] || 0, b = h('button', 'stop' + (s ? ' done' : ''), l.k);
         b.title = l.name; if(s) b.append(h('span', 'st', '★'.repeat(s)));
@@ -308,7 +359,7 @@ function render(){
   if(cur) drawDots();
 }
 const firstOpen = () => (LEVELS.find(l => !data.stars[l.id]) || LEVELS[0]).id;
-$('#startBtn').onclick = () => go(firstOpen());
+$('#startBtn').onclick = () => { const l = LEVELS.find(x => x.id === firstOpen()); if(PQ_LEARN[l.lesson] && !data.learned[l.lesson]) location.hash = 'learn-' + l.lesson; else go(l.id) };
 $('#homeLink').onclick = e => { e.preventDefault(); location.hash = '' };
 $('#backBtn').onclick = () => { location.hash = '' };
 
@@ -422,7 +473,7 @@ function openLevel(id){
   const intro = $('#introBox');
   if(cur.k === 1 && ls.intro){
     intro.hidden = false;
-    intro.innerHTML = '<b>New to Python?</b> ' + esc(ls.intro) + ' Example: <code>hero.run(3)</code> makes the explorer run 3 squares. Type your code on the right and press <b>Run</b>.';
+    intro.innerHTML = '<b>New to Python?</b> ' + esc(ls.intro) + ' Example: <code>hero.run(3)</code> makes the explorer run 3 squares. Type your code on the right and press <b>Run</b>.' + (PQ_LEARN[ls.n] ? ' <a href="#learn-' + ls.n + '">📖 Review the lesson</a>' : '');
   } else intro.hidden = true;
   ta.value = data.code[cur.id] != null ? data.code[cur.id] : cur.start;
   player.setLevel(cur); player.speed = speed;
@@ -479,12 +530,93 @@ $('#winHome').onclick = () => { $('#winModal').classList.remove('show'); locatio
 $('#winAgain').onclick = () => { $('#winModal').classList.remove('show'); $('#resetBtn').onclick() };
 $('#winNext').onclick = () => { $('#winModal').classList.remove('show'); const next = LEVELS[LEVELS.indexOf(cur) + 1]; if(next) go(next.id) };
 
+// ---------- learn: teach the idea first (slides + quick check), then practice in the levels ----------
+let L = null, sIdx = 0, demoPlayers = [];
+const mini = (cv, map, extra = {}) => { const p = new PQ.Player(cv); p.setLevel({map, ...extra}); demoPlayers.push(p); return p };
+const playOn = (p, code) => { p.stop(); p.reset(); const r = PQ.simulate(p.level, code); p.play(r.events) };
+function openLearn(n){ L = PQ_LEARN[n]; L.n = n; sIdx = 0; $('#learnTitle').textContent = 'Lesson ' + n + ' · ' + L.title.replace(/^Learn: /, ''); showSlide() }
+function showSlide(){
+  demoPlayers.forEach(p => p.destroy()); demoPlayers.length = 0;   // (old canvases are dropped with the slide)
+  const sl = L.slides[sIdx], box = $('#slide'); box.innerHTML = '<h2>' + esc(sl.title) + '</h2>' + (sl.html || '');
+  if(sl.kind === 'anatomy'){
+    const cols = ['#2E9363', '#7C8A78', '#2F6FDE', '#D97E16'], a = h('div', 'anat');
+    sl.parts.forEach(([tok, lab, exp], i) => a.append(h('div', 'part', `<span class="tok" style="border-color:${cols[i]};color:${cols[i]}">${esc(tok)}</span><span class="lab" style="color:${cols[i]}">${esc(lab)}</span><span class="exp">${esc(exp)}</span>`)));
+    box.append(a);
+  }
+  if(sl.kind === 'demo'){
+    const cv = h('canvas', 'demo-cv'); box.append(cv); const p = mini(cv, sl.map);
+    const pr = h('div', 'progs');
+    sl.programs.forEach(g => { const d = h('div', 'prog', esc(g.code) + '\n'); const b = h('button', 'btn small primary', '▶ Run ' + esc(g.label)); b.onclick = () => playOn(p, g.code); d.append(b); pr.append(d) });
+    box.append(pr);
+  }
+  if(sl.kind === 'commands'){
+    const grid = h('div', 'cmdgrid'), say = h('div', 'cmdsay', 'Pick a command.'), cv = h('canvas', 'demo-cv');
+    let p = null;
+    sl.demos.forEach(d => {
+      const b = h('button', 'btn small', esc(d.code));
+      b.onclick = () => {
+        grid.querySelectorAll('button').forEach(x => x.classList.remove('on')); b.classList.add('on');
+        const c = PQ_COMMANDS.find(x => x.code === d.code); say.textContent = c ? c.say : '';
+        demoPlayers.forEach(x => x.destroy()); demoPlayers.length = 0;
+        p = mini(cv, d.map, {hp: d.hp, hearts: d.hearts}); setTimeout(() => playOn(p, d.prog), 250);
+      };
+      grid.append(b);
+    });
+    box.append(grid, say, cv);
+    grid.firstChild.click();
+  }
+  if(sl.kind === 'quiz'){
+    sl.questions.forEach((q, qi) => {
+      const el = h('div', 'q'); el.append(h('div', 'qt', (qi + 1) + '. ' + esc(q.q)));
+      const opts = h('div', 'opts'), why = h('div', 'why');
+      const order = q.a.map((_, i) => i).sort((a, b) => ((a * 7 + qi * 3) % 5) - ((b * 7 + qi * 3) % 5));   // mixed, but the same every time
+      order.forEach(i => {
+        const b = h('button', 'opt', esc(q.a[i]));
+        b.onclick = () => {
+          if(i === q.ok){ opts.querySelectorAll('.opt').forEach(x => x.disabled = true); b.classList.add('right'); why.innerHTML = '✅ ' + esc(q.why); el.dataset.ok = 1; SFX.take() }
+          else { b.classList.add('wrong'); why.innerHTML = '❌ Not quite. Try again!'; SFX.bump() }
+          updateNav();
+        };
+        opts.append(b);
+      });
+      el.append(opts, why); box.append(el);
+    });
+  }
+  if(sl.note) box.append(h('div', 'note', sl.note));
+  if(sIdx === L.slides.length - 1 && L.vocab){
+    box.append(h('h3', '', 'Words to know'));
+    const v = h('div', 'vocab'); L.vocab.forEach(([w, m]) => v.append(h('b', '', esc(w)), h('span', '', esc(m)))); box.append(v);
+  }
+  const dots = $('#sdots'); dots.innerHTML = '';
+  L.slides.forEach((_, i) => { const d = h('button', 'sdot' + (i <= sIdx ? ' on' : ''), ''); d.title = L.slides[i].title; d.onclick = () => { sIdx = i; showSlide() }; dots.append(d) });
+  updateNav(); window.scrollTo(0, 0);
+}
+function updateNav(){
+  const last = sIdx === L.slides.length - 1, sl = L.slides[sIdx];
+  $('#slPrev').disabled = sIdx === 0;
+  $('#slCount').textContent = (sIdx + 1) + ' / ' + L.slides.length;
+  const quizLeft = sl.kind === 'quiz' ? sl.questions.length - $('#slide').querySelectorAll('.q[data-ok]').length : 0;
+  $('#slNext').textContent = last ? (quizLeft ? 'Answer all ' + sl.questions.length + ' to start' : '🎮 Start practicing') : 'Next →';
+  $('#slNext').disabled = last && quizLeft > 0;
+}
+$('#slPrev').onclick = () => { if(sIdx > 0){ sIdx--; showSlide() } };
+$('#slNext').onclick = () => {
+  if(sIdx < L.slides.length - 1){ sIdx++; showSlide(); return }
+  data.learned[L.n] = true; saveLocal();
+  const first = LEVELS.find(l => l.lesson === L.n && !data.stars[l.id]) || LEVELS.find(l => l.lesson === L.n); go(first.id);
+};
+$('#learnBack').onclick = () => { location.hash = '' };
+
 // ---------- routes: #level-1-3 opens a level, no hash = lesson list ----------
 function go(id){ location.hash = 'level-' + id }
 function route(){
   const m = location.hash.match(/^#level-(\d+-\d+)$/);
   $('#winModal').classList.remove('show');
+  const ln = location.hash.match(/^#learn-(\d+)$/);
+  demoPlayers.forEach(p => p.destroy()); demoPlayers.length = 0;
+  $('#learn').hidden = true;
   if(m && LEVELS.some(l => l.id === m[1])){ $('#home').hidden = true; $('#play').hidden = false; openLevel(m[1]); window.scrollTo(0, 0) }
+  else if(ln && PQ_LEARN[ln[1]]){ player.stop(); $('#home').hidden = true; $('#play').hidden = true; $('#learn').hidden = false; cur = null; openLearn(Number(ln[1])) }
   else { player.stop(); $('#play').hidden = true; $('#home').hidden = false; cur = null; render(); startArt() }
 }
 window.addEventListener('hashchange', route);

@@ -110,3 +110,52 @@ window.PQ_LEVELS = [
          '.k.S..|.^..#.GD.',
          '################']},
 ];
+
+// "Learn" step for each lesson: short slides that teach the idea first, then a quick check, then practice in the game.
+// Slide kinds: text (html), anatomy (labelled command), demo (mini level + one or more programs to watch), quiz (questions).
+window.PQ_LEARN = {
+  1: {
+    title: 'Learn: Python commands in order',
+    vocab: [['program', 'a list of instructions for the computer'], ['command', 'one instruction, like hero.run(3)'],
+            ['sequence', 'commands that run one after another, in order'], ['bug', 'a mistake in a program']],
+    slides: [
+      {kind: 'text', title: 'What is Python?',
+       html: '<p><b>Python</b> is a programming language: a way to write instructions that a computer can follow. Scientists, game makers and big websites all use it.</p><p>A <b>program</b> is a list of instructions. In this game your program tells an explorer how to get through a jungle temple.</p>'},
+      {kind: 'anatomy', title: 'How a command is built',
+       html: '<p>Every command in this game has the same parts. Read it like a sentence: <i>"hero, run 3 steps."</i></p>',
+       parts: [['hero', 'who', 'the explorer you control'], ['.', 'dot', 'joins who and the action'], ['run', 'action', 'what to do'], ['(3)', 'value', 'how much, inside ( )']],
+       note: 'Some actions need no value, but they still need the ( ), like <code>hero.jump()</code>.'},
+      {kind: 'demo', title: 'Try it: one command',
+       html: '<p>Press <b>Run</b> to watch the command. The number says how many squares to run.</p>',
+       map: ['........', '........', 'S.....D.', '########'],
+       programs: [{label: 'hero.run(3)', code: 'hero.run(3)'}, {label: 'hero.run(6)', code: 'hero.run(6)'}]},
+      {kind: 'demo', title: 'Sequence: order matters',
+       html: '<p>Python runs your commands <b>from top to bottom</b>, one line at a time. This is called a <b>sequence</b>. The same commands in a different order can give a very different result. Watch both:</p>',
+       map: ['.........', '.........', 'S.......D', '###.#####'],
+       programs: [{label: 'Program A', code: 'hero.run(2)\nhero.jump()\nhero.run(4)'}, {label: 'Program B', code: 'hero.jump()\nhero.run(2)\nhero.run(4)'}],
+       note: 'Program A works. Program B jumps too early and runs into the pit: that is a <b>bug</b>.'},
+      {kind: 'commands', title: 'The explorer\'s commands',
+       html: '<p>Press a command to see what it does. You will meet them one at a time in the levels.</p>',
+       demos: [
+         {code: 'hero.run(3)', map: ['......', '......', 'S.....', '######'], prog: 'hero.run(3)'},
+         {code: 'hero.jump()', map: ['......', '......', 'S.....', '#.####'], prog: 'hero.jump()'},
+         {code: 'hero.climb()', map: ['......', '......', 'S#....', '######'], prog: 'hero.climb()'},
+         {code: 'hero.take()', map: ['......', '......', 'S*....', '######'], prog: 'hero.run(1)\nhero.take()'},
+         {code: 'hero.attack()', map: ['......', '......', 'SG....', '######'], hp: 2, prog: 'hero.attack()\nhero.attack()'},
+         {code: 'hero.drink()', map: ['......', '......', 'Sp....', '######'], hearts: 1, prog: 'hero.run(1)\nhero.drink()'},
+         {code: 'hero.turn()', map: ['......', '......', '..S...', '######'], prog: 'hero.turn()\nhero.run(2)'}]},
+      {kind: 'text', title: 'Spelling counts',
+       html: '<p>Python is picky. It reads exactly what you type:</p><ul class="mist"><li><code class="bad">Hero.run(3)</code> Capital H. Use <code>hero</code> in small letters.</li><li><code class="bad">hero.jump</code> Missing ( ). Write <code>hero.jump()</code>.</li><li><code class="bad">hero.jupm()</code> Spelling. Write <code>jump</code>.</li><li><code class="bad">hero run(3)</code> Missing the dot.</li></ul><p>Don\'t worry: when something is wrong, Python tells you the line and how to fix it.</p>'},
+      {kind: 'quiz', title: 'Check your understanding',
+       questions: [
+         {q: 'Which command makes the explorer run 4 squares?', a: ['hero.run(4)', 'hero.run4()', 'Hero.run(4)', 'run.hero(4)'], ok: 0,
+          why: 'Who (hero), a dot, the action (run), then the value inside ( ).'},
+         {q: 'In what order does Python run your commands?', a: ['From top to bottom', 'From bottom to top', 'Shortest line first', 'All at the same time'], ok: 0,
+          why: 'A sequence runs one line at a time, from the top.'},
+         {q: 'What is wrong with  hero.jump  ?', a: ['It is missing ( )', 'jump needs a number', 'It needs a capital H', 'Nothing'], ok: 0,
+          why: 'Every action needs ( ), even when there is no value inside.'},
+         {q: 'There is a pit 2 squares ahead. Which program is right?', a: ['hero.run(1) then hero.jump()', 'hero.jump() then hero.run(1)', 'hero.run(3)', 'hero.run(2) then hero.jump()'], ok: 0,
+          why: 'Run to the edge (1 square), then jump over the pit. Running 2 squares would step into it.'}]},
+    ]
+  }
+};

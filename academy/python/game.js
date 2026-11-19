@@ -356,6 +356,7 @@
     reset(){ this.setLevel(this.level) }
     play(events, onDone){ this.events = events; this.i = 0; this.state = events[0].s; this.cur = null; this.done = onDone; this.say = null; this.next() }
     stop(){ this.events = null; this.cur = null }
+    destroy(){ this.stop(); this.dead = true }
     next(){
       if(!this.events) return;
       if(this.i >= this.events.length){ const d = this.done; this.done = null; this.events = null; if(d) d(); return }
@@ -365,6 +366,7 @@
       if(this.hooks.onEvent) this.hooks.onEvent(e);
     }
     loop(now){
+      if(this.dead) return;
       requestAnimationFrame(this.loop);
       if(this.cur && now - this.cur.start >= this.cur.dur){ this.state = this.cur.e.s; if(this.hooks.onState) this.hooks.onState(this.state, this.world); this.cur = null; this.next() }
       this.draw(now);
