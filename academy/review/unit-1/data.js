@@ -69,6 +69,26 @@ const REVIEW = {
     {s: 'The program has a bug: the rover ____ into a rock. To fix it, I add a block that ____ the rover.', a: ['crashes', 'turns']},
   ],
 
+  // Quiz vocabulary: pick the word for each meaning (the study guide asks the other way round).
+  quizVocab: [
+    {m: 'steps that happen in order, one after another', opts: ['sequence', 'flag', 'debug'], a: 0},
+    {m: 'a block that repeats the blocks inside it', opts: ['algorithm', 'loop', 'flag'], a: 1},
+    {m: 'a loop inside another loop', opts: ['infinite loop', 'sequence', 'nested loop'], a: 2},
+    {m: 'a loop that never stops', opts: ['infinite loop', 'pattern', 'program'], a: 0},
+    {m: 'the goal square the rover must reach', opts: ['loop', 'flag', 'efficient'], a: 1},
+    {m: 'find a mistake and fix it', opts: ['repeat', 'until', 'debug'], a: 2},
+    {m: 'a plan of steps to solve a problem', opts: ['algorithm', 'nested loop', 'flag'], a: 0},
+    {m: 'does the job with fewer steps', opts: ['pattern', 'efficient', 'debug'], a: 1},
+  ],
+  // Quiz sentences: blanks filled from fillBank, like the study guide.
+  quizFill: [
+    {s: 'There are 5 crystals in a row, so I ____ F C 5 times. Each time, the rover ____ a crystal.', a: ['repeat', 'collects']},
+    {s: 'A rock is right in front of the rover. If the rover ____, it ____ into the rock.', a: ['moves forward', 'crashes']},
+    {s: 'R F C R F C R F C is a ____. Each time, the rover ____ right first.', a: ['pattern', 'turns']},
+  ],
+  // Quiz points (total 100): each program question, each vocabulary word, each sentence blank.
+  quizPoints: {question: 4, vocab: 2, blank: 2},
+
   // Study guide points (total 100): each sample question, each vocabulary word, each sentence blank.
   points: {sample: 4, vocab: 2, blank: 1},
 
@@ -132,9 +152,6 @@ const REVIEW = {
     {lesson: 1, q: 'The rover faces <b>left</b>. Which block turns it to face the <b>top of the page</b>?', map: ['###', '#S#', '###'], dir: 3,
      opts: [{b: 'L'}, {b: 'R'}, {b: 'F'}], a: 1,
      why: 'Facing left on the page, the rover\'s right hand points up. So turn right.'},
-    {lesson: 1, q: 'Which word means <b>a list of steps for a computer</b>?',
-     opts: ['flag', 'program', 'pattern'], a: 1,
-     why: 'A program is a list of steps that a computer follows in order.'},
     {lesson: 2, kind: 'num', q: 'There are 7 crystals in a row. The program is <span class="code">repeat 4 [ F C ]</span>. How many crystals are <b>left</b>?', map: ['##########', '#S*******#', '##########'], dir: 1, prog: 'repeat 4 [ F C ]', a: 3,
      why: 'The repeat runs 4 times and collects 4 crystals. 7 − 4 = 3 are left.'},
     {lesson: 2, q: 'Rewrite <span class="code">F F C F F C F F C F F C</span> with a repeat.',
@@ -161,9 +178,6 @@ const REVIEW = {
     {lesson: 4, q: 'Which loop should you use? <i>"Do 15 jumping jacks."</i>',
      opts: ['repeat 15 times', 'repeat until', 'no loop'], a: 0,
      why: 'You know the number (15), so a plain repeat is the best choice.'},
-    {lesson: 4, q: 'Which word means <b>a loop that never stops</b>?',
-     opts: ['nested loop', 'infinite loop', 'sequence'], a: 1,
-     why: 'An infinite loop never stops. Make sure the blocks inside move the rover closer to the flag.'},
     {lesson: 5, q: 'The rover faces <b>down</b>. The flag is to the <b>left side of the page</b>. Which program reaches the flag?', map: ['#######', '#G...S#', '#######'], dir: 2,
      opts: [{p: 'L until flag [ F ]'}, {p: 'R until flag [ F ]'}, {p: 'until flag [ R F ]'}], a: 1,
      why: 'Facing down, the rover\'s right is the left side of the page. Turn right once, then go until the flag.'},

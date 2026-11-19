@@ -172,9 +172,9 @@ body{border-top:6px solid var(--lv,var(--accent))}
   </header>
   <main id="app"><p class="muted">Loading…</p></main>
 </div>
-<script src="course.js?v=15"></script>
+<script src="course.js?v=16"></script>
 <script src="firebase-config.js"></script>
-<script src="cloud.js?v=20"></script>
+<script src="cloud.js?v=21"></script>
 <script src="python/levels.js?v=2"></script>
 <script>
 const $=(s,r=document)=>r.querySelector(s);
@@ -268,7 +268,7 @@ function dashboard(admin){
   });
   if(stopClasses) stopClasses();
   stopClasses=Cloud.watchClasses((list,err)=>{
-    const snap=c=>JSON.stringify([c.locked||[], c.unlocked||[], c.level||'', c.levels||{}, !!c.duels, !!c.races]);
+    const snap=c=>JSON.stringify([c.locked||[], c.unlocked||[], c.published||[], c.level||'', c.levels||{}, !!c.duels, !!c.races]);
     const was=snap(classes.find(c=>c.code===current)||{});
     classes=list.sort((a,b)=>(a.name||'').localeCompare(b.name||''));
     const now=classes.find(c=>c.code===current); if(now && snap(now)!==was && $('#locks')) renderClass();
@@ -518,9 +518,9 @@ function renderClass(err){
     <p class="muted" style="margin:0 0 8px">Every lesson has its own set of 10 puzzles at each level. Pick the level that fits this class: different levels for different grades, ages or experience. You can move single students to another level in the Progress table. Stars earned at each level are kept.</p>
     <div class="levels" id="levels" role="group" aria-label="Class difficulty level">${LEVELS_AVAILABLE.map(v=>`<button class="lvlbtn${v===cl?' on':''}" data-level="${v}" aria-pressed="${v===cl}" style="${levelStyle(v)}"><b>${LEVEL_NAMES[v]}</b><small>${LEVEL_HELP[v]}</small></button>`).join('')}</div>
     <div class="toolbar"><h2>Lessons open to students</h2><div class="spacer"></div><button class="btn" id="unlockAll">Unlock all</button><button class="btn" id="lockAll">Lock all</button></div>
-    <p class="muted" style="margin:0 0 8px">Tap a lesson to lock or unlock it for this class. Students see a lock and can't open its puzzles. Changes reach students right away. Their stars are kept.</p>
+    <p class="muted" style="margin:0 0 8px">Tap a lesson to lock or unlock it for this class. Students see a lock and can't open its puzzles. Changes reach students right away. Their stars are kept. The 🔑 quiz answers button shares the right answers with students after they turn the quiz in.</p>
     <div class="locks" id="locks">${UNITS.map(u=>{ const off=(c.locked||[]).includes(u.n); return `<button class="lockbtn${off?' off':''}" data-unit="${u.n}" aria-pressed="${!off}"><span class="lnum" style="background:${off?'var(--line)':u.color}">L${u.n}</span><span class="ltitle">${esc(u.title)}</span><span class="lstate">${off?'🔒 Locked':'Open'}</span></button>`
-      + REVIEWS.filter(q=>q.after===u.n).map(q=>[[q.guideId,'📖','study guide'],[q.quizId,'✏️','quiz']].map(([id,ico,what])=>{ const isQuiz=id===q.quizId, qo=isQuiz?!(c.unlocked||[]).map(Number).includes(id):(c.locked||[]).includes(id); return `<button class="lockbtn${qo?' off':''}" data-unit="${id}"${isQuiz?' data-quiz="1"':''} aria-pressed="${!qo}" title="${esc(q.name)}: ${what}${isQuiz?'. Starts locked: open it when students have studied the study guide.':''}"><span class="lnum" style="background:${qo?'var(--line)':q.color}">${ico}</span><span class="ltitle">${esc(q.name.replace(/ review$/,''))} ${what}</span><span class="lstate">${qo?'🔒 Locked':'Open'}</span></button>` }).join('')).join('') }).join('')}</div>
+      + REVIEWS.filter(q=>q.after===u.n).map(q=>[[q.guideId,'📖','study guide'],[q.quizId,'✏️','quiz']].map(([id,ico,what])=>{ const isQuiz=id===q.quizId, qo=isQuiz?!(c.unlocked||[]).map(Number).includes(id):(c.locked||[]).includes(id); return `<button class="lockbtn${qo?' off':''}" data-unit="${id}"${isQuiz?' data-quiz="1"':''} aria-pressed="${!qo}" title="${esc(q.name)}: ${what}${isQuiz?'. Starts locked: open it when students have studied the study guide.':''}"><span class="lnum" style="background:${qo?'var(--line)':q.color}">${ico}</span><span class="ltitle">${esc(q.name.replace(/ review$/,''))} ${what}</span><span class="lstate">${qo?'🔒 Locked':'Open'}</span></button>` }).join('')+(()=>{ const pub=(c.published||[]).map(Number).includes(q.quizId); return `<button class="lockbtn${pub?'':' off'}" data-unit="${q.quizId}" data-publish="1" aria-pressed="${pub}" title="${esc(q.name)} quiz answers. Students see their right and wrong answers and their score only after you publish them."><span class="lnum" style="background:${pub?q.color:'var(--line)'}">🔑</span><span class="ltitle">${esc(q.name.replace(/ review$/,''))} quiz answers</span><span class="lstate">${pub?'Published':'Not published'}</span></button>` })()).join('') }).join('')}</div>
     <p class="err" id="lockErr" role="alert"></p>
     <div class="toolbar"><h2>Progress</h2><div class="spacer"></div><button class="btn" id="csv" ${n?'':'disabled'}>Download CSV</button></div>
     <div class="legend"><span><i class="cell s3">★★★</i> 3 stars</span><span><i class="cell s2">★★</i> 2 stars</span><span><i class="cell s1">★</i> 1 star</span><span><i class="cell s0">·</i> not solved</span><span>Click a lesson to show or hide each puzzle.</span><span><b>Score</b> per lesson out of 100: 3 stars = 100, 2 stars = 90, 1 star = 80 for each puzzle, unsolved = 0</span><span>Updates live as students play.</span></div>
@@ -567,12 +567,14 @@ function renderClass(err){
     cref.update(data).then(ok, e=>{ console.error(e); if(!done) say('Could not save ('+(e.code||e.message)+'). Try again.') });
     Cloud.restUpdate('classes/'+c.code, rest||data).then(ok, e=>{ console.error(e);
       if(!done){ clearTimeout(slow); say('Not saved yet ('+(e.status?e.status+' ':'')+(e.message||e.name||'network error')+'). Still trying… keep this page open.') } }) };
-  const lockedNow=()=>[...document.querySelectorAll('#locks .lockbtn.off:not([data-quiz])')].map(b=>+b.dataset.unit);
+  const lockedNow=()=>[...document.querySelectorAll('#locks .lockbtn.off:not([data-quiz]):not([data-publish])')].map(b=>+b.dataset.unit);
+  const publishedNow=()=>[...document.querySelectorAll('#locks .lockbtn[data-publish]:not(.off)')].map(b=>+b.dataset.unit);
   // Review quizzes are the other way round: locked unless listed in classes/{code}.unlocked.
   const unlockedNow=()=>[...document.querySelectorAll('#locks .lockbtn[data-quiz]:not(.off)')].map(b=>+b.dataset.unit);
   $('#locks').onclick=e=>{ const b=e.target.closest('.lockbtn'); if(!b) return; const u=+b.dataset.unit, off=b.classList.contains('off');
     b.classList.toggle('off');
-    if(b.dataset.quiz) save({unlocked: off ? FV.arrayUnion(u) : FV.arrayRemove(u)}, {unlocked: unlockedNow()});
+    if(b.dataset.publish) save({published: off ? FV.arrayUnion(u) : FV.arrayRemove(u)}, {published: publishedNow()});
+    else if(b.dataset.quiz) save({unlocked: off ? FV.arrayUnion(u) : FV.arrayRemove(u)}, {unlocked: unlockedNow()});
     else save({locked: off ? FV.arrayRemove(u) : FV.arrayUnion(u)}, {locked: lockedNow()}) };
   $('#levels').onclick=e=>{ const b=e.target.closest('.lvlbtn'); if(!b) return; save({level: b.dataset.level}) };
   tw0=$('#progressTable'); tw0.onchange=e=>{ const sel=e.target.closest('.stulvl'); if(!sel) return; const k='levels.'+sel.dataset.uid;

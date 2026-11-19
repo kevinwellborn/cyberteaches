@@ -181,11 +181,13 @@
 
   // Unit review quiz scores (academy/review/unit-N/quiz.html), in their own field: review.u1 = {score, total, best, tries, missed, at}.
   // Two writes per quiz check (the student's record and, in a class, the roster row the teacher reads). Returns the saved entry.
-  Cloud.saveReview = async (unit, {score, total, missed}) => {
+  // answers ({questionId: answer}) lets the quiz show the student's own answers again once the teacher shares the right ones.
+  Cloud.saveReview = async (unit, {score, total, missed, answers}) => {
     if(!Cloud.user) return null;
     const uid = Cloud.user.uid, key = 'u' + unit, prev = ((Cloud.profile || {}).review || {})[key] || {};
-    const entry = {score, total, missed: (missed || []).slice(0, 50), best: Math.max(score, prev.best || 0), tries: (prev.tries || 0) + 1,
+    const entry = {score, total, missed: (missed || []).slice(0, 50), best: prev.answers ? Math.max(score, prev.best || 0) : score, tries: (prev.tries || 0) + 1,
       at: firebase.firestore.FieldValue.serverTimestamp()};
+    if(answers) entry.answers = answers;
     const base = who();
     await db.collection('users').doc(uid).set({...base, review: {[key]: entry}}, {merge: true});
     const cc = Cloud.profile && Cloud.profile.classCode;

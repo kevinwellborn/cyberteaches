@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Atkinson+Hyperlegible:wght@400;700&family=JetBrains+Mono:wght@400;600&display=swap">
 <link rel="stylesheet" href="../../resources/resources.css">
-<link rel="stylesheet" href="../review.css?v=5">
+<link rel="stylesheet" href="../review.css?v=6">
 <style>body.gate .sheet > section:not(.cover){visibility:hidden}</style>
 </head><body class="gate">
 <div class="sheet">
@@ -52,10 +52,10 @@
     <div class="submitbar noprint" style="justify-content:flex-start;margin:14px 0 0"><a class="btn primary big" href="quiz.html">I'm ready. Take the quiz →</a></div></section>
 </div>
 <script src="../../firebase-config.js"></script>
-<script src="../../cloud.js?v=20"></script>
+<script src="../../cloud.js?v=21"></script>
 <script src="../../resources/resources.js"></script>
-<script src="data.js?v=3"></script>
-<script src="../review.js?v=3"></script>
+<script src="data.js?v=4"></script>
+<script src="../review.js?v=4"></script>
 <script>
 const R = REVIEW, V = Review, $ = id => document.getElementById(id);
 $('recap').innerHTML = R.recap.map(r => `<div class="row"><div class="ln${r.n > 3 ? ' u' : ''}">L${r.n}</div><div><h3>${r.title}</h3><p>${r.idea}</p></div>${V.prog(r.p)}</div>`).join('');
