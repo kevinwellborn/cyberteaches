@@ -299,13 +299,13 @@ table.progress tr.on{background:var(--accent-soft)}
     </nav>
   </header>
   <main id="app"></main>
-  <div class="foot"><span>Uses the same classes as CyberTeaches Academy.</span><span>Only you can see your students' work.</span></div>
+  <div class="foot"><span>Uses the same classes as CyberTeaches Code Lab.</span><span>Only you can see your students' work.</span></div>
 </div>
 <script src="../academy/firebase-config.js"></script>
 <script src="../academy/cloud.js?v=22"></script>
 <script src="content.js"></script>
 <script>
-// App Builder class progress for teachers. Reads the same classes and roster as the Academy Teacher Dashboard
+// App Builder class progress for teachers. Reads the same classes and roster as the Code Lab Teacher Dashboard
 // (academy/cloud.js). Each student's App Builder work is in classes/{code}/students/{uid}.appBuilder:
 // { done: {lessonId: time}, steps: {lessonId: count}, work: {fieldKey: text}, updatedAt }. This page only reads.
 (function(){
@@ -342,7 +342,7 @@ table.progress tr.on{background:var(--accent-soft)}
     if (id === gateUid && id) return;
     gateUid = id; stopAll();
     const signIn = '<p style="margin-top:16px"><a class="btn primary" href="../academy/teacher.html">Go to the Teacher Dashboard</a></p>';
-    if (!u) return hero('See how your class is doing in App Builder', 'Sign in on the Teacher Dashboard, then come back to this page. App Builder uses the same teacher account and the same classes as CyberTeaches Academy.', signIn);
+    if (!u) return hero('See how your class is doing in App Builder', 'Sign in on the Teacher Dashboard, then come back to this page. App Builder uses the same teacher account and the same classes as CyberTeaches Code Lab.', signIn);
     if (Cloud.isStudentLogin(u)) return hero('This is a student login', 'This page is for teachers. Open the course to keep building your app.', '<p style="margin-top:16px"><a class="btn primary" href="./">Open the course</a></p>');
     if (Cloud.isAdmin(u)) return start();
     stopStatus = Cloud.watchTeacherStatus((st, err) => {
@@ -353,7 +353,7 @@ table.progress tr.on{background:var(--accent-soft)}
   });
 
   function start(){
-    app.innerHTML = `<nav class="courseswitch" aria-label="Course to manage"><span class="label">Course</span><a class="btn small" href="../academy/teacher.html">Coding Academy</a><span class="btn small primary" aria-current="page">App Builder</span><span class="muted">Your classes work in both courses. Pick the course you want to manage.</span></nav>
+    app.innerHTML = `<nav class="courseswitch" aria-label="Course to manage"><span class="label">Course</span><a class="btn small" href="../academy/teacher.html">Code Lab</a><span class="btn small primary" aria-current="page">App Builder</span><span class="muted">Your classes work in both courses. Pick the course you want to manage.</span></nav>
       <div class="page-head"><span class="label">For teachers</span><h1>App Builder class progress</h1>
       <p>See each student's automatic lesson scores, which lessons they finished, and what they wrote. To create a class or make student logins, use the <a href="../academy/teacher.html">Teacher Dashboard</a>.</p></div>
       <div class="row" id="tabs" role="tablist" aria-label="Your classes"></div><div id="classview"></div>`;
@@ -389,7 +389,7 @@ table.progress tr.on{background:var(--accent-soft)}
           <p style="margin:8px 0 6px">Share this link. Students sign in, and the class code is filled in for them.</p>
           <div class="url" id="joinLink">${esc(link)}</div>
           <div class="row" style="margin-top:10px"><button class="btn small" type="button" id="copyLink">Copy link</button><span class="muted">Class code: <b class="mono">${esc(c.code)}</b></span></div>
-          <p class="muted" style="margin:10px 0 0;font-size:15px">Students who already joined this class in the Academy are in it here too. They only need to sign in.</p></section>
+          <p class="muted" style="margin:10px 0 0;font-size:15px">Students who already joined this class in the Code Lab are in it here too. They only need to sign in.</p></section>
         <section class="card"><span class="label">${esc(c.name || c.code)}</span>
           <div class="stats"><div><b>${n}</b><span class="muted">students in class</span></div><div><b>${started}</b><span class="muted">started App Builder</span></div><div><b>${avg.toFixed(1)}</b><span class="muted">lessons done, average, of ${LIVE.length}</span></div></div></section>
       </div>

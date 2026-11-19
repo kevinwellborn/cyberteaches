@@ -4,7 +4,7 @@
 // Rules facts in the track come from the official 2026 CAC rules. Dates for 2027 are not announced yet; update CAC_INFO when they are.
 // Each lesson: summary (one paragraph), more (extra paragraphs), terms ([word, meaning]), steps (things to do),
 // example ({ title, text }), fields (fill-in boxes saved in the browser and collected on the My Plan page),
-// cac (optional note shown as "For the App Challenge"), blocks (optional note linking to Academy block coding),
+// cac (optional note shown as "For the App Challenge"), blocks (optional note linking to Code Lab block coding),
 // tries (Try it boxes: { mode: 'js' | 'html', title, intro, code, challenge }), quiz ({ q, a, c, why }).
 // A unit with track: true is the App Challenge track. A lesson with soon: true is listed but not written yet.
 window.CAC_INFO = {
@@ -515,7 +515,7 @@ window.AP_UNITS = [
           `Conditions compare values. Use === for "is equal to", !== for "is not equal to", and <, >, <=, >= for less than and greater than. Notice that a single = assigns a value, while === asks a question.`,
           `You can chain choices with else if, which checks another condition when the first one was false. You can also join conditions: && means "and", so both sides must be true. || means "or", so one true side is enough.`
         ],
-        blocks: 'In CyberTeaches Academy you used the "if tank ahead" and "if ... else" blocks to help the rover decide what to do. This is the same idea, written as text.',
+        blocks: 'In CyberTeaches Code Lab you used the "if tank ahead" and "if ... else" blocks to help the rover decide what to do. This is the same idea, written as text.',
         terms: [
           ['Condition', 'A question the code asks that is either true or false.'],
           ['if statement', 'Code that runs a block only when a condition is true.'],
@@ -549,7 +549,7 @@ window.AP_UNITS = [
           `A for loop has three parts inside its parentheses: where the counter starts, the condition for continuing, and how the counter changes after each round. for (let i = 1; i <= 5; i++) starts i at 1, keeps going while i is 5 or less, and adds 1 to i each time. i++ is a short way to write i = i + 1.`,
           `A while loop repeats as long as its condition is true. Something inside the loop must eventually make the condition false. If nothing does, the loop never ends. That bug is called an infinite loop. The Try it box stops your code after a few seconds if this happens, so it is safe to experiment.`
         ],
-        blocks: 'In CyberTeaches Academy, the "repeat" block is a for loop, and "repeat until" is a while loop. You already know how to think in loops.',
+        blocks: 'In CyberTeaches Code Lab, the "repeat" block is a for loop, and "repeat until" is a while loop. You already know how to think in loops.',
         terms: [
           ['Loop', 'Code that runs a block again and again.'],
           ['for loop', 'A loop that repeats a set number of times, using a counter.'],

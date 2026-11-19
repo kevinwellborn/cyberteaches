@@ -163,7 +163,7 @@ body{border-top:6px solid var(--lv,var(--accent))}
   <header class="topbar">
     <a class="brand" href="./">
       <svg viewBox="0 0 40 40" width="34" height="34" aria-hidden="true"><rect width="40" height="40" rx="10" fill="var(--accent)"/><rect x="9" y="11" width="5" height="19" rx="2.5" fill="var(--wheel)"/><rect x="26" y="11" width="5" height="19" rx="2.5" fill="var(--wheel)"/><rect x="12.5" y="12" width="15" height="17" rx="4" fill="var(--rover)"/><circle cx="20" cy="17" r="3.2" fill="#fff"/><circle cx="20" cy="16.4" r="1.6" fill="var(--eye)"/></svg>
-      CyberTeaches Academy <small>Teacher</small>
+      CyberTeaches Code Lab <small>Teacher</small>
     </a>
     <div class="spacer"></div>
     <a class="btn" href="resources/" style="text-decoration:none">Teacher resources</a>
@@ -248,7 +248,7 @@ function renderAcct(c){
 }
 
 function dashboard(admin){
-  app.innerHTML=`${admin?'<section id="adminview" class="panel" style="margin-top:6px"></section>':''}<nav class="courseswitch" aria-label="Course to manage"><span class="label">Course</span><button class="tab" id="crsRover" aria-pressed="${course!=='python'}">Coding Academy</button><button class="tab" id="crsPy" aria-pressed="${course==='python'}">🐍 Python Quest</button><a class="tab" href="../app-builder/teacher.html">App Builder</a><span class="muted">Your classes work in both courses. Pick the course you want to manage.</span></nav>
+  app.innerHTML=`${admin?'<section id="adminview" class="panel" style="margin-top:6px"></section>':''}<nav class="courseswitch" aria-label="Course to manage"><span class="label">Course</span><button class="tab" id="crsRover" aria-pressed="${course!=='python'}">🤖 Rover Coding</button><button class="tab" id="crsPy" aria-pressed="${course==='python'}">🐍 Python Quest</button><a class="tab" href="../app-builder/teacher.html">App Builder</a><span class="muted">Your classes work in both courses. Pick the course you want to manage.</span></nav>
     <div class="toolbar" style="margin-top:6px"><h2>Your classes</h2></div>
     <div class="classes" id="classes"></div>
     <form class="newclass" id="newclass"><label class="label" for="cname" style="align-self:center">New class</label><input id="cname" placeholder="e.g. Period 3 Coding" maxlength="60" required><button class="btn primary" id="cbtn">Create class</button><span class="err" id="cerr" role="alert"></span></form>
@@ -443,7 +443,7 @@ function ago(ts){
 // Difficulty: the class has one level (Easy / Medium / Hard); a student can be moved to another level on their own.
 const classLevel=c=>LEVELS_AVAILABLE.includes(c&&c.level)?c.level:DEFAULT_LEVEL;
 const studentLevel=(c,s)=>{ const v=(c&&c.levels||{})[s.uid]; return LEVELS_AVAILABLE.includes(v)?v:classLevel(c) };
-// Course tab: Coding Academy (rover puzzles) or Python Quest. The class, code and student list are shared;
+// Course tab: Rover Coding (block puzzles) or Python Quest. The class, code and student list are shared;
 // Python Quest stars are kept in their own field (students/{uid}.py.stars = {'1-1': 3, ...}).
 let course=(()=>{ try{ return localStorage.getItem('ct-teacher-course')||'rover' }catch(e){ return 'rover' } })();
 function setCourse(v){
@@ -482,7 +482,7 @@ function renderPython(err){
   let place=0, prev=-1;
   view.innerHTML=`<div class="top2">
     <section class="panel"><span class="label">${esc(c.name)} · class code</span><div class="code">${esc(c.code)}</div>
-      <p class="muted" style="margin:0 0 8px">Same class and code as the Coding Academy. Students open <b>Python Quest</b> from the Academy home page (or this link) while signed in:</p>
+      <p class="muted" style="margin:0 0 8px">Same class and code as Rover Coding. Students open <b>Python Quest</b> from the Code Lab home page (or this link) while signed in:</p>
       <div class="linkrow"><code id="jl">${esc(new URL('./python/', location.href).href)}</code><button class="btn" id="copy">Copy link</button></div></section>
     <section class="panel"><span class="label">Python Quest summary</span>
       <div class="stats"><div class="stat"><b>${started}</b><span class="muted">of ${n} students started</span></div>
@@ -494,7 +494,7 @@ function renderPython(err){
     <p class="err" id="pyLockErr" role="alert"></p>
     <div class="toolbar"><h2>🐍 Python Quest progress</h2><div class="spacer"></div><button class="btn" id="csv" ${n?'':'disabled'}>Download CSV</button></div>
     <div class="legend"><span><i class="cell s3">★★★</i> 3 stars (fewest lines of code)</span><span><i class="cell s2">★★</i> 2 stars</span><span><i class="cell s1">★</i> 1 star</span><span><i class="cell s0">·</i> not solved</span><span>Click a lesson to show or hide each level.</span><span><b>Score</b> per lesson out of 100: 3 stars = 100, 2 stars = 90, 1 star = 80 per level, unsolved = 0</span><span>Each lesson starts with a 📖 Learn step, then 10 practice levels.</span></div>
-    <div class="tablewrap" id="pyTable">${err?'<div class="empty err">Could not load students.</div>':n?pyTable():'<div class="empty">No students yet. Share the class code from the Coding Academy tab.</div>'}</div>
+    <div class="tablewrap" id="pyTable">${err?'<div class="empty err">Could not load students.</div>':n?pyTable():'<div class="empty">No students yet. Share the class code from the Rover Coding tab.</div>'}</div>
     ${board.length?`<div class="toolbar"><h2>Python Quest leaderboard</h2></div><section class="panel"><div class="tablewrap"><table><thead><tr><th>#</th><th class="l">Student</th><th>Stars</th><th>Levels</th></tr></thead><tbody>${board.map((r,i)=>{ if(r.stars!==prev){ place=i+1; prev=r.stars } return `<tr><td><b>${place===1?'👑':place}</b></td><td class="l"><b>${esc(r.name)}</b></td><td><b>${r.stars}</b> ⭐</td><td>${r.solved}</td></tr>` }).join('')}</tbody></table></div></section>`:''}`;
   $('#copy').onclick=async()=>{ try{ await navigator.clipboard.writeText($('#jl').textContent); $('#copy').textContent='Copied' }catch(e){} };
   const tw=$('#pyTable'); tw.onclick=e=>{ const b=e.target.closest('[data-pyunit]'); if(!b) return; const u=+b.dataset.pyunit;

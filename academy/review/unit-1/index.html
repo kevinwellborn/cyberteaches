@@ -1,8 +1,8 @@
 <!doctype html>
 <html lang="en"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Unit 1 Lesson 1-6 Review: Study Guide · CyberTeaches Academy</title>
-<meta name="description" content="Study guide for CyberTeaches Academy Lessons 1 to 6: repeat loops, nested loops and repeat until. Vocabulary, big ideas, sentence frames and sample questions. Students answer first, then check, for a score out of 100.">
+<title>Unit 1 Lesson 1-6 Review: Study Guide · CyberTeaches Code Lab</title>
+<meta name="description" content="Study guide for CyberTeaches Code Lab Lessons 1 to 6: repeat loops, nested loops and repeat until. Vocabulary, big ideas, sentence frames and sample questions. Students answer first, then check, for a score out of 100.">
 <link rel="icon" href="../../../favicon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Atkinson+Hyperlegible:wght@400;700&family=JetBrains+Mono:wght@400;600&display=swap">
@@ -12,7 +12,7 @@
 </head><body class="gate">
 <div class="sheet">
   <div class="toolbar">
-    <a class="btn" href="../../">← Academy</a>
+    <a class="btn" href="../../">← Code Lab</a>
     <span class="spacer"></span>
     <button class="btn" id="printBtn">🖨 Print</button>
     <button class="btn" id="printKey">🖨 Print with answers</button>
@@ -117,12 +117,12 @@ function startScoring(cls){
     $('gbig').textContent = `${earned} / ${total}`;
     $('gparts').innerHTML = done < count ? `You have answered <b>${done} of ${count}</b> questions. Answer them all to finish.` : (earned >= 90 ? 'Excellent work! 🌟 You are ready for the quiz.' : earned >= 70 ? 'Good job! Read the ✗ answers again before the quiz.' : 'Keep going! Read the big ideas and the ✗ answers again before the quiz.');
     if (done === count) send(earned, total);
-    else if (!reset) $('gsend').textContent = !C ? '' : !C.user ? 'Sign in on the Academy page so your teacher can see your score.' : '' } });
+    else if (!reset) $('gsend').textContent = !C ? '' : !C.user ? 'Sign in on the Code Lab page so your teacher can see your score.' : '' } });
   async function send(score, total){
     const el = $('gsend');
     if (!C) return;
-    if (!C.user) { el.innerHTML = 'Not sent: you are not signed in. <a href="../../">Sign in on the Academy page</a> so your teacher sees your score.'; return }
-    if (!(C.profile && C.profile.classCode)) { el.innerHTML = 'Not sent: you have not joined a class. <a href="../../">Join your class on the Academy page</a>.'; return }
+    if (!C.user) { el.innerHTML = 'Not sent: you are not signed in. <a href="../../">Sign in on the Code Lab page</a> so your teacher sees your score.'; return }
+    if (!(C.profile && C.profile.classCode)) { el.innerHTML = 'Not sent: you have not joined a class. <a href="../../">Join your class on the Code Lab page</a>.'; return }
     let sent = null; try { sent = localStorage.getItem(sentKey) } catch (e) {}
     if (sent === String(score)) { el.textContent = '✓ Your teacher can see this score.'; return }
     el.textContent = 'Sending your score to your teacher…';
@@ -138,7 +138,7 @@ if (window.Cloud && Cloud.enabled) { let checked = false; Cloud.onChange(C => {
   C.findClass(code).catch(() => C.restGet('classes/' + code)).then(c => {
     if (!c || !isLocked(c)) { openGuide(c); return }
     document.querySelectorAll('.sheet > section:not(.cover), #printBtn, #printKey').forEach(e => e.remove());
-    document.querySelector('.cover').insertAdjacentHTML('beforeend', `<div class="signin warn2">🔒 Your teacher has locked the <b>study guide</b> of the ${R.name} for your class for now. Ask your teacher when it opens. <a href="../../">Back to the Academy</a></div>`);
+    document.querySelector('.cover').insertAdjacentHTML('beforeend', `<div class="signin warn2">🔒 Your teacher has locked the <b>study guide</b> of the ${R.name} for your class for now. Ask your teacher when it opens. <a href="../../">Back to the Code Lab</a></div>`);
     document.body.classList.remove('gate');   // locked: no questions, so nothing to score
   }).catch(e => { console.error(e); openGuide() }) }) }
 else openGuide();

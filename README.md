@@ -9,7 +9,7 @@ and small ad spots (edit `CT_ADS` in `index.html`).
 | `apcybersecurity/` | AP Cybersecurity (high school) |
 | `apcsp/` | AP Computer Science Principles (high school) |
 | `networking/` | AP Networking (companion site for the book: labs, practice exams, syllabus, teacher keys) |
-| `academy/` | CyberTeaches Academy block coding (grades 6 to 12) |
+| `academy/` | CyberTeaches Code Lab block coding (grades 6 to 12) |
 | `app-builder/` | App Builder: design and build your own app, with a Congressional App Challenge track (grades 6 to 12) |
 
 Old links keep working: `ap-cyber/` and `teacher.html` redirect, and the hub forwards `?class=CODE` join links
@@ -39,7 +39,7 @@ Congressional App Challenge (lessons `C.1` to `C.6` and a plain-words rules page
 - The track is based on the official 2026 rules. When the 2027 rules and dates are published, update `CAC_INFO`,
   `CAC_RULES` and the `C.` lessons.
 - Routes are plain names (`#lesson-3-5`, `#challenge`, `#rules`, `#plan`, `#class`, `#teachers`); `#/topic/3.5` also works.
-- Classes: App Builder uses the Academy's sign-in, classes and roster (`academy/cloud.js`), with no change to
+- Classes: App Builder uses the Code Lab's sign-in, classes and roster (`academy/cloud.js`), with no change to
   `firestore.rules`. Students sign in and join on the My class page (`#class`, or the join link
   `app-builder/?class=CODE`). A signed-in student's writing is saved to `users/{uid}.courses['ctcac-work-v1']`.
   For a student in a class, finished lessons, step counts, first-try quick check scores and writing are also copied to
@@ -51,7 +51,7 @@ Congressional App Challenge (lessons `C.1` to `C.6` and a plain-words rules page
   A box earns credit when it is long enough: `lines` (lines) or `min` (words) on the field; with neither, any writing counts. The score
   checks that work is complete, not how good it is.
 - Locks: a teacher can lock lessons or whole modules for a class on `app-builder/teacher.html`. The list is saved as
-  `classes/{code}.abLocked` (lesson ids like `1.3`, module ids like `m1`), next to the Academy's own `locked` field.
+  `classes/{code}.abLocked` (lesson ids like `1.3`, module ids like `m1`), next to the Code Lab's own `locked` field.
   Students in that class see a lock and cannot open those lessons. Students not in a class are never locked out.
 - Pasting and dropping text into the fill-in boxes is turned off so answers are typed. Try it code boxes still allow it.
 - Pictures are inline SVG in `app-builder/figures.js`. `AB_ART(lessonId, slot)` returns the picture for the `hero`,
@@ -69,7 +69,7 @@ editable sample syllabus, and a teacher area with lab keys, exam keys, and print
 noindex and blocked in `robots.txt`. `apnetworking/` redirects to it. The pages are built from source files kept with the
 book project (exam JSON and page fragments), so edit there and copy the built folder in.
 
-## CyberTeaches Academy (grades 6 to 12)
+## CyberTeaches Code Lab (grades 6 to 12)
 
 A self-paced, block-based coding course. Students guide a rover through lessons that each unlock one new block:
 
