@@ -7,8 +7,9 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Atkinson+Hyperlegible:wght@400;700&family=JetBrains+Mono:wght@400;600&display=swap">
 <link rel="stylesheet" href="../../resources/resources.css">
-<link rel="stylesheet" href="../review.css?v=2">
-</head><body>
+<link rel="stylesheet" href="../review.css?v=3">
+<style>body.gate .sheet > section:not(.cover){visibility:hidden}</style>
+</head><body class="gate">
 <div class="sheet">
   <div class="toolbar">
     <a class="btn" href="../../">← Academy</a>
@@ -66,11 +67,19 @@ $('printBtn').onclick = () => { document.body.classList.remove('show-key'); prin
 $('printKey').onclick = () => { document.body.classList.add('show-key'); document.querySelectorAll('details.sol').forEach(d => d.open = true); print() };
 addEventListener('afterprint', () => document.body.classList.remove('show-key'));
 // The teacher can lock the study guide for a class (classes/{code}.locked holds 100 + unit; 200 + unit is the quiz).
-if (window.Cloud) { let checked = false; Cloud.onChange(C => {
-  const code = C.ready && C.user && C.profile && C.profile.classCode; if (!code || checked) return; checked = true;
-  C.findClass(code).then(c => { if (!c || !(c.locked || []).map(Number).includes(100 + R.unit)) return;
-    document.querySelectorAll('.sheet > section:not(.cover), #printBtn, #printKey').forEach(e => e.hidden = true);
+// The teacher can lock the study guide for a class (classes/{code}.locked holds 100 + unit; 200 + unit is the quiz).
+// The guide stays hidden (body.gate) until that check is done, so a locked guide never flashes on screen.
+const openGuide = () => document.body.classList.remove('gate');
+if (window.Cloud && Cloud.enabled) { let checked = false; Cloud.onChange(C => {
+  if (!C.ready || checked) return; checked = true;
+  const code = C.user && C.profile && C.profile.classCode; if (!code) { openGuide(); return }
+  const isLocked = c => (c.locked || []).map(Number).includes(100 + R.unit);
+  C.findClass(code).catch(() => C.restGet('classes/' + code)).then(c => {
+    if (!c || !isLocked(c)) { openGuide(); return }
+    document.querySelectorAll('.sheet > section:not(.cover), #printBtn, #printKey').forEach(e => e.remove());
     document.querySelector('.cover').insertAdjacentHTML('beforeend', `<div class="signin warn2">🔒 Your teacher has locked the <b>study guide</b> of the ${R.name} for your class for now. Ask your teacher when it opens. <a href="../../">Back to the Academy</a></div>`);
-  }).catch(e => console.error(e)) }) }
+    openGuide();
+  }).catch(e => { console.error(e); openGuide() }) }) }
+else openGuide();
 </script>
 </body></html>
