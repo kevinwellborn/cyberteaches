@@ -1,4 +1,4 @@
-// Checks the Unit 1 review (academy/review/unit-1/data.js) with the game simulator:
+// Checks the Unit 1 Lesson 1-6 review (academy/review/unit-1/data.js) with the game simulator:
 // every option program on a map is run, the marked answer must be the only one that wins,
 // block-count, crystal-count and crystals-left answers must match; other number answers are printed for a look. Usage: node tools/review/check.js
 const R = require('../../academy/review/unit-1/data.js');

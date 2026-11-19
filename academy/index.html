@@ -175,6 +175,7 @@ h1,h2,h3{font-family:var(--f-display);text-wrap:balance;margin:0;line-height:1.1
 .chip.off{opacity:.5}
 .chip.bump{animation:chipbump .35s}
 @keyframes chipbump{50%{transform:scale(1.15)}}
+.unit.review{border-left:8px solid #7A4BD6;background:linear-gradient(90deg,#F1ECFB,var(--panel) 40%)}
 .unit.locked{background:transparent;border-style:dashed}
 .unit.locked .unit-num{background:var(--line);color:var(--muted)}
 .unit.locked h2{color:var(--muted)}
@@ -343,7 +344,7 @@ body{border-top:8px solid var(--lv,var(--accent))}
 </div>
 <div id="modal"></div>
 
-<script src="course.js?v=13"></script>
+<script src="course.js?v=14"></script>
 <script src="firebase-config.js"></script>
 <script src="cloud.js?v=19"></script>
 <script src="sound.js?v=1"></script>
@@ -429,10 +430,22 @@ const guestLocked = unit => !!Cloud && !Cloud.user && unit !== FREE_UNIT;
 const isLocked = unit => lockedUnits.has(unit) || guestLocked(unit);
 const nextLevel = ()=>{ const o=myLevels(); return (o.find(l=>!progress[l.n] && !isLocked(l.unit)) || o.find(l=>!isLocked(l.unit)) || o[o.length-1]).n };
 const LOCK_ICO='<svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" style="vertical-align:-2px"><rect x="5" y="10" width="14" height="11" rx="2" fill="currentColor"/><path d="M8 10V7a4 4 0 0 1 8 0v3" stroke="currentColor" stroke-width="2.2" fill="none"/></svg>';
+// A review (study guide + quiz) card after its last lesson. Teachers lock it like a lesson (classes/{code}.locked holds r.id).
+function reviewCard(r){
+  const lockedR=isLocked(r.id), guestR=guestLocked(r.id), sc=(((Cloud&&Cloud.profile)||{}).review||{})['u'+r.n];
+  const card=h('article','unit review'+(lockedR?' locked teacher-locked':''));
+  const status=guestR?'Sign in to unlock':lockedR?'Locked by your teacher':sc?`Your best quiz score: ${sc.best}/${sc.total}`:'Quiz not taken yet';
+  card.innerHTML=`<div class="unit-num" style="background:${lockedR?'':r.color}">${lockedR?LOCK_ICO:'📘'}</div>
+    <div><span class="label">Lessons ${r.lessons} · Review · ${status}</span><h2 style="margin-top:4px">${r.name}</h2><p class="concept">${r.blurb}</p>
+    <div class="hero-actions" style="margin:0">${lockedR?'':`<a class="btn" href="${r.path}">📖 Study guide</a><a class="btn primary" href="${r.path}quiz.html">✏️ Take the quiz</a>`}</div></div>`;
+  if(lockedR){ card.style.cursor='pointer'; card.onclick=()=> guestR ? signInMsg(r.id)
+    : showMsg('Review locked', `<p>${LOCK_ICO} Your teacher has locked the <b>${r.name}</b> for now. Ask your teacher when it opens.</p>`) }
+  return card;
+}
 function lockedMsg(unit){ if(guestLocked(unit)) return signInMsg(unit); showMsg('Lesson locked', `<p>${LOCK_ICO} Your teacher has locked <b>Lesson ${unit}</b> for now. Pick a lesson that is open, or ask your teacher.</p>`) }
 
 let authWaiting=false;   // a puzzle link opened before sign-in was checked
-function signInMsg(unit){ showMsg('Sign in to unlock', `<p>${LOCK_ICO} <b>Lesson ${unit}</b> and the other lessons open when you sign in with your school Google account or the student login from your teacher, then join your class.</p><p>Lesson 1 is free to try without signing in.</p>`,
+function signInMsg(unit){ showMsg('Sign in to unlock', `<p>${LOCK_ICO} <b>${unit>100?'This review':'Lesson '+unit}</b> and the other lessons open when you sign in with your school Google account or the student login from your teacher, then join your class.</p><p>Lesson 1 is free to try without signing in.</p>`,
   [['Not now',false],['Sign in',true,()=>{ openSignIn(joinParam); return false }]]) }
 
 // ---------- routing ----------
@@ -648,7 +661,6 @@ function showHome(){
       <div class="hero-actions">
         <button class="btn primary" id="go">${done? (done===total?'Replay the course':'Continue with puzzle '+(l=>l.unit+'.'+l.k)(LEVELS[nextLevel()-1])) : 'Start puzzle 1'}</button>
         <a class="btn" href="quiz/" title="Join a live class quiz with the game PIN from your teacher">⚡ Join Quiz Battle</a>
-        <a class="btn" href="review/unit-1/" title="Study guide and quiz for Lessons 1 to 6 (repeat and repeat until)">📘 Unit 1 review</a>
         <a class="btn" href="python/" title="New: write real Python to guide an explorer through a jungle temple">🐍 Python Quest <small style="background:#E9B21B;color:#2A1E00;border-radius:6px;padding:0 5px;font-size:11px">NEW</small></a>
         ${Cloud&&Cloud.user&&Cloud.profile&&Cloud.profile.classCode?'<a class="btn" href="#duel" title="Race a classmate on the same puzzle: fewest blocks wins">⚔ Duel</a><a class="btn" href="#race" title="Up to 4 classmates race to the flag with a few blocks: first one there wins">🚩 Flag Race</a>':''}
         <div class="meter"><span class="label">${done} of ${total} puzzles solved</span><div class="meter-bar"><i style="width:${done/total*100}%"></i></div></div>
@@ -686,6 +698,7 @@ function showHome(){
     });
     if(guestU){ card.style.cursor='pointer'; card.title='Sign in to unlock'; card.onclick=()=>signInMsg(u.n) }
     units.appendChild(card);
+    REVIEWS.filter(r=>r.after===u.n).forEach(r=>units.appendChild(reviewCard(r)));
   });
   UPCOMING.forEach((u,i)=>{
     const card=h('article','unit locked');

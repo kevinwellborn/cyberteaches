@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Unit 1 Quiz: Loops · CyberTeaches Academy</title>
+<title>Unit 1 Lesson 1-6 Review: Quiz · CyberTeaches Academy</title>
 <meta name="description" content="Self-scored quiz for CyberTeaches Academy Lessons 1 to 6: repeat loops, nested loops and repeat until.">
 <link rel="icon" href="../../../favicon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -20,7 +20,7 @@
   <section class="card score" id="score" aria-live="polite"></section>
 
   <section class="card cover">
-    <span class="label">Unit 1 · Lessons 1 to 6 · Quiz</span>
+    <span class="label">Unit 1 Lesson 1-6 review · Quiz</span>
     <h1>Loops <em>quiz</em></h1>
     <p><b id="qcount"></b> questions. Pick one answer for each question, or type a number.<span class="screen-only"> Then press <b>Check my answers</b> at the bottom.</span><span class="print-only"> Circle the letter, or write the number on the line.</span></p>
     <div class="namebox"><label>Name<input id="name" autocomplete="name" placeholder="Type your name"></label><label>Class<input id="klass" placeholder="Period or class"></label></div>
@@ -79,8 +79,18 @@ $('check').onclick = () => {
 
 // Signed-in students: the score goes to their record and their class roster, where the Teacher Dashboard shows it.
 const C = window.Cloud;
+// The teacher can lock this review for a class like a lesson (classes/{code}.locked holds 100 + unit).
+let lockChecked = false, lockedNow = false;
+function checkLock(code){
+  if (lockChecked) return; lockChecked = true;
+  C.findClass(code).then(c => { if (!c || !(c.locked || []).map(Number).includes(100 + R.unit)) return;
+    lockedNow = true; document.querySelectorAll('#quiz, .submitbar, .bank').forEach(e => e.hidden = true);
+    const box = $('signin'); box.className = 'signin noprint warn2';
+    box.innerHTML = `🔒 Your teacher has locked the <b>${R.name}</b> for your class for now. Ask your teacher when it opens. <a href="../../">Back to the Academy</a>`;
+  }).catch(e => console.error(e));
+}
 function signinBox(){
-  const box = $('signin'); if (!box) return;
+  const box = $('signin'); if (!box || lockedNow) return;
   if (!C || !C.enabled) { box.hidden = true; return }
   if (!C.ready) { box.className = 'signin noprint'; box.textContent = 'Checking if you are signed in…'; return }
   const u = C.user, cls = C.profile && C.profile.classCode;
@@ -89,6 +99,7 @@ function signinBox(){
     box.innerHTML = `✓ Signed in as <b>${esc(u.displayName || 'Student')}</b> · class <b>${esc(C.profile.className || cls)}</b>. Your score goes to your teacher when you check your answers.`;
     if (!$('name').value) $('name').value = u.displayName || '';
     if (!$('klass').value) $('klass').value = C.profile.className || cls;
+    checkLock(cls);
   } else if (u) {
     box.className = 'signin noprint warn2';
     box.innerHTML = `You are signed in, but you have not joined a class. <a href="../../">Join your class on the Academy page</a>, then come back so your teacher sees your score.`;
