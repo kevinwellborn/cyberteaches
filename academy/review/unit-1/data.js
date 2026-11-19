@@ -1,4 +1,4 @@
-// Unit 1 review (Lessons 1-6: repeat and repeat until): study guide content and quiz questions.
+// Unit 1 Lesson 1-6 review (Lessons 1-6: repeat and repeat until): study guide content and quiz questions.
 // Programs use the classwork letters: F move forward, L turn left, R turn right, C collect crystal,
 // "repeat 3 [ F C ]" and "until flag [ F ]" (repeat until at flag). Maps use the game legend:
 // # rock, . sand, S rover, * crystal, G flag; dir 0 up, 1 right, 2 down, 3 left.
@@ -7,7 +7,7 @@
 // tools/review/check.js runs every map question through the game simulator. Run it after any change.
 (function(){
 const REVIEW = {
-  unit: 1, title: 'Loops', lessons: [1, 2, 3, 4, 5, 6],
+  unit: 1, name: 'Unit 1 Lesson 1-6 review', title: 'Loops', lessons: [1, 2, 3, 4, 5, 6],
 
   // What each lesson taught, with the program shown as its picture.
   recap: [

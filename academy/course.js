@@ -76,6 +76,12 @@ const UNITS = [
           '<b>repeat steps times</b> repeats the blocks inside as many times as the number in the box. Change the box inside a loop and every lap is a different length.',
           'You can still use the blocks from earlier lessons, like repeat and collect crystal.']}
 ];
+// Reviews (study guide + self-scored quiz) shown after a lesson in the course. id is the number used in classes/{code}.locked
+// (100 + n, so it never clashes with a lesson number); scores are saved to review.u{n} (see Cloud.saveReview).
+const REVIEWS = [
+  {n:1, id:101, after:6, name:'Unit 1 Lesson 1-6 review', short:'L1-6 review', lessons:'1-6', path:'review/unit-1/', color:'#7A4BD6',
+   blurb:'Review Lessons 1 to 6 (repeat and repeat until). Read the study guide with sample questions, then take the 20-question quiz. Your score goes to your teacher.'}
+];
 const UPCOMING = [
   {title:'Destroy walls', blurb:'Blast cracked walls, collect charges, and find keys to locked gates.'}
 ];
