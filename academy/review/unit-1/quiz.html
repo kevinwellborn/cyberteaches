@@ -79,14 +79,14 @@ $('check').onclick = () => {
 
 // Signed-in students: the score goes to their record and their class roster, where the Teacher Dashboard shows it.
 const C = window.Cloud;
-// The teacher can lock this review for a class like a lesson (classes/{code}.locked holds 100 + unit).
+// In a class the quiz starts locked: it opens when the teacher adds 200 + unit to classes/{code}.unlocked (Teacher Dashboard).
 let lockChecked = false, lockedNow = false;
 function checkLock(code){
   if (lockChecked) return; lockChecked = true;
-  C.findClass(code).then(c => { if (!c || !(c.locked || []).map(Number).includes(100 + R.unit)) return;
+  C.findClass(code).then(c => { if (!c || (c.unlocked || []).map(Number).includes(200 + R.unit)) return;
     lockedNow = true; document.querySelectorAll('#quiz, .submitbar, .bank').forEach(e => e.hidden = true);
     const box = $('signin'); box.className = 'signin noprint warn2';
-    box.innerHTML = `🔒 Your teacher has locked the <b>${R.name}</b> for your class for now. Ask your teacher when it opens. <a href="../../">Back to the Academy</a>`;
+    box.innerHTML = `🔒 This quiz is locked for your class for now. Study the <a href="index.html">study guide</a> first. Your teacher will open the quiz when it is time. <a href="../../">Back to the Academy</a>`;
   }).catch(e => console.error(e));
 }
 function signinBox(){
