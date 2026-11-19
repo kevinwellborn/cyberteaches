@@ -88,30 +88,50 @@ $('check').onclick = () => {
 
 // Signed-in students: the score goes to their record and their class roster, where the Teacher Dashboard shows it.
 const C = window.Cloud;
-// Who may see the questions:
-// - in a class: only when the teacher has unlocked the quiz (200 + unit in classes/{code}.unlocked, Teacher Dashboard);
-// - signed in without a class (teachers, practice): yes; not signed in: sign in first, so signing out can't skip a lock.
+// Who may see the questions (every quiz is locked and hidden by default):
+// - teachers (approved in the Admin panel) and the admin: always, so they can try it;
+// - students in a class: only when the teacher has unlocked the quiz (200 + unit in classes/{code}.unlocked, Teacher Dashboard);
+// - students without a class: no, they join their class first; not signed in: sign in first, so signing out can't skip a lock.
 let checking = false, decided = false;
+const retry = async f => { for (let i = 0; i < 3; i++) { try { return await f() } catch (e) { console.error(e); await new Promise(r => setTimeout(r, 1500 * (i + 1))) } } throw new Error('network') };
 async function classOpen(code){
-  for (let i = 0; i < 3; i++) {
-    try { const c = await C.findClass(code); if (c) return (c.unlocked || []).map(Number).includes(200 + R.unit) } catch (e) { console.error(e) }
-    try { const c = await C.restGet('classes/' + code); if (c) return (c.unlocked || []).map(Number).includes(200 + R.unit) } catch (e) { console.error(e) }
-    await new Promise(r => setTimeout(r, 1500 * (i + 1)));
-  }
-  throw new Error('network');
+  return retry(async () => {
+    let c = null; try { c = await C.findClass(code) } catch (e) { console.error(e) }
+    if (!c) c = await C.restGet('classes/' + code);
+    return !!c && (c.unlocked || []).map(Number).includes(200 + R.unit) });
 }
+async function isStaff(u){
+  if (C.isAdmin(u)) return true;
+  if (C.isStudentLogin(u)) return false;
+  return retry(async () => {
+    let t; try { const s = await C.db.collection('teachers').doc(u.uid).get(); t = s.exists ? s.data() : null }
+    catch (e) { console.error(e); t = await C.restGet('teachers/' + u.uid) }
+    return !!t && t.status === 'approved' });
+}
+const LOCKED_MSG = `🔒 This quiz is locked for now. Study the <a href="index.html">study guide</a> first. Your teacher will open the quiz when it is time. <a href="../../">Back to the Academy</a>`;
 function access(){
   const box = $('signin'); if (decided) return;
   if (!C || !C.enabled) { box.hidden = true; decided = true; showQuiz(); return }
   if (!C.ready) { box.className = 'signin noprint'; box.textContent = 'Checking if you are signed in…'; return }
   const u = C.user, cls = C.profile && C.profile.classCode;
-  if (u && cls) {
+  if (u && (cls || !C.profileFailed)) {
     if (checking) return; checking = true;
     box.className = 'signin noprint'; box.textContent = 'Checking if your teacher has opened this quiz…'; hideQuiz('Checking if your teacher has opened this quiz…');
-    classOpen(cls).then(open => { decided = true;
-      if (!open) {
+    (async () => {
+      if (await isStaff(u)) return 'staff';
+      if (!cls) return 'noclass';
+      return (await classOpen(cls)) ? 'open' : 'locked';
+    })().then(state => { decided = true;
+      if (state === 'staff') {
+        box.className = 'signin noprint ok';
+        box.innerHTML = `✓ Signed in as a teacher. Students see this quiz only after you unlock it for their class in the <a href="../../teacher.html">Teacher Dashboard</a>.`;
+        showQuiz(); return }
+      if (state === 'noclass') {
         box.className = 'signin noprint warn2';
-        box.innerHTML = `🔒 This quiz is locked for your class for now. Study the <a href="index.html">study guide</a> first. Your teacher will open the quiz when it is time. <a href="../../">Back to the Academy</a>`;
+        box.innerHTML = `🔒 This quiz is locked. <a href="../../">Join your class on the Academy page</a>. Your teacher will open the quiz when it is time.`;
+        hideQuiz('The questions appear here when your teacher opens the quiz.'); return }
+      if (state === 'locked') {
+        box.className = 'signin noprint warn2'; box.innerHTML = LOCKED_MSG;
         hideQuiz('The questions appear here when your teacher opens the quiz.'); return }
       box.className = 'signin noprint ok';
       box.innerHTML = `✓ Signed in as <b>${esc(u.displayName || 'Student')}</b> · class <b>${esc(C.profile.className || cls)}</b>. Your score goes to your teacher when you check your answers.`;
@@ -121,15 +141,10 @@ function access(){
     }, () => { checking = false; box.className = 'signin noprint warn2';
       box.innerHTML = `Could not check if the quiz is open (the network may be slow). <button class="btn sm" type="button" id="retry">Try again</button>`;
       $('retry').onclick = access });
-  } else if (u && C.profileFailed) {
+  } else if (u) {
     box.className = 'signin noprint warn2';
     box.innerHTML = `Could not load your account (the network may be slow). <button class="btn sm" type="button" id="retry">Reload</button>`;
     hideQuiz('The questions appear here when your account loads.'); $('retry').onclick = () => location.reload();
-  } else if (u) {
-    decided = true;
-    box.className = 'signin noprint warn2';
-    box.innerHTML = `You are signed in, but you have not joined a class. <a href="../../">Join your class on the Academy page</a>, then come back so your teacher sees your score.`;
-    showQuiz();
   } else {
     box.className = 'signin noprint warn2';
     box.innerHTML = `<b>Sign in to take the quiz.</b> <button class="btn sm" type="button" id="gsign">Sign in with Google</button> Have a student login? <a href="../../">Sign in on the Academy page</a>, then come back.`;
