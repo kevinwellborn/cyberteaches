@@ -17,7 +17,8 @@ function parse(src) {
 const blocks = p => p.reduce((s, n) => s + 1 + (n.body ? blocks(n.body) : 0), 0);
 const count = (p, t) => p.reduce((s, n) => s + (n.type === t ? 1 : 0) + (n.body ? count(n.body, t) * (n.n || 1) : 0), 0);
 let bad = 0; const fail = m => { bad++; console.log('FAIL', m) };
-const all = [...R.samples.map((q, i) => ['sample ' + (i + 1), q]), ...R.quiz.map((q, i) => ['quiz ' + (i + 1), q])];
+const all = [...R.samples.map((q, i) => ['sample ' + (i + 1), q]), ...R.quiz.map((q, i) => ['quiz ' + (i + 1), q]),
+  ...Object.entries(R.quizVariants || {}).flatMap(([i, vs]) => vs.map((q, k) => [`quiz ${+i + 1} look-alike ${k + 1}`, q]))];
 for (const [id, q] of all) {
   if (q.map) { const w = q.map[0].length; if (q.map.some(r => r.length !== w)) fail(id + ': map rows differ in length') }
   if (q.kind !== 'num' && !(q.a >= 0 && q.a < q.opts.length)) fail(id + ': answer index out of range');

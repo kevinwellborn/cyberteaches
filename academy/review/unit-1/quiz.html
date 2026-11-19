@@ -38,14 +38,14 @@
 <script src="../../firebase-config.js"></script>
 <script src="../../cloud.js?v=21"></script>
 <script src="../../resources/resources.js"></script>
-<script src="data.js?v=4"></script>
-<script src="../review.js?v=4"></script>
+<script src="data.js?v=5"></script>
+<script src="../review.js?v=5"></script>
 <script>
 const R = REVIEW, V = Review, $ = id => document.getElementById(id), P = R.quizPoints;
 // Three parts, like the study guide: vocabulary, sentences and program questions, 100 points in all.
-const vocabQs = R.quizVocab.map((v, i) => ({id: 'qv' + i, q: `Which word means <b>${v.m}</b>?`, opts: v.opts, a: v.a, pts: P.vocab, why: `<b>${v.opts[v.a]}</b> means ${v.m}.`}));
-const fillQs = R.quizFill.map((f, i) => ({id: 'qf' + i, kind: 'fill', a: f.a, pts: f.a.length * P.blank, s: f.s}));
-const progQs = R.quiz.map((q, i) => ({...q, id: 'qp' + i, pts: P.question}));
+let vocabQs = R.quizVocab.map((v, i) => ({id: 'qv' + i, q: `Which word means <b>${v.m}</b>?`, opts: v.opts, a: v.a, pts: P.vocab, why: `<b>${v.opts[v.a]}</b> means ${v.m}.`}));
+let fillQs = R.quizFill.map((f, i) => ({id: 'qf' + i, kind: 'fill', a: f.a, pts: f.a.length * P.blank, s: f.s}));
+let progQs = R.quiz.map((q, i) => ({...q, id: 'qp' + i, pts: P.question}));
 const ITEMS = [...vocabQs.map(q => ({id: q.id, kind: 'mc', a: q.a, pts: q.pts, why: q.why})), ...fillQs,
   ...progQs.map(q => ({id: q.id, kind: q.kind === 'num' ? 'num' : 'mc', a: q.a, pts: q.pts, why: q.why}))];
 const TOTAL = ITEMS.reduce((t, it) => t + it.pts, 0), COUNT = ITEMS.length;
@@ -54,9 +54,25 @@ $('qcount').textContent = COUNT;
 $('wbank').innerHTML = '<b>Word bank:</b> ' + R.fillBank.map(w => `<span>${w}</span>`).join('');
 // The questions are only put on the page once we know this student may see them (see access() below),
 // so a locked quiz never flashes on screen.
-let shown = false;
+let shown = false, mixed = false;
+// Each student in a class gets the questions of each part in their own order, and the answer choices in their own order,
+// so neighbours' screens don't match. The order comes from the student's account, so it stays the same when they reload.
+// Teachers, the answer key and the printed quiz keep the normal order.
+function mixUp(seed){
+  const mix = V.shuffler(seed + '/u' + R.unit);
+  const reorder = qs => mix(qs).map(q => q.opts ? {...q, order: mix(q.opts.map((o, k) => k))} : q);
+  // Some program questions have look-alikes with other numbers (R.quizVariants): each student gets one of the versions.
+  progQs = progQs.map((q, i) => { const vs = (R.quizVariants || {})[i]; if (!vs) return q; const pick = mix([q, ...vs])[0];
+    if (pick === q) return q; const it = ITEMS.find(x => x.id === q.id); it.a = pick.a; it.why = pick.why; return {...pick, id: q.id, pts: q.pts} });
+  vocabQs = reorder(vocabQs); fillQs = mix(fillQs); progQs = reorder(progQs);
+  const byId = Object.fromEntries([...vocabQs, ...progQs].map(q => [q.id, q]));
+  ITEMS.forEach(it => { if (byId[it.id] && byId[it.id].order) it.order = byId[it.id].order });
+}
 function showQuiz(){
   if (shown) return; shown = true; $('waitq').hidden = true;
+  // (A quiz turned in before the mix-up existed keeps the normal order, so its answers still line up.)
+  mixed = inClass && C && C.user && !new URLSearchParams(location.search).has('teacher') && (!prior || !!(prior.answers && prior.answers._mix));
+  if (mixed) mixUp(C.user.uid);
   $('quiz').innerHTML = `<h2 class="qsec">Part 1. Vocabulary <span class="pts">${sum(vocabQs)} points</span></h2><p class="sub">Pick the word that matches the meaning.</p>`
     + vocabQs.map((q, i) => V.question(q, i, 'quiz')).join('')
     + `<h2 class="qsec">Part 2. Finish the sentence <span class="pts">${sum(fillQs)} points</span></h2><p class="sub">Pick a word from the word bank for each blank.</p>`
@@ -97,6 +113,7 @@ function showResults(answers){
 }
 $('check').onclick = async () => {
   const answers = {}; ITEMS.forEach(it => { answers[it.id] = V.read(el(it), it) });
+  if (mixed) answers._mix = 1;
   const blank = ITEMS.map((it, i) => answers[it.id] === null ? it : null).filter(Boolean);
   if (blank.length && !$('check').dataset.sure) {
     $('warn').textContent = `You did not answer ${blank.length} question${blank.length > 1 ? 's' : ''}. Press again to turn it in anyway.`;

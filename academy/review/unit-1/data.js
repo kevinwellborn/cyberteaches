@@ -86,6 +86,35 @@ const REVIEW = {
     {s: 'A rock is right in front of the rover. If the rover ____, it ____ into the rock.', a: ['moves forward', 'crashes']},
     {s: 'R F C R F C R F C is a ____. Each time, the rover ____ right first.', a: ['pattern', 'turns']},
   ],
+  // Quiz look-alikes: for these program questions (by place in quiz, from 0) each student gets the original or one of these,
+  // with different numbers and a different answer. Picked from the student's account, so it stays the same on reload.
+  quizVariants: {
+    2: [
+      {lesson: 2, kind: 'num', q: 'There are 8 crystals in a row. The program is <span class="code">repeat 3 [ F C ]</span>. How many crystals are <b>left</b>?', map: ['###########', '#S********#', '###########'], dir: 1, prog: 'repeat 3 [ F C ]', a: 5,
+       why: 'The repeat runs 3 times and collects 3 crystals. 8 − 3 = 5 are left.'},
+      {lesson: 2, kind: 'num', q: 'There are 6 crystals in a row. The program is <span class="code">repeat 4 [ F C ]</span>. How many crystals are <b>left</b>?', map: ['#########', '#S******#', '#########'], dir: 1, prog: 'repeat 4 [ F C ]', a: 2,
+       why: 'The repeat runs 4 times and collects 4 crystals. 6 − 4 = 2 are left.'},
+    ],
+    4: [
+      {lesson: 2, kind: 'num', q: 'How many blocks is this program?', prog: 'L repeat 5 [ F F C ]', a: 5,
+       why: 'Turn left (1) + repeat (1) + 3 blocks inside = 5 blocks.'},
+      {lesson: 2, kind: 'num', q: 'How many blocks is this program?', prog: 'repeat 3 [ F C R ] F F', a: 6,
+       why: 'Repeat (1) + 3 blocks inside + 2 move forward blocks after it = 6 blocks.'},
+    ],
+    6: [
+      {lesson: 3, kind: 'num', q: 'How many crystals does this program collect?', prog: 'repeat 3 [ repeat 3 [ F C ] R ]', a: 9,
+       why: 'The inside repeat collects 3 crystals. The outside repeat runs it 3 times: 3 × 3 = 9.'},
+      {lesson: 3, kind: 'num', q: 'How many crystals does this program collect?', prog: 'repeat 4 [ repeat 3 [ F C ] R ]', a: 12,
+       why: 'The inside repeat collects 3 crystals. The outside repeat runs it 4 times: 4 × 3 = 12.'},
+    ],
+    9: [
+      {lesson: 4, kind: 'num', q: 'How many times does <b>move forward</b> run?', map: ['#########', '#S.....G#', '#########'], dir: 1, prog: 'until flag [ F ]', a: 6,
+       why: 'The flag is 6 squares away. The loop stops the moment the rover is on the flag.'},
+      {lesson: 4, kind: 'num', q: 'How many times does <b>move forward</b> run?', map: ['#############', '#S.........G#', '#############'], dir: 1, prog: 'until flag [ F ]', a: 10,
+       why: 'The flag is 10 squares away. The loop stops the moment the rover is on the flag.'},
+    ],
+  },
+
   // Quiz points (total 100): each program question, each vocabulary word, each sentence blank.
   quizPoints: {question: 4, vocab: 2, blank: 2},
 
