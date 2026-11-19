@@ -72,16 +72,21 @@ const HELPERS = `
 
   // ---------- quiz ----------
   await p.goto(base + 'quiz.html'); await p.waitForTimeout(700); await p.addScriptTag({content: HELPERS});
-  await p.evaluate(() => document.querySelectorAll('.fb, .key, .signin, input').forEach(e => e.remove()));
+  await p.evaluate(() => { document.querySelectorAll('.fb, .key, .signin, input, .fillgap').forEach(e => e.remove());
+    document.querySelectorAll('#quiz select').forEach(e => e.replaceWith('______')); document.querySelectorAll('#quiz .pts').forEach(e => e.remove()) });
   await picturize(p);
   write('quiz-digital', await p.evaluate(() => {
     const R = REVIEW;
     return `<h1>${R.name}: Quiz (${R.title})</h1>
       <p><b>Name:</b> ______________________ &nbsp; <b>Class:</b> ____________ &nbsp; <b>Date:</b> ____________</p>
-      <p>${R.quiz.length} questions. For each question, type the letter of the best answer, or type a number, in the shaded box.</p>
+      <p>${document.querySelectorAll('#quiz .q').length} questions, 100 points. For each question, type the letter, the word or the number in the shaded box.</p>
       <p><b>Block letters:</b> ${code('F')} move forward &nbsp;·&nbsp; ${code('L')} turn left &nbsp;·&nbsp; ${code('R')} turn right &nbsp;·&nbsp; ${code('C')} collect crystal</p>
-      <p><b>Word bank:</b> ${R.vocab.slice(0, 10).map(([w, , es]) => `[ ${w} <i>(${es})</i> ]`).join(' ')}</p>`
-      + [...document.querySelectorAll('#quiz .q')].map((q, i) => qHtml(q, i)).join('');
+      <p><b>Word bank:</b> ${R.fillBank.map(w => `[ ${w} ]`).join(' ')}</p>`
+      + [...document.querySelectorAll('#quiz .qsec')].map(h => {
+        const qs = []; let n = h.nextElementSibling; while (n && !n.classList.contains('qsec')) { if (n.classList.contains('q')) qs.push(n); n = n.nextElementSibling }
+        return `<h2>${h.textContent.replace(/\d+ points$/, m => '(' + m + ')')}</h2>` + qs.map((q, i) => q.classList.contains('fillq')
+          ? '<h3>Question ' + (i + 1) + '</h3><p>' + q.querySelector('.qt').innerHTML + '</p>' + box(1, '<b>My answers (words):</b> ')
+          : qHtml(q, i)).join('') }).join('');
   }));
   await b.close();
 })().catch(e => { console.error(e); process.exit(1) });
