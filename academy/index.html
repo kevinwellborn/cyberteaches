@@ -345,7 +345,7 @@ body{border-top:8px solid var(--lv,var(--accent))}
 
 <script src="course.js?v=13"></script>
 <script src="firebase-config.js"></script>
-<script src="cloud.js?v=18"></script>
+<script src="cloud.js?v=19"></script>
 <script src="sound.js?v=1"></script>
 <script src="duel.js?v=3"></script>
 <script src="race.js?v=3"></script>
@@ -648,6 +648,7 @@ function showHome(){
       <div class="hero-actions">
         <button class="btn primary" id="go">${done? (done===total?'Replay the course':'Continue with puzzle '+(l=>l.unit+'.'+l.k)(LEVELS[nextLevel()-1])) : 'Start puzzle 1'}</button>
         <a class="btn" href="quiz/" title="Join a live class quiz with the game PIN from your teacher">⚡ Join Quiz Battle</a>
+        <a class="btn" href="review/unit-1/" title="Study guide and quiz for Lessons 1 to 6 (repeat and repeat until)">📘 Unit 1 review</a>
         <a class="btn" href="python/" title="New: write real Python to guide an explorer through a jungle temple">🐍 Python Quest <small style="background:#E9B21B;color:#2A1E00;border-radius:6px;padding:0 5px;font-size:11px">NEW</small></a>
         ${Cloud&&Cloud.user&&Cloud.profile&&Cloud.profile.classCode?'<a class="btn" href="#duel" title="Race a classmate on the same puzzle: fewest blocks wins">⚔ Duel</a><a class="btn" href="#race" title="Up to 4 classmates race to the flag with a few blocks: first one there wins">🚩 Flag Race</a>':''}
         <div class="meter"><span class="label">${done} of ${total} puzzles solved</span><div class="meter-bar"><i style="width:${done/total*100}%"></i></div></div>

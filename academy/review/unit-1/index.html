@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Unit 1 Study Guide: Loops · CyberTeaches Academy</title>
+<meta name="description" content="Study guide for CyberTeaches Academy Lessons 1 to 6: repeat loops, nested loops and repeat until. Vocabulary, big ideas, sentence frames and sample questions with answers.">
+<link rel="icon" href="../../../favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Atkinson+Hyperlegible:wght@400;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<link rel="stylesheet" href="../../resources/resources.css">
+<link rel="stylesheet" href="../review.css?v=2">
+</head><body>
+<div class="sheet">
+  <div class="toolbar">
+    <a class="btn" href="../../">← Academy</a>
+    <span class="spacer"></span>
+    <button class="btn" id="printBtn">🖨 Print</button>
+    <button class="btn" id="printKey">🖨 Print with answers</button>
+    <a class="btn primary" href="quiz.html">Take the quiz →</a>
+  </div>
+
+  <section class="card cover">
+    <span class="label">Unit 1 · Lessons 1 to 6 · Study guide</span>
+    <h1>Loops: <em>repeat</em> and <em>repeat until</em></h1>
+    <p>Read the big ideas, learn the words, then try the sample questions. The quiz has questions just like them.</p>
+    <div class="namebox"><label>Name<span class="line"></span></label><label>Class<span class="line"></span></label><label style="max-width:160px">Date<span class="line"></span></label></div>
+    <div class="levels">For every level:<i style="background:#2E9363"></i>Easy<i style="background:#D9A013"></i>Medium<i style="background:#C8402F"></i>Hard. The maps are a different size at each level, but the ideas and blocks are the same.</div>
+  </section>
+
+  <section class="card"><h2>1. What you learned</h2><p class="sub">Each lesson in one sentence, with a program that shows the idea.</p><div class="recap" id="recap"></div></section>
+
+  <section class="card"><h2>2. Blocks you know</h2><p class="sub">On paper we write each block with a letter.</p>
+    <div class="blocks" id="blocks"></div></section>
+
+  <section class="card"><h2>3. Word bank</h2><p class="sub">Learn these words. The Spanish word is in <i>italics</i>.</p>
+    <table class="words"><thead><tr><th>Word</th><th>Meaning</th><th>Español</th><th class="wpic">Picture</th></tr></thead><tbody id="words"></tbody></table></section>
+
+  <section class="card pagebreak"><h2>4. Big ideas</h2><p class="sub">Trace each program on its map with your finger.</p><div class="ideas" id="ideas"></div></section>
+
+  <section class="card"><h2>5. Say it and write it</h2><p class="sub">Use the word bank to finish each sentence. Say it to a partner, then write it.</p>
+    <div class="bank" id="fbank"></div><ol class="frames" id="frames"></ol></section>
+
+  <section class="card pagebreak"><h2>6. Sample questions</h2><p class="sub">Try each question first. Then open <b>Check your answer</b> to see the answer and why.</p>
+    <div id="samples"></div></section>
+
+  <section class="card"><h2>Quiz tips</h2><ul class="tips" id="tips"></ul>
+    <div class="submitbar noprint" style="justify-content:flex-start;margin:14px 0 0"><a class="btn primary big" href="quiz.html">I'm ready. Take the quiz →</a></div></section>
+</div>
+<script src="../../resources/resources.js"></script>
+<script src="data.js?v=2"></script>
+<script src="../review.js?v=1"></script>
+<script>
+const R = REVIEW, V = Review, $ = id => document.getElementById(id);
+$('recap').innerHTML = R.recap.map(r => `<div class="row"><div class="ln${r.n > 3 ? ' u' : ''}">L${r.n}</div><div><h3>${r.title}</h3><p>${r.idea}</p></div>${V.prog(r.p)}</div>`).join('');
+$('blocks').innerHTML = [['F', V.blk('F')], ['L', V.blk('L')], ['R', V.blk('R')], ['C', V.blk('C')], ['repeat 3 [ … ]', V.prog('repeat 3 [ F ]')], ['until flag [ … ]', V.prog('until flag [ F ]')]]
+  .map(([k, h]) => `<div><b class="code">${k}</b>${h}</div>`).join('');
+$('words').innerHTML = R.vocab.map(([w, m, es, pic]) => `<tr><td>${w}</td><td>${m}</td><td class="es">${es}</td><td class="wpic">${pic}</td></tr>`).join('');
+$('ideas').innerHTML = R.ideas.map(d => `<div class="idea"><h3>${d.title}</h3><p>${d.text}</p><div class="show">${d.map ? V.board(d.map, d.dir, 30) : ''}${V.prog(d.p)}</div><p class="note">${d.note}</p></div>`).join('');
+$('fbank').innerHTML = '<b>Word bank:</b> ' + ['moves forward', 'collects', 'turns', 'pattern', 'repeat', 'until', 'flag', 'how many times', 'crashes'].map(w => `<span>${w}</span>`).join('');
+$('frames').innerHTML = R.frames.map(([f, eg]) => `<li>${f.replace(/____/g, '<span class="gap" style="display:inline-block;min-width:1.4in;border-bottom:1.5px solid var(--ink)"></span>')}<span class="eg noprint">e.g. ${eg}</span></li>`).join('');
+$('samples').innerHTML = R.samples.map((q, i) => V.question(q, i, 'study')).join('');
+$('tips').innerHTML = R.tips.map(t => `<li>${t}</li>`).join('');
+drawBoards();
+$('printBtn').onclick = () => { document.body.classList.remove('show-key'); print() };
+$('printKey').onclick = () => { document.body.classList.add('show-key'); document.querySelectorAll('details.sol').forEach(d => d.open = true); print() };
+addEventListener('afterprint', () => document.body.classList.remove('show-key'));
+</script>
+</body></html>

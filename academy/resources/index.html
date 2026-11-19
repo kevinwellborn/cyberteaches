@@ -45,6 +45,8 @@ html{border:12px solid var(--lv,var(--accent));min-height:100vh}
 #lvlnote{color:var(--lv,var(--muted));font-weight:700}
 .muted{color:var(--muted);font-size:14px}
 .soon{font-size:13px;color:var(--muted);font-weight:700}
+.review{background:var(--panel);border:3px solid var(--b-loop);border-left-width:12px;border-radius:16px;padding:18px;margin:0 0 16px;display:grid;grid-template-columns:auto minmax(0,1fr);gap:14px;align-items:start}
+.review h2{font-size:22px;margin:2px 0 6px} .review p{margin:0 0 12px;color:var(--muted);font-size:14px;max-width:80ch}
 </style>
 </head><body>
 <div class="wrap">
@@ -69,6 +71,12 @@ html{border:12px solid var(--lv,var(--accent));min-height:100vh}
     <div><b>3. Code</b>Students solve the lesson's 10 puzzles. Watch their stars live on the Teacher Dashboard.</div>
   </div>
   <div class="lvlbar"><span class="label">Difficulty level · different levels for different grades or experience</span><div class="lvlpick" id="lvlpick" role="group" aria-label="Difficulty level"></div><span class="muted" id="lvlnote"></span></div>
+  <section class="review" aria-label="Unit reviews">
+    <div class="num" style="background:var(--b-loop)">U1</div>
+    <div><span class="label">Unit 1 review · Lessons 1 to 6 · all levels</span><h2>Loops: study guide and quiz</h2>
+      <p>A study guide with vocabulary (English and Spanish), big ideas with pictures, sentence frames and 17 sample questions with answers. Then a 20-question quiz with similar questions that students take online (it scores itself) or on paper.</p>
+      <div class="acts"><a class="btn primary" href="../review/unit-1/" target="_blank" rel="noopener">Study guide</a><a class="btn" href="../review/unit-1/quiz.html" target="_blank" rel="noopener" title="Student link: share this in Google Classroom">Quiz (student link)</a><a class="btn" href="../review/unit-1/quiz.html?teacher=1" target="_blank" rel="noopener" title="Quiz with Show answer key and Print answer key buttons">Quiz answer key</a></div></div>
+  </section>
   <div class="grid" id="grid"></div>
 </div>
 <script src="../course.js?v=13"></script>

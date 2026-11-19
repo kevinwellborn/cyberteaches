@@ -179,6 +179,21 @@
     Cloud.profile = {...Cloud.profile, py: {stars, code}};
   };
 
+  // Unit review quiz scores (academy/review/unit-N/quiz.html), in their own field: review.u1 = {score, total, best, tries, missed, at}.
+  // Two writes per quiz check (the student's record and, in a class, the roster row the teacher reads). Returns the saved entry.
+  Cloud.saveReview = async (unit, {score, total, missed}) => {
+    if(!Cloud.user) return null;
+    const uid = Cloud.user.uid, key = 'u' + unit, prev = ((Cloud.profile || {}).review || {})[key] || {};
+    const entry = {score, total, missed: (missed || []).slice(0, 50), best: Math.max(score, prev.best || 0), tries: (prev.tries || 0) + 1,
+      at: firebase.firestore.FieldValue.serverTimestamp()};
+    const base = who();
+    await db.collection('users').doc(uid).set({...base, review: {[key]: entry}}, {merge: true});
+    const cc = Cloud.profile && Cloud.profile.classCode;
+    if(cc) await db.collection('classes').doc(cc).collection('students').doc(uid).set({...base, review: {[key]: entry}}, {merge: true});
+    Cloud.profile = {...Cloud.profile, review: {...((Cloud.profile || {}).review || {}), [key]: {...entry, at: new Date()}}};
+    return {...entry, classCode: cc || null};
+  };
+
   // Class leaderboard: classmates can read each other's first name, last initial, stars and puzzles solved, nothing else.
   const shortName = n => { const w = String(n || 'Student').trim().split(/\s+/); return (w.length > 1 ? w[0] + ' ' + w[w.length-1][0] + '.' : w[0]).slice(0, 40) };
   // Today's stars: the row keeps the date (the computer's own day) and the star total it had before the first save that day
