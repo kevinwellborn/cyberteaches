@@ -310,6 +310,34 @@ for (int i = 0; i &lt; 3; i++) {
             <h3>4. What is the value of total after the loops?</h3>
             <ol><li><b>(A)</b> 9</li><li><b>(B)</b> 6</li><li><b>(C)</b> 3</li><li><b>(D)</b> 4</li></ol>
             <details><summary>Show answer</summary><p><b>(B) 6</b> The inner loop runs 3, then 2, then 1 times: 3 + 2 + 1 = 6.</p></details>
+          </div><div class="static-q">
+            <span class="skill">From the book</span>
+            <pre class="stim">int total = 0;
+int i = 0;
+while (i &lt; 3)
+{
+    for (int j = 0; j &lt; 3; j++)
+    {
+        total += j;
+    }
+    i++;
+}</pre>
+            <h3>5. What is the value of total after the code segment executes?</h3>
+            <ol><li><b>(A)</b> 3</li><li><b>(B)</b> 6</li><li><b>(C)</b> 9</li><li><b>(D)</b> 27</li></ol>
+            <details><summary>Show answer</summary><p><b>(C) 9</b> Each pass of the inner loop adds 0 + 1 + 2 = 3, and it happens 3 times.</p></details>
+          </div><div class="static-q">
+            <span class="skill">From the book</span>
+            <pre class="stim">String s = &quot;xy&quot;;
+for (int i = 0; i &lt; s.length(); i++)
+{
+    for (int k = 0; k &lt; 2; k++)
+    {
+        System.out.print(s.substring(i, i + 1));
+    }
+}</pre>
+            <h3>6. What is printed as a result of executing the code segment?</h3>
+            <ol><li><b>(A)</b> xxyy</li><li><b>(B)</b> xyxy</li><li><b>(C)</b> xy</li><li><b>(D)</b> xxxx</li></ol>
+            <details><summary>Show answer</summary><p><b>(A) xxyy</b> For each character, the inner loop prints it twice before the outer loop moves on.</p></details>
           </div>
         </section>
         <p style="margin-top:20px"><a class="btn primary" href="../../#/topic/2.11">Open 2.11 in the interactive course</a></p>

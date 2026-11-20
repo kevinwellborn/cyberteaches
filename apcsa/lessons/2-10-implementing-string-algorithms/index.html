@@ -305,6 +305,32 @@ System.out.println(out);</pre>
             <h3>4. What is printed?</h3>
             <ol><li><b>(A)</b> abc</li><li><b>(B)</b> 123</li><li><b>(C)</b> a1b2c3</li><li><b>(D)</b> a2c</li></ol>
             <details><summary>Show answer</summary><p><b>(A) abc</b> The loop takes characters at indexes 0, 2, 4: a, b, c.</p></details>
+          </div><div class="static-q">
+            <span class="skill">From the book</span>
+            <pre class="stim">String s = &quot;a1b2c3&quot;;
+String digits = &quot;0123456789&quot;;
+int total = 0;
+for (int i = 0; i &lt; s.length(); i++)
+{
+    if (digits.indexOf(s.substring(i, i + 1)) &gt;= 0)
+    {
+        total++;
+    }
+}</pre>
+            <h3>5. What is the value of total after the code segment executes?</h3>
+            <ol><li><b>(A)</b> 0</li><li><b>(B)</b> 3</li><li><b>(C)</b> 6</li><li><b>(D)</b> 9</li></ol>
+            <details><summary>Show answer</summary><p><b>(B) 3</b> indexOf returns -1 for the letters and an index of 0 or more for the three digits.</p></details>
+          </div><div class="static-q">
+            <span class="skill">From the book</span>
+            <pre class="stim">String s = &quot;abcdef&quot;;
+String t = &quot;&quot;;
+for (int i = 0; i &lt; s.length(); i += 2)
+{
+    t += s.substring(i, i + 1);
+}</pre>
+            <h3>6. What is the value of t after the code segment executes?</h3>
+            <ol><li><b>(A)</b> &quot;abc&quot;</li><li><b>(B)</b> &quot;ace&quot;</li><li><b>(C)</b> &quot;bdf&quot;</li><li><b>(D)</b> &quot;abcdef&quot;</li></ol>
+            <details><summary>Show answer</summary><p><b>(B) &quot;ace&quot;</b> The loop visits indices 0, 2, and 4.</p></details>
           </div>
         </section>
         <p style="margin-top:20px"><a class="btn primary" href="../../#/topic/2.10">Open 2.10 in the interactive course</a></p>

@@ -26,8 +26,12 @@ pretend-terminal mission for each unit (`missions.js`). Lesson text lives in `ap
 
 `apcsa/` covers all four units and 53 topics of the College Board AP CSA course framework (2025-26 revision): Using Objects
 and Methods, Selection and Iteration, Class Creation, and Data Collections. Each topic has a short paragraph, vocabulary and four
-original AP-style Java questions (`questions.js`). Seven labs run in the browser (`labs.js`), and some topics have a diagram
-(`figures.js`). Lesson text lives in `apcsa/content.js`. The companion book is not published yet: fill in `AP_BOOK` at the
+original AP-style Java questions (`questions.js`) plus two questions per lesson from Kevin's AP CSA study guide
+(`book-questions.js`, shown with a "From the book" tag). Seven labs run in the browser (`labs.js`), and some topics have a diagram
+(`figures.js`). Lesson text lives in `apcsa/content.js`.
+Two full-length practice exams live in `apcsa/exam/` (`exam1.js`, `exam2.js`, run by `engine.js`; `booklet.html?n=1&key=1`
+prints a booklet with the key). After editing an exam, run `node tools/check-apcsa-exams.js`: it compiles and runs every
+question that has a `run` field and checks the printed output against the answer. The companion book is not published yet: fill in `AP_BOOK` at the
 bottom of `content.js` (title, buyUrl, cover) when it is, and add it to the Books section of the home page.
 
 ## App Builder (grades 6 to 12)

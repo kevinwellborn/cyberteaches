@@ -293,6 +293,26 @@ a[3] = 4;</pre>
             <h3>4. What value does names[0] hold?</h3>
             <ol><li><b>(A)</b> &quot;&quot;</li><li><b>(B)</b> null</li><li><b>(C)</b> 0</li><li><b>(D)</b> &quot;names&quot;</li></ol>
             <details><summary>Show answer</summary><p><b>(B) null</b> Arrays of objects are filled with null by default.</p></details>
+          </div><div class="static-q">
+            <span class="skill">From the book</span>
+            <pre class="stim">int[] x = {1, 2, 3};
+int[] y = x;
+y[2] = 50;
+System.out.println(x[2]);</pre>
+            <h3>5. What is printed as a result of executing the code segment?</h3>
+            <ol><li><b>(A)</b> 3</li><li><b>(B)</b> 50</li><li><b>(C)</b> 0</li><li><b>(D)</b> 2</li></ol>
+            <details><summary>Show answer</summary><p><b>(B) 50</b> y is an alias for the same array, so the change is seen through x.</p></details>
+          </div><div class="static-q">
+            <span class="skill">From the book</span>
+            <pre class="stim">boolean[] flags = new boolean[4];
+flags[1] = true;
+int c = 0;
+if (flags[0]) { c += 1; }
+if (flags[1]) { c += 2; }
+if (!flags[3]) { c += 4; }</pre>
+            <h3>6. What is the value of c after the code segment executes?</h3>
+            <ol><li><b>(A)</b> 2</li><li><b>(B)</b> 3</li><li><b>(C)</b> 6</li><li><b>(D)</b> 7</li></ol>
+            <details><summary>Show answer</summary><p><b>(C) 6</b> flags[0] and flags[3] are the default false; flags[1] is true. 2 + 4 = 6.</p></details>
           </div>
         </section>
         <p style="margin-top:20px"><a class="btn primary" href="../../#/topic/4.3">Open 4.3 in the interactive course</a></p>

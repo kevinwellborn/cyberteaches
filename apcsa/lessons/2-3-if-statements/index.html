@@ -303,6 +303,29 @@ if (y &gt; 5)
             <h3>4. In an if-else statement, how many of the two blocks run?</h3>
             <ol><li><b>(A)</b> Always both</li><li><b>(B)</b> Exactly one</li><li><b>(C)</b> Zero or one</li><li><b>(D)</b> Zero, one, or two</li></ol>
             <details><summary>Show answer</summary><p><b>(B) Exactly one</b> Either the condition is true and the if block runs, or it is false and the else block runs.</p></details>
+          </div><div class="static-q">
+            <span class="skill">From the book</span>
+            <pre class="stim">int c = 10;
+if (c == 10);
+{
+    c = 0;
+}</pre>
+            <h3>5. A student expects c to be 0 only when c equals 10. Which of the following best describes the code?</h3>
+            <ol><li><b>(A)</b> It works as the student expects.</li><li><b>(B)</b> It does not compile.</li><li><b>(C)</b> The semicolon ends the if statement, so c = 0 executes regardless of the condition.</li><li><b>(D)</b> The body never executes.</li></ol>
+            <details><summary>Show answer</summary><p><b>(C) The semicolon ends the if statement, so c = 0 executes regardless of the condition.</b> The semicolon makes the if body empty. The block below is not controlled by the if.</p></details>
+          </div><div class="static-q">
+            <span class="skill">From the book</span>
+            <pre class="stim">int p = 20;
+int q = 15;
+int big = p;
+if (q &gt; big)
+{
+    big = q;
+}
+System.out.println(big);</pre>
+            <h3>6. What is printed as a result of executing the code segment?</h3>
+            <ol><li><b>(A)</b> 15</li><li><b>(B)</b> 20</li><li><b>(C)</b> 35</li><li><b>(D)</b> 5</li></ol>
+            <details><summary>Show answer</summary><p><b>(B) 20</b> 15 &gt; 20 is false, so big keeps the value 20. This is the &quot;larger of two values&quot; pattern.</p></details>
           </div>
         </section>
         <p style="margin-top:20px"><a class="btn primary" href="../../#/topic/2.3">Open 2.3 in the interactive course</a></p>

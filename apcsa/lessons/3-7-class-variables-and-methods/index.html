@@ -302,6 +302,23 @@ System.out.println(Ticket.getSold());</pre>
             <h3>4. How many copies of a static variable exist if 25 objects of the class are created?</h3>
             <ol><li><b>(A)</b> 0</li><li><b>(B)</b> 1</li><li><b>(C)</b> 25</li><li><b>(D)</b> 26</li></ol>
             <details><summary>Show answer</summary><p><b>(B) 1</b> A static variable belongs to the class, so there is exactly one copy.</p></details>
+          </div><div class="static-q">
+            <span class="skill">From the book</span><p style="margin:0 0 6px">Consider the following class.</p>
+            <pre class="stim">public class Cup
+{
+    private static int n = 0;
+    public Cup() { n++; }
+    public static int getN() { return n; }
+}</pre>
+            <h3>5. After Cup a = new Cup(); Cup b = new Cup(); Cup c = b; executes, what is returned by Cup.getN()?</h3>
+            <ol><li><b>(A)</b> 0</li><li><b>(B)</b> 1</li><li><b>(C)</b> 2</li><li><b>(D)</b> 3</li></ol>
+            <details><summary>Show answer</summary><p><b>(C) 2</b> Only two objects were constructed. Cup c = b; copies a reference and calls no constructor.</p></details>
+          </div><div class="static-q">
+            <span class="skill">From the book</span>
+            
+            <h3>6. The class Counter has public static int count;, and its constructor does not change count. What is the value of Counter.count after Counter.count = 5; Counter c = new Counter(); Counter.count += 2; executes?</h3>
+            <ol><li><b>(A)</b> 0</li><li><b>(B)</b> 2</li><li><b>(C)</b> 5</li><li><b>(D)</b> 7</li></ol>
+            <details><summary>Show answer</summary><p><b>(D) 7</b> There is one copy of count, and creating an object does not reset it.</p></details>
           </div>
         </section>
         <p style="margin-top:20px"><a class="btn primary" href="../../#/topic/3.7">Open 3.7 in the interactive course</a></p>

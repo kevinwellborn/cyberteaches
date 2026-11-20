@@ -303,6 +303,39 @@ if (a &gt; 0) {
             <h3>4. In an if / else if / else chain with four branches, how many branches can run?</h3>
             <ol><li><b>(A)</b> All four</li><li><b>(B)</b> Exactly one</li><li><b>(C)</b> At most two</li><li><b>(D)</b> None, ever</li></ol>
             <details><summary>Show answer</summary><p><b>(B) Exactly one</b> With a final else, exactly one branch runs: the first whose condition is true, or the else.</p></details>
+          </div><div class="static-q">
+            <span class="skill">From the book</span>
+            <pre class="stim">if (w &lt; 10)
+{
+    s = &quot;small&quot;;
+}
+else if ( /* missing */ )
+{
+    s = &quot;medium&quot;;
+}
+else
+{
+    s = &quot;large&quot;;
+}</pre>
+            <h3>5. A program should assign &quot;small&quot; when w is less than 10, &quot;medium&quot; when w is from 10 to 49, and &quot;large&quot; when w is 50 or more. Which condition should replace /* missing */?</h3>
+            <ol><li><b>(A)</b> w &gt; 10</li><li><b>(B)</b> w &gt;= 10</li><li><b>(C)</b> w &lt; 50</li><li><b>(D)</b> w &lt;= 50</li></ol>
+            <details><summary>Show answer</summary><p><b>(C) w &lt; 50</b> When the second condition is reached, w is already at least 10. w &lt; 50 separates medium from large.</p></details>
+          </div><div class="static-q">
+            <span class="skill">From the book</span>
+            <pre class="stim">if (a &gt; 5)
+{
+    if (b &gt; 5)
+    {
+        a = 0;
+    }
+}
+else
+{
+    b = 0;
+}</pre>
+            <h3>6. Assume int a = 2; and int b = 9;. What are the values of a and b after the code segment executes?</h3>
+            <ol><li><b>(A)</b> a is 0 and b is 9</li><li><b>(B)</b> a is 0 and b is 0</li><li><b>(C)</b> a is 2 and b is 9</li><li><b>(D)</b> a is 2 and b is 0</li></ol>
+            <details><summary>Show answer</summary><p><b>(D) a is 2 and b is 0</b> The outer condition is false, so the inner if is never reached and the else runs.</p></details>
           </div>
         </section>
         <p style="margin-top:20px"><a class="btn primary" href="../../#/topic/2.4">Open 2.4 in the interactive course</a></p>

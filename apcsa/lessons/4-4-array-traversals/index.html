@@ -301,6 +301,28 @@ for (int i = arr.length - 1; i &gt;= 0; i -= 2) {
             <h3>4. Which loop header visits every index of an array named data?</h3>
             <ol><li><b>(A)</b> for (int i = 1; i &lt;= data.length; i++)</li><li><b>(B)</b> for (int i = 0; i &lt; data.length; i++)</li><li><b>(C)</b> for (int i = 0; i &lt;= data.length; i++)</li><li><b>(D)</b> for (int i = 0; i &lt; data.length(); i++)</li></ol>
             <details><summary>Show answer</summary><p><b>(B) for (int i = 0; i &lt; data.length; i++)</b> Indexes run from 0 to length - 1, and length has no parentheses for arrays.</p></details>
+          </div><div class="static-q">
+            <span class="skill">From the book</span>
+            <pre class="stim">int[] a = {2, 4, 6};
+int[] b = {1, 3, 5};
+int t = 0;
+for (int i = 0; i &lt; a.length; i++)
+{
+    t += a[i] * b[i];
+}</pre>
+            <h3>5. What is the value of t after the code segment executes?</h3>
+            <ol><li><b>(A)</b> 21</li><li><b>(B)</b> 44</li><li><b>(C)</b> 56</li><li><b>(D)</b> 108</li></ol>
+            <details><summary>Show answer</summary><p><b>(B) 44</b> 2 × 1 + 4 × 3 + 6 × 5 = 2 + 12 + 30 = 44.</p></details>
+          </div><div class="static-q">
+            <span class="skill">From the book</span>
+            <pre class="stim">int[] a = {1, 1, 1, 1};
+for (int i = 1; i &lt; a.length; i++)
+{
+    a[i] = a[i - 1] * 2;
+}</pre>
+            <h3>6. What are the contents of a after the code segment executes?</h3>
+            <ol><li><b>(A)</b> {1, 2, 2, 2}</li><li><b>(B)</b> {2, 4, 8, 16}</li><li><b>(C)</b> {1, 2, 4, 8}</li><li><b>(D)</b> {1, 1, 2, 4}</li></ol>
+            <details><summary>Show answer</summary><p><b>(C) {1, 2, 4, 8}</b> Each element becomes twice the element just before it, which was already updated.</p></details>
           </div>
         </section>
         <p style="margin-top:20px"><a class="btn primary" href="../../#/topic/4.4">Open 4.4 in the interactive course</a></p>

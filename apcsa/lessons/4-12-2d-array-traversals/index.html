@@ -308,6 +308,33 @@ System.out.println(g[1][2]);</pre>
             <h3>4. What is printed?</h3>
             <ol><li><b>(A)</b> 2</li><li><b>(B)</b> 3</li><li><b>(C)</b> 1</li><li><b>(D)</b> 0</li></ol>
             <details><summary>Show answer</summary><p><b>(B) 3</b> Each cell stores row + column, so g[1][2] is 1 + 2 = 3.</p></details>
+          </div><div class="static-q">
+            <span class="skill">From the book</span>
+            <pre class="stim">int[][] a = { {1, 2, 3}, {4, 5, 6} };
+for (int[] row : a)
+{
+    for (int v : row)
+    {
+        v = 0;
+    }
+}</pre>
+            <h3>5. What is the value of a[1][1] after the code segment executes?</h3>
+            <ol><li><b>(A)</b> 0</li><li><b>(B)</b> 2</li><li><b>(C)</b> 4</li><li><b>(D)</b> 5</li></ol>
+            <details><summary>Show answer</summary><p><b>(D) 5</b> Assigning to the enhanced for loop variable does not change the array.</p></details>
+          </div><div class="static-q">
+            <span class="skill">From the book</span>
+            <pre class="stim">int[][] a = { {1, 2, 3}, {4, 5, 6} };
+int n = 0;
+for (int r = 0; r &lt; a.length; r++)
+{
+    for (int c = 0; c &lt; a[0].length; c++)
+    {
+        if (a[r][c] % 2 == 0) { n += a[r][c]; }
+    }
+}</pre>
+            <h3>6. What is the value of n after the code segment executes?</h3>
+            <ol><li><b>(A)</b> 9</li><li><b>(B)</b> 12</li><li><b>(C)</b> 21</li><li><b>(D)</b> 3</li></ol>
+            <details><summary>Show answer</summary><p><b>(B) 12</b> The even elements are 2, 4, and 6.</p></details>
           </div>
         </section>
         <p style="margin-top:20px"><a class="btn primary" href="../../#/topic/4.12">Open 4.12 in the interactive course</a></p>

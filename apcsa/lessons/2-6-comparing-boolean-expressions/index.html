@@ -292,6 +292,19 @@ System.out.println((a == b) + &quot; &quot; + a.equals(b));</pre>
             <h3>4. How can you prove two Boolean expressions are equivalent?</h3>
             <ol><li><b>(A)</b> Test them with one input</li><li><b>(B)</b> Show they give the same result for every combination of inputs, such as with a truth table</li><li><b>(C)</b> Check that they have the same length</li><li><b>(D)</b> Compile them both</li></ol>
             <details><summary>Show answer</summary><p><b>(B) Show they give the same result for every combination of inputs, such as with a truth table</b> Equivalent expressions match on all possible inputs, which a truth table shows.</p></details>
+          </div><div class="static-q">
+            <span class="skill">From the book</span>
+            <pre class="stim">String p = new String(&quot;sun&quot;);
+String q = new String(&quot;sun&quot;);</pre>
+            <h3>5. Which of the following is true?</h3>
+            <ol><li><b>(A)</b> p == q is true and p.equals(q) is true.</li><li><b>(B)</b> p == q is true and p.equals(q) is false.</li><li><b>(C)</b> p == q is false and p.equals(q) is true.</li><li><b>(D)</b> p == q is false and p.equals(q) is false.</li></ol>
+            <details><summary>Show answer</summary><p><b>(C) p == q is false and p.equals(q) is true.</b> They are different objects with the same characters. equals compares the contents.</p></details>
+          </div><div class="static-q">
+            <span class="skill">From the book</span>
+            
+            <h3>6. Which expression is equivalent to !(done || n &gt; 0)?</h3>
+            <ol><li><b>(A)</b> !done || n &lt;= 0</li><li><b>(B)</b> done &amp;&amp; n &gt; 0</li><li><b>(C)</b> !done &amp;&amp; n &lt; 0</li><li><b>(D)</b> !done &amp;&amp; n &lt;= 0</li></ol>
+            <details><summary>Show answer</summary><p><b>(D) !done &amp;&amp; n &lt;= 0</b> De Morgan's law: !(A || B) is !A &amp;&amp; !B. The opposite of &gt; is &lt;=.</p></details>
           </div>
         </section>
         <p style="margin-top:20px"><a class="btn primary" href="../../#/topic/2.6">Open 2.6 in the interactive course</a></p>

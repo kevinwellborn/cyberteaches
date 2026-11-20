@@ -194,6 +194,7 @@ input[type=range]{width:100%;accent-color:var(--accent)}
     <nav class="nav" aria-label="Main">
       <a href="#/" data-nav="home">Units</a>
       <a href="#/labs" data-nav="labs">Labs</a>
+      <a href="exam/">Practice exams</a>
       <a href="#/book" data-nav="book" id="bookNav" hidden>The Book</a>
       <a href="#" id="videoNav" target="_blank" rel="noopener" hidden>Videos</a>
       <a href="../">All courses</a>
@@ -207,6 +208,7 @@ input[type=range]{width:100%;accent-color:var(--accent)}
 <script src="../account.js"></script>
 <script src="content.js"></script>
 <script src="questions.js"></script>
+<script src="book-questions.js"></script>
 <script src="labs.js"></script>
 <script src="figures.js"></script>
 <script>
@@ -277,10 +279,11 @@ input[type=range]{width:100%;accent-color:var(--accent)}
         <div>
           <span class="label">CyberTeaches · AP CSA · Free online course</span>
           <h1 style="margin-top:8px">AP Computer Science A: learn to <em>code in Java.</em></h1>
-          <p>Four units and ${ALL.length} topics, from your first line of Java to arrays, sorting and recursion. Read each topic and its vocabulary, then pass its AP-style practice to mark it complete.</p>
+          <p>Four units and ${ALL.length} topics, from your first line of Java to arrays, sorting and recursion. Read each topic and its vocabulary, then pass its AP-style practice to mark it complete. Two full-length practice exams are ready when you are.</p>
           <div class="row" style="margin-bottom:18px">
             <a class="btn primary" href="#/topic/${next.id}">${d ? 'Continue' : 'Start'} with ${next.id} ${esc(next.title)}</a>
             <a class="btn" href="#/labs">Try a lab</a>
+            <a class="btn" href="exam/">Take a practice exam</a>
           </div>
           <div class="meter"><span class="label">${d} of ${ALL.length} topics complete</span><div class="meter-bar"><i style="width:${Math.round(d / ALL.length * 100)}%"></i></div></div>
         </div>
@@ -332,7 +335,8 @@ input[type=range]{width:100%;accent-color:var(--accent)}
           <section class="card quiz" id="quiz">
             <div><h2 style="font-size:22px">Check for understanding</h2><p class="muted" style="margin:4px 0 0">AP-style practice. Get at least ${need} of ${t.quiz.length} right to complete this topic. You can retry.</p></div>
             ${t.quiz.map((q, qi) => `<div class="q" data-q="${qi}">
-              ${q.s && SK[q.s] ? `<span class="skill">Skill: ${esc(SK[q.s])}</span>` : ''}
+              ${q.book ? `<span class="skill">From the book</span>` : ''}
+              ${q.pre ? `<p style="margin:0 0 6px">${esc(q.pre)}</p>` : ''}
               ${q.st ? `<pre class="stim">${esc(q.st)}</pre>` : ''}
               <h3>${qi + 1}. ${esc(q.q)}</h3>
               <div class="choices">${order[qi].map((ai, pos) => `<button class="choice" data-a="${ai}"><b class="letter">(${'ABCD'[pos]})</b> ${esc(q.a[ai])}</button>`).join('')}</div>

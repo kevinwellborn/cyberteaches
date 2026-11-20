@@ -300,6 +300,27 @@ System.out.println(sum);</pre>
             <h3>4. A loop is supposed to print the numbers 1 to 10. Which header has an off-by-one error?</h3>
             <ol><li><b>(A)</b> for (int i = 1; i &lt;= 10; i++)</li><li><b>(B)</b> for (int i = 0; i &lt; 10; i++) with print(i + 1)</li><li><b>(C)</b> for (int i = 1; i &lt; 10; i++)</li><li><b>(D)</b> for (int i = 1; i &lt; 11; i++)</li></ol>
             <details><summary>Show answer</summary><p><b>(C) for (int i = 1; i &lt; 10; i++)</b> i &lt; 10 stops at 9, so 10 is never printed.</p></details>
+          </div><div class="static-q">
+            <span class="skill">From the book</span>
+            <pre class="stim">String w = &quot;LOOP&quot;;
+String r = &quot;&quot;;
+for (int i = 0; i &lt; w.length(); i++)
+{
+    r = w.substring(i, i + 1) + r;
+}</pre>
+            <h3>5. What is the value of r after the code segment executes?</h3>
+            <ol><li><b>(A)</b> &quot;LOOP&quot;</li><li><b>(B)</b> &quot;POOL&quot;</li><li><b>(C)</b> &quot;P&quot;</li><li><b>(D)</b> &quot;LOOPLOOP&quot;</li></ol>
+            <details><summary>Show answer</summary><p><b>(B) &quot;POOL&quot;</b> Each letter is placed in front of the letters already collected, which reverses the string.</p></details>
+          </div><div class="static-q">
+            <span class="skill">From the book</span>
+            <pre class="stim">int count = 0;
+for (int i = 1; i &lt; 50; i *= 3)
+{
+    count++;
+}</pre>
+            <h3>6. What is the value of count after the code segment executes?</h3>
+            <ol><li><b>(A)</b> 3</li><li><b>(B)</b> 4</li><li><b>(C)</b> 5</li><li><b>(D)</b> 16</li></ol>
+            <details><summary>Show answer</summary><p><b>(B) 4</b> i takes the values 1, 3, 9, and 27. The next value, 81, fails the test.</p></details>
           </div>
         </section>
         <p style="margin-top:20px"><a class="btn primary" href="../../#/topic/2.8">Open 2.8 in the interactive course</a></p>

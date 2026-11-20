@@ -303,6 +303,28 @@ for (String w : words) {
             <h3>4. Which expression gets the last element of a non-empty ArrayList named list?</h3>
             <ol><li><b>(A)</b> list.get(list.size())</li><li><b>(B)</b> list.get(list.size() - 1)</li><li><b>(C)</b> list[list.length - 1]</li><li><b>(D)</b> list.last()</li></ol>
             <details><summary>Show answer</summary><p><b>(B) list.get(list.size() - 1)</b> The last index is size() - 1.</p></details>
+          </div><div class="static-q">
+            <span class="skill">From the book</span>
+            <pre class="stim">ArrayList&lt;Integer&gt; a = new ArrayList&lt;Integer&gt;();
+a.add(5); a.add(6); a.add(7);
+for (int x : a)
+{
+    x = x * 2;
+}</pre>
+            <h3>5. What does a contain after the code segment executes?</h3>
+            <ol><li><b>(A)</b> [5, 6, 7]</li><li><b>(B)</b> [10, 12, 14]</li><li><b>(C)</b> [10, 6, 7]</li><li><b>(D)</b> []</li></ol>
+            <details><summary>Show answer</summary><p><b>(A) [5, 6, 7]</b> Assigning to the enhanced for loop variable does not change the list.</p></details>
+          </div><div class="static-q">
+            <span class="skill">From the book</span>
+            <pre class="stim">ArrayList&lt;Integer&gt; a = new ArrayList&lt;Integer&gt;();
+a.add(9); a.add(4); a.add(9); a.add(9);
+for (int i = a.size() - 1; i &gt;= 0; i--)
+{
+    if (a.get(i) == 9) { a.remove(i); }
+}</pre>
+            <h3>6. What does a contain after the code segment executes?</h3>
+            <ol><li><b>(A)</b> [4]</li><li><b>(B)</b> [4, 9]</li><li><b>(C)</b> [9, 4]</li><li><b>(D)</b> []</li></ol>
+            <details><summary>Show answer</summary><p><b>(A) [4]</b> A backward traversal removes every 9 without skipping.</p></details>
           </div>
         </section>
         <p style="margin-top:20px"><a class="btn primary" href="../../#/topic/4.9">Open 4.9 in the interactive course</a></p>

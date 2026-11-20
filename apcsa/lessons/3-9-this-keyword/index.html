@@ -309,6 +309,23 @@ System.out.println(new Point(3, 4).getX());</pre>
             <h3>4. What is printed?</h3>
             <ol><li><b>(A)</b> 3</li><li><b>(B)</b> 0</li><li><b>(C)</b> 4</li><li><b>(D)</b> The code does not compile</li></ol>
             <details><summary>Show answer</summary><p><b>(B) 0</b> x = x assigns the parameter to itself. The instance variable keeps its default 0. Use this.x = x.</p></details>
+          </div><div class="static-q">
+            <span class="skill">From the book</span>
+            <pre class="stim">public class Tag
+{
+    private int id;
+    public Tag(int id) { id = id; }
+    public int getId() { return id; }
+}</pre>
+            <h3>5. What is returned by new Tag(42).getId()?</h3>
+            <ol><li><b>(A)</b> 42</li><li><b>(B)</b> 0</li><li><b>(C)</b> null</li><li><b>(D)</b> The code does not compile.</li></ol>
+            <details><summary>Show answer</summary><p><b>(B) 0</b> The parameter is assigned to itself. The instance variable keeps the default value 0.</p></details>
+          </div><div class="static-q">
+            <span class="skill">From the book</span>
+            
+            <h3>6. An instance variable is named count, and no parameter or local variable has that name. Inside an instance method, is this. required in order to use it?</h3>
+            <ol><li><b>(A)</b> Yes, always</li><li><b>(B)</b> No; count and this.count mean the same thing</li><li><b>(C)</b> Yes, but only in a constructor</li><li><b>(D)</b> No, and this.count would be an error</li></ol>
+            <details><summary>Show answer</summary><p><b>(B) No; count and this.count mean the same thing</b> this. is needed only when a local name hides the instance variable.</p></details>
           </div>
         </section>
         <p style="margin-top:20px"><a class="btn primary" href="../../#/topic/3.9">Open 3.9 in the interactive course</a></p>

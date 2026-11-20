@@ -298,6 +298,31 @@ input[type=range]{width:100%;accent-color:var(--accent)}
             <h3>4. Program A uses one loop over n items. Program B uses two nested loops over n items. Both give the same output. Which is most likely true for large n?</h3>
             <ol><li><b>(A)</b> A and B take the same time</li><li><b>(B)</b> A does far fewer steps than B</li><li><b>(C)</b> B does far fewer steps than A</li><li><b>(D)</b> B is always more correct</li></ol>
             <details><summary>Show answer</summary><p><b>(B) A does far fewer steps than B</b> About n steps grows much more slowly than about n x n steps.</p></details>
+          </div><div class="static-q">
+            <span class="skill">From the book</span>
+            <pre class="stim">int c = 0;
+for (int i = 1; i &lt;= 50; i++)
+{
+    if (i % 10 == 0)
+    {
+        c++;
+    }
+}</pre>
+            <h3>5. How many times is the statement c++ executed?</h3>
+            <ol><li><b>(A)</b> 5</li><li><b>(B)</b> 10</li><li><b>(C)</b> 49</li><li><b>(D)</b> 50</li></ol>
+            <details><summary>Show answer</summary><p><b>(A) 5</b> The condition is true only for 10, 20, 30, 40, and 50.</p></details>
+          </div><div class="static-q">
+            <span class="skill">From the book</span>
+            <pre class="stim">int n = 64;
+int steps = 0;
+while (n &gt; 1)
+{
+    n /= 2;
+    steps++;
+}</pre>
+            <h3>6. What is the value of steps after the code segment executes?</h3>
+            <ol><li><b>(A)</b> 5</li><li><b>(B)</b> 6</li><li><b>(C)</b> 7</li><li><b>(D)</b> 32</li></ol>
+            <details><summary>Show answer</summary><p><b>(B) 6</b> n goes 64, 32, 16, 8, 4, 2, 1. The body runs 6 times.</p></details>
           </div>
         </section>
         <p style="margin-top:20px"><a class="btn primary" href="../../#/topic/2.12">Open 2.12 in the interactive course</a></p>

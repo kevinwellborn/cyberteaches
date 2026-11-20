@@ -298,6 +298,18 @@ if (count != 0 &amp;&amp; total / count &gt; 5) {
             <h3>4. Which expression is true only when x is between 1 and 10, inclusive?</h3>
             <ol><li><b>(A)</b> x &gt;= 1 || x &lt;= 10</li><li><b>(B)</b> x &gt;= 1 &amp;&amp; x &lt;= 10</li><li><b>(C)</b> 1 &lt;= x &lt;= 10</li><li><b>(D)</b> x &gt; 1 &amp;&amp; x &lt; 10</li></ol>
             <details><summary>Show answer</summary><p><b>(B) x &gt;= 1 &amp;&amp; x &lt;= 10</b> Both conditions must be true, so use &amp;&amp;. Java does not allow 1 &lt;= x &lt;= 10.</p></details>
+          </div><div class="static-q">
+            <span class="skill">From the book</span>
+            
+            <h3>5. Assume int age = 16; and boolean permit = true;. What is the value of age &gt;= 18 || permit &amp;&amp; age &gt;= 15?</h3>
+            <ol><li><b>(A)</b> true</li><li><b>(B)</b> false</li><li><b>(C)</b> 16</li><li><b>(D)</b> The expression does not compile.</li></ol>
+            <details><summary>Show answer</summary><p><b>(A) true</b> &amp;&amp; is evaluated first: true &amp;&amp; true. Then false || true is true.</p></details>
+          </div><div class="static-q">
+            <span class="skill">From the book</span>
+            
+            <h3>6. Which expression is true exactly when the int variable n is not between 1 and 10, inclusive?</h3>
+            <ol><li><b>(A)</b> n &lt; 1 &amp;&amp; n &gt; 10</li><li><b>(B)</b> n &gt; 1 || n &lt; 10</li><li><b>(C)</b> n &lt;= 1 || n &gt;= 10</li><li><b>(D)</b> n &lt; 1 || n &gt; 10</li></ol>
+            <details><summary>Show answer</summary><p><b>(D) n &lt; 1 || n &gt; 10</b> The value is either below 1 or above 10. It cannot be both, so &amp;&amp; would never be true.</p></details>
           </div>
         </section>
         <p style="margin-top:20px"><a class="btn primary" href="../../#/topic/2.5">Open 2.5 in the interactive course</a></p>

@@ -305,6 +305,26 @@ a[a.length - 1] = temp;</pre>
             <h3>4. A loop compares a[i] with a[i + 1]. Why must the loop stop at i &lt; a.length - 1?</h3>
             <ol><li><b>(A)</b> So it runs faster</li><li><b>(B)</b> So a[i + 1] never goes past the last index</li><li><b>(C)</b> Because the first element is skipped</li><li><b>(D)</b> It does not need to stop early</li></ol>
             <details><summary>Show answer</summary><p><b>(B) So a[i + 1] never goes past the last index</b> When i is the last index, i + 1 would be out of bounds.</p></details>
+          </div><div class="static-q">
+            <span class="skill">From the book</span>
+            <pre class="stim">int[] a = {2, 5, 5, 3, 3, 3};
+int n = 0;
+for (int i = 0; i &lt; a.length - 1; i++)
+{
+    if (a[i] == a[i + 1]) { n++; }
+}</pre>
+            <h3>5. What is the value of n after the code segment executes?</h3>
+            <ol><li><b>(A)</b> 2</li><li><b>(B)</b> 3</li><li><b>(C)</b> 4</li><li><b>(D)</b> 5</li></ol>
+            <details><summary>Show answer</summary><p><b>(B) 3</b> Equal neighbors: 5 and 5, 3 and 3, 3 and 3.</p></details>
+          </div><div class="static-q">
+            <span class="skill">From the book</span>
+            <pre class="stim">int[] a = {10, 20, 30};
+int s = 0;
+for (int v : a) { s += v; }
+System.out.println(s / a.length);</pre>
+            <h3>6. What is printed as a result of executing the code segment?</h3>
+            <ol><li><b>(A)</b> 20</li><li><b>(B)</b> 20.0</li><li><b>(C)</b> 60</li><li><b>(D)</b> 30</li></ol>
+            <details><summary>Show answer</summary><p><b>(A) 20</b> The sum is 60 and 60 / 3 is the int 20.</p></details>
           </div>
         </section>
         <p style="margin-top:20px"><a class="btn primary" href="../../#/topic/4.5">Open 4.5 in the interactive course</a></p>

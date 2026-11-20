@@ -297,6 +297,22 @@ Right half: {3, 4, 10}</pre>
             <h3>4. What is the base case that means the target is not in the array?</h3>
             <ol><li><b>(A)</b> a[mid] == t</li><li><b>(B)</b> lo &gt; hi</li><li><b>(C)</b> a[mid] &lt; t</li><li><b>(D)</b> mid == 0</li></ol>
             <details><summary>Show answer</summary><p><b>(B) lo &gt; hi</b> When lo passes hi, the search range is empty, so it returns -1.</p></details>
+          </div><div class="static-q">
+            <span class="skill">From the book</span>
+            <pre class="stim">public static int len(String s)
+{
+    if (s.equals(&quot;&quot;)) { return 0; }
+    return 1 + len(s.substring(1));
+}</pre>
+            <h3>5. What is returned by the call len(&quot;java&quot;)?</h3>
+            <ol><li><b>(A)</b> 0</li><li><b>(B)</b> 3</li><li><b>(C)</b> 4</li><li><b>(D)</b> 5</li></ol>
+            <details><summary>Show answer</summary><p><b>(C) 4</b> Each call counts one character and recurs on the rest of the string.</p></details>
+          </div><div class="static-q">
+            <span class="skill">From the book</span>
+            
+            <h3>6. A sorted array has 100 elements. After the first comparison of a binary search does not find the target, about how many elements are still possible locations?</h3>
+            <ol><li><b>(A)</b> 99</li><li><b>(B)</b> 50</li><li><b>(C)</b> 10</li><li><b>(D)</b> 1</li></ol>
+            <details><summary>Show answer</summary><p><b>(B) 50</b> Each comparison removes about half of the remaining elements.</p></details>
           </div>
         </section>
         <p style="margin-top:20px"><a class="btn primary" href="../../#/topic/4.17">Open 4.17 in the interactive course</a></p>

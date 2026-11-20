@@ -310,6 +310,26 @@ for (int i = 0; i &lt; g.length; i++) {
             <h3>4. What is the value of sum after the loop?</h3>
             <ol><li><b>(A)</b> 13</li><li><b>(B)</b> 11</li><li><b>(C)</b> 15</li><li><b>(D)</b> 9</li></ol>
             <details><summary>Show answer</summary><p><b>(A) 13</b> This adds the main diagonal: 3 + 5 + 5 = 13.</p></details>
+          </div><div class="static-q">
+            <span class="skill">From the book</span>
+            <pre class="stim">int[][] a = { {1, 2}, {3, 4}, {5, 6} };
+int[] t = a[0];
+a[0] = a[2];
+a[2] = t;</pre>
+            <h3>5. What is the value of a[0][1] after the code segment executes?</h3>
+            <ol><li><b>(A)</b> 2</li><li><b>(B)</b> 4</li><li><b>(C)</b> 5</li><li><b>(D)</b> 6</li></ol>
+            <details><summary>Show answer</summary><p><b>(D) 6</b> Rows 0 and 2 are swapped, so row 0 is now {5, 6}.</p></details>
+          </div><div class="static-q">
+            <span class="skill">From the book</span>
+            <pre class="stim">int[][] a = { {3, 8}, {6, 1}, {7, 2} };
+int m = a[0][0];
+for (int r = 0; r &lt; a.length; r++)
+{
+    if (a[r][1] &gt; m) { m = a[r][1]; }
+}</pre>
+            <h3>6. What is the value of m after the code segment executes?</h3>
+            <ol><li><b>(A)</b> 3</li><li><b>(B)</b> 7</li><li><b>(C)</b> 8</li><li><b>(D)</b> 2</li></ol>
+            <details><summary>Show answer</summary><p><b>(C) 8</b> Only column 1 (8, 1, 2) is compared with the starting value 3.</p></details>
           </div>
         </section>
         <p style="margin-top:20px"><a class="btn primary" href="../../#/topic/4.13">Open 4.13 in the interactive course</a></p>

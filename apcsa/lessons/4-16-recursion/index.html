@@ -303,6 +303,26 @@ input[type=range]{width:100%;accent-color:var(--accent)}
             <h3>4. What happens when h(5) is called?</h3>
             <ol><li><b>(A)</b> It returns 15</li><li><b>(B)</b> It returns 0</li><li><b>(C)</b> It never reaches a base case, so it throws a StackOverflowError</li><li><b>(D)</b> It does not compile</li></ol>
             <details><summary>Show answer</summary><p><b>(C) It never reaches a base case, so it throws a StackOverflowError</b> With no base case, the calls never stop.</p></details>
+          </div><div class="static-q">
+            <span class="skill">From the book</span>
+            <pre class="stim">public static int c(int n)
+{
+    if (n &lt; 10) { return 1; }
+    return 1 + c(n / 10);
+}</pre>
+            <h3>5. What is returned by the call c(4096)?</h3>
+            <ol><li><b>(A)</b> 1</li><li><b>(B)</b> 3</li><li><b>(C)</b> 4</li><li><b>(D)</b> 19</li></ol>
+            <details><summary>Show answer</summary><p><b>(C) 4</b> The method counts digits: 4096, 409, 40, 4.</p></details>
+          </div><div class="static-q">
+            <span class="skill">From the book</span>
+            <pre class="stim">public static int h(int n)
+{
+    if (n &lt;= 2) { return n; }
+    return h(n - 1) + h(n - 2);
+}</pre>
+            <h3>6. What is returned by the call h(5)?</h3>
+            <ol><li><b>(A)</b> 5</li><li><b>(B)</b> 7</li><li><b>(C)</b> 8</li><li><b>(D)</b> 13</li></ol>
+            <details><summary>Show answer</summary><p><b>(C) 8</b> h(1) = 1, h(2) = 2, h(3) = 3, h(4) = 5, h(5) = 8.</p></details>
           </div>
         </section>
         <p style="margin-top:20px"><a class="btn primary" href="../../#/topic/4.16">Open 4.16 in the interactive course</a></p>

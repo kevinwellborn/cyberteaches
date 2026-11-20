@@ -301,6 +301,24 @@ q *= p;</pre>
             <h3>4. What are the values of p and q after this code runs?</h3>
             <ol><li><b>(A)</b> p = 7, q = 28</li><li><b>(B)</b> p = 7, q = 12</li><li><b>(C)</b> p = 3, q = 12</li><li><b>(D)</b> p = 12, q = 7</li></ol>
             <details><summary>Show answer</summary><p><b>(A) p = 7, q = 28</b> p becomes 3 + 4 = 7, then q becomes 4 * 7 = 28.</p></details>
+          </div><div class="static-q">
+            <span class="skill">From the book</span>
+            <pre class="stim">double d = 10;
+d /= 4;
+d += 1;</pre>
+            <h3>5. What is the value of d after the code segment executes?</h3>
+            <ol><li><b>(A)</b> 3</li><li><b>(B)</b> 3.0</li><li><b>(C)</b> 3.5</li><li><b>(D)</b> 11.0</li></ol>
+            <details><summary>Show answer</summary><p><b>(C) 3.5</b> d is a double, so 10.0 / 4 is 2.5, and 2.5 + 1 is 3.5.</p></details>
+          </div><div class="static-q">
+            <span class="skill">From the book</span>
+            <pre class="stim">int x = 9;
+int y = 2;
+x -= y;
+y += x;
+x /= y;</pre>
+            <h3>6. What are the values of x and y after the code segment executes?</h3>
+            <ol><li><b>(A)</b> x is 1 and y is 9</li><li><b>(B)</b> x is 0 and y is 9</li><li><b>(C)</b> x is 7 and y is 9</li><li><b>(D)</b> x is 0 and y is 11</li></ol>
+            <details><summary>Show answer</summary><p><b>(B) x is 0 and y is 9</b> x is 7, y is 2 + 7 = 9, then 7 / 9 is 0 with integer division.</p></details>
           </div>
         </section>
         <p style="margin-top:20px"><a class="btn primary" href="../../#/topic/1.6">Open 1.6 in the interactive course</a></p>

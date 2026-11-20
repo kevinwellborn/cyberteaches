@@ -305,6 +305,24 @@ System.out.println(x.getLevel());</pre>
             <h3>4. What happens to a method's local variables when the method finishes?</h3>
             <ol><li><b>(A)</b> They keep their values for the next call</li><li><b>(B)</b> They no longer exist</li><li><b>(C)</b> They become instance variables</li><li><b>(D)</b> They become static</li></ol>
             <details><summary>Show answer</summary><p><b>(B) They no longer exist</b> Local variables exist only while their block runs.</p></details>
+          </div><div class="static-q">
+            <span class="skill">From the book</span>
+            <pre class="stim">int x = 5;
+if (x &gt; 2)
+{
+    int y = x * 2;
+    x = y + 1;
+}
+System.out.println(x);</pre>
+            <h3>5. What is printed as a result of executing the code segment?</h3>
+            <ol><li><b>(A)</b> 5</li><li><b>(B)</b> 10</li><li><b>(C)</b> 11</li><li><b>(D)</b> Nothing; a compile-time error occurs.</li></ol>
+            <details><summary>Show answer</summary><p><b>(C) 11</b> x is declared outside the block and can be changed inside it. y is used only inside its block.</p></details>
+          </div><div class="static-q">
+            <span class="skill">From the book</span>
+            
+            <h3>6. A constructor has the header public Car(String model) and the body model = model;. The class has an instance variable private String model;. After new Car(&quot;Z&quot;), the instance variable model is</h3>
+            <ol><li><b>(A)</b> &quot;Z&quot;</li><li><b>(B)</b> &quot;&quot;</li><li><b>(C)</b> null</li><li><b>(D)</b> &quot;model&quot;</li></ol>
+            <details><summary>Show answer</summary><p><b>(C) null</b> Both names in the assignment refer to the parameter, so the instance variable keeps its default.</p></details>
           </div>
         </section>
         <p style="margin-top:20px"><a class="btn primary" href="../../#/topic/3.8">Open 3.8 in the interactive course</a></p>

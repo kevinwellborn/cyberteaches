@@ -299,6 +299,21 @@ Book b = a;</pre>
             <h3>4. What does a reference variable actually store?</h3>
             <ol><li><b>(A)</b> A copy of every instance variable of the object</li><li><b>(B)</b> The location of the object in memory</li><li><b>(C)</b> The name of the class</li><li><b>(D)</b> The constructor code</li></ol>
             <details><summary>Show answer</summary><p><b>(B) The location of the object in memory</b> A reference stores where the object is in memory, not the object itself.</p></details>
+          </div><div class="static-q">
+            <span class="skill">From the book</span>
+            <pre class="stim">Coin a = new Coin();
+Coin b = new Coin();
+Coin c = b;</pre>
+            <h3>5. How many Coin objects are created by the code segment?</h3>
+            <ol><li><b>(A)</b> 0</li><li><b>(B)</b> 1</li><li><b>(C)</b> 2</li><li><b>(D)</b> 3</li></ol>
+            <details><summary>Show answer</summary><p><b>(C) 2</b> new appears twice. Coin c = b copies a reference and creates no object.</p></details>
+          </div><div class="static-q">
+            <span class="skill">From the book</span>
+            <pre class="stim">int size = 10;
+Box b = new Box(size);</pre>
+            <h3>6. The Box constructor changes the value of its parameter to 99. What is the value of size after the code segment executes?</h3>
+            <ol><li><b>(A)</b> 0</li><li><b>(B)</b> 10</li><li><b>(C)</b> 99</li><li><b>(D)</b> The code does not compile.</li></ol>
+            <details><summary>Show answer</summary><p><b>(B) 10</b> Call by value: the parameter is a copy of size, so size is unchanged.</p></details>
           </div>
         </section>
         <p style="margin-top:20px"><a class="btn primary" href="../../#/topic/1.13">Open 1.13 in the interactive course</a></p>

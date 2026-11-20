@@ -294,6 +294,21 @@ double avg = (double) (total / count);</pre>
             <h3>4. What happens when 1 is added to an int variable that holds Integer.MAX_VALUE?</h3>
             <ol><li><b>(A)</b> The program does not compile</li><li><b>(B)</b> The value becomes a double</li><li><b>(C)</b> Integer overflow occurs and the value wraps around to a large negative number</li><li><b>(D)</b> The value stays the same</li></ol>
             <details><summary>Show answer</summary><p><b>(C) Integer overflow occurs and the value wraps around to a large negative number</b> The result is too large for an int, so it overflows and wraps to Integer.MIN_VALUE.</p></details>
+          </div><div class="static-q">
+            <span class="skill">From the book</span>
+            <pre class="stim">double price = 4.75;
+int dollars = (int) price;
+double cents = price - dollars;</pre>
+            <h3>5. What is the value of cents after the code segment executes? Ignore any round-off error.</h3>
+            <ol><li><b>(A)</b> 0</li><li><b>(B)</b> 0.75</li><li><b>(C)</b> 4.0</li><li><b>(D)</b> 75</li></ol>
+            <details><summary>Show answer</summary><p><b>(B) 0.75</b> dollars is 4. Then 4.75 - 4 widens 4 to 4.0 and gives 0.75.</p></details>
+          </div><div class="static-q">
+            <span class="skill">From the book</span>
+            <pre class="stim">int n = Integer.MAX_VALUE;
+n = n + 1;</pre>
+            <h3>6. Which of the following best describes the result of executing the code segment?</h3>
+            <ol><li><b>(A)</b> The code does not compile.</li><li><b>(B)</b> An exception is thrown when 1 is added.</li><li><b>(C)</b> n is automatically changed to type double so the larger value fits.</li><li><b>(D)</b> n holds a value in the int range that is not the mathematically expected result.</li></ol>
+            <details><summary>Show answer</summary><p><b>(D) n holds a value in the int range that is not the mathematically expected result.</b> Integer overflow gives an in-range but unexpected value, with no error or exception.</p></details>
           </div>
         </section>
         <p style="margin-top:20px"><a class="btn primary" href="../../#/topic/1.5">Open 1.5 in the interactive course</a></p>

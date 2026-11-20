@@ -306,6 +306,40 @@ System.out.println(new Dog(&quot;Rex&quot;));</pre>
             <h3>4. Which method is most likely a mutator?</h3>
             <ol><li><b>(A)</b> public int getLevel()</li><li><b>(B)</b> public void setLevel(int newLevel)</li><li><b>(C)</b> public String toString()</li><li><b>(D)</b> public boolean isEmpty()</li></ol>
             <details><summary>Show answer</summary><p><b>(B) public void setLevel(int newLevel)</b> Mutators change an object's data, often named set...</p></details>
+          </div><div class="static-q">
+            <span class="skill">From the book</span>
+            <pre class="stim">public static int test(int n)
+{
+    if (n &gt; 10)
+    {
+        return 1;
+    }
+    n = n * 2;
+    if (n &gt; 10)
+    {
+        return 2;
+    }
+    return 3;
+}</pre>
+            <h3>5. What is returned by the call test(6)?</h3>
+            <ol><li><b>(A)</b> 1</li><li><b>(B)</b> 2</li><li><b>(C)</b> 3</li><li><b>(D)</b> 12</li></ol>
+            <details><summary>Show answer</summary><p><b>(B) 2</b> 6 is not greater than 10. n becomes 12, so the second if returns 2.</p></details>
+          </div><div class="static-q">
+            <span class="skill">From the book</span>
+            <pre class="stim">public static int find(int limit)
+{
+    for (int i = 1; i &lt;= limit; i++)
+    {
+        if (i * i &gt; 20)
+        {
+            return i;
+        }
+    }
+    return -1;
+}</pre>
+            <h3>6. What is returned by the call find(10)?</h3>
+            <ol><li><b>(A)</b> -1</li><li><b>(B)</b> 4</li><li><b>(C)</b> 5</li><li><b>(D)</b> 10</li></ol>
+            <details><summary>Show answer</summary><p><b>(C) 5</b> 4 * 4 is 16, which is not greater than 20. 5 * 5 is 25, so the method returns 5 and the loop stops.</p></details>
           </div>
         </section>
         <p style="margin-top:20px"><a class="btn primary" href="../../#/topic/3.5">Open 3.5 in the interactive course</a></p>

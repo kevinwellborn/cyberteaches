@@ -315,6 +315,23 @@ System.out.println(mine.getCash());</pre>
             <h3>4. Which statement best describes how Java passes arguments?</h3>
             <ol><li><b>(A)</b> Primitives by value, objects by name</li><li><b>(B)</b> Always by value: the parameter gets a copy of the argument, which for an object is a copy of the reference</li><li><b>(C)</b> Always by reference</li><li><b>(D)</b> Only primitives can be passed</li></ol>
             <details><summary>Show answer</summary><p><b>(B) Always by value: the parameter gets a copy of the argument, which for an object is a copy of the reference</b> Java is always pass by value. For objects, the value is a reference.</p></details>
+          </div><div class="static-q">
+            <span class="skill">From the book</span>
+            
+            <h3>5. The method getOwner() of a Pet object returns the Person reference stored in its instance variable. A client executes Person a = pet.getOwner(); Person b = pet.getOwner();. What is the value of a == b?</h3>
+            <ol><li><b>(A)</b> true, because both hold the same reference</li><li><b>(B)</b> false, because each call returns a new copy</li><li><b>(C)</b> false, because == cannot compare objects</li><li><b>(D)</b> It does not compile.</li></ol>
+            <details><summary>Show answer</summary><p><b>(A) true, because both hold the same reference</b> Each call returns the same reference, not a new object.</p></details>
+          </div><div class="static-q">
+            <span class="skill">From the book</span><p style="margin:0 0 6px">Consider the following method.</p>
+            <pre class="stim">public static void swap(String a, String b)
+{
+    String temp = a;
+    a = b;
+    b = temp;
+}</pre>
+            <h3>6. A client executes String x = &quot;L&quot;; String y = &quot;R&quot;; swap(x, y); System.out.println(x + y);. What is printed?</h3>
+            <ol><li><b>(A)</b> LR</li><li><b>(B)</b> RL</li><li><b>(C)</b> LL</li><li><b>(D)</b> RR</li></ol>
+            <details><summary>Show answer</summary><p><b>(A) LR</b> The method swaps only its own parameters. The caller's variables are unchanged.</p></details>
           </div>
         </section>
         <p style="margin-top:20px"><a class="btn primary" href="../../#/topic/3.6">Open 3.6 in the interactive course</a></p>

@@ -292,6 +292,24 @@ int r = triple(triple(2)) + 1;</pre>
             <h3>4. Which statement uses this method correctly?</h3>
             <ol><li><b>(A)</b> String s = greet();</li><li><b>(B)</b> greet();</li><li><b>(C)</b> int x = greet() + 1;</li><li><b>(D)</b> System.out.println(greet() * 2);</li></ol>
             <details><summary>Show answer</summary><p><b>(B) greet();</b> greet is void, so it is called as a statement and its result cannot be stored or used.</p></details>
+          </div><div class="static-q">
+            <span class="skill">From the book</span>
+            <pre class="stim">public static int cube(int n)
+{
+    return n * n * n;
+}</pre>
+            <h3>5. The method is defined in class M. What is the value of M.cube(2) + M.cube(3)?</h3>
+            <ol><li><b>(A)</b> 15</li><li><b>(B)</b> 35</li><li><b>(C)</b> 125</li><li><b>(D)</b> 216</li></ol>
+            <details><summary>Show answer</summary><p><b>(B) 35</b> M.cube(2) is 8 and M.cube(3) is 27, and 8 + 27 = 35.</p></details>
+          </div><div class="static-q">
+            <span class="skill">From the book</span>
+            <pre class="stim">public static int f(int a, int b)
+{
+    return a - b;
+}</pre>
+            <h3>6. The method is defined in class Q. What is the value of Q.f(10, Q.f(6, 2))?</h3>
+            <ol><li><b>(A)</b> 2</li><li><b>(B)</b> 4</li><li><b>(C)</b> 6</li><li><b>(D)</b> 14</li></ol>
+            <details><summary>Show answer</summary><p><b>(C) 6</b> The inner call Q.f(6, 2) is 4, and Q.f(10, 4) is 6.</p></details>
           </div>
         </section>
         <p style="margin-top:20px"><a class="btn primary" href="../../#/topic/1.10">Open 1.10 in the interactive course</a></p>

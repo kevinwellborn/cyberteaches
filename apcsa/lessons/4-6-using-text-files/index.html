@@ -296,6 +296,26 @@ System.out.println(parts[1]);</pre>
             <h3>4. What happens if a program tries to open a file that does not exist?</h3>
             <ol><li><b>(A)</b> An empty file is used</li><li><b>(B)</b> A FileNotFoundException is thrown</li><li><b>(C)</b> The program prints null</li><li><b>(D)</b> Java creates the file and fills it with zeros</li></ol>
             <details><summary>Show answer</summary><p><b>(B) A FileNotFoundException is thrown</b> Opening a missing file throws a FileNotFoundException, a kind of IOException.</p></details>
+          </div><div class="static-q">
+            <span class="skill">From the book</span>
+            <pre class="stim">String s = &quot;red,green,blue&quot;;
+String[] c = s.split(&quot;,&quot;);
+System.out.println(c.length + c[1]);</pre>
+            <h3>5. What is printed as a result of executing the code segment?</h3>
+            <ol><li><b>(A)</b> 2green</li><li><b>(B)</b> 3green</li><li><b>(C)</b> 3red</li><li><b>(D)</b> 14green</li></ol>
+            <details><summary>Show answer</summary><p><b>(B) 3green</b> The string splits into three pieces, and c[1] is the second piece.</p></details>
+          </div><div class="static-q">
+            <span class="skill">From the book</span>
+            <pre class="stim">String t = &quot;a b c d&quot;;
+String[] parts = t.split(&quot; &quot;);
+String r = &quot;&quot;;
+for (int i = parts.length - 1; i &gt;= 0; i--)
+{
+    r += parts[i];
+}</pre>
+            <h3>6. What is the value of r after the code segment executes?</h3>
+            <ol><li><b>(A)</b> &quot;abcd&quot;</li><li><b>(B)</b> &quot;dcba&quot;</li><li><b>(C)</b> &quot;d c b a&quot;</li><li><b>(D)</b> &quot;a b c d&quot;</li></ol>
+            <details><summary>Show answer</summary><p><b>(B) &quot;dcba&quot;</b> The four pieces are joined from last to first, with no spaces.</p></details>
           </div>
         </section>
         <p style="margin-top:20px"><a class="btn primary" href="../../#/topic/4.6">Open 4.6 in the interactive course</a></p>

@@ -293,6 +293,22 @@ System.out.println(a / b);</pre>
             <h3>4. A program to find the average of three test scores compiles and runs, but always prints a value that is too large. What kind of error is this?</h3>
             <ol><li><b>(A)</b> Syntax error</li><li><b>(B)</b> Logic error</li><li><b>(C)</b> Compiler error</li><li><b>(D)</b> Exception</li></ol>
             <details><summary>Show answer</summary><p><b>(B) Logic error</b> The program runs but gives the wrong answer, which is a logic error.</p></details>
+          </div><div class="static-q">
+            <span class="skill">From the book</span><p style="margin:0 0 6px">The following code segment is intended to print the average of x and y.</p>
+            <pre class="stim">int x = 10;
+int y = 20;
+System.out.println(x + y / 2);</pre>
+            <h3>5. The code prints 20 instead of 15. Which of the following best describes the problem?</h3>
+            <ol><li><b>(A)</b> A syntax error, because the compiler cannot evaluate x + y / 2</li><li><b>(B)</b> A logic error, because the expression divides only y by 2</li><li><b>(C)</b> A run-time error, because the program stops before printing</li><li><b>(D)</b> An exception, because y / 2 is not allowed</li></ol>
+            <details><summary>Show answer</summary><p><b>(B) A logic error, because the expression divides only y by 2</b> Division happens before addition, so it computes 10 + 10. It runs but gives the wrong result.</p></details>
+          </div><div class="static-q">
+            <span class="skill">From the book</span><p style="margin:0 0 6px">Consider the following code segment.</p>
+            <pre class="stim">int total = 50;
+int count = 0;
+System.out.println(total / count);</pre>
+            <h3>6. Which of the following best describes what happens?</h3>
+            <ol><li><b>(A)</b> The code does not compile.</li><li><b>(B)</b> 0 is printed.</li><li><b>(C)</b> 50 is printed.</li><li><b>(D)</b> The code compiles, but an ArithmeticException occurs when it runs.</li></ol>
+            <details><summary>Show answer</summary><p><b>(D) The code compiles, but an ArithmeticException occurs when it runs.</b> The code is legal, so it compiles. Dividing an int by zero throws the exception at run time.</p></details>
           </div>
         </section>
         <p style="margin-top:20px"><a class="btn primary" href="../../#/topic/1.1">Open 1.1 in the interactive course</a></p>

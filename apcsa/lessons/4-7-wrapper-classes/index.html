@@ -293,6 +293,23 @@ int m = n + 1;</pre>
             <h3>4. What happens when this code runs?</h3>
             <ol><li><b>(A)</b> m is 1</li><li><b>(B)</b> m is 0</li><li><b>(C)</b> A NullPointerException is thrown when n is unboxed</li><li><b>(D)</b> It does not compile</li></ol>
             <details><summary>Show answer</summary><p><b>(C) A NullPointerException is thrown when n is unboxed</b> Unboxing a null Integer throws a NullPointerException.</p></details>
+          </div><div class="static-q">
+            <span class="skill">From the book</span>
+            <pre class="stim">Integer a = 6;
+int b = a * 2;
+Integer c = b + a;</pre>
+            <h3>5. What value does c hold after the code segment executes?</h3>
+            <ol><li><b>(A)</b> 12</li><li><b>(B)</b> 18</li><li><b>(C)</b> 24</li><li><b>(D)</b> 6</li></ol>
+            <details><summary>Show answer</summary><p><b>(B) 18</b> b is 12, and 12 + 6 is 18.</p></details>
+          </div><div class="static-q">
+            <span class="skill">From the book</span>
+            <pre class="stim">String s = &quot;8&quot;;
+String t = &quot;4&quot;;
+System.out.println(s + t
++ Integer.parseInt(s) / Integer.parseInt(t));</pre>
+            <h3>6. What is printed as a result of executing the code segment?</h3>
+            <ol><li><b>(A)</b> 14</li><li><b>(B)</b> 842</li><li><b>(C)</b> 122</li><li><b>(D)</b> 84</li></ol>
+            <details><summary>Show answer</summary><p><b>(B) 842</b> The division 8 / 4 = 2 happens first, then &quot;8&quot; + &quot;4&quot; + 2 is concatenated.</p></details>
           </div>
         </section>
         <p style="margin-top:20px"><a class="btn primary" href="../../#/topic/4.7">Open 4.7 in the interactive course</a></p>

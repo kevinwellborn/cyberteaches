@@ -302,6 +302,22 @@ c.click();</pre>
             <h3>4. How is an instance method called?</h3>
             <ol><li><b>(A)</b> Using the class name, like Counter.click()</li><li><b>(B)</b> Using an object reference, like c.click()</li><li><b>(C)</b> Using the keyword static</li><li><b>(D)</b> It cannot be called from outside its class</li></ol>
             <details><summary>Show answer</summary><p><b>(B) Using an object reference, like c.click()</b> Instance methods run on a specific object, so they are called through a reference to it.</p></details>
+          </div><div class="static-q">
+            <span class="skill">From the book</span>
+            <pre class="stim">Counter a = new Counter(3);
+Counter b = new Counter(3);
+a.increase(4);</pre>
+            <h3>5. What are the values of a.getValue() and b.getValue() after the code segment executes?</h3>
+            <ol><li><b>(A)</b> 7 and 3</li><li><b>(B)</b> 7 and 7</li><li><b>(C)</b> 3 and 7</li><li><b>(D)</b> 3 and 3</li></ol>
+            <details><summary>Show answer</summary><p><b>(A) 7 and 3</b> a and b refer to different objects, so only a changes.</p></details>
+          </div><div class="static-q">
+            <span class="skill">From the book</span>
+            <pre class="stim">Counter a = new Counter(3);
+Counter b = a;
+b.increase(4);</pre>
+            <h3>6. What is the value of a.getValue() after the code segment executes?</h3>
+            <ol><li><b>(A)</b> 3</li><li><b>(B)</b> 4</li><li><b>(C)</b> 7</li><li><b>(D)</b> 12</li></ol>
+            <details><summary>Show answer</summary><p><b>(C) 7</b> a and b refer to the same object, so the change made through b is seen through a.</p></details>
           </div>
         </section>
         <p style="margin-top:20px"><a class="btn primary" href="../../#/topic/1.14">Open 1.14 in the interactive course</a></p>
