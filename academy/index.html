@@ -448,7 +448,7 @@ function reviewCards(r){
   return [
     one(r.guideId, '📖', base+' study guide', 'Study guide', r.guideBlurb, r.path, `<a class="btn primary" href="${r.path}">📖 Open the study guide</a>`, 'Study guide'),
     // Quizzes are hidden, not just locked, until the teacher opens them.
-    ...(isLocked(r.quizId) ? [] : [one(r.quizId, '✏️', base+' quiz', sc?'Turned in ✓':'Not taken yet', r.quizBlurb, r.path+'quiz.html', `<a class="btn primary" href="${r.path}quiz.html">✏️ ${sc?'See my quiz':'Take the quiz'}</a>`, 'Quiz')]) ];
+    ...(isLocked(r.quizId) ? [] : [one(r.quizId, '✏️', base+' quiz', sc?'Submitted ✓':'Not taken yet', r.quizBlurb, r.path+'quiz.html', `<a class="btn primary" href="${r.path}quiz.html">✏️ ${sc?'See my quiz':'Take the quiz'}</a>`, 'Quiz')]) ];
 }
 function lockedMsg(unit){ if(guestLocked(unit)) return signInMsg(unit); showMsg('Lesson locked', `<p>${LOCK_ICO} Your teacher has locked <b>Lesson ${unit}</b> for now. Pick a lesson that is open, or ask your teacher.</p>`) }
 

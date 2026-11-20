@@ -23,7 +23,7 @@
   <section class="card cover">
     <span class="label">Unit 1 Lesson 1-6 review · Quiz</span>
     <h1>Loops <em>quiz</em></h1>
-    <p><b id="qcount"></b> questions, <b>100 points</b>: vocabulary, sentences and programs. Answer every question.<span class="screen-only"> Then press <b>Turn in my quiz</b> at the bottom. You can turn it in only once. You will see your right and wrong answers after your teacher shares them.</span><span class="print-only"> Circle the letter, or write the word or number on the line.</span></p>
+    <p><b id="qcount"></b> questions, <b>100 points</b>: vocabulary, sentences and programs. Answer every question.<span class="screen-only"> Then press <b>Submit my quiz</b> at the bottom. You can submit it only once, and you cannot change your answers after you submit. You will see your right and wrong answers after your teacher shares them.</span><span class="print-only"> Circle the letter, or write the word or number on the line.</span></p>
     <div class="namebox"><label>Name<input id="name" autocomplete="name" placeholder="Type your name"></label><label>Class<input id="klass" placeholder="Period or class"></label></div>
     <div class="signin noprint" id="signin" aria-live="polite"></div>
   </section>
@@ -33,7 +33,7 @@
     <div class="bank" hidden><b>Blocks:</b> <span><b class="code">F</b> move forward</span><span><b class="code">L</b> turn left</span><span><b class="code">R</b> turn right</span><span><b class="code">C</b> collect crystal</span></div>
     <div class="bank" id="wbank" hidden></div>
     <form id="quiz" autocomplete="off"></form>
-    <div class="submitbar" hidden><span class="warn" id="warn"></span><button class="btn primary big" id="check" type="button">Turn in my quiz</button></div>
+    <div class="submitbar" hidden><span class="warn" id="warn"></span><button class="btn primary big" id="check" type="button">✅ Submit my quiz</button></div>
   </section>
 </div>
 <script src="../../firebase-config.js"></script>
@@ -108,7 +108,7 @@ function restore(){
 }
 function showWaiting(){
   $('score').classList.add('on');
-  $('score').innerHTML = `<span class="label">Quiz turned in ✓</span><div class="big" style="font-size:44px">Waiting for your teacher</div>
+  $('score').innerHTML = `<span class="label">Quiz submitted ✓</span><div class="big" style="font-size:44px">Waiting for your teacher</div>
     <p>Your answers are saved and your teacher has your score. You will see which answers are right or wrong after your teacher shares the answers.</p>
     <div class="submitbar" style="margin:12px 0 0"><button class="btn" type="button" id="recheck">Check if the answers are out</button></div>`;
   $('recheck').onclick = () => { $('recheck').textContent = 'Checking…'; classInfo(C.profile.classCode).then(c => {
@@ -127,11 +127,11 @@ $('check').onclick = async () => {
   if (mixed) { answers._mix = 1; if (seedN) answers._seed = seedN }
   const blank = ITEMS.map((it, i) => answers[it.id] === null ? it : null).filter(Boolean);
   if (blank.length && !$('check').dataset.sure) {
-    $('warn').textContent = `You did not answer ${blank.length} question${blank.length > 1 ? 's' : ''}. Press again to turn it in anyway.`;
+    $('warn').textContent = `You did not answer ${blank.length} question${blank.length > 1 ? 's' : ''}. Press again to submit anyway.`;
     $('check').dataset.sure = '1'; el(blank[0]).scrollIntoView({behavior: 'smooth', block: 'center'}); return }
   if (!$('check').dataset.final) {
-    $('warn').textContent = 'You can turn the quiz in only once, and you cannot change your answers after. Press again to turn it in.';
-    $('check').dataset.final = '1'; $('check').textContent = 'Yes, turn it in'; return }
+    $('warn').textContent = 'You can submit the quiz only once, and you cannot change your answers after. Press again to submit.';
+    $('check').dataset.final = '1'; $('check').textContent = 'Yes, submit it'; return }
   const score = ITEMS.reduce((t, it) => t + V.earnedOf(it, answers[it.id]), 0);
   ITEMS.forEach(it => V.lock(el(it))); $('check').disabled = true; $('warn').textContent = '';
   scrollTo({top: 0, behavior: 'smooth'});
@@ -139,7 +139,7 @@ $('check').onclick = async () => {
   $('score').classList.add('on'); $('score').innerHTML = '<p>Sending your quiz to your teacher…</p>';
   const missed = ITEMS.map((it, i) => V.earnedOf(it, answers[it.id]) === it.pts ? 0 : i + 1).filter(Boolean);
   const trySend = async () => {
-    try { await C.saveReview(R.unit, {score, total: TOTAL, missed, answers}); clearDraft(); prior = {answers}; $('signin').lastChild && ($('signin').innerHTML = $('signin').innerHTML.replace('Your teacher gets your score when you turn the quiz in.', 'You turned this quiz in.')); restore() }
+    try { await C.saveReview(R.unit, {score, total: TOTAL, missed, answers}); clearDraft(); prior = {answers}; $('signin').lastChild && ($('signin').innerHTML = $('signin').innerHTML.replace('Your teacher gets your score when you submit the quiz.', 'You submitted this quiz.')); restore() }
     catch (err) { console.error(err);
       $('score').innerHTML = `<p class="warn">Could not send your quiz (${esc(err.message)}). Your answers are still here.</p><div class="submitbar" style="margin:12px 0 0"><button class="btn primary" type="button" id="resend">Try again</button></div>`;
       $('resend').onclick = () => { $('score').innerHTML = '<p>Sending your quiz to your teacher…</p>'; trySend() } } };
@@ -207,7 +207,7 @@ function access(){
         else seedN = r.tries }   // start over: a new mix (new order and other look-alike versions)
       if (prior) seedN = prior.answers._seed || 0;
       box.className = 'signin noprint ok';
-      box.innerHTML = `✓ Signed in as <b>${esc(u.displayName || 'Student')}</b> · class <b>${esc(C.profile.className || cls)}</b>. ${prior ? 'You turned this quiz in.' : again ? (prefill ? 'Your teacher let you fix your quiz. Your earlier answers are filled in. Change what you need, then turn it in again.' : 'Your teacher let you take this quiz again.') + ' Your new score will replace the old one.' : 'Your teacher gets your score when you turn the quiz in.'}`;
+      box.innerHTML = `✓ Signed in as <b>${esc(u.displayName || 'Student')}</b> · class <b>${esc(C.profile.className || cls)}</b>. ${prior ? 'You submitted this quiz.' : again ? (prefill ? 'Your teacher let you fix your quiz. Your earlier answers are filled in. Change what you need, then turn it in again.' : 'Your teacher let you take this quiz again.') + ' Your new score will replace the old one.' : 'Your teacher gets your score when you submit the quiz.'}`;
       if (!$('name').value) $('name').value = u.displayName || '';
       if (!$('klass').value) $('klass').value = C.profile.className || cls;
       showQuiz();
