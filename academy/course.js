@@ -37,20 +37,21 @@ const UNITS = [
    intro:['Puzzle 1 is drive mode. Use the arrow keys (or the buttons) to drive and Space to fire. Every move you make turns into a block in your program.',
           'After that, you write the program first. <b>fire cannon</b> shoots straight ahead until the shell hits a tank or a rock. Shells are limited, so do not waste them.',
           '<b>if tank ahead</b> runs the blocks inside only when a tank is in your line of fire. <b>repeat until no tanks left</b> keeps your patrol going until the job is done.',
-          'Careful: a red <b>!</b> means a tank has spotted you. If you are still in front of its cannon after your next move, it fires.']},
+          'Careful: a red <b>!</b> means a tank has spotted you. If you are still in front of its cannon after your next move, it fires.',
+          'Every coding puzzle has a <b>block goal</b> and a <b>block limit</b>. Match the goal for 3 stars. You cannot add more blocks than the limit, so use repeat instead of dragging in the same block again and again.']},
   {n:8, title:'Tank practice', color:'var(--b-act)', newBlocks:[], video:'',
    concept:'Easy practice with the cannon: aim, turn and fire at parked tanks, one or two at a time.',
-   intro:['No new blocks. Practice <b>fire cannon</b> from Lesson 7.',
+   intro:['No new blocks. Practice <b>fire cannon</b> from Lesson 7. Watch the block goal and the block limit.',
           'Turn the rover so it faces the tank, then fire. The shell flies straight until it hits a tank or a rock.',
           'You have one shell per tank, so aim before you fire.']},
   {n:9, title:'Tank patrols', color:'var(--b-act)', newBlocks:[], video:'',
    concept:'Write patrol programs: check for tanks with if tank ahead, and keep going with repeat until no tanks left.',
-   intro:['No new blocks. Practice <b>if tank ahead</b> and <b>repeat until no tanks left</b>.',
+   intro:['No new blocks. Practice <b>if tank ahead</b> and <b>repeat until no tanks left</b>. Watch the block goal and the block limit.',
           'Patrol: move, look to the side, fire only if a tank is there, then turn back.',
           'Remember: a red <b>!</b> means a tank has spotted you. Fire or move out of its way.']},
   {n:10, title:'Tank missions', color:'var(--b-act)', newBlocks:[], video:'',
    concept:'Real missions with limits: only so many shells and only so many blocks. Too many tanks to fire one by one, so find the pattern and use repeat.',
-   intro:['No new blocks, but now there are <b>limits</b>. Each puzzle shows how many shells you have and the most blocks your program can use.',
+   intro:['No new blocks, but bigger missions with <b>limits</b>. Each puzzle shows how many shells you have and the most blocks your program can use.',
           'There are too many tanks to drag in one fire block for each. Find the pattern and put it inside a <b>repeat</b>.',
           'You get a few extra blocks, so you do not need the shortest program to win. Match the goal for 3 stars, stay close for 2, and any working program inside the limit earns 1.']},
   {n:11, title:'If / else', color:'var(--b-move)', newBlocks:['ifelse'], video:'',
@@ -83,7 +84,7 @@ const UNITS = [
 const REVIEWS = [
   {n:1, guideId:101, quizId:201, after:6, name:'Unit 1 Lesson 1-6 review', short:'L1-6 review', lessons:'1-6', path:'review/unit-1/', color:'#7A4BD6',
    guideBlurb:'Review Lessons 1 to 6 (repeat and repeat until): big ideas, vocabulary and 17 sample questions with answers. Study it before the quiz.',
-   quizBlurb:'20 questions on Lessons 1 to 6, like the sample questions in the study guide. Your score goes to your teacher. Your teacher opens it when it is time.'}
+   quizBlurb:'29 questions on Lessons 1 to 6 for 100 points: vocabulary, sentences and programs, like the study guide. Turn it in once; you see right and wrong answers after your teacher shares them. Your teacher opens it when it is time.'}
 ];
 const UPCOMING = [
   {title:'Destroy walls', blurb:'Blast cracked walls, collect charges, and find keys to locked gates.'}
@@ -1823,6 +1824,11 @@ function applyLevelTheme(level){
 const levelStyle = level => { const c = levelColor(level); return `--c:${c.main};--ci:${c.ink};--cs:${c.soft}` };
 const DEFAULT_LEVEL = 'hard';
 LEVELS.forEach((l,i)=>{ l.level=l.level||'hard'; l.n=i+1; l.k=LEVELS.slice(0,i).filter(o=>o.unit===l.unit && o.level===l.level).length+1 });  // k: puzzle number inside its lesson and level
+// Tank lessons 7-9 (every level): a block limit of goal + 3, so a working program has to stay close to the goal and
+// students cannot win by dragging in lots of blocks. Drive mode records moves instead, so it has no limit.
+// Lesson 10 (Tank missions) sets its own maxBlocks on each puzzle.
+const TANK_SLACK = 3;
+LEVELS.forEach(l=>{ if(l.unit>=7 && l.unit<=9 && !l.drive && !l.maxBlocks) l.maxBlocks = l.ideal + TANK_SLACK });
 const ORDER = [...LEVELS].sort((a,b)=>a.unit-b.unit || LEVEL_ORDER.indexOf(a.level)-LEVEL_ORDER.indexOf(b.level) || a.k-b.k);
 const LEVELS_AVAILABLE = LEVEL_ORDER.filter(v=>LEVELS.some(l=>l.level===v));   // levels that have puzzles
 const levelsOf = (level, unit) => ORDER.filter(l=>l.level===level && (unit==null || l.unit===unit));   // puzzles of one level, in play order

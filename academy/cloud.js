@@ -181,10 +181,27 @@
 
   // Unit review quiz scores (academy/review/unit-N/quiz.html), in their own field: review.u1 = {score, total, best, tries, missed, at}.
   // Two writes per quiz check (the student's record and, in a class, the roster row the teacher reads). Returns the saved entry.
-  Cloud.saveReview = async (unit, {score, total, missed}) => {
+  // answers ({questionId: answer}) lets the quiz show the student's own answers again once the teacher shares the right ones.
+  Cloud.saveReview = async (unit, {score, total, missed, answers}) => {
     if(!Cloud.user) return null;
     const uid = Cloud.user.uid, key = 'u' + unit, prev = ((Cloud.profile || {}).review || {})[key] || {};
-    const entry = {score, total, missed: (missed || []).slice(0, 50), best: Math.max(score, prev.best || 0), tries: (prev.tries || 0) + 1,
+    const entry = {score, total, missed: (missed || []).slice(0, 50), best: answers ? score : Math.max(score, prev.best || 0), tries: (prev.tries || 0) + 1,
+      at: firebase.firestore.FieldValue.serverTimestamp()};
+    if(answers) entry.answers = answers;
+    const base = who();
+    await db.collection('users').doc(uid).set({...base, review: {[key]: entry}}, {merge: true});
+    const cc = Cloud.profile && Cloud.profile.classCode;
+    if(cc) await db.collection('classes').doc(cc).collection('students').doc(uid).set({...base, review: {[key]: entry}}, {merge: true});
+    Cloud.profile = {...Cloud.profile, review: {...((Cloud.profile || {}).review || {}), [key]: {...entry, at: new Date()}}};
+    return {...entry, classCode: cc || null};
+  };
+
+  // Unit review study guide (academy/review/unit-N/): score out of 100 when every question is answered.
+  // review.g{unit} = {score (latest), first (the score the teacher sees), best, total, tries, at}.
+  Cloud.saveGuide = async (unit, {score, total, reset}) => {
+    if(!Cloud.user) return null;
+    const uid = Cloud.user.uid, key = 'g' + unit, prev = ((Cloud.profile || {}).review || {})[key] || {};
+    const entry = {score, total, first: !reset && prev.first != null ? prev.first : score, best: Math.max(score, prev.best || 0), tries: (prev.tries || 0) + 1,
       at: firebase.firestore.FieldValue.serverTimestamp()};
     const base = who();
     await db.collection('users').doc(uid).set({...base, review: {[key]: entry}}, {merge: true});

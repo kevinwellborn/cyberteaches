@@ -129,3 +129,24 @@ body.show-key .key{display:block}
 .print-only{display:none}
 @media print{.print-only{display:inline}}
 [hidden]{display:none!important}
+/* study guide practice: check one question at a time */
+.checkrow{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:10px}
+.pickmsg{color:#7A1D12;font-weight:700;font-size:14px}
+.tally{font-weight:700;color:var(--muted);font-size:15px}
+.tally b{color:var(--accent);font-size:18px}
+.pts{display:inline-block;font:700 12px var(--f-body);color:#5B3A00;background:#FBF0CC;border:1px solid #E7CF84;border-radius:999px;padding:1px 9px;vertical-align:middle;margin-left:6px;letter-spacing:0;text-transform:none}
+h2 .pts,h3 .pts{font-size:13px}
+.checkhead{font-size:18px;margin:18px 0 2px}
+.fb.part{background:#FBF0CC;color:#5B3A00}
+.q.part .qn{background:#D9A013}
+.fillq .qt{line-height:2.2}
+.fillq select{font:700 16px var(--f-body);border:2px solid var(--line);border-radius:8px;padding:3px 6px;background:#fff;color:var(--ink);margin:0 2px}
+.fillq select.right{border-color:#2E9363;background:#DDF2E6}
+.fillq select.wrong{border-color:#C8402F;background:#F9DFDA}
+@media print{.fillgap{display:inline-block;min-width:1.4in;border-bottom:1.5px solid var(--ink)}}
+label.opt:has(input:disabled){cursor:default}
+label.opt:has(input:disabled):hover{border-color:var(--line)}
+label.opt:has(input:disabled:checked):hover{border-color:var(--accent)}
+@media print{.fillq select{display:none}}
+.qsec{font-size:20px;margin:22px 0 2px;padding-top:14px;border-top:3px solid var(--line)}
+.qsec:first-child{margin-top:0;padding-top:0;border-top:0}

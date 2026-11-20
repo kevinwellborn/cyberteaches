@@ -60,13 +60,66 @@ const REVIEW = {
      map: ['#######', '#S***.#', '#####.#', '#####G#', '#######'], dir: 1, p: 'repeat 3 [ F C ] F R until flag [ F ]', note: 'Count 3 crystals, move, turn, then go until the flag.'},
   ],
 
-  frames: [
-    ['First, the rover ____. Then it ____.', 'moves forward / collects'],
-    ['The pattern is ____. It happens ____ times.', 'F C / 4'],
-    ['I use a repeat because ____.', 'the same steps happen again and again'],
-    ['I use repeat until at flag because I don\'t know ____.', 'how many times'],
-    ['The program has a bug. The rover ____, so I ____.', 'crashes / add a turn'],
+  // Say it and write it: each blank is filled from the word bank (fillBank). The study guide checks them (1 point a blank).
+  fillBank: ['moves forward', 'collects', 'turns', 'pattern', 'repeat', 'until', 'flag', 'how many times', 'crashes'],
+  fill: [
+    {s: 'The rover ____ one square. Then it ____ the crystal.', a: ['moves forward', 'collects']},
+    {s: 'F C F C F C is a ____. I build F C once and ____ it 3 times.', a: ['pattern', 'repeat']},
+    {s: 'I use repeat ____ at flag because I don\'t know ____ the rover must move.', a: ['until', 'how many times']},
+    {s: 'The program has a bug: the rover ____ into a rock. To fix it, I add a block that ____ the rover.', a: ['crashes', 'turns']},
   ],
+
+  // Quiz vocabulary: pick the word for each meaning (the study guide asks the other way round).
+  quizVocab: [
+    {m: 'steps that happen in order, one after another', opts: ['sequence', 'flag', 'debug'], a: 0},
+    {m: 'a block that repeats the blocks inside it', opts: ['algorithm', 'loop', 'flag'], a: 1},
+    {m: 'a loop inside another loop', opts: ['infinite loop', 'sequence', 'nested loop'], a: 2},
+    {m: 'a loop that never stops', opts: ['infinite loop', 'pattern', 'program'], a: 0},
+    {m: 'the goal square the rover must reach', opts: ['loop', 'flag', 'efficient'], a: 1},
+    {m: 'find a mistake and fix it', opts: ['repeat', 'until', 'debug'], a: 2},
+    {m: 'a plan of steps to solve a problem', opts: ['algorithm', 'nested loop', 'flag'], a: 0},
+    {m: 'does the job with fewer steps', opts: ['pattern', 'efficient', 'debug'], a: 1},
+  ],
+  // Quiz sentences: blanks filled from fillBank, like the study guide.
+  quizFill: [
+    {s: 'There are 5 crystals in a row, so I ____ F C 5 times. Each time, the rover ____ a crystal.', a: ['repeat', 'collects']},
+    {s: 'A rock is right in front of the rover. If the rover ____, it ____ into the rock.', a: ['moves forward', 'crashes']},
+    {s: 'R F C R F C R F C is a ____. Each time, the rover ____ right first.', a: ['pattern', 'turns']},
+  ],
+  // Quiz look-alikes: for these program questions (by place in quiz, from 0) each student gets the original or one of these,
+  // with different numbers and a different answer. Picked from the student's account, so it stays the same on reload.
+  quizVariants: {
+    2: [
+      {lesson: 2, kind: 'num', q: 'There are 8 crystals in a row. The program is <span class="code">repeat 3 [ F C ]</span>. How many crystals are <b>left</b>?', map: ['###########', '#S********#', '###########'], dir: 1, prog: 'repeat 3 [ F C ]', a: 5,
+       why: 'The repeat runs 3 times and collects 3 crystals. 8 − 3 = 5 are left.'},
+      {lesson: 2, kind: 'num', q: 'There are 6 crystals in a row. The program is <span class="code">repeat 4 [ F C ]</span>. How many crystals are <b>left</b>?', map: ['#########', '#S******#', '#########'], dir: 1, prog: 'repeat 4 [ F C ]', a: 2,
+       why: 'The repeat runs 4 times and collects 4 crystals. 6 − 4 = 2 are left.'},
+    ],
+    4: [
+      {lesson: 2, kind: 'num', q: 'How many blocks is this program?', prog: 'L repeat 5 [ F F C ]', a: 5,
+       why: 'Turn left (1) + repeat (1) + 3 blocks inside = 5 blocks.'},
+      {lesson: 2, kind: 'num', q: 'How many blocks is this program?', prog: 'repeat 3 [ F C R ] F F', a: 6,
+       why: 'Repeat (1) + 3 blocks inside + 2 move forward blocks after it = 6 blocks.'},
+    ],
+    6: [
+      {lesson: 3, kind: 'num', q: 'How many crystals does this program collect?', prog: 'repeat 3 [ repeat 3 [ F C ] R ]', a: 9,
+       why: 'The inside repeat collects 3 crystals. The outside repeat runs it 3 times: 3 × 3 = 9.'},
+      {lesson: 3, kind: 'num', q: 'How many crystals does this program collect?', prog: 'repeat 4 [ repeat 3 [ F C ] R ]', a: 12,
+       why: 'The inside repeat collects 3 crystals. The outside repeat runs it 4 times: 4 × 3 = 12.'},
+    ],
+    9: [
+      {lesson: 4, kind: 'num', q: 'How many times does <b>move forward</b> run?', map: ['#########', '#S.....G#', '#########'], dir: 1, prog: 'until flag [ F ]', a: 6,
+       why: 'The flag is 6 squares away. The loop stops the moment the rover is on the flag.'},
+      {lesson: 4, kind: 'num', q: 'How many times does <b>move forward</b> run?', map: ['#############', '#S.........G#', '#############'], dir: 1, prog: 'until flag [ F ]', a: 10,
+       why: 'The flag is 10 squares away. The loop stops the moment the rover is on the flag.'},
+    ],
+  },
+
+  // Quiz points (total 100): each program question, each vocabulary word, each sentence blank.
+  quizPoints: {question: 4, vocab: 2, blank: 2},
+
+  // Study guide points (total 100): each sample question, each vocabulary word, each sentence blank.
+  points: {sample: 4, vocab: 2, blank: 1},
 
   tips: ['Find the rover and the way it faces.', 'Trace the program with your finger, one block at a time.', 'Count crystals and steps before you pick a number.', 'Read every answer before you choose.'],
 
@@ -128,9 +181,6 @@ const REVIEW = {
     {lesson: 1, q: 'The rover faces <b>left</b>. Which block turns it to face the <b>top of the page</b>?', map: ['###', '#S#', '###'], dir: 3,
      opts: [{b: 'L'}, {b: 'R'}, {b: 'F'}], a: 1,
      why: 'Facing left on the page, the rover\'s right hand points up. So turn right.'},
-    {lesson: 1, q: 'Which word means <b>a list of steps for a computer</b>?',
-     opts: ['flag', 'program', 'pattern'], a: 1,
-     why: 'A program is a list of steps that a computer follows in order.'},
     {lesson: 2, kind: 'num', q: 'There are 7 crystals in a row. The program is <span class="code">repeat 4 [ F C ]</span>. How many crystals are <b>left</b>?', map: ['##########', '#S*******#', '##########'], dir: 1, prog: 'repeat 4 [ F C ]', a: 3,
      why: 'The repeat runs 4 times and collects 4 crystals. 7 − 4 = 3 are left.'},
     {lesson: 2, q: 'Rewrite <span class="code">F F C F F C F F C F F C</span> with a repeat.',
@@ -157,9 +207,6 @@ const REVIEW = {
     {lesson: 4, q: 'Which loop should you use? <i>"Do 15 jumping jacks."</i>',
      opts: ['repeat 15 times', 'repeat until', 'no loop'], a: 0,
      why: 'You know the number (15), so a plain repeat is the best choice.'},
-    {lesson: 4, q: 'Which word means <b>a loop that never stops</b>?',
-     opts: ['nested loop', 'infinite loop', 'sequence'], a: 1,
-     why: 'An infinite loop never stops. Make sure the blocks inside move the rover closer to the flag.'},
     {lesson: 5, q: 'The rover faces <b>down</b>. The flag is to the <b>left side of the page</b>. Which program reaches the flag?', map: ['#######', '#G...S#', '#######'], dir: 2,
      opts: [{p: 'L until flag [ F ]'}, {p: 'R until flag [ F ]'}, {p: 'until flag [ R F ]'}], a: 1,
      why: 'Facing down, the rover\'s right is the left side of the page. Turn right once, then go until the flag.'},

@@ -44,6 +44,7 @@ const HELPERS = `
   // ---------- study guide ----------
   await p.goto(base); await p.waitForTimeout(700); await p.addScriptTag({content: HELPERS});
   await p.evaluate(() => document.querySelectorAll('.idea .board, .idea .prog').forEach(e => e.style.fontSize = '13px'));
+  await p.evaluate(() => document.querySelectorAll('.fb, .key, .checkrow, .pts, input').forEach(e => e.remove()));
   await picturize(p);
   write('study-guide-digital', await p.evaluate(() => {
     const R = REVIEW, t = s => document.querySelector(s);
@@ -56,11 +57,13 @@ const HELPERS = `
       + [...document.querySelectorAll('#blocks > div')].map(d => `<tr><td>${code(d.querySelector('.code').textContent)}</td><td>${d.querySelector('img').outerHTML}</td></tr>`).join('') + '</table>';
     h += '<h2>3. Word bank</h2><p>GRIDTABLE</p><table><tr><th>Word</th><th>Meaning</th><th>Español</th><th>Picture</th></tr>'
       + R.vocab.map(([w, m, es, pic]) => `<tr><td><b>${w}</b></td><td>${m}</td><td><i>${es}</i></td><td>${pic}</td></tr>`).join('') + '</table>';
+    h += '<h3>Vocabulary check</h3><p>What does each word mean? Type the letter in the shaded box.</p>'
+      + [...document.querySelectorAll('#vocabq .q')].map((q, i) => qHtml(q, i)).join('');
     h += '<h2>4. Big ideas</h2>' + [...document.querySelectorAll('#ideas .idea')].map(d =>
       `<h3>${d.querySelector('h3').textContent}</h3><p>${d.querySelector('p').innerHTML}</p><p>${[...d.querySelectorAll('img')].map(i => i.outerHTML).join(' &nbsp; ')}</p><p><i>${d.querySelector('.note').innerHTML}</i></p>`).join('');
     h += '<h2>5. Say it and write it</h2><p>Finish each sentence. Type the missing words in the box. Use the word bank.</p><p><b>Word bank:</b> '
-      + [...document.querySelectorAll('#fbank span')].map(s => `[ ${s.textContent} ]`).join(' ') + '</p>'
-      + R.frames.map(([f], i) => `<p>${i + 1}. ${f.replace(/____/g, '______')}</p>` + box(1)).join('');
+      + R.fillBank.map(w => `[ ${w} ]`).join(' ') + '</p>'
+      + R.fill.map((f, i) => `<p>${i + 1}. ${f.s.replace(/____/g, '______')}</p>` + box(1)).join('');
     h += '<p>PAGEBREAK</p><h2>6. Sample questions</h2><p>Try each question. Type the letter or the number in the shaded box. Check your answers in the online study guide.</p>'
       + [...document.querySelectorAll('#samples .q')].map((q, i) => qHtml(q, i)).join('');
     h += '<h2>Quiz tips</h2>' + R.tips.map(x => `<p>• ${x}</p>`).join('');
@@ -69,16 +72,21 @@ const HELPERS = `
 
   // ---------- quiz ----------
   await p.goto(base + 'quiz.html'); await p.waitForTimeout(700); await p.addScriptTag({content: HELPERS});
-  await p.evaluate(() => document.querySelectorAll('.fb, .key, .signin, input').forEach(e => e.remove()));
+  await p.evaluate(() => { document.querySelectorAll('.fb, .key, .signin, input, .fillgap').forEach(e => e.remove());
+    document.querySelectorAll('#quiz select').forEach(e => e.replaceWith('______')); document.querySelectorAll('#quiz .pts').forEach(e => e.remove()) });
   await picturize(p);
   write('quiz-digital', await p.evaluate(() => {
     const R = REVIEW;
     return `<h1>${R.name}: Quiz (${R.title})</h1>
       <p><b>Name:</b> ______________________ &nbsp; <b>Class:</b> ____________ &nbsp; <b>Date:</b> ____________</p>
-      <p>${R.quiz.length} questions. For each question, type the letter of the best answer, or type a number, in the shaded box.</p>
+      <p>${document.querySelectorAll('#quiz .q').length} questions, 100 points. For each question, type the letter, the word or the number in the shaded box.</p>
       <p><b>Block letters:</b> ${code('F')} move forward &nbsp;·&nbsp; ${code('L')} turn left &nbsp;·&nbsp; ${code('R')} turn right &nbsp;·&nbsp; ${code('C')} collect crystal</p>
-      <p><b>Word bank:</b> ${R.vocab.slice(0, 10).map(([w, , es]) => `[ ${w} <i>(${es})</i> ]`).join(' ')}</p>`
-      + [...document.querySelectorAll('#quiz .q')].map((q, i) => qHtml(q, i)).join('');
+      <p><b>Word bank:</b> ${R.fillBank.map(w => `[ ${w} ]`).join(' ')}</p>`
+      + [...document.querySelectorAll('#quiz .qsec')].map(h => {
+        const qs = []; let n = h.nextElementSibling; while (n && !n.classList.contains('qsec')) { if (n.classList.contains('q')) qs.push(n); n = n.nextElementSibling }
+        return `<h2>${h.textContent.replace(/\d+ points$/, m => '(' + m + ')')}</h2>` + qs.map((q, i) => q.classList.contains('fillq')
+          ? '<h3>Question ' + (i + 1) + '</h3><p>' + q.querySelector('.qt').innerHTML + '</p>' + box(1, '<b>My answers (words):</b> ')
+          : qHtml(q, i)).join('') }).join('');
   }));
   await b.close();
 })().catch(e => { console.error(e); process.exit(1) });
