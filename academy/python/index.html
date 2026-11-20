@@ -57,6 +57,14 @@ header.top{display:flex;align-items:center;gap:12px;padding:12px 16px;max-width:
 .sample{font-family:var(--f-mono);background:rgba(0,0,0,.28);border-radius:10px;padding:10px 14px;font-size:14px;margin:14px 0;color:#E4EFE9;white-space:pre;overflow-x:auto}
 .sample .h{color:#6FD3A0}.sample .n{color:#F2C14A}.sample .c{color:#8FB09F}
 .lessons{display:flex;flex-direction:column;gap:14px;margin:22px 0 40px}
+.gear{background:var(--panel);border:2px solid var(--line);border-radius:18px;padding:16px 18px;margin:0 0 40px}
+.gear h2{margin:0 0 4px}.gear .sub{color:var(--muted);margin:0 0 10px;font-size:14px}
+.gear-row{display:flex;flex-wrap:wrap;gap:10px;margin:6px 0 14px}
+.gitem{display:flex;flex-direction:column;align-items:center;gap:4px;width:112px;padding:8px;border:2px solid var(--line);border-radius:14px;background:var(--panel);cursor:pointer;font:inherit;color:inherit}
+.gitem.on{border-color:var(--good);box-shadow:0 0 0 3px rgba(46,147,99,.25)}
+.gitem[disabled]{opacity:.55;cursor:default}
+.gitem canvas{width:56px;height:75px;background:#1F4B36;border-radius:10px}
+.gitem b{font-size:13px}.gitem small{font-size:11px;color:var(--muted);text-align:center;line-height:1.2}
 .lesson{background:var(--panel);border:2px solid var(--line);border-radius:18px;padding:16px 18px}
 .lesson-head{display:flex;gap:14px;align-items:center}
 .lesson-num{width:50px;height:50px;border-radius:14px;display:grid;place-items:center;color:#fff;font-family:var(--f-display);font-weight:800;font-size:15px;flex:none}
@@ -207,6 +215,7 @@ header.top{display:flex;align-items:center;gap:12px;padding:12px 16px;max-width:
   </section>
   <p class="lock-note" id="lockNote" hidden></p>
   <div class="lessons" id="lessons"></div>
+  <section class="gear" id="gearBox"></section>
 </main>
 
 <main id="learn" class="wrap" hidden>
@@ -268,9 +277,9 @@ header.top{display:flex;align-items:center;gap:12px;padding:12px 16px;max-width:
 
 <p class="foot">Python Quest is an original CyberTeaches game. Python runs right in your browser.</p>
 
-<script src="pyrun.js?v=1"></script>
-<script src="levels.js?v=3"></script>
-<script src="game.js?v=2"></script>
+<script src="pyrun.js?v=2"></script>
+<script src="levels.js?v=6"></script>
+<script src="game.js?v=5"></script>
 <script src="../firebase-config.js"></script>
 <script src="../cloud.js?v=22"></script>
 <script>
@@ -285,6 +294,13 @@ $('#gameTitle').innerHTML = esc(PQ_GAME_NAME) + '<small>' + esc(PQ_WORLD) + '</s
 const KEY = 'cyberteaches:py';
 const load = () => { try { return JSON.parse(localStorage.getItem(KEY)) || {} } catch(e){ return {} } };
 let data = load(); data.stars = data.stars || {}; data.code = data.code || {}; data.learned = data.learned || {};
+// Gear (outfits and weapons): unlocked by solving the level named in PQ_GEAR, so it follows the student's stars everywhere.
+const GEAR = window.PQ_GEAR || [];
+const hasGear = g => !g.soon && (!g.level || !!data.stars[g.level]);
+const wear = () => {
+  const w = data.wear || {}, ok = id => { const g = GEAR.find(x => x.id === id); return g && hasGear(g) };
+  return {outfit: ok(w.outfit) ? w.outfit : 'explorer', weapon: ok(w.weapon) ? w.weapon : 'sword'};
+};
 const saveLocal = () => { try { localStorage.setItem(KEY, JSON.stringify(data)) } catch(e){} };
 let lastUid = null;
 function cloudSave(){
@@ -351,6 +367,28 @@ function render(){
     box.append(card);
   });
   if(cur) drawDots();
+  renderGear();
+}
+function renderGear(){
+  const box = $('#gearBox'); if(!box) return; box.innerHTML = '';
+  const on = wear(), got = GEAR.filter(hasGear).length;
+  box.append(h('h2', '', '🎒 My gear'), h('p', 'sub', 'Open treasure chests and finish big levels to unlock outfits and weapons. You have ' + got + ' of ' + GEAR.length + '. Pick what your explorer wears.'));
+  [['outfit', 'Outfits'], ['weapon', 'Weapons']].forEach(([kind, label]) => {
+    box.append(h('div', 'crumb', label));
+    const row = h('div', 'gear-row');
+    GEAR.filter(g => g.kind === kind).forEach(g => {
+      const open = hasGear(g), b = h('button', 'gitem' + (on[kind] === g.id ? ' on' : ''));
+      const cv = document.createElement('canvas'); cv.width = 48; cv.height = 64; b.append(cv);
+      const look = {...on, [kind]: g.id}, cx = cv.getContext('2d');
+      PQ.drawHero(cx, 0, 0.33, 1, 'idle', 0, 0, false, look);
+      if(!open){ cx.fillStyle = 'rgba(0,0,0,.45)'; cx.fillRect(0, 0, 48, 64); cx.font = '20px system-ui'; cx.textAlign = 'center'; cx.fillText('🔒', 24, 38) }
+      b.append(h('b', '', esc(g.name)), h('small', '', open ? (on[kind] === g.id ? 'Wearing' : 'Tap to wear') : esc(g.how)));
+      if(!open) b.disabled = true;
+      b.onclick = () => { data.wear = {...wear(), [kind]: g.id}; saveLocal(); player.gear = wear(); if(art) art.gear = wear(); renderGear() };
+      row.append(b);
+    });
+    box.append(row);
+  });
 }
 const firstOpen = () => (LEVELS.find(l => !data.stars[l.id] && !isLocked(l.lesson)) || LEVELS.find(l => !isLocked(l.lesson)) || LEVELS[0]).id;
 $('#startBtn').onclick = () => { const l = LEVELS.find(x => x.id === firstOpen()); if(PQ_LEARN[l.lesson] && !data.learned[l.lesson]) location.hash = 'learn-' + l.lesson; else go(l.id) };
@@ -363,6 +401,7 @@ let art = null, artOn = false;
 function startArt(){
   if(artOn) return; artOn = true;
   if(!art){ art = new PQ.Player($('#heroArt')); art.setLevel(artLevel) }
+  art.gear = wear();
   const loop = () => { if($('#home').hidden){ art.stop(); artOn = false; return } art.reset(); const r = PQ.simulate(artLevel, 'hero.run(3)\nhero.take()\nhero.run(2)\nhero.jump()\nhero.attack()\nhero.attack()\nhero.run(2)'); art.play(r.events, () => setTimeout(loop, 1500)) };
   loop();
 }
@@ -375,6 +414,7 @@ const player = new PQ.Player($('#stage'), {
     if(e.a === 'step') SFX.step(); else if(e.a === 'jump') SFX.jump(); else if(e.a === 'climb') SFX.climb();
     else if(e.a === 'take') SFX.take(); else if(e.a === 'drink') SFX.drink(); else if(e.a === 'attack') SFX.attack();
     else if(e.a === 'hurt') SFX.hit(); else if(e.a === 'open') SFX.open(); else if(e.a === 'bump') SFX.bump();
+    else if(e.a === 'defend') SFX.open(); else if(e.a === 'block') SFX.climb();
     else if(e.a === 'win') SFX.win(); else if(e.a === 'die') SFX.lose();
     else if(e.a === 'print') showOut(e.text);
   }
@@ -461,7 +501,7 @@ function openLevel(id){
   running = false; errLine = runLine = 0;
   $('#lvlTag').textContent = 'Lesson ' + cur.lesson + ' · Level ' + cur.k;
   $('#lvlName').textContent = cur.name;
-  $('#goalText').textContent = cur.goal;
+  $('#goalText').textContent = cur.goal + (cur.variants ? '  🔀 This temple changes every time you press Run (' + (cur.variants.length + 1) + ' versions). Your code must work on all of them.' : '');
   $('#tipText').textContent = cur.tip; $('#tipBox').open = false;
   const ls = PQ_LESSONS.find(x => x.n === cur.lesson);
   const intro = $('#introBox');
@@ -470,7 +510,7 @@ function openLevel(id){
     intro.innerHTML = '<b>New to Python?</b> ' + esc(ls.intro) + ' Example: <code>hero.run(3)</code> makes the explorer run 3 squares. Type your code on the right and press <b>Run</b>.' + (PQ_LEARN[ls.n] ? ' <a href="#learn-' + ls.n + '">📖 Review the lesson</a>' : '');
   } else intro.hidden = true;
   ta.value = data.code[cur.id] != null ? data.code[cur.id] : cur.start;
-  player.setLevel(cur); player.speed = speed;
+  player.setLevel(cur); player.speed = speed; player.gear = wear();
   hideMsg(); $('#out').className = 'out'; $('#out').textContent = '';
   const cmds = $('#cmds'); cmds.innerHTML = '<div class="crumb">Commands (click to add a line)</div>';
   PQ_COMMANDS.filter(c => (c.lesson || 1) < cur.lesson || ((c.lesson || 1) === cur.lesson && c.from <= cur.k)).forEach(c => {
@@ -493,12 +533,12 @@ $('#runBtn').onclick = () => running ? $('#resetBtn').onclick() : runCode();
 function runCode(){
   if(running) return;
   hideMsg(); errLine = runLine = 0; $('#out').className = 'out'; $('#out').textContent = '';
-  const src = ta.value, r = PQ.simulate(cur, src);
+  const src = ta.value, all = PQ.simulateAll(cur, src), r = all.run;
   if(r.result.result === 'error' && !r.result.partial){
     errLine = r.result.line || 0; refresh(); SFX.bump();
     showMsg('error', '<b>🐍 Python says:</b> ' + esc(r.result.msg)); return;
   }
-  player.reset(); player.speed = speed; setRunning(true);
+  player.setLevel(all.level); player.gear = wear(); player.speed = speed; setRunning(true);
   player.play(r.events, () => finish(r));
 }
 function finish(r){
@@ -507,9 +547,10 @@ function finish(r){
   if(res.result === 'win'){
     const stars = PQ.starsFor(cur, r.lines), before = data.stars[cur.id] || 0;
     if(stars > before){ data.stars[cur.id] = stars; saveLocal(); cloudSave() }
+    const newGear = before ? [] : GEAR.filter(g => g.level === cur.id);
     refresh(); drawDots(); render();
     $('#winStars').innerHTML = '★'.repeat(stars) + '<span class="off">' + '★'.repeat(3 - stars) + '</span>';
-    $('#winText').innerHTML = 'You used <b>' + r.lines + '</b> line' + (r.lines === 1 ? '' : 's') + ' of code.' + (stars < 3 ? ' Can you do it in ' + cur.par + '? Tip: ' + (cur.lesson >= 2 ? 'put the part that repeats inside a for loop.' : 'hero.run(3) is shorter than three hero.run() lines.') : ' Perfect!');
+    $('#winText').innerHTML = (cur.rescue ? '🎉 <b>' + esc(res.msg) + '</b><br>' : '') + newGear.map(g => '🎁 New gear: <b>' + esc(g.name) + '</b>! Wear it from 🎒 My gear on the lessons page.<br>').join('') + 'You used <b>' + r.lines + '</b> line' + (r.lines === 1 ? '' : 's') + ' of code.' + (stars < 3 ? ' Can you do it in ' + cur.par + '? Tip: ' + (cur.lesson >= 2 && (cur.lesson === 2 || /loop/i.test(cur.goal + cur.tip)) ? 'put the part that repeats inside a for loop.' : cur.lesson === 3 ? 'one sword.attack( ) per guard with the right number, and hero.run( ) with a bigger number.' : 'hero.run(3) is shorter than three hero.run() lines.') : ' Perfect!');
     const next = LEVELS[LEVELS.indexOf(cur) + 1];
     $('#winNext').hidden = !next; $('#winHome').hidden = !!next;
     $('#winTitle').textContent = next ? 'Level complete!' : 'Lesson complete!';
@@ -526,7 +567,7 @@ $('#winNext').onclick = () => { $('#winModal').classList.remove('show'); const n
 
 // ---------- learn: teach the idea first (slides + quick check), then practice in the levels ----------
 let L = null, sIdx = 0, demoPlayers = [];
-const mini = (cv, map, extra = {}) => { const p = new PQ.Player(cv); p.setLevel({map, ...extra}); demoPlayers.push(p); return p };
+const mini = (cv, map, extra = {}) => { const p = new PQ.Player(cv); p.setLevel({...extra, map}); p.gear = wear(); demoPlayers.push(p); return p };
 const playOn = (p, code) => { p.stop(); p.reset(); const r = PQ.simulate(p.level, code); p.play(r.events) };
 function openLearn(n){ L = PQ_LEARN[n]; L.n = n; sIdx = 0; $('#learnTitle').textContent = 'Lesson ' + n + ' · ' + L.title.replace(/^Learn: /, ''); showSlide() }
 function showSlide(){
@@ -538,9 +579,9 @@ function showSlide(){
     box.append(a);
   }
   if(sl.kind === 'demo'){
-    const cv = h('canvas', 'demo-cv'); box.append(cv); const p = mini(cv, sl.map);
+    const cv = h('canvas', 'demo-cv'); box.append(cv); const p = mini(cv, sl.map, sl);
     const pr = h('div', 'progs');
-    sl.programs.forEach(g => { const d = h('div', 'prog', esc(g.code) + '\n'); const b = h('button', 'btn small primary', '▶ Run ' + esc(g.label)); b.onclick = () => playOn(p, g.code); d.append(b); pr.append(d) });
+    sl.programs.forEach(g => { const d = h('div', 'prog', esc(g.code) + '\n'); const b = h('button', 'btn small primary', '▶ Run ' + esc(g.label)); b.onclick = () => { const m = g.map || sl.map; if(p.level.map !== m) p.setLevel({...sl, map: m}); playOn(p, g.code) }; d.append(b); pr.append(d) });
     box.append(pr);
   }
   if(sl.kind === 'commands'){
@@ -552,7 +593,7 @@ function showSlide(){
         grid.querySelectorAll('button').forEach(x => x.classList.remove('on')); b.classList.add('on');
         const c = PQ_COMMANDS.find(x => x.code === d.code); say.textContent = c ? c.say : '';
         demoPlayers.forEach(x => x.destroy()); demoPlayers.length = 0;
-        p = mini(cv, d.map, {hp: d.hp, hearts: d.hearts}); setTimeout(() => playOn(p, d.prog), 250);
+        p = mini(cv, d.map, d); setTimeout(() => playOn(p, d.prog), 250);
       };
       grid.append(b);
     });

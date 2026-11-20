@@ -81,7 +81,7 @@
         if(c === '{' || c === '}' || c === ';') err(L, 'Python doesn\'t use ' + c + ' here (line ' + L + '). Use a colon : and indent the lines inside instead.');
         err(L, 'Python doesn\'t understand the symbol ' + c + ' on line ' + L + '.');
       }
-      if(depth > 0 && (ln === lines.length - 1 || /^\s*(hero\.|if |for |while |def |print\()/.test(lines[ln + 1] || ''))) err(openLine, 'A bracket ( on line ' + openLine + ' is never closed. Add the missing ).');
+      if(depth > 0 && (ln === lines.length - 1 || /^\s*(hero\.|sword\.|shield\.|if |for |while |def |print\()/.test(lines[ln + 1] || ''))) err(openLine, 'A bracket ( on line ' + openLine + ' is never closed. Add the missing ).');
       if(depth === 0 && toks.length && toks[toks.length - 1].t !== 'NEWLINE' && toks[toks.length - 1].t !== 'INDENT' && toks[toks.length - 1].t !== 'DEDENT')
         toks.push({t: 'NEWLINE', line: L});
     }
@@ -305,7 +305,8 @@
           if(o && typeof o === 'object' && !Array.isArray(o) && o.__methods){
             if(n.name in o) return o[n.name];
             const c = closest(n.name, Object.keys(o).filter(x => !x.startsWith('__')));
-            err(n.line, 'Line ' + n.line + ': the hero doesn\'t know how to "' + n.name + '".' + (c ? ' Did you mean hero.' + c + '()?' : ' See the command list for what the hero can do.'));
+            const who = o.__name || 'hero';
+            err(n.line, 'Line ' + n.line + ': the ' + who + ' doesn\'t know how to "' + n.name + '".' + (c ? ' Did you mean ' + who + '.' + c + '()?' : ' See the command list for what the ' + who + ' can do.'));
           }
           err(n.line, 'Line ' + n.line + ': ' + repr(o) + ' has nothing called .' + n.name + '.');
         }
@@ -337,7 +338,7 @@
         case 'expr': {
           const v = evalE(s.e, sc);
           if(typeof v === 'function' || v instanceof Fn || (v && v.builtin)){
-            const what = s.e.k === 'attr' ? 'hero.' + s.e.name : s.e.k === 'name' ? s.e.name : 'it';
+            const what = s.e.k === 'attr' ? (s.e.obj && s.e.obj.k === 'name' ? s.e.obj.name : 'hero') + '.' + s.e.name : s.e.k === 'name' ? s.e.name : 'it';
             err(s.line, 'Line ' + s.line + ': add ( ) to run it: ' + what + '()');
           }
           return;
@@ -345,6 +346,7 @@
         case 'assign': {
           const target = sc || globals;
           if(s.name === 'hero') err(s.line, 'Line ' + s.line + ': don\'t store something in hero, or you will lose your hero!');
+          if(s.name === 'sword' || s.name === 'shield') err(s.line, 'Line ' + s.line + ': don\'t store something in ' + s.name + ', or the explorer will lose it! Use ' + s.name + (s.name === 'sword' ? '.attack(3)' : '.defend(2)') + '.');
           let v = evalE(s.value, sc);
           if(s.op !== '='){
             const old = lookup(s.name, sc, s.line);
