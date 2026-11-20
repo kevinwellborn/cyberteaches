@@ -1,5 +1,7 @@
 // Builds one plain HTML page per lesson so search engines can index each topic on its own URL,
 // plus a lessons index for each course and a fresh sitemap.xml.
+// Each course also gets a vocabulary page (<course>/vocabulary/) with every key term, and there is a
+// vocabulary hub at /vocabulary/. Landing pages for teachers, homeschool and students come from build-landing-pages.js.
 // The interactive course (hash routes like #/topic/1.1) stays as is; these pages link back to it.
 // Run after editing any content.js or questions.js:  node tools/build-lesson-pages.js
 const fs = require('fs');
@@ -14,6 +16,8 @@ const COURSES = [
     files: ['content.js', 'missions.js', 'questions.js', 'images.js'], practice: 'AP-style practice questions' },
   { dir: 'apcsp', name: 'AP Computer Science Principles', short: 'AP CSP', unit: 'Big Idea', units: 'Big Ideas',
     files: ['content.js', 'questions.js', 'labs.js', 'figures.js', 'images.js'], practice: 'AP-style practice questions' },
+  { dir: 'apcsa', name: 'AP Computer Science A', short: 'AP CSA', unit: 'Unit', units: 'Units',
+    files: ['content.js', 'questions.js', 'book-questions.js', 'labs.js', 'figures.js'], practice: 'AP-style practice questions' },
   { dir: 'securityplus', name: 'CompTIA Security+ SY0-801', short: 'Security+', unit: 'Domain', units: 'Domains',
     files: ['content.js', 'questions.js', 'figures.js', 'images.js'], practice: 'Exam-style practice questions' },
   { dir: 'app-builder', name: 'App Builder: Design and Build Your Own App', short: 'App Builder', unit: 'Module', units: 'Modules',
@@ -64,8 +68,8 @@ ${extra.join('\n')}
 </style>`);
 }
 
-function page({ course, css, title, desc, url, depth, body, data }) {
-  const up = '../'.repeat(depth), lessons = '../'.repeat(depth - 1) || './';
+function page({ course, css, title, desc, url, depth, body, data, lessonsHref }) {
+  const up = '../'.repeat(depth), lessons = lessonsHref || '../'.repeat(depth - 1) || './';
   return `<!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>${esc(title)}</title>
@@ -83,6 +87,7 @@ ${data.map(ld).join('\n')}
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Atkinson+Hyperlegible:wght@400;700&family=JetBrains+Mono:wght@400;600&display=swap">
 ${styles(course, css)}
+<script async src="/analytics.js?v=1"></script>
 </head><body>
 <div class="wrap">
   <header class="topbar">
@@ -94,6 +99,7 @@ ${styles(course, css)}
     <nav class="nav" aria-label="Main">
       <a href="${up}">Interactive course</a>
       <a href="${lessons}">All lessons</a>
+      <a href="${up}vocabulary/">Vocabulary</a>
       <a href="${up}../">All courses</a>
     </nav>
   </header>
@@ -110,8 +116,9 @@ function breadcrumbs(items) {
     itemListElement: items.map(([name, item], i) => ({ '@type': 'ListItem', position: i + 1, name, item })) };
 }
 
-const sitemap = ['', 'app-builder/', 'apcybersecurity/', 'apcsp/', 'apcsp/exam/', 'securityplus/', 'networking/', 'networking/exam-1/', 'networking/exam-2/', 'networking/lab-1/', 'networking/lab-2/', 'networking/lab-3/', 'networking/lab-4/', 'networking/syllabus/', 'networking/updates/', 'academy/', 'academy/review/unit-1/', 'academy/review/unit-1/quiz.html', 'congressional-award-tracker/', 'award-tracker/'];
+const sitemap = ['', 'teachers/', 'homeschool/', 'learn-to-code/', 'learn-cybersecurity/', 'vocabulary/', 'app-builder/', 'apcybersecurity/', 'apcsp/', 'apcsp/exam/', 'apcsa/', 'apcsa/exam/', 'apcsa/exam/1/', 'apcsa/exam/2/', 'securityplus/', 'networking/', 'networking/exam-1/', 'networking/exam-2/', 'networking/lab-1/', 'networking/lab-2/', 'networking/lab-3/', 'networking/lab-4/', 'networking/syllabus/', 'networking/updates/', 'academy/', 'academy/python/', 'academy/review/unit-1/', 'academy/review/unit-1/quiz.html', 'congressional-award-tracker/', 'award-tracker/'];
 
+const vocabHub = [], lessonIndex = {};
 for (const course of COURSES) {
   const w = load(course);
   const units = w.AP_UNITS;
@@ -119,6 +126,7 @@ for (const course of COURSES) {
   const videos = (w.AP_VIDEOS && w.AP_VIDEOS.topics) || {};
   const skills = w.AP_SKILLS || {};
   const courseUrl = SITE + course.dir + '/';
+  lessonIndex[course.dir] = all.map(t => ({ id: t.id, title: t.title, href: course.dir + '/lessons/' + slug(t) + '/' }));
   const indexUrl = courseUrl + 'lessons/';
   const outDir = path.join(ROOT, course.dir, 'lessons');
   fs.rmSync(outDir, { recursive: true, force: true });
@@ -150,7 +158,7 @@ for (const course of COURSES) {
           <div><h2 style="font-size:22px">${esc(course.practice)}</h2>
           <p class="muted" style="margin:4px 0 0">Try each one, then open the answer. To save your progress, <a href="../../#/topic/${t.id}">take this quiz in the interactive course</a>.</p></div>
           ${quiz.map((q, qi) => `<div class="static-q">
-            ${q.s && skills[q.s] ? `<span class="skill">Skill: ${esc(skills[q.s])}</span>` : ''}
+            ${q.s && skills[q.s] ? `<span class="skill">Skill: ${esc(skills[q.s])}</span>` : ''}${q.book ? `<span class="skill">From the book</span>` : ''}${q.pre ? `<p style="margin:0 0 6px">${esc(q.pre)}</p>` : ''}
             ${q.st ? `<pre class="stim">${esc(q.st)}</pre>` : ''}
             <h3>${qi + 1}. ${esc(q.q)}</h3>
             <ol>${q.a.map((a, k) => `<li><b>(${'ABCD'[k]})</b> ${esc(a)}</li>`).join('')}</ol>
@@ -205,7 +213,55 @@ for (const course of COURSES) {
   const data = [breadcrumbs([['CyberTeaches', SITE], [course.name, courseUrl], ['Lessons', indexUrl]])];
   fs.writeFileSync(path.join(outDir, 'index.html'), page({ course, css: w.css, title, desc, url: indexUrl, depth: 1, body, data }));
   sitemap.splice(sitemap.indexOf(course.dir + '/') + 1, 0, course.dir + '/lessons/');
+
+  // Vocabulary page: every term from every lesson, grouped by unit, each linking to its lesson page.
+  const termId = k => 'term-' + k.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+  const seen = new Set();
+  const groups = units.map(u => ({ u, items: u.topics.filter(t => !t.soon).flatMap(t => (t.terms || []).map(([k, v]) => ({ k, v, t })))
+    .filter(x => !seen.has(x.k.toLowerCase()) && seen.add(x.k.toLowerCase())) })).filter(g => g.items.length);
+  const termCount = groups.reduce((n, g) => n + g.items.length, 0);
+  const vocabUrl = courseUrl + 'vocabulary/';
+  const letters = [...new Set(groups.flatMap(g => g.items.map(x => x.k[0].toUpperCase())))].sort();
+  const vTitle = `${course.short} Vocabulary: ${termCount} Key Terms and Definitions | CyberTeaches`;
+  const vDesc = clip(`Every ${course.short} vocabulary word with a plain-English definition, organized by ${course.units.toLowerCase()}: ${groups[0].items.slice(0, 6).map(x => x.k).join(', ')} and more. Free study list for students and teachers.`, 158);
+  const az = groups.flatMap(g => g.items).slice().sort((a, b) => a.k.localeCompare(b.k));
+  const vBody = `
+    <div class="crumbs"><a href="../">${esc(course.name)}</a> / Vocabulary</div>
+    <section style="margin:12px 0 24px">
+      <span class="label">CyberTeaches · Free study list</span>
+      <h1 style="margin-top:8px">${esc(course.name)} vocabulary</h1>
+      <p class="muted" style="max-width:66ch">All ${termCount} key terms from the free ${esc(course.short)} course, each with a short definition and a link to the lesson that teaches it. Use it as a word wall, a flashcard list, or a quick review before a test.</p>
+      <p class="muted" style="max-width:66ch">Jump to A to Z: ${letters.map(l => `<a href="#az-${l}">${l}</a>`).join(' ')}</p>
+    </section>
+    <div class="units">
+      ${groups.map(({ u, items }) => `<section class="card unit" style="--u:var(--u${u.num})">
+        <div class="unit-num" style="background:var(--u)">${unitMark(u)}</div>
+        <div style="min-width:0">
+          <h2>${esc(unitName(course, u))} vocabulary</h2>
+          <ul class="terms" style="margin-top:12px">${items.map(x => `<li id="${termId(x.k)}"><b>${esc(x.k)}:</b> ${esc(x.v)} <a href="../lessons/${slug(x.t)}/" style="font-size:14px">${x.t.id} ${esc(x.t.title)} →</a></li>`).join('')}</ul>
+        </div>
+      </section>`).join('\n      ')}
+    </div>
+    <section class="card" style="margin-top:24px">
+      <h2 style="font-size:22px;margin-bottom:12px">${esc(course.short)} terms A to Z</h2>
+      ${letters.map(l => `<p id="az-${l}" style="margin:0 0 8px"><b>${l}</b> · ${az.filter(x => x.k[0].toUpperCase() === l).map(x => `<a href="#${termId(x.k)}">${esc(x.k)}</a>`).join(', ')}</p>`).join('\n      ')}
+    </section>
+    <p style="margin-top:20px"><a class="btn primary" href="../">Start the free ${esc(course.short)} course</a> <a class="btn" href="../../vocabulary/">Vocabulary for every course</a></p>`;
+  const vData = [
+    { '@context': 'https://schema.org', '@type': 'DefinedTermSet', name: `${course.short} vocabulary`, url: vocabUrl, description: vDesc,
+      inLanguage: 'en', isAccessibleForFree: true,
+      hasDefinedTerm: groups.flatMap(g => g.items).map(x => ({ '@type': 'DefinedTerm', name: x.k, description: x.v, url: vocabUrl + '#' + termId(x.k) })) },
+    breadcrumbs([['CyberTeaches', SITE], [course.name, courseUrl], ['Vocabulary', vocabUrl]]),
+  ];
+  fs.rmSync(path.join(ROOT, course.dir, 'vocabulary'), { recursive: true, force: true });
+  fs.mkdirSync(path.join(ROOT, course.dir, 'vocabulary'));
+  fs.writeFileSync(path.join(ROOT, course.dir, 'vocabulary', 'index.html'),
+    page({ course, css: w.css, title: vTitle, desc: vDesc, url: vocabUrl, depth: 1, body: vBody, data: vData, lessonsHref: '../lessons/' }));
+  sitemap.splice(sitemap.indexOf(course.dir + '/lessons/') + 1, 0, course.dir + '/vocabulary/');
+  vocabHub.push({ course, termCount, url: course.dir + '/vocabulary/', sample: groups.flatMap(g => g.items).slice(0, 8).map(x => x.k) });
 }
+
+require('./build-landing-pages.js')({ ROOT, SITE, vocabHub, lessonIndex });
 
 fs.writeFileSync(path.join(ROOT, 'sitemap.xml'), `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">

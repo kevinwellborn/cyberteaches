@@ -8,6 +8,7 @@ and small ad spots (edit `CT_ADS` in `index.html`).
 | --- | --- |
 | `apcybersecurity/` | AP Cybersecurity (high school) |
 | `apcsp/` | AP Computer Science Principles (high school) |
+| `apcsa/` | AP Computer Science A, Java (high school) |
 | `networking/` | AP Networking (companion site for the book: labs, practice exams, syllabus, teacher keys) |
 | `academy/` | CyberTeaches Academy block coding (grades 6 to 12) |
 | `app-builder/` | App Builder: design and build your own app, with a Congressional App Challenge track (grades 6 to 12) |
@@ -20,6 +21,18 @@ and `#puzzle-N` links to `academy/`.
 `apcybersecurity/` covers all five units and 24 topics of the College Board course framework. Each topic has a short
 paragraph, vocabulary, a video, and AP-style practice questions (`questions.js`). There are six quick labs and a
 pretend-terminal mission for each unit (`missions.js`). Lesson text lives in `apcybersecurity/content.js`.
+
+## AP Computer Science A (high school)
+
+`apcsa/` covers all four units and 53 topics of the College Board AP CSA course framework (2025-26 revision): Using Objects
+and Methods, Selection and Iteration, Class Creation, and Data Collections. Each topic has a short paragraph, vocabulary and four
+original AP-style Java questions (`questions.js`) plus two questions per lesson from Kevin's AP CSA study guide
+(`book-questions.js`, shown with a "From the book" tag). Seven labs run in the browser (`labs.js`), and some topics have a diagram
+(`figures.js`). Lesson text lives in `apcsa/content.js`.
+Two full-length practice exams live in `apcsa/exam/` (`exam1.js`, `exam2.js`, run by `engine.js`; `booklet.html?n=1&key=1`
+prints a booklet with the key). After editing an exam, run `node tools/check-apcsa-exams.js`: it compiles and runs every
+question that has a `run` field and checks the printed output against the answer. The companion book is not published yet: fill in `AP_BOOK` at the
+bottom of `content.js` (title, buyUrl, cover) when it is, and add it to the Books section of the home page.
 
 ## App Builder (grades 6 to 12)
 

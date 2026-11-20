@@ -6,7 +6,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Atkinson+Hyperlegible:wght@400;700&family=JetBrains+Mono:wght@400;600;800&display=swap">
 <link rel="stylesheet" href="../resources/resources.css">
-<link rel="stylesheet" href="quiz.css?v=4">
+<link rel="stylesheet" href="quiz.css?v=5">
+<script async src="/analytics.js?v=1"></script>
 </head><body>
 <div class="wrap">
   <div class="top"><a class="brand" href="../teacher.html">CyberTeaches · Quiz Battle</a><div class="spacer"></div><span id="status" class="pill" hidden></span><button class="btn ghost" id="sndBtn" type="button" title="Turn music and sound on or off"></button><button class="btn ghost" id="fsBtn" type="button">Full screen</button></div>
@@ -15,7 +16,8 @@
 <script src="../firebase-config.js"></script>
 <script src="../cloud.js?v=22"></script>
 <script src="../resources/resources.js"></script>
-<script src="questions.js?v=3"></script>
+<script src="../python/levels.js?v=6"></script>
+<script src="questions.js?v=5"></script>
 <script src="quiz.js?v=3"></script>
 <script src="music.js?v=1"></script>
 <script>
@@ -73,17 +75,19 @@ async function resumeOrSetup(){
 function setupView(msg){
   stopAll(); G = null; app.className = 'center'; app.style.flex = '';
   const want = new URLSearchParams(location.search).get('lesson');
-  const sets = Object.entries(QUIZZES).filter(([n]) => !want || !QUIZZES[want] || n === want);
+  // Python Quest sets show only once their lesson is open in python/levels.js.
+  const pyOpen = n => (window.PQ_LESSONS || []).some(L => L.n === n && !L.soon);
+  const sets = Object.entries(QUIZZES).filter(([n, s]) => s.course !== 'python' || pyOpen(s.n)).filter(([n]) => !want || !QUIZZES[want] || n === want);
   app.innerHTML = `<h1 style="font-size:clamp(36px,6vw,64px)">Quiz Battle</h1>
     <p class="muted" style="font-size:20px;max-width:640px">Students join on their own devices with a game PIN and race to answer. Faster correct answers score more points.</p>
     ${msg ? `<p class="pill">${esc(msg)}</p>` : ''}
     <div style="display:flex;gap:14px;flex-wrap:wrap;justify-content:center">${sets.map(([n, s]) => `<div class="card" style="width:300px;text-align:left">
-      <span class="muted" style="font-weight:700;font-size:13px;letter-spacing:.08em;text-transform:uppercase">Lesson ${n}</span>
+      <span class="muted" style="font-weight:700;font-size:13px;letter-spacing:.08em;text-transform:uppercase">${esc(s.label)}</span>
       <h2 style="font-size:26px;margin:6px 0 4px">${esc(s.title)}</h2>
       <p class="muted" style="margin:0 0 14px">${s.questions.length} questions</p>
       <button class="btn" data-n="${n}" style="background:var(--qbg-2);color:#fff;width:100%">Create game</button></div>`).join('')}</div>
-    <p class="muted" style="font-size:15px">More lessons are coming soon. <button class="btn ghost" id="outBtn" type="button" style="font-size:14px;padding:6px 12px">Sign out</button></p>`;
-  app.querySelectorAll('button[data-n]').forEach(b => b.onclick = () => createGame(+b.dataset.n, b));
+    <p class="muted" style="font-size:15px"><button class="btn ghost" id="outBtn" type="button" style="font-size:14px;padding:6px 12px">Sign out</button></p>`;
+  app.querySelectorAll('button[data-n]').forEach(b => b.onclick = () => createGame(/^\d+$/.test(b.dataset.n) ? +b.dataset.n : b.dataset.n, b));
   $('#outBtn').onclick = () => Cloud.signOut();
 }
 
@@ -136,7 +140,7 @@ function lobbyView(){
   const url = location.origin + location.pathname.replace(/host\.html$/, '');
   app.innerHTML = `<p style="font-size:22px;margin:0">Go to <b>${esc(url.replace(/^https?:\/\//, ''))}</b> and enter the game PIN</p>
     <div class="pinbox"><span class="muted" style="font-weight:700">Game PIN</span><span class="pin">${G.pin}</span></div>
-    <p style="font-size:20px;margin:0"><b id="pc">0</b> players · Lesson ${G.lesson}: ${esc(G.set.title)}</p>
+    <p style="font-size:20px;margin:0"><b id="pc">0</b> players · ${esc(G.set.label)}: ${esc(G.set.title)}</p>
     <div class="names" id="names"></div>
     <div style="display:flex;gap:12px"><button class="btn ghost" id="endBtn" type="button">Cancel game</button><button class="btn big" id="startBtn" type="button" disabled>Start</button></div>
     <p class="muted" style="font-size:14px;margin:0">Tap a name to remove that player.</p>`;
