@@ -16,7 +16,7 @@
 <script src="../firebase-config.js"></script>
 <script src="../cloud.js?v=22"></script>
 <script src="../resources/resources.js"></script>
-<script src="questions.js?v=3"></script>
+<script src="questions.js?v=4"></script>
 <script src="quiz.js?v=3"></script>
 <script src="music.js?v=1"></script>
 <script>
@@ -83,7 +83,7 @@ function setupView(msg){
       <h2 style="font-size:26px;margin:6px 0 4px">${esc(s.title)}</h2>
       <p class="muted" style="margin:0 0 14px">${s.questions.length} questions</p>
       <button class="btn" data-n="${n}" style="background:var(--qbg-2);color:#fff;width:100%">Create game</button></div>`).join('')}</div>
-    <p class="muted" style="font-size:15px">More lessons are coming soon. <button class="btn ghost" id="outBtn" type="button" style="font-size:14px;padding:6px 12px">Sign out</button></p>`;
+    <p class="muted" style="font-size:15px"><button class="btn ghost" id="outBtn" type="button" style="font-size:14px;padding:6px 12px">Sign out</button></p>`;
   app.querySelectorAll('button[data-n]').forEach(b => b.onclick = () => createGame(+b.dataset.n, b));
   $('#outBtn').onclick = () => Cloud.signOut();
 }

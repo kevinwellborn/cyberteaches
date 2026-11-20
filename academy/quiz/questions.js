@@ -3,22 +3,35 @@
 // "repeat 3 [ F C ]". Maps use the game legend (# rock, . sand, S rover, * crystal, G flag) with dir 0 up, 1 right, 2 down, 3 left.
 (function(){
   const NAMES = {F: ['move', 'move forward'], L: ['move', 'turn left'], R: ['move', 'turn right'], C: ['act', 'collect crystal'], X: ['act', 'fire cannon']};
-  // Parses "F C repeat 2 [ F C ]" into nested lists.
+  // Parses "F C repeat 2 [ F C ]" into nested lists. Also: "until tanks [ ]", "iftank [ ]", "if ahead [ ] else [ ]"
+  // (ahead, left, right, crystal, tank), "set 3", "change +1" and "repeat steps [ ]".
   function parse(src){
     const t = src.replace(/\[/g, ' [ ').replace(/\]/g, ' ] ').trim().split(/\s+/); let i = 0;
+    const sub = () => { i++; const b = list(); i++; return b };
     function list(){ const out = [];
       while(i < t.length && t[i] !== ']'){
         const w = t[i++];
-        if(w === 'repeat'){ const n = t[i++]; i++; const body = list(); i++; out.push({n, body}) }
-        else if(w === 'until'){ const c = t[i++]; i++; const body = list(); i++; out.push({until: c, body}) }
+        if(w === 'repeat'){ const n = t[i++]; out.push({n, body: sub()}) }
+        else if(w === 'until'){ const c = t[i++]; out.push({until: c, body: sub()}) }
+        else if(w === 'iftank') out.push({iftank: true, body: sub()});
+        else if(w === 'if'){ const cond = t[i++], body = sub(); let els = [];
+          if(t[i] === 'else'){ i++; els = sub() } out.push({cond, body, els}) }
+        else if(w === 'set') out.push({set: +t[i++]});
+        else if(w === 'change') out.push({change: +t[i++]});
         else out.push(w);
       }
       return out }
     return list();
   }
-  const html = p => p.map(n => typeof n === 'string'
-    ? `<span class="blk ${NAMES[n][0]}">${NAMES[n][1]}</span>`
-    : `<div class="rep"><div class="head">${n.until ? 'repeat until ' + (n.until === 'flag' ? 'at flag' : 'no tanks left') : 'repeat ' + n.n + ' times'}</div><div class="inner">${html(n.body)}</div></div>`).join('');
+  const COND = {ahead: 'path ahead', left: 'path left', right: 'path right', crystal: 'crystal here', tank: 'tank ahead'};
+  const box = (cls, head, body, extra) => `<div class="rep${cls}"><div class="head">${head}</div><div class="inner">${html(body) || '&nbsp;'}</div>${extra || ''}</div>`;
+  const html = p => p.map(n => typeof n === 'string' ? `<span class="blk ${NAMES[n][0]}">${NAMES[n][1]}</span>`
+    : n.set != null ? `<span class="blk var">set steps to ${n.set}</span>`
+    : n.change != null ? `<span class="blk var">change steps by ${n.change > 0 ? '+' : ''}${n.change}</span>`
+    : n.iftank ? box(' logic', 'if tank ahead', n.body)
+    : n.cond ? box(' logic', 'if ' + COND[n.cond], n.body, `<div class="elsel">else</div><div class="inner">${html(n.els) || '&nbsp;'}</div>`)
+    : n.until ? box('', 'repeat until ' + (n.until === 'flag' ? 'at flag' : 'no tanks left'), n.body)
+    : box('', n.n === 'steps' ? 'repeat steps times' : 'repeat ' + n.n + ' times', n.body)).join('');
   const P = src => `<div class="prog">${html(parse(src))}</div>`;
   const map = (rows, dir) => `<div class="board" data-map="${rows.join('|')}" data-dir="${dir}"></div>`;
   const blk = n => `<span class="blk ${NAMES[n][0]}">${NAMES[n][1]}</span>`;
@@ -139,6 +152,206 @@
         sim: {rows: ['#######', '#S.#.G#', '#######'], dir: 1, progs: ['until flag [ F ]'], fail: 'crashes'} },
       MQ('Which program reaches the flag?', ['#######', '#S....#', '#####G#', '#######'], 1,
         ['repeat 4 [ F ] R F', 'until flag [ F ]', 'repeat 5 [ F ] R F', 'repeat 4 [ F ] L F'], 0),
+    ] },
+    6: { title: 'Repeat until patterns', questions: [
+      { q: 'What should go inside "repeat until at flag" on a stairs map?', time: 20,
+        opts: ['One copy of the stair pattern', 'Every step of the whole path', 'Only turn blocks', 'Nothing'], a: 0 },
+      MQ('Which program collects both crystals and reaches the flag?', ['########', '#S*.*.G#', '########'], 1,
+        ['until flag [ F C F ]', 'until flag [ F C ]', 'until flag [ C F F ]', 'until flag [ F F C ]'], 0),
+      MQ('Which program collects the crystals on the stairs and reaches the flag?', ['######', '#S*###', '##.*##', '###.G#', '######'], 1,
+        ['until flag [ F C R F L ]', 'until flag [ F C L F R ]', 'until flag [ F R F L C ]', 'until flag [ F C R F ]'], 0),
+      { q: 'How many times does the loop run before the rover reaches the flag?', time: 30,
+        pic: map(['#########', '#S.....G#', '#########'], 1) + P('until flag [ F F ]'), opts: ['2', '3', '4', '6'], a: 1,
+        sim: {rows: ['#########', '#S.....G#', '#########'], dir: 1, progs: ['until flag [ F F ]'], a: 0} },
+      MQ('Which program reaches the flag?', ['######', '#S...#', '####.#', '####.#', '####G#', '######'], 1,
+        ['repeat 3 [ F ] R until flag [ F ]', 'until flag [ F ] R', 'repeat 3 [ F ] L until flag [ F ]', 'repeat 2 [ F ] R until flag [ F ]'], 0),
+      { q: 'A pattern in a program is…', time: 20,
+        opts: ['A group of steps that happens again and again', 'A rock on the map', 'The last block', 'A kind of flag'], a: 0 },
+      { q: 'Which block goes in the blank to climb the stairs?', time: 30,
+        pic: map(['######', '#S.###', '##..##', '###G##', '######'], 1) + '<p class="arrow">until flag [ F R F ? ]</p>', opts: [blk('L'), blk('R'), blk('F'), blk('C')], a: 0,
+        sim: {rows: ['######', '#S.###', '##..##', '###G##', '######'], dir: 1, progs: ['until flag [ F R F L ]'], a: 0} },
+      { q: 'Why look for a pattern before you use repeat until?', time: 20,
+        opts: ['So you only build the steps once', 'So the rover goes faster', 'Because the flag moves', 'To use more blocks'], a: 0 },
+      MQ('The stairs go UP. Which program reaches the flag?', ['######', '###G##', '##..##', '#S.###', '######'], 1,
+        ['until flag [ F L F R ]', 'until flag [ F R F L ]', 'until flag [ L F R F ]', 'until flag [ F F L ]'], 0),
+      { q: 'How many blocks is this program? (Each loop counts as 1.)', time: 20,
+        pic: P('repeat 2 [ F ] until flag [ F C ]'), opts: ['3', '4', '5', '6'], a: 2 },
+    ] },
+    7: { title: 'Tank battle', questions: [
+      { q: 'What does "fire cannon" do?', time: 20,
+        opts: ['Shoots straight ahead until the shell hits a tank or a rock', 'Shoots in every direction', 'Turns the rover around', 'Collects a crystal'], a: 0 },
+      MQ('Which program destroys the tank?', ['#######', '#S...>#', '#######'], 1,
+        ['X', 'L X', 'R X', 'F F F F'], 0),
+      { q: 'What does a red ! over an enemy tank mean?', time: 20,
+        opts: ['The tank has spotted you', 'The tank is out of shells', 'The tank is a friend', 'You won'], a: 0 },
+      MQ('The rover faces right. Which program destroys the tank?', ['###', '#S#', '#.#', '#^#', '###'], 1,
+        ['R X', 'L X', 'X', 'R F F'], 0),
+      { q: 'When does "if tank ahead" run the blocks inside it?', time: 20,
+        opts: ['Only when a tank is in the line of fire', 'Every time', 'Never', 'Only at the flag'], a: 0 },
+      { q: 'When does "repeat until no tanks left" stop?', time: 20,
+        opts: ['When every tank is destroyed', 'After 3 times', 'When the rover reaches a crystal', 'When the shells run out'], a: 0 },
+      MQ('Which patrol program destroys both tanks?', ['#######', '#.v.v.#', '#S....#', '#######'], 1,
+        ['until tanks [ F L iftank [ X ] R ]', 'until tanks [ F R iftank [ X ] L ]', 'until tanks [ F X ]', 'until tanks [ L iftank [ X ] R ]'], 0, 40),
+      MQ('Which program destroys both tanks?', ['########', '#S.>.>.#', '########'], 1,
+        ['until tanks [ X ]', 'X', 'repeat 3 [ F ] X', 'iftank [ X ]'], 0),
+      { q: 'Why does the game limit your shells?', time: 20,
+        opts: ['So you aim before you fire', 'So the rover drives faster', 'Because tanks have no armor', 'To make the map bigger'], a: 0 },
+      { q: 'How many blocks is this program? (Each loop or if counts as 1.)', time: 20,
+        pic: P('until tanks [ F iftank [ X ] ]'), opts: ['2', '3', '4', '5'], a: 2 },
+    ] },
+    8: { title: 'Tank practice', questions: [
+      MQ('The rover faces up. Which program destroys the tank?', ['######', '#>.S.#', '######'], 0,
+        ['L X', 'R X', 'X', 'L L X'], 0),
+      { q: 'The rover faces right. A tank is behind it. Which turns point the cannon at the tank?', time: 20,
+        opts: [P('L L'), P('L'), P('R'), P('F')], a: 0 },
+      MQ('The rover faces right. Which program destroys both tanks?', ['###', '#v#', '#S#', '#^#', '###'], 1,
+        ['L X R R X', 'L X R X', 'R X R X', 'X X'], 0),
+      { q: 'A shell flies straight. What stops it?', time: 20,
+        opts: ['A tank or a rock', 'A crystal', 'Sand', 'The flag'], a: 0 },
+      { q: 'You have 2 shells and 2 tanks. What happens if you fire when no tank is ahead?', time: 20,
+        opts: ['You waste a shell and can not destroy both tanks', 'Nothing, shells never run out', 'The rover gets a new shell', 'The tank disappears anyway'], a: 0 },
+      MQ('Which program destroys the tank around the corner?', ['######', '#S..##', '###.##', '###.##', '###^##', '######'], 1,
+        ['F F R X', 'F F L X', 'R X', 'F R X'], 0),
+      { q: 'A tank is on your right. Which block points the cannon at it?', time: 20,
+        opts: [blk('R'), blk('L'), blk('F'), blk('C')], a: 0 },
+      { q: 'How many shells does this program fire?', time: 20,
+        pic: P('repeat 3 [ X ]'), opts: ['1', '2', '3', '4'], a: 2 },
+      MQ('A rock is in the way. Which program destroys the tank?', ['#######', '#S.#..#', '#....<#', '#######'], 1,
+        ['R F L X', 'X', 'L F R X', 'R F R X'], 0),
+      { q: 'What is the block goal?', time: 20,
+        opts: ['The number of blocks for 3 stars', 'The number of tanks', 'The number of shells', 'The time left'], a: 0 },
+    ] },
+    9: { title: 'Tank patrols', questions: [
+      { q: 'What is a patrol program?', time: 20,
+        opts: ['A program that moves, checks for tanks and repeats', 'A program with one block', 'A program that only turns', 'A list of crystals'], a: 0 },
+      MQ('Which patrol destroys both tanks?', ['########', '#S.....#', '#..^.^.#', '########'], 1,
+        ['until tanks [ F R iftank [ X ] L ]', 'until tanks [ F L iftank [ X ] R ]', 'until tanks [ F iftank [ X ] ]', 'repeat 2 [ F R iftank [ X ] L ]'], 0, 40),
+      { q: 'Why put "fire cannon" inside "if tank ahead"?', time: 20,
+        opts: ['So you only fire when a tank is there and save shells', 'So the rover drives faster', 'So it fires twice', 'Because fire cannon can not be used alone'], a: 0 },
+      { q: 'No tank is ahead. What does this program do?', time: 20,
+        pic: P('iftank [ X ]'), opts: ['Nothing, it skips the fire block', 'It fires anyway', 'It crashes', 'It loops forever'], a: 0 },
+      MQ('Tanks on every side! Which program destroys all 4?', ['#####', '#.v.#', '#>S<#', '#.^.#', '#####'], 0,
+        ['until tanks [ X R ]', 'repeat 2 [ X R ]', 'until tanks [ X ]', 'X R X R X'], 0),
+      { q: 'Which block keeps a patrol going until the job is done?', time: 20,
+        opts: ['repeat until no tanks left', 'fire cannon', 'turn left', 'collect crystal'], a: 0 },
+      MQ('The rover faces down. Which patrol destroys both tanks?', ['####', '#.S#', '#>.#', '#..#', '#>.#', '#..#', '####'], 2,
+        ['until tanks [ F R iftank [ X ] L ]', 'until tanks [ F L iftank [ X ] R ]', 'until tanks [ F iftank [ X ] ]', 'until tanks [ R iftank [ X ] L ]'], 0, 40),
+      { q: 'In a patrol, why does the rover turn back after it checks for a tank?', time: 20,
+        opts: ['So it faces the road again before it moves', 'To fire again', 'To collect a crystal', 'To stop the loop'], a: 0 },
+      { q: 'How many blocks is this program? (Each loop or if counts as 1.)', time: 30,
+        pic: P('until tanks [ F L iftank [ X ] R ]'), opts: ['4', '5', '6', '7'], a: 2 },
+      { q: 'Which program fires ONLY when a tank is ahead?', time: 20,
+        opts: [P('iftank [ X ]'), P('X'), P('repeat 2 [ X ]'), P('until tanks [ X ]')], a: 0 },
+    ] },
+    10: { title: 'Tank missions', questions: [
+      { q: 'Why use repeat in a tank mission?', time: 20,
+        opts: ['There are too many tanks to drag in one fire block for each', 'Repeat gives you more shells', 'Repeat makes tanks slower', 'You can not fire without it'], a: 0 },
+      MQ('Which program destroys all 3 tanks?', ['#########', '#.v.v.v.#', '#S......#', '#########'], 1,
+        ['repeat 3 [ F L X R F ]', 'repeat 3 [ F R X L F ]', 'repeat 3 [ F L X R ]', 'repeat 2 [ F L X R F ]'], 0, 40),
+      { q: 'You have 4 shells and 4 tanks. How many shells can you miss?', time: 20,
+        opts: ['0', '1', '2', '4'], a: 0 },
+      MQ('Which program destroys all 4 tanks?', ['#######', '#S>>>>#', '#######'], 1,
+        ['repeat 4 [ X ]', 'repeat 3 [ X ]', 'X X X', 'repeat 4 [ F X ]'], 0),
+      { q: 'Your program can use at most 6 blocks. Which program fits? (Each repeat counts as 1.)', time: 30,
+        opts: [P('repeat 4 [ F L X R ]'), P('F L X R F L X R'), P('F L X R F L X R F L X R'), P('repeat 2 [ F ] L X R F L X')], a: 0 },
+      MQ('Tanks above AND below! Which program destroys all 4?', ['#######', '#.v.v.#', '#S....#', '#.^.^.#', '#######'], 1,
+        ['repeat 2 [ F L X R R X L F ]', 'repeat 2 [ F L X R F ]', 'repeat 2 [ F L X L L X R F ]', 'repeat 4 [ F L X R ]'], 0, 40),
+      { q: 'A working program inside the block limit always earns at least…', time: 20,
+        opts: ['1 star', '3 stars', '0 stars', '10 stars'], a: 0 },
+      { q: 'A tank waits at every stop. How many tanks can this program destroy?', time: 20,
+        pic: P('repeat 5 [ F L X R ]'), opts: ['1', '4', '5', '10'], a: 2 },
+      MQ('The rover faces down. Which program destroys all 3 tanks?', ['####', '#.S#', '#>.#', '#..#', '#>.#', '#..#', '#>.#', '####'], 2,
+        ['repeat 3 [ F R X L F ]', 'repeat 3 [ F L X R F ]', 'repeat 3 [ F R X L ]', 'repeat 2 [ F R X L F ]'], 0, 40),
+      { q: 'What is the best way to stay inside the block limit?', time: 20,
+        opts: ['Find the pattern and put it in a repeat', 'Drag in more fire blocks', 'Delete the repeat', 'Add more turns'], a: 0 },
+    ] },
+    11: { title: 'If / else', questions: [
+      { q: 'An if / else block runs the top part when the answer is yes. When does it run the part under else?', time: 20,
+        opts: ['When the answer is no', 'Always', 'Never', 'Twice'], a: 0 },
+      { q: 'Which is a yes or no question the rover can ask?', time: 20,
+        opts: ['Is there a path ahead?', 'How fast am I?', 'What color is the flag?', 'How old is the rover?'], a: 0 },
+      MQ('Which program reaches the flag?', ['######', '#S..##', '###.##', '###G##', '######'], 1,
+        ['until flag [ if ahead [ F ] else [ R ] ]', 'until flag [ if ahead [ F ] else [ L ] ]', 'until flag [ F ]', 'until flag [ if ahead [ R ] else [ F ] ]'], 0, 40),
+      { q: 'Why can one if / else program solve paths it has never seen?', time: 20,
+        opts: ['It checks the map at every step and decides', 'It remembers every map', 'It is very long', 'It only goes straight'], a: 0 },
+      { q: 'The rover is on a crystal. What does this program do?', time: 20,
+        pic: P('if crystal [ C ] else [ F ]'), opts: ['Collects the crystal', 'Moves forward', 'Turns right', 'Nothing'], a: 0 },
+      MQ('Which program collects every crystal and reaches the flag?', ['#########', '#S*..**G#', '#########'], 1,
+        ['until flag [ F if crystal [ C ] ]', 'until flag [ F C ]', 'until flag [ F ]', 'repeat 6 [ F C ]'], 0, 40),
+      { q: 'An if / else inside another if / else is called…', time: 20,
+        opts: ['a nested if / else', 'a double loop', 'a variable', 'a crash'], a: 0 },
+      MQ('Which program reaches the flag?', ['#####', '#G..#', '###.#', '#S..#', '#####'], 1,
+        ['until flag [ if ahead [ F ] else [ L ] ]', 'until flag [ if ahead [ F ] else [ R ] ]', 'until flag [ F ]', 'repeat 2 [ F ] L until flag [ F ]'], 0, 40),
+      { q: 'What does the rover check in this block?', time: 20,
+        pic: P('if right [ R ] else [ F ]'), opts: ['Is there a path to the right?', 'Is there a crystal here?', 'Is a tank ahead?', 'Is it at the flag?'], a: 0 },
+      MQ('A tank blocks the road. Which program reaches the flag?', ['########', '#S.<..G#', '########'], 1,
+        ['until flag [ if tank [ X ] else [ F ] ]', 'until flag [ F ]', 'until flag [ if tank [ F ] else [ X ] ]', 'X X until flag [ X ]'], 0, 40),
+    ] },
+    12: { title: 'If / else practice', questions: [
+      MQ('The rover faces up. Which program reaches the flag?', ['#####', '#..G#', '#.###', '#S###', '#####'], 0,
+        ['until flag [ if ahead [ F ] else [ R ] ]', 'until flag [ if ahead [ F ] else [ L ] ]', 'until flag [ F ]', 'until flag [ if ahead [ R ] else [ F ] ]'], 0, 40),
+      { q: 'What does "path ahead" check?', time: 20,
+        opts: ['Is the square in front of the rover open?', 'Is there a crystal here?', 'Is a tank ahead?', 'Is the flag close?'], a: 0 },
+      { q: 'The path ahead is blocked. Which part runs?', time: 20,
+        pic: P('if ahead [ F ] else [ L ]'), opts: ['The else part: turn left', 'The top part: move forward', 'Both parts', 'Neither part'], a: 0 },
+      MQ('Which program collects every crystal and reaches the flag?', ['########', '#S**.*G#', '########'], 1,
+        ['until flag [ if crystal [ C ] else [ F ] ]', 'until flag [ C F ]', 'until flag [ F C ]', 'until flag [ if crystal [ F ] else [ C ] ]'], 0, 40),
+      { q: 'The answer to the question is yes. Which part of if / else runs?', time: 20,
+        opts: ['The top part', 'The else part', 'Both parts', 'Neither part'], a: 0 },
+      { q: 'How many blocks is this program? (Each loop or if / else counts as 1.)', time: 20,
+        pic: P('until flag [ if ahead [ F ] else [ R ] ]'), opts: ['2', '3', '4', '5'], a: 2 },
+      MQ('The rover faces down. Which program reaches the flag?', ['#####', '#S###', '#.###', '#..G#', '#####'], 2,
+        ['until flag [ if ahead [ F ] else [ L ] ]', 'until flag [ if ahead [ F ] else [ R ] ]', 'repeat 2 [ F ] R until flag [ F ]', 'until flag [ if left [ L ] else [ F ] ]'], 0, 40),
+      { q: 'Why put the if / else inside "repeat until at flag"?', time: 20,
+        opts: ['So the rover checks again at every step', 'So it only checks once', 'So the rover drives backward', 'To use fewer crystals'], a: 0 },
+      { q: 'The rover is NOT on a crystal. What does it do?', time: 20,
+        pic: P('if crystal [ C ] else [ F ]'), opts: ['Moves forward', 'Collects a crystal', 'Turns left', 'Stops the program'], a: 0 },
+      MQ('Two tanks block the road. Which program reaches the flag?', ['#########', '#S.>.>.G#', '#########'], 1,
+        ['until flag [ if tank [ X ] else [ F ] ]', 'until flag [ F ]', 'X until flag [ F ]', 'repeat 2 [ X ]'], 0, 40),
+    ] },
+    13: { title: 'If / else challenges', questions: [
+      { q: 'The rover has more than two choices. Where do you put the second if / else?', time: 20,
+        opts: ['Inside another if / else', 'After the flag', 'Inside a crystal', 'Nowhere, it is not allowed'], a: 0 },
+      MQ('The path turns right, then left. Which program reaches the flag?', ['#######', '#S..###', '###.###', '###..G#', '#######'], 1,
+        ['until flag [ if ahead [ F ] else [ if left [ L ] else [ R ] ] ]', 'until flag [ if ahead [ F ] else [ R ] ]', 'until flag [ if ahead [ F ] else [ L ] ]', 'until flag [ if ahead [ F ] else [ if left [ R ] else [ L ] ] ]'], 0, 45),
+      { q: 'A tank might be in the way. What should the rover check first?', time: 20,
+        opts: ['Tank ahead', 'Crystal here', 'Path left', 'Nothing'], a: 0 },
+      { q: 'How many blocks is this program? (Each if / else counts as 1.)', time: 30,
+        pic: P('if ahead [ F ] else [ if left [ L ] else [ R ] ]'), opts: ['4', '5', '6', '7'], a: 1 },
+      MQ('Which program gets past the tank to the flag?', ['######', '#S.<.#', '####.#', '####G#', '######'], 1,
+        ['until flag [ if tank [ X ] else [ if ahead [ F ] else [ R ] ] ]', 'until flag [ if ahead [ F ] else [ R ] ]', 'until flag [ if ahead [ F ] else [ X ] ]', 'until flag [ if tank [ X ] else [ if ahead [ F ] else [ L ] ] ]'], 0, 45),
+      MQ('A spiral that turns right. Which program reaches the flag?', ['#######', '#S....#', '#####.#', '#.G##.#', '#.###.#', '#.....#', '#######'], 1,
+        ['until flag [ if ahead [ F ] else [ R ] ]', 'until flag [ if ahead [ F ] else [ L ] ]', 'until flag [ F ]', 'until flag [ if right [ R ] else [ F ] ]'], 0, 40),
+      { q: 'A dead end is a spot with…', time: 20,
+        opts: ['No way forward, left or right', 'A crystal at the end', 'Two flags', 'A tank at the start'], a: 0 },
+      { q: 'The rover is on a crystal. What does this program do?', time: 20,
+        pic: P('if crystal [ C ] else [ if ahead [ F ] else [ R ] ]'), opts: ['Collects the crystal', 'Moves forward', 'Turns right', 'Stops'], a: 0 },
+      MQ('Which program collects every crystal and reaches the flag?', ['######', '#S*.*#', '####*#', '####G#', '######'], 1,
+        ['until flag [ if crystal [ C ] else [ if ahead [ F ] else [ R ] ] ]', 'until flag [ if ahead [ F ] else [ R ] ]', 'until flag [ F C ]', 'until flag [ if crystal [ C ] else [ if ahead [ F ] else [ L ] ] ]'], 0, 45),
+      { q: 'Which block does the right thing for a tank ahead, an open path, AND a wall?', time: 30,
+        opts: [P('if tank [ X ] else [ if ahead [ F ] else [ R ] ]'), P('if ahead [ F ] else [ R ]'), P('X F R'), P('if tank [ X ] else [ R ]')], a: 0 },
+    ] },
+    14: { title: 'Variables', questions: [
+      { q: 'What is a variable?', time: 20,
+        opts: ['A named box that holds a number', 'A kind of rock', 'A turn block', 'A flag'], a: 0 },
+      { q: 'steps is 2. This block runs. What is steps now?', time: 20,
+        pic: P('change +3'), opts: ['2', '3', '5', '6'], a: 2 },
+      { q: 'How many times does the rover move forward?', time: 20,
+        pic: P('set 4 repeat steps [ F ]'), opts: ['1', '3', '4', '5'], a: 2 },
+      { q: 'What number is in the steps box at the end?', time: 30,
+        pic: P('set 1 repeat 3 [ change +2 ]'), opts: ['3', '5', '6', '7'], a: 3 },
+      MQ('Each lap is one square longer. Which program reaches the flag?', ['######', '###S.#', '####.#', '#G...#', '######'], 1,
+        ['set 1 repeat 3 [ repeat steps [ F ] R change +1 ]', 'set 1 repeat 3 [ repeat steps [ F ] L change +1 ]', 'set 2 repeat 3 [ repeat steps [ F ] R change +1 ]', 'set 1 repeat 3 [ repeat steps [ F ] R ]'], 0, 45),
+      { q: 'Why use a variable in a repeat?', time: 20,
+        opts: ['So each lap can be a different length', 'So the rover never stops', 'To collect more crystals at once', 'Because repeat can not hold a number'], a: 0 },
+      { q: 'steps is 5. This block runs. What is steps now?', time: 20,
+        pic: P('set 2'), opts: ['2', '3', '5', '7'], a: 0 },
+      MQ('The crystals get closer each time. Which program collects all 3?', ['#########', '#S..*.**#', '#########'], 1,
+        ['set 3 repeat 3 [ repeat steps [ F ] C change -1 ]', 'set 3 repeat 3 [ repeat steps [ F ] C change +1 ]', 'set 1 repeat 3 [ repeat steps [ F ] C change +1 ]', 'repeat 3 [ F F F C ]'], 0, 45),
+      { q: 'How many blocks is this program? (Each repeat counts as 1.)', time: 30,
+        pic: P('set 1 repeat 4 [ repeat steps [ F ] change +1 ]'), opts: ['3', '4', '5', '6'], a: 2 },
+      { q: 'How many times does the rover move forward in the THIRD lap?', time: 30,
+        pic: P('set 1 repeat 3 [ repeat steps [ F ] change +1 ]'), opts: ['1', '2', '3', '6'], a: 2 },
     ] },
   };
   // Move the right answer around so it is not always the same colour. Options that are all numbers keep their order.

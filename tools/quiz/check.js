@@ -7,7 +7,12 @@ global.window = {}; new Function('window', fs.readFileSync(path.join(ROOT, 'acad
 const src = fs.readFileSync(path.join(ROOT, 'tools/teacher-resources/build.js'), 'utf8');
 const simulate = new Function(src.slice(src.indexOf('const DX'), src.indexOf('// ---------- helpers')) + '; return simulate;')();
 const B = {F: 'forward', L: 'left', R: 'right', C: 'collect', X: 'fire'};
-const conv = p => p.map(n => typeof n === 'string' ? {type: B[n]} : n.until ? {type: n.until === 'flag' ? 'until' : 'untilclear', body: conv(n.body)} : {type: 'repeat', n: +n.n, body: conv(n.body)});
+const conv = p => p.map(n => typeof n === 'string' ? {type: B[n]}
+  : n.set != null ? {type: 'set', n: n.set} : n.change != null ? {type: 'change', d: n.change}
+  : n.iftank ? {type: 'iftank', body: conv(n.body)}
+  : n.cond ? {type: 'ifelse', cond: n.cond, body: conv(n.body), elseBody: conv(n.els)}
+  : n.until ? {type: n.until === 'flag' ? 'until' : 'untilclear', body: conv(n.body)}
+  : n.n === 'steps' ? {type: 'repeatvar', body: conv(n.body)} : {type: 'repeat', n: +n.n, body: conv(n.body)});
 let bad = 0, checked = 0;
 for(const [n, set] of Object.entries(window.QUIZZES)) set.questions.forEach((Q, i) => {
   if(!(Q.a >= 0 && Q.a < Q.opts.length)) { bad++; console.log(`L${n} Q${i + 1}: answer index out of range`) }
