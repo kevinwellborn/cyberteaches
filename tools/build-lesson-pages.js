@@ -16,6 +16,8 @@ const COURSES = [
     files: ['content.js', 'missions.js', 'questions.js', 'images.js'], practice: 'AP-style practice questions' },
   { dir: 'apcsp', name: 'AP Computer Science Principles', short: 'AP CSP', unit: 'Big Idea', units: 'Big Ideas',
     files: ['content.js', 'questions.js', 'labs.js', 'figures.js', 'images.js'], practice: 'AP-style practice questions' },
+  { dir: 'apcsa', name: 'AP Computer Science A', short: 'AP CSA', unit: 'Unit', units: 'Units',
+    files: ['content.js', 'questions.js', 'book-questions.js', 'labs.js', 'figures.js'], practice: 'AP-style practice questions' },
   { dir: 'securityplus', name: 'CompTIA Security+ SY0-801', short: 'Security+', unit: 'Domain', units: 'Domains',
     files: ['content.js', 'questions.js', 'figures.js', 'images.js'], practice: 'Exam-style practice questions' },
   { dir: 'app-builder', name: 'App Builder: Design and Build Your Own App', short: 'App Builder', unit: 'Module', units: 'Modules',
@@ -114,7 +116,7 @@ function breadcrumbs(items) {
     itemListElement: items.map(([name, item], i) => ({ '@type': 'ListItem', position: i + 1, name, item })) };
 }
 
-const sitemap = ['', 'teachers/', 'homeschool/', 'learn-to-code/', 'learn-cybersecurity/', 'vocabulary/', 'app-builder/', 'apcybersecurity/', 'apcsp/', 'apcsp/exam/', 'securityplus/', 'networking/', 'networking/exam-1/', 'networking/exam-2/', 'networking/lab-1/', 'networking/lab-2/', 'networking/lab-3/', 'networking/lab-4/', 'networking/syllabus/', 'networking/updates/', 'academy/', 'academy/python/', 'academy/review/unit-1/', 'academy/review/unit-1/quiz.html', 'congressional-award-tracker/', 'award-tracker/'];
+const sitemap = ['', 'teachers/', 'homeschool/', 'learn-to-code/', 'learn-cybersecurity/', 'vocabulary/', 'app-builder/', 'apcybersecurity/', 'apcsp/', 'apcsp/exam/', 'apcsa/', 'apcsa/exam/', 'apcsa/exam/1/', 'apcsa/exam/2/', 'securityplus/', 'networking/', 'networking/exam-1/', 'networking/exam-2/', 'networking/lab-1/', 'networking/lab-2/', 'networking/lab-3/', 'networking/lab-4/', 'networking/syllabus/', 'networking/updates/', 'academy/', 'academy/python/', 'academy/review/unit-1/', 'academy/review/unit-1/quiz.html', 'congressional-award-tracker/', 'award-tracker/'];
 
 const vocabHub = [], lessonIndex = {};
 for (const course of COURSES) {
@@ -156,7 +158,7 @@ for (const course of COURSES) {
           <div><h2 style="font-size:22px">${esc(course.practice)}</h2>
           <p class="muted" style="margin:4px 0 0">Try each one, then open the answer. To save your progress, <a href="../../#/topic/${t.id}">take this quiz in the interactive course</a>.</p></div>
           ${quiz.map((q, qi) => `<div class="static-q">
-            ${q.s && skills[q.s] ? `<span class="skill">Skill: ${esc(skills[q.s])}</span>` : ''}
+            ${q.s && skills[q.s] ? `<span class="skill">Skill: ${esc(skills[q.s])}</span>` : ''}${q.book ? `<span class="skill">From the book</span>` : ''}${q.pre ? `<p style="margin:0 0 6px">${esc(q.pre)}</p>` : ''}
             ${q.st ? `<pre class="stim">${esc(q.st)}</pre>` : ''}
             <h3>${qi + 1}. ${esc(q.q)}</h3>
             <ol>${q.a.map((a, k) => `<li><b>(${'ABCD'[k]})</b> ${esc(a)}</li>`).join('')}</ol>

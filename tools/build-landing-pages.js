@@ -78,9 +78,9 @@ ${faq ? `<section class="block faq"><div class="wrap">
 <footer class="site"><div class="wrap">
   <div class="cols">
     <div><a class="brand" href="../"><img src="../logo.png" alt="" width="32" height="32">CyberTeaches</a><p style="margin:14px 0 0;max-width:32ch">Free computer science and cybersecurity courses for grades 6 to 12 from teacher Kevin Wellborn.</p></div>
-    <div><h2>Courses</h2><ul><li><a href="../academy/">Rover Coding</a></li><li><a href="../academy/python/">Python Quest</a></li><li><a href="../app-builder/">App Builder</a></li><li><a href="../apcsp/">AP CSP</a></li><li><a href="../apcybersecurity/">AP Cybersecurity</a></li><li><a href="../networking/">AP Networking</a></li><li><a href="../securityplus/">Security+</a></li></ul></div>
+    <div><h2>Courses</h2><ul><li><a href="../academy/">Rover Coding</a></li><li><a href="../academy/python/">Python Quest</a></li><li><a href="../app-builder/">App Builder</a></li><li><a href="../apcsp/">AP CSP</a></li><li><a href="../apcsa/">AP CSA (Java)</a></li><li><a href="../apcybersecurity/">AP Cybersecurity</a></li><li><a href="../networking/">AP Networking</a></li><li><a href="../securityplus/">Security+</a></li></ul></div>
     <div><h2>Who it's for</h2><ul><li><a href="../teachers/">Teachers</a></li><li><a href="../homeschool/">Homeschool families</a></li><li><a href="../learn-to-code/">Students learning to code</a></li><li><a href="../learn-cybersecurity/">Cybersecurity learners</a></li></ul></div>
-    <div><h2>Study</h2><ul><li><a href="../vocabulary/">Vocabulary lists</a></li><li><a href="../apcsp/exam/">AP CSP practice exam</a></li><li><a href="../academy/resources/">Teacher resources</a></li><li><a href="https://www.youtube.com/@cyberteaches" target="_blank" rel="noopener">YouTube lessons</a></li></ul></div>
+    <div><h2>Study</h2><ul><li><a href="../vocabulary/">Vocabulary lists</a></li><li><a href="../apcsp/exam/">AP CSP practice exam</a></li><li><a href="../apcsa/exam/">AP CSA practice exams</a></li><li><a href="../academy/resources/">Teacher resources</a></li><li><a href="https://www.youtube.com/@cyberteaches" target="_blank" rel="noopener">YouTube lessons</a></li></ul></div>
   </div>
   <div class="legal"><span>© CyberTeaches · Kevin Wellborn</span><span>AP® is a trademark of the College Board, which does not endorse this site. CompTIA and Security+ are trademarks of CompTIA.</span></div>
 </div></footer>
@@ -161,9 +161,11 @@ ${faq ? `<section class="block faq"><div class="wrap">
   <div class="head"><span class="eyebrow">Study tools</span><h2>Free AP and certification practice</h2><p>Every AP course has lesson pages with notes, vocabulary and practice questions with answers that students can use on their own.</p></div>
   <div class="chips">
     <a href="../apcsp/exam/">AP CSP full-length practice exam</a>
+    <a href="../apcsa/exam/">AP CSA practice exams (Java)</a>
     <a href="../networking/exam-1/">AP Networking practice exams</a>
     <a href="../apcybersecurity/lessons/">AP Cybersecurity lessons</a>
     <a href="../apcsp/lessons/">AP CSP lessons</a>
+    <a href="../apcsa/lessons/">AP CSA lessons</a>
     <a href="../securityplus/lessons/">Security+ lessons</a>
     <a href="../vocabulary/">Vocabulary lists for every course</a>
   </div>
@@ -207,8 +209,9 @@ ${faq ? `<section class="block faq"><div class="wrap">
       <tr><td>2</td><td><a href="../academy/python/">Python Quest</a></td><td>Typing real Python: commands, loops and more, in an adventure game.</td></tr>
       <tr><td>3</td><td><a href="../app-builder/">App Builder</a></td><td>Designing and building an app for a real problem. Good for a project-based semester.</td></tr>
       <tr><td>4</td><td><a href="../apcsp/">AP Computer Science Principles</a></td><td>A full AP course: data, algorithms, the internet and the impact of computing, with a practice exam.</td></tr>
-      <tr><td>5</td><td><a href="../apcybersecurity/">AP Cybersecurity</a></td><td>How attacks work and how to defend people, networks, devices and data.</td></tr>
-      <tr><td>6</td><td><a href="../securityplus/">CompTIA Security+</a></td><td>An industry certification for older students who want an IT or cyber career head start.</td></tr>
+      <tr><td>5</td><td><a href="../apcsa/">AP Computer Science A</a></td><td>Java programming the AP way: objects, loops, classes, arrays and ArrayLists, with two full practice exams.</td></tr>
+      <tr><td>6</td><td><a href="../apcybersecurity/">AP Cybersecurity</a></td><td>How attacks work and how to defend people, networks, devices and data.</td></tr>
+      <tr><td>7</td><td><a href="../securityplus/">CompTIA Security+</a></td><td>An industry certification for older students who want an IT or cyber career head start.</td></tr>
     </tbody>
   </table>
 </div></section>
@@ -275,7 +278,7 @@ ${faq ? `<section class="block faq"><div class="wrap">
 
 <section class="block"><div class="wrap">
   <div class="head"><span class="eyebrow">Play with your class</span><h2>Compete, climb the leaderboard, earn ranks</h2><p>If your teacher turns them on: coding Duels, 4-player Flag Races, Quiz Battle with a game PIN, and daily leaderboards.</p></div>
-  <div class="chips"><a href="../academy/quiz/">Join a Quiz Battle</a><a href="../academy/#duel">Duels</a><a href="../apcsp/">AP CSP</a><a href="../apcsp/exam/">AP CSP practice exam</a><a href="../apcsp/vocabulary/">AP CSP vocabulary</a></div>
+  <div class="chips"><a href="../academy/quiz/">Join a Quiz Battle</a><a href="../academy/#duel">Duels</a><a href="../apcsp/">AP CSP</a><a href="../apcsp/exam/">AP CSP practice exam</a><a href="../apcsa/">AP CSA (Java)</a><a href="../apcsp/vocabulary/">AP CSP vocabulary</a></div>
 </div></section>`,
     faq: [
       ['Is it free?', 'Yes. Every game and course on CyberTeaches is free.'],
