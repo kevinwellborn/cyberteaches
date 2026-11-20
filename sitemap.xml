@@ -1,15 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url><loc>https://cyberteaches.com/</loc><lastmod>2026-11-19</lastmod></url>
+  <url><loc>https://cyberteaches.com/teachers/</loc><lastmod>2026-11-19</lastmod></url>
+  <url><loc>https://cyberteaches.com/homeschool/</loc><lastmod>2026-11-19</lastmod></url>
+  <url><loc>https://cyberteaches.com/learn-to-code/</loc><lastmod>2026-11-19</lastmod></url>
+  <url><loc>https://cyberteaches.com/learn-cybersecurity/</loc><lastmod>2026-11-19</lastmod></url>
+  <url><loc>https://cyberteaches.com/vocabulary/</loc><lastmod>2026-11-19</lastmod></url>
   <url><loc>https://cyberteaches.com/app-builder/</loc><lastmod>2026-11-19</lastmod></url>
   <url><loc>https://cyberteaches.com/app-builder/lessons/</loc><lastmod>2026-11-19</lastmod></url>
+  <url><loc>https://cyberteaches.com/app-builder/vocabulary/</loc><lastmod>2026-11-19</lastmod></url>
   <url><loc>https://cyberteaches.com/apcybersecurity/</loc><lastmod>2026-11-19</lastmod></url>
   <url><loc>https://cyberteaches.com/apcybersecurity/lessons/</loc><lastmod>2026-11-19</lastmod></url>
+  <url><loc>https://cyberteaches.com/apcybersecurity/vocabulary/</loc><lastmod>2026-11-19</lastmod></url>
   <url><loc>https://cyberteaches.com/apcsp/</loc><lastmod>2026-11-19</lastmod></url>
   <url><loc>https://cyberteaches.com/apcsp/lessons/</loc><lastmod>2026-11-19</lastmod></url>
+  <url><loc>https://cyberteaches.com/apcsp/vocabulary/</loc><lastmod>2026-11-19</lastmod></url>
   <url><loc>https://cyberteaches.com/apcsp/exam/</loc><lastmod>2026-11-19</lastmod></url>
   <url><loc>https://cyberteaches.com/securityplus/</loc><lastmod>2026-11-19</lastmod></url>
   <url><loc>https://cyberteaches.com/securityplus/lessons/</loc><lastmod>2026-11-19</lastmod></url>
+  <url><loc>https://cyberteaches.com/securityplus/vocabulary/</loc><lastmod>2026-11-19</lastmod></url>
   <url><loc>https://cyberteaches.com/networking/</loc><lastmod>2026-11-19</lastmod></url>
   <url><loc>https://cyberteaches.com/networking/exam-1/</loc><lastmod>2026-11-19</lastmod></url>
   <url><loc>https://cyberteaches.com/networking/exam-2/</loc><lastmod>2026-11-19</lastmod></url>
@@ -20,6 +29,7 @@
   <url><loc>https://cyberteaches.com/networking/syllabus/</loc><lastmod>2026-11-19</lastmod></url>
   <url><loc>https://cyberteaches.com/networking/updates/</loc><lastmod>2026-11-19</lastmod></url>
   <url><loc>https://cyberteaches.com/academy/</loc><lastmod>2026-11-19</lastmod></url>
+  <url><loc>https://cyberteaches.com/academy/python/</loc><lastmod>2026-11-19</lastmod></url>
   <url><loc>https://cyberteaches.com/academy/review/unit-1/</loc><lastmod>2026-11-19</lastmod></url>
   <url><loc>https://cyberteaches.com/academy/review/unit-1/quiz.html</loc><lastmod>2026-11-19</lastmod></url>
   <url><loc>https://cyberteaches.com/congressional-award-tracker/</loc><lastmod>2026-11-19</lastmod></url>
