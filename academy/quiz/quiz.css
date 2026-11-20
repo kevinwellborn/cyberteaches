@@ -122,3 +122,10 @@ button.opt:active{transform:translateY(3px);box-shadow:0 2px 0 rgba(0,0,0,.25)}
   .opt .body .prog,.opt .body .blk{font-size:14px}
 }
 [hidden]{display:none!important}
+/* Python Quest code: a block (pre.py) or one line (code.py) */
+pre.py{margin:0;background:#1C292C;color:#F4F1E8;border-radius:14px;padding:14px 20px;font:600 26px/1.45 var(--f-mono);text-align:left;white-space:pre;overflow-x:auto;max-width:100%}
+code.py{background:#1C292C;color:#F4F1E8;border-radius:8px;padding:.25em .55em;font:600 .9em var(--f-mono);white-space:pre-wrap;word-break:break-word}
+.opt .body pre.py{font-size:17px;padding:8px 12px;border-radius:10px}
+.opt .body code.py{font-size:19px}
+@media (max-width:700px){ pre.py{font-size:17px;padding:10px 12px} .opt .body pre.py{font-size:13px} .opt .body code.py{font-size:14px} }
+.wrap pre.py,.wrap code.py,pre.py,code.py{font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0}
