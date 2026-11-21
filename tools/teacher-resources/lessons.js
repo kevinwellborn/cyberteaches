@@ -21,6 +21,9 @@ const blocksOf = p => p.map(n => {
   if (n.type === 'set') return vb('set steps to', n.n); if (n.type === 'change') return vb('change steps by', (n.d > 0 ? '+' : '') + n.d);
   if (n.type === 'repeat') return rep(`repeat <span class="num">${n.n}</span> times`, blocksOf(n.body));
   if (n.type === 'repeatvar') return rep('repeat <span class="num">steps</span> times', blocksOf(n.body));
+  if (n.type === 'until') return rep('repeat until at flag', blocksOf(n.body));
+  if (n.type === 'ifelse') { const head = `if ${{ ahead: 'path ahead', left: 'path left', right: 'path right', crystal: 'crystal here', tank: 'tank ahead' }[n.cond]}`;
+    return n.elseBody && n.elseBody.length ? rep(head, blocksOf(n.body), 'logic').replace(/<\/div><\/div>$/, `</div><div class="elsel">else</div><div class="inner">${blocksOf(n.elseBody)}</div></div>`) : rep(head, blocksOf(n.body), 'logic') }
   throw new Error('blocksOf: ' + n.type) }).join('');
 const cntA = n => `<span class="count" style="background:var(--accent)">${n} blocks</span>`;
 const code = s => `<span class="code">${s}</span>`;
@@ -58,6 +61,9 @@ const V = {
   value: ['value', 'the number inside the box', 'valor'],
   setv: ['set', 'put a number in the box', 'asignar'],
   changev: ['change by', 'add to or take away from the number in the box', 'cambiar'],
+  increase: ['increase', 'make a number bigger', 'aumentar'],
+  decrease: ['decrease', 'make a number smaller', 'disminuir'],
+  difference: ['difference', 'how far apart two numbers are (subtract to find it)', 'diferencia'],
 };
 const TIPS = {
   repeat: ['<b>Count first.</b> Count the crystals or steps before you set the repeat number.', '<b>Find one copy</b> of the pattern, build it once, then repeat it.', '<b>Inside or outside?</b> Check which blocks are inside the repeat.', '<b>Run, watch, fix.</b> Change one thing at a time.'],
@@ -65,6 +71,8 @@ const TIPS = {
   tank: ['<b>Face it first.</b> The shell flies the way the rover faces.', '<b>Shells are limited.</b> Only fire when a tank is in your line of fire.', '<b>Red ! means danger.</b> Fire or move out of the tank\'s line on your next move.', '<b>Run, watch, fix.</b> Count tanks and shells before you run.'],
   ifelse: ['<b>Read it as a sentence:</b> "If there is a path ahead, move forward, else turn right."', '<b>Check at every step.</b> Put the if / else inside repeat until at flag.', '<b>Most important first.</b> Check for a tank before you check the path.', '<b>Left or right?</b> Paths are checked from the rover\'s point of view.'],
   variable: ['<b>Set it first.</b> An empty box holds 0, and repeat 0 times does nothing.', '<b>Set or change?</b> Set replaces the number. Change adds to it or takes from it.', '<b>Inside the loop.</b> The change block goes inside the repeat, so every lap is different.', '<b>Watch the box.</b> The purple box shows steps while the rover runs. Say the number for each lap.'],
+  variable2: ['<b>Write the lengths.</b> Write the list (1, 2, 3, 4 or 9, 7, 5 …) before you build.', '<b>Start = first length.</b> Set steps to the first number in the list.', '<b>Change = the jump.</b> The difference between two lengths is your change. Smaller each time? Use a minus.', '<b>Watch the box.</b> Say the number for each lap while the rover runs.'],
+  varmix: ['<b>Can you count the laps?</b> If not, put repeat until at flag around your loop.', '<b>Every square or every corner?</b> A check for every square goes inside repeat steps times. A check for each corner goes after it.', '<b>Two loops, one box.</b> After the first loop, ask what is in the box now. Change it before the next loop starts.', '<b>Shells are limited.</b> Use if tank ahead so you only fire when a tank is there.'],
 };
 const DESIGN = {
   repeat: 'Draw a rover (with an arrow for the way it faces), some rocks (shade the square) and crystals (◆). Write the shortest program you can with a repeat, then swap with a partner and check each other\'s work.',
@@ -72,6 +80,8 @@ const DESIGN = {
   tank: 'Draw a rover (with an arrow), rocks (shade the square) and enemy tanks (draw a box with an arrow for its cannon). Write a program that destroys every tank, then swap with a partner.',
   ifelse: 'Draw a winding road from the rover to a flag (⚑), with rocks around it. Write one program with if / else that drives the whole road, then swap with a partner and test it.',
   variable: 'Draw a spiral or stairs where every lap is a different length, with a flag (⚑) at the end. Write one program with set, change and repeat steps that drives it, then swap with a partner and trace the box together.',
+  variable2: 'Draw a road where the gaps or laps count down (like 5, 4, 3, 2, 1) or jump by 2, with crystals (◆) or a flag (⚑). Write one program with set, change and repeat steps, then swap with a partner and check it.',
+  varmix: 'Draw a spiral with crystals (◆) on some squares and a flag (⚑) at the end. Write one program with set, change, repeat steps and an if / else check, then swap with a partner and test it.',
 };
 const STD = { repeat: ['2-AP-10', '2-AP-12', '2-AP-13', '2-AP-17'], tank: ['2-AP-10', '2-AP-12', '2-AP-13', '2-AP-17'], ifelse: ['2-AP-10', '2-AP-12', '2-AP-17', '2-AP-19'], variable: ['2-AP-11', '2-AP-12', '2-AP-13', '2-AP-17'] };
 const LEG = {
@@ -80,6 +90,7 @@ const LEG = {
   patrol: [['if tank [ X ]', 'if tank ahead, fire'], ['until no tanks [ … ]', 'repeat until no tanks left']],
   ifelse: [['if path ahead [ F ] else [ R ]', 'if / else'], ['until flag [ … ]', 'repeat until at flag']],
   variable: [['set 3', 'set steps to 3'], ['change +1', 'change steps by +1'], ['repeat steps [ F ]', 'repeat steps times']],
+  varmix: [['set 3', 'set steps to 3'], ['change +1', 'change steps by +1'], ['repeat steps [ F ]', 'repeat steps times'], ['until flag [ … ]', 'repeat until at flag'], ['if crystal here [ C ]', 'if crystal here, collect'], ['if tank ahead [ X ]', 'if tank ahead, fire']],
 };
 const CODE_NOTE = 'Students sign in with Google or the username and password from the Teacher Dashboard. Watch their stars live on the dashboard and help anyone stuck on the same puzzle.';
 
@@ -854,7 +865,118 @@ module.exports = [
     misconceptions: ['Thinking set and change are the same (set replaces the number, change adds to it).', 'Putting change steps by outside the loop, so every lap is the same length.', 'Forgetting to set a starting value, so the box holds 0 and the loop does nothing.', 'Using the plain repeat number when the laps are different lengths.'],
     support: 'give a "box card" where students write the value of steps after each lap before they run the program.', extension: '3 stars on 14.9 and 14.10; write a program that draws a spiral with change steps by +2.',
     connections: ['<b>Math:</b> variables in algebra (x) and growing patterns (1, 2, 3, …).', '<b>Everyday life:</b> a scoreboard, a step counter and a bank balance are all variables.'],
-    next: 'Congratulations! Students have finished the course. More lessons (Destroy walls) are coming soon. Students can return to any lesson for 3 stars.',
+    next: 'more practice with the steps box: counting up, counting down, and changing by 2 or 3.',
+  },
+},
+// ===== Lesson 15: Variable practice =====
+{
+  n: 15, unitName: 'Variables', notation: 'CX', legend: LEG.variable,
+  titleHtml: 'Variable <em>practice</em>', tagline: 'Count up, count down, jump by two. One small loop, many different lengths.',
+  goals: ['Find the <b>starting number</b> and the <b>change</b> in a growing or shrinking pattern', 'Count <b>down</b> with change steps by -1 or -2', 'Use the steps box with crystals, stairs and tanks'],
+  warmup: { time: '3 minutes', title: 'What comes next?', body: `<div class="row"><div class="grow"><p class="big">1, 2, 3, 4, ___</p><p class="big">9, 7, 5, 3, ___</p><p class="big">1, 4, 7, ___</p><p class="muted">For each list: what is the first number? How much does it change each time?</p></div><div class="box" style="width:420px"><p class="big" style="margin:0 0 8px">Answer</p><p class="reveal" style="margin:0">5 (start 1, +1) · 1 (start 9, -2) · 10 (start 1, +3)</p></div></div>`, note: 'Every list has a start and a change. Those are exactly the two numbers students choose for set steps to and change steps by.' },
+  review: { title: 'Remember the steps box', body: `<div class="row"><div class="prog">${blocksOf([S1, Rp(3, [RVF, R, Ch(1)])])}</div><div class="grow"><p><b>set steps to</b> puts a number in the box.</p><p><b>change steps by</b> adds to it or takes from it.</p><p><b>repeat steps times</b> uses the number in the box.</p><p class="reveal">Laps: 1, then 2, then 3.</p></div></div>`, note: 'Quick review from Lesson 14. Ask a student to say the value of steps for each lap.' },
+  concepts: [
+    { kicker: 'Big idea', title: 'Find the <em>start</em> and the <em>change</em>', body: `<div class="row"><div class="grow"><table style="font-size:30px;border-collapse:collapse;width:100%"><tr><th style="padding:10px 18px;border-bottom:2px solid rgba(0,0,0,.12);text-align:left">Lengths</th><th style="padding:10px 18px;border-bottom:2px solid rgba(0,0,0,.12);text-align:left">set steps to</th><th style="padding:10px 18px;border-bottom:2px solid rgba(0,0,0,.12);text-align:left">change steps by</th></tr><tr><td style="padding:10px 18px;border-bottom:2px solid rgba(0,0,0,.12)">1, 2, 3, 4</td><td class="reveal code" style="padding:10px 18px;border-bottom:2px solid rgba(0,0,0,.12)">1</td><td class="reveal code" style="padding:10px 18px;border-bottom:2px solid rgba(0,0,0,.12)">+1</td></tr><tr><td style="padding:10px 18px;border-bottom:2px solid rgba(0,0,0,.12)">4, 3, 2, 1</td><td class="reveal code" style="padding:10px 18px;border-bottom:2px solid rgba(0,0,0,.12)">4</td><td class="reveal code" style="padding:10px 18px;border-bottom:2px solid rgba(0,0,0,.12)">-1</td></tr><tr><td style="padding:10px 18px;border-bottom:2px solid rgba(0,0,0,.12)">9, 7, 5, 3, 1</td><td class="reveal code" style="padding:10px 18px;border-bottom:2px solid rgba(0,0,0,.12)">9</td><td class="reveal code" style="padding:10px 18px;border-bottom:2px solid rgba(0,0,0,.12)">-2</td></tr><tr><td style="padding:10px 18px;border-bottom:2px solid rgba(0,0,0,.12)">1, 4, 7</td><td class="reveal code" style="padding:10px 18px;border-bottom:2px solid rgba(0,0,0,.12)">1</td><td class="reveal code" style="padding:10px 18px;border-bottom:2px solid rgba(0,0,0,.12)">+3</td></tr></table></div></div>`, note: 'The start is the first length. The change is the difference between two lengths in a row. If the lengths get smaller, the change is negative.' },
+    { kicker: 'Growing gaps', title: 'Crystal <em>gaps</em>', body: `<div class="row">${bd(['#############', '#S*.*..*...*#', '#############'], 1, 44)}<div class="grow"><p>The gaps grow: 1, 2, 3, 4. Collect at the end of each gap.</p><div class="prog reveal">${blocksOf([S1, Rp(4, [RVF, C, Ch(1)])])}</div><p class="reveal" style="margin-top:14px">${cnt(6)} Without a variable this takes 14 blocks.</p></div></div>`, note: 'Puzzle 15.1. The collect block goes after repeat steps times and before the change.' },
+    { kicker: 'Counting down', title: 'Change by a <em>minus</em> number', body: `<div class="row">${bd(['#########', '#S......#', '#######.#', '#######.#', '#######.#', '#####G..#', '#########'], 1, 52)}<div class="grow"><p>The laps shrink: 6, then 4, then 2.</p><div class="prog reveal">${blocksOf([Sv(6), Rp(3, [RVF, R, Ch(-2)])])}</div><p class="reveal" style="margin-top:14px">${cnt(6)} Start big, then take 2 away after every lap.</p></div></div>`, note: 'Like puzzle 15.8. Ask: what would happen with change steps by +2? (The second lap would be 8 squares and crash.)' },
+  ],
+  together: [{ k: 4, ask: 'Corner crystals: what goes inside the loop, and in what order?', note: 'Puzzle 15.4: repeat steps times (F), collect crystal, turn right, change steps by +1.' }, { k: 9, ask: 'Tank alleys: where does the fire block go?', note: 'Puzzle 15.9: after the drive, turn left, fire, turn right, then change steps by +1.' }],
+  tips: TIPS.variable2, codeTip: 'Write the list of lengths first. The first number is your set, and the jump between numbers is your change.',
+  exit: { q: 'The gaps between crystals are 8, 6, 4, 2. What do you set steps to, and what do you change it by?', a: 'set steps to 8, and change steps by -2.' },
+  notes: { title: 'A practice lesson with no new blocks: finding the start and the change in growing and shrinking patterns. Plan: warm-up 5 min, slides 15 min, classwork 12 min, coding 15 min, exit ticket 3 min.', tips: 'Have students write the list of lengths on paper (or a whiteboard) before they build. Most bugs are a wrong start or a change with the wrong sign.', code: CODE_NOTE },
+  trace: [
+    { map: ['############', '#S.*..*...*#', '############'], dir: 1, prog: [S2, Rp(3, [RVF, C, Ch(1)])], q: 'Write the value of steps each time the rover collects. How many squares does it move in all?', answer: 'steps = 2, then 3, then 4. It moves 2 + 3 + 4 = 9 squares.', why: 'The box starts at 2 and grows by 1 after every crystal, so each gap is one square longer.', expect: { won: true } },
+    { map: ['#########', '#S......#', '#######.#', '#######.#', '#######.#', '#####G..#', '#########'], dir: 1, prog: [Sv(6), Rp(3, [RVF, R, Ch(-2)])], q: 'What is in the box on each lap? Mark where the rover stops.', lines: 1, answer: 'Lap 1: 6. Lap 2: 4. Lap 3: 2. It stops on the flag.', why: 'change steps by -2 takes 2 away after every lap, so the laps are 6, 4 and 2 squares long.', expect: { atFlag: true } },
+  ],
+  writeInstr: 'Use set, change and repeat steps. Write the starting number and the change.',
+  write: [{ k: 2, q: 'The gaps shrink. Write the program.' }, { k: 6, q: 'Write a program for the wide stairs.' }],
+  partC: { title: 'Start and change', pts: 'Find the two numbers', instr: 'Each row lists the lengths of the laps or gaps. Write the set and change blocks that make them.', colA: 'Lengths', colB: 'set · change',
+    rows: [
+      { a: '1, 2, 3, 4, 5', key: code('set 1 · change +1') },
+      { a: '5, 4, 3, 2, 1', key: code('set 5 · change -1') },
+      { a: '2, 4, 6, 8', key: code('set 2 · change +2') },
+      { a: '10, 7, 4, 1', key: code('set 10 · change -3') },
+    ] },
+  design: DESIGN.variable2,
+  reflect: { q: 'How do you find the change number from a list of lengths?', look: 'the difference between two lengths', key: 'subtract one length from the next: 2, 4, 6 jumps by 2, so change steps by +2. If the lengths get smaller, the change is a minus number.' },
+  vocab: [V.variable, V.value, V.changev, V.increase, V.decrease, V.difference],
+  ell: { eld: [ELD.SI, ELD.MA, ELD.SC],
+    frames: [['The lengths 1, 2, 3 grow, so I change steps by ____.', '+1'], ['The lengths 6, 4, 2 shrink, so I change steps by ____.', '-2'], ['The first length is 5, so I set steps to ____.', '5']],
+    choices: [
+      { text: 'The lengths are 3, 2, 1. Which change block?', opts: [vb('change steps by', '+1'), vb('change steps by', '-1'), vb('change steps by', '+3')], a: 1 },
+      { text: 'The lengths are 2, 4, 6. What do you set steps to first?', opts: ['2', '4', '6'], a: 0 },
+    ] },
+  plan: {
+    overview: 'A practice lesson with no new blocks. Students look at a growing or shrinking pattern, find its <b>start</b> (the first length) and its <b>change</b> (the jump between lengths), and turn them into set steps to and change steps by. Puzzles count up, count down, jump by 2 or 3, and add crystals, stairs and tank alleys.',
+    objectives: ['Find the starting value and the change in a number pattern.', 'Use change steps by with negative numbers to count down.', 'Combine a variable loop with collect, turns and fire.', 'Trace the value of the variable for each lap of a loop.'],
+    standards: STD.variable, before: [],
+    warmup: '"What comes next?": 1, 2, 3, 4 · 9, 7, 5, 3 · 1, 4, 7. Students name the start and the change for each list.',
+    direct: 'Review the steps box. Fill in the start-and-change table together, then show the crystal gaps (puzzle 15.1) and a countdown spiral with change -2.',
+    guided: 'Solve puzzle 15.4 (corner crystals) together, then pairs plan puzzle 15.9 (tank alleys) before the reveal. Review the tips.',
+    classwork: 'Students complete Parts A to C and E in pairs. Part C turns lists of lengths into set and change blocks.',
+    code: 'Students solve puzzles 15.1 to 15.10: growing and shrinking gaps, jumps by 3, corner crystals, spirals by 2, wide stairs, crystal rows, countdowns, tank alleys and a climbing wall.',
+    closure: 'Exit ticket: gaps 8, 6, 4, 2 → set steps to 8, change steps by -2.',
+    success: 'the student solves at least 8 of 10 puzzles and can name the start and the change for a list of lengths.',
+    misconceptions: ['Using +1 when the lengths shrink (the change must be a minus number).', 'Setting steps to the last length instead of the first one.', 'Putting change steps by before repeat steps times, so the first lap is already the wrong length.', 'Thinking the change is always 1.'],
+    support: 'give a table with two columns (lap, value of steps) to fill in before running the program.', extension: '3 stars on 15.9 and 15.10; write a list of lengths for a partner and ask them for the set and change blocks.',
+    connections: ['<b>Math:</b> arithmetic sequences: a start value and a common difference (1, 4, 7, 10 …).', '<b>Everyday life:</b> a countdown timer, saving the same amount each week.'],
+    next: 'challenges that mix variables with repeat until at flag, if / else checks and two loops.',
+  },
+},
+
+// ===== Lesson 16: Variable challenges =====
+{
+  n: 16, unitName: 'Variables', notation: 'CX', legend: LEG.varmix,
+  titleHtml: 'Variable <em>challenges</em>', tagline: 'Mix the steps box with repeat until, if / else and two loops.',
+  goals: ['Put a variable loop inside <b>repeat until at flag</b>', 'Check every square with an <b>if / else</b> inside repeat steps times', 'Fix the box with change steps by between <b>two loops</b>'],
+  warmup: { time: '3 minutes', title: 'Up and down', body: `<div class="row"><div class="grow"><p>Clap <b>1, 2, 3, 4</b> times, then <b>3, 2, 1</b> times.</p><p class="big">You add 1 after every round on the way up. After the 4 claps, the box holds 5. What do you change it by to start the way down at 3?</p></div><div class="box" style="width:420px"><p class="big" style="margin:0 0 8px">Answer</p><p class="reveal" style="margin:0">Change by <b>-2</b> (5 - 2 = 3), then count down with -1.</p></div></div>`, note: 'This is exactly puzzle 16.5 (Up and down). Do it as a class with a number card for the box.' },
+  review: { title: 'Blocks you know', body: `<div class="row"><div class="grow"><p>${vb('set steps to', 1)} ${vb('change steps by', '+1')}</p><p>${rep('repeat <span class="num">steps</span> times', fwd)} ${rep('repeat until at flag', fwd)}</p><p>${rep('if crystal here', col, 'logic')} ${rep('if tank ahead', fire, 'logic')}</p></div></div>`, note: 'Every block in this lesson is one students already know. The challenge is putting them together.' },
+  concepts: [
+    { kicker: 'Big idea', title: 'Repeat until <em>at flag</em>', body: `<div class="row">${bd(['########', '#.....G#', '#.######', '#.#S.###', '#.##.###', '#....###', '########'], 1, 52)}<div class="grow"><p>You do not have to count the laps. Keep spiraling until the rover is at the flag.</p><div class="prog reveal">${blocksOf([S1, U([RVF, R, Ch(1)])])}</div><p class="reveal" style="margin-top:14px">${cnt(6)}</p></div></div>`, note: 'Like puzzle 16.1. The variable grows inside a loop that stops at the flag.' },
+    { kicker: 'Big idea', title: 'Check <em>every square</em>', body: `<div class="row">${bd(['######', '#G####', '#*####', '#.#S*#', '#.##.#', '#*.*.#', '######'], 1, 52)}<div class="grow"><p>Only some squares have crystals. Put the check <b>inside</b> repeat steps times so it runs on every square.</p><div class="prog reveal">${blocksOf([S1, Rp(4, [RV([F, IE('crystal', [C])]), R, Ch(1)])])}</div><p class="reveal" style="margin-top:14px">${cnt(8)}</p></div></div>`, note: 'Like puzzle 16.3. A check for each corner (like if tank ahead) goes after repeat steps times instead.' },
+    { kicker: 'Big idea', title: 'Fix the box <em>between loops</em>', body: `<div>${bd(['############', '#S*.*..*.**#', '############'], 1, 56)}<div class="row" style="margin-top:18px;align-items:flex-start"><div class="prog reveal" style="flex-direction:row;gap:14px;align-items:flex-start;font-size:22px">${blocksOf([S1, Rp(3, [RVF, C, Ch(1)])])}<div>${blocksOf([Ch(-2)])}</div>${blocksOf([Rp(2, [RVF, C, Ch(-1)])])}</div><div class="grow"><p>Gaps 1, 2, 3, then 2, 1.</p><p class="reveal">After the first loop the box holds <b>4</b>. change -2 makes it 2.</p></div></div></div>`, note: 'Like puzzle 16.5. Ask: what is in the box after the first loop? Students often guess 3.' },
+  ],
+  together: [{ k: 2, ask: 'Each length is used twice. How many repeat steps blocks go inside the loop?', note: 'Puzzle 16.2: two repeat steps times blocks, each followed by a turn, then change steps by +2.' }, { k: 10, ask: 'Crystals and tanks at once. Where does each check go?', note: 'Puzzle 16.10: if crystal here goes inside repeat steps times (every square); if tank ahead goes after it, before the turn (every corner).' }],
+  tips: TIPS.varmix, codeTip: 'Build the variable loop first and test it, then add the check or the second loop.',
+  exit: { q: 'After a loop the box holds 5. The next loop should make gaps of 3, 2, 1. Which block goes between the two loops?', a: `${code('change -2')} (5 - 2 = 3), then the second loop changes by -1.` },
+  notes: { title: 'The last variables lesson: combining the steps box with repeat until at flag, if / else checks and two loops. Plan: warm-up 5 min, slides 15 min, classwork 12 min, coding 15 min, exit ticket 3 min.', tips: 'Encourage students to build in stages: get the plain spiral working, then add the crystal or tank check. Celebrate finishing the variables unit!', code: CODE_NOTE },
+  trace: [
+    { map: ['########', '#S....G#', '########'], dir: 1, prog: [S1, Rp(2, [RVF, Ch(1)]), Ch(-1), RVF], q: 'What is in the box after the first loop? After change -1? How many squares does the rover move in all?', answer: 'After the loop: 3. After change -1: 2. It moves 1 + 2 + 2 = 5 squares, to the flag.', why: 'The loop moves 1, then 2 squares and leaves 3 in the box. Taking 1 away leaves 2 for the last move.', expect: { atFlag: true, steps: 2 } },
+    { map: ['#S*..*#'], dir: 1, prog: [Sv(4), RV([F, IE('crystal', [C])])], q: 'How many times does the rover check for a crystal? How many times does it collect?', answer: 'It checks 4 times and collects 2 times.', why: 'The check is inside repeat steps times, so it runs on all 4 squares, but only 2 of them have a crystal.', expect: { won: true } },
+  ],
+  writeInstr: 'Use set, change and repeat steps together with repeat until at flag or if / else.',
+  write: [{ k: 1, q: 'Write the spiral program. Use repeat until at flag so you do not count the laps.' }, { k: 3, q: 'Collect the crystals in the spiral. Check every square.' }],
+  partC: { title: 'Which block, and where?', pts: 'Plan the program', instr: 'Read the job. Write which block or check you add to the variable loop, and where it goes.', colA: 'The job', colB: 'Block · where it goes',
+    rows: [
+      { a: 'You can not count the laps.', key: 'repeat until at flag · around the whole variable loop' },
+      { a: 'Crystals are on some squares only.', key: code('if crystal here [ C ]') + ' · inside repeat steps times, after F' },
+      { a: 'Tanks at some corners, and only enough shells for them.', key: code('if tank ahead [ X ]') + ' · after repeat steps times, before the turn' },
+      { a: 'Gaps go 1, 2, 3, then 2, 1.', key: code('change -2') + ' · between the two loops (the box holds 4 after the first loop)' },
+    ] },
+  design: DESIGN.varmix,
+  reflect: { q: 'Why does if crystal here go inside repeat steps times and not after it?', look: 'checks every square', key: 'inside, it runs on every square the rover drives over; after the loop it would only check the corner squares and miss crystals.' },
+  vocab: [V.variable, V.nested, V.condition, V.until, V.algorithm],
+  ell: { eld: [ELD.SI, ELD.MA, ELD.SCC],
+    frames: [['I use repeat until at flag when I can not ____ the laps.', 'count'], ['The crystal check goes ____ repeat steps times.', 'inside'], ['The box holds 5. I change it by -2 to make ____.', '3']],
+    choices: [
+      { text: 'Crystals are on some squares only. Which check?', opts: ['if crystal here', 'if tank ahead', 'if path left'], a: 0 },
+      { text: 'You can not count the laps. Which loop goes around the program?', opts: ['repeat 3 times', 'repeat until at flag', 'repeat steps times'], a: 1 },
+    ] },
+  plan: {
+    overview: 'The final variables lesson. Students combine the steps box with blocks from earlier lessons: repeat until at flag around a growing spiral, if / else checks for crystals (on every square) and tanks (at every corner), laps that use each length twice, and two loops with the variable fixed in between.',
+    objectives: ['Put a variable loop inside repeat until at flag.', 'Place an if / else check inside or after repeat steps times, depending on what it must check.', 'Use change steps by between two loops to set up the next pattern.', 'Plan a program in stages and test each stage.'],
+    standards: STD.variable, before: ['Optional: a box with a "steps" sticky note and number cards from Lesson 14 for the warm-up.'],
+    warmup: '"Up and down": clap 1, 2, 3, 4 then 3, 2, 1; what change sets up the way down?',
+    direct: 'Model repeat until at flag around a spiral (puzzle 16.1), the crystal check inside repeat steps times (16.3), and fixing the box between two loops (16.5).',
+    guided: 'Solve puzzle 16.2 (double laps) together, then pairs plan where the checks go in puzzle 16.10 before the reveal. Review the tips.',
+    classwork: 'Students complete Parts A to C and E in pairs. Part C plans which block to add and where.',
+    code: 'Students solve puzzles 16.1 to 16.10: spirals with repeat until, double laps, crystal and tank checks, up-and-down gaps, crystal stairs, two-sided tank alleys and a final mission.',
+    closure: 'Exit ticket: the box holds 5, the next gaps are 3, 2, 1 → change steps by -2 between the loops.',
+    success: 'the student solves at least 7 of 10 puzzles and can explain where a crystal check and a tank check go.',
+    misconceptions: ['Putting if crystal here after repeat steps times, so only corner squares are checked.', 'Forgetting that the box keeps its value after a loop ends.', 'Firing at every corner without if tank ahead and running out of shells.', 'Using repeat until at flag when a plain repeat count is needed for another part.'],
+    support: 'let students build and test the plain spiral first, then add one check at a time; provide the "box card" from Lesson 14.', extension: '3 stars on 16.8 and 16.10; design a spiral with crystals and tanks for a partner.',
+    connections: ['<b>Math:</b> patterns that grow then shrink (1, 2, 3, 2, 1) and finding a missing step.', '<b>Careers:</b> game developers combine variables, loops and conditions to control characters.'],
+    next: 'Congratulations! Students have finished the variables unit. More lessons (Destroy walls) are coming soon. Students can return to any lesson for 3 stars.',
   },
 },
 ];

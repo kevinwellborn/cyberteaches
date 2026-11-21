@@ -219,4 +219,17 @@ module.exports = {
     extension: '3 stars on 14.9 and 14.10; write a program that draws a spiral with change steps by +2.',
   },
 },
+15: {
+  together: [{ k: 4, ask: 'Corner crystals: what goes inside the loop, and in what order?', note: 'Puzzle 15.4: repeat steps times (F), collect crystal, turn right, change steps by +1.' }, { k: 9, ask: 'Tank alleys: where does the fire block go?', note: 'Puzzle 15.9: after the drive, turn left, fire, turn right, then change steps by +1.' }],
+  plan: {
+    code: 'Students solve puzzles 15.1 to 15.10: growing and shrinking gaps, jumps by 2, corner crystals, a left spiral, wide stairs, crystal rows, a countdown by 2, tank alleys and a climbing wall.',
+    extension: '3 stars on 15.9 and 15.10; write a list of lengths for a partner and ask them for the set and change blocks.',
+  },
+},
+16: {
+  together: [{ k: 2, ask: 'Each length is used twice. How many repeat steps blocks go inside the loop?', note: 'Puzzle 16.2: two repeat steps times blocks, each followed by a turn right, then change steps by +2.' }, { k: 10, ask: 'Crystals and tanks at once. Where does each check go?', note: 'Puzzle 16.10: if crystal here inside repeat steps times; if tank ahead after it, before the turn.' }],
+  plan: {
+    code: 'Students solve puzzles 16.1 to 16.10: small spirals with repeat until, double laps, crystal and tank checks, up-and-down gaps, crystal stairs, two-sided tank alleys and a final mission.',
+  },
+},
 };
