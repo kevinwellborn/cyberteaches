@@ -378,7 +378,7 @@ const SFX = {
 };
 const setSoundBtn = () => { $('#soundBtn').textContent = muted ? '🔇' : '🔊' };
 setSoundBtn();
-$('#soundBtn').onclick = () => { muted = !muted; try { localStorage.setItem('academy.muted', muted ? '1' : '0') } catch(e){} setSoundBtn() };
+$('#soundBtn').onclick = () => { muted = !muted; try { localStorage.setItem('academy.muted', muted ? '1' : '0') } catch(e){} setSoundBtn(); if(muted){ try { speechSynthesis.cancel() } catch(e){} if(vAudio && !vAudio.paused){ vAudio.pause(); if(vAudio.onended) vAudio.onended() } } };
 
 // ---------- home ----------
 function render(){
@@ -708,26 +708,38 @@ function openVideo(n){
   big.innerHTML = '<div class="vtitle">' + esc(V.title) + '</div><div>About ' + Math.max(1, Math.round(V.scenes.reduce((t, sc) => t + sc.say.split(/\s+/).length, 0) / 150)) + ' minutes · turn your sound on 🔊</div>';
   const b = h('button', 'btn primary', '▶ Watch the video'); b.onclick = () => { big.hidden = true; playVideo() }; big.append(b);
 }
-function stopVideo(){ vTok++; vPlaying = false; try { speechSynthesis.cancel() } catch(e){} if(vPlayer) vPlayer.stop(); const pb = $('#vPlay'); if(pb) pb.textContent = '▶ Play' }
+function stopVideo(){ vTok++; vPlaying = false; vHush(); if(vPlayer) vPlayer.stop(); const pb = $('#vPlay'); if(pb) pb.textContent = '▶ Play' }
 function playVideo(){ $('#vBig').hidden = true; vPlaying = true; $('#vPlay').textContent = '⏸ Pause'; showScene(true) }
 function vTicks(){
   const t = $('#vTicks'); t.innerHTML = '';
   V.scenes.forEach((sc, i) => { const b = h('button', i < vIdx ? 'done' : i === vIdx ? 'cur' : ''); b.title = sc.title; b.onclick = () => { stopVideo(); vIdx = i; playVideo() }; t.append(b) });
   $('#vCount').textContent = (vIdx + 1) + ' / ' + V.scenes.length;
 }
-function vSay(text, tok){
+let vAudio = null;
+function vSay(text, tok, src){
   return new Promise(res => {
     const est = Math.max(2200, text.split(/\s+/).length * 400); let done = false; const fin = () => { if(!done){ done = true; res() } };
-    if(!muted && window.speechSynthesis){
+    const speak = () => {
+      if(done || tok !== vTok) return fin();
+      if(!muted && window.speechSynthesis){
+        try {
+          speechSynthesis.cancel();
+          const u = new SpeechSynthesisUtterance(text); u.lang = 'en-US'; u.rate = 0.95; const v = vVoice(); if(v) u.voice = v;
+          u.onend = fin; u.onerror = () => setTimeout(fin, est); speechSynthesis.speak(u); setTimeout(fin, est * 2 + 4000); return;
+        } catch(e){}
+      }
+      setTimeout(fin, est);
+    };
+    if(!muted && src){
       try {
-        speechSynthesis.cancel();
-        const u = new SpeechSynthesisUtterance(text); u.lang = 'en-US'; u.rate = 0.95; const v = vVoice(); if(v) u.voice = v;
-        u.onend = fin; u.onerror = () => setTimeout(fin, est); speechSynthesis.speak(u); setTimeout(fin, est * 2 + 4000); return;
+        const a = vAudio || (vAudio = new Audio()); a.onended = fin; a.onerror = speak; a.src = src;
+        const pr = a.play(); if(pr && pr.catch) pr.catch(speak); setTimeout(fin, est * 2 + 4000); return;
       } catch(e){}
     }
-    setTimeout(fin, est);
+    speak();
   });
 }
+const vHush = () => { try { speechSynthesis.cancel() } catch(e){} try { if(vAudio){ vAudio.onended = vAudio.onerror = null; vAudio.pause() } } catch(e){} };
 function vType(code, tok){
   const el = $('#vCode');
   return new Promise(res => { let i = 0; const step = () => { if(tok !== vTok) return res(); i++; el.innerHTML = highlight(code.slice(0, i)); if(i < code.length) setTimeout(step, 32); else res() }; step() });
@@ -742,7 +754,7 @@ function vDemos(demos, tok){
 }
 function showScene(play){
   const sc = V.scenes[vIdx], tok = ++vTok;
-  try { speechSynthesis.cancel() } catch(e){}
+  vHush();
   $('#vTitle').textContent = sc.title; $('#vCap').textContent = sc.say; $('#vLabel').textContent = '';
   const ul = $('#vBul'); ul.innerHTML = ''; (sc.bullets || []).forEach(t => ul.append(h('li', play ? '' : 'on', esc(t))));
   const withDemo = sc.demos ? sc : (V.scenes.slice(0, vIdx + 1).reverse().find(x => x.demos) || V.scenes.find(x => x.demos)), lastDemo = withDemo && withDemo.demos[0];
@@ -753,7 +765,7 @@ function showScene(play){
   if(!play) return;
   ul.querySelectorAll('li').forEach((li, i) => setTimeout(() => { if(tok === vTok) li.classList.add('on') }, 700 + i * 1500));
   const visual = (sc.code ? vType(sc.code, tok) : Promise.resolve()).then(() => sc.demos && sc.demos.some(d => d.prog) ? vDemos(sc.demos, tok) : null);
-  Promise.all([vSay(sc.say, tok), visual]).then(() => setTimeout(() => {
+  Promise.all([vSay(sc.say, tok, V.voice ? 'voice/v' + V.n + '-' + (vIdx + 1) + '.mp3?v=' + V.voice : null), visual]).then(() => setTimeout(() => {
     if(tok !== vTok || !vPlaying) return;
     if(vIdx < V.scenes.length - 1){ vIdx++; showScene(true) } else videoEnd();
   }, 700));
