@@ -48,9 +48,9 @@ window.PQ_GEAR = [
   {id: 'sword', kind: 'weapon', name: 'Short sword', how: 'Ready from the start'},
   {id: 'ranger', kind: 'outfit', name: 'Ranger outfit', level: '3-10', how: 'Rescue Niko (Lesson 3, level 10)'},
   {id: 'golden', kind: 'weapon', name: 'Golden sword', level: '4-10', how: 'Finish Lesson 4 (level 10)'},
-  {id: 'flame', kind: 'weapon', name: 'Flame sword', level: '5-3', how: 'Chest in Lesson 5, level 3'},
-  {id: 'fire', kind: 'outfit', name: 'Fire suit', level: '5-7', how: 'Chest in Lesson 5, level 7'},
-  {id: 'axe', kind: 'weapon', name: 'Volcano axe', level: '5-10', how: 'Chest in Lesson 5, level 10'},
+  {id: 'flame', kind: 'weapon', name: 'Flame sword', level: '5-3', how: 'Chest in Lesson 5, level 5'},
+  {id: 'fire', kind: 'outfit', name: 'Fire suit', level: '5-7', how: 'Chest in Lesson 5, level 9'},
+  {id: 'axe', kind: 'weapon', name: 'Volcano axe', level: '5-10', how: 'Chest in Lesson 5, level 12'},
   {id: 'diver', kind: 'outfit', name: 'Diver helmet', soon: true, how: 'Coming in Lesson 6'},
   {id: 'trident', kind: 'weapon', name: 'Trident', soon: true, how: 'Coming in Lesson 6'},
 ];
@@ -391,6 +391,23 @@ window.PQ_LEVELS = [
          '######.#########.###']},  // ---------- Lesson 5: Keep going (while loops) in the Lava Caves ----------
   // variants: these temples change every time you press Run, and the program must work on every version,
   // so counting squares won't do: keep going WHILE something is true. T = treasure chest (unlocks gear, see PQ_GEAR).
+  // Review levels (review: true, k: 0) open a lesson with earlier skills before the new idea; the explainer video comes after them.
+  {id: '5-r1', lesson: 5, k: 0, review: true, name: 'Warm-up: look before you leap', par: 5, theme: 'lava', rescue: {who: 'parrot', name: 'Flint the parrot'},
+   goal: 'Review from Lesson 4: the lava pits are uneven. Look ahead each step: jump if there is lava, otherwise run 1.',
+   tip: 'for i in range(20):  then  if hero.ahead() == \'pit\': hero.jump()  else: hero.run(1)',
+   start: '',
+   map: ['.............',
+         '.............',
+         'S..........Dc',
+         '###.##.#.#.##']},
+  {id: '5-r2', lesson: 5, k: 0, review: true, name: 'Warm-up: walls and guards', par: 7, theme: 'lava', hp: 2, rescue: {who: 'monkey', name: 'Ash the monkey'},
+   goal: 'Review from Lessons 3 and 4: climb the walls and defeat the guards (2 hit points each), all in one loop.',
+   tip: 'Inside a for loop: if wall, climb. elif guard, sword.attack(2). else, run 1.',
+   start: '',
+   map: ['..............',
+         '..............',
+         'S..W..#...W.Dc',
+         '##############']},
   {id: '5-1', lesson: 5, k: 1, name: 'Lava corridor', par: 3, theme: 'lava', rescue: {who: 'monkey', name: 'Tiko the monkey'},
    goal: 'This corridor is a different length every time. Run while there is no lava ahead, then jump.',
    tip: 'while hero.ahead() != \'pit\':  then hero.run(1) pushed in. After the loop, hero.jump() lands on the door.',
@@ -464,6 +481,9 @@ window.PQ_LEVELS = [
    map: ['..............', '..............', 'S.W..#..T...Dc', '#######.##.###'],
    variants: [['.............', '.............', 'S...T.W..#.Dc', '##.##########']]},
 ];
+
+// Level numbers shown to students: 1, 2, 3... inside each lesson, in the order above (review levels first).
+(function(){ const seen = {}; window.PQ_LEVELS.forEach(l => { seen[l.lesson] = (seen[l.lesson] || 0) + 1; l.num = seen[l.lesson] }) })();
 
 // "Learn" step for each lesson: short slides that teach the idea first, then a quick check, then practice in the game.
 // Slide kinds: text (html), anatomy (labelled command), demo (mini level + one or more programs to watch), quiz (questions).
@@ -658,6 +678,46 @@ window.PQ_LEARN = {
           why: 'You don\'t know the number, but you know when to stop: when lava is ahead.'},
          {q: 'Why does this never end?   while hero.gems_left() > 0:  hero.run(1)', a: ['The gems are never taken, so gems_left() never goes down', 'run needs a bigger number', 'while needs range()', 'It needs a colon'], ok: 0,
           why: 'Nothing in the body changes the condition. Add: if hero.here() == \'gem\': hero.take()'}]},
+    ]
+  },
+};
+
+// Explainer videos: an animated, narrated lesson that plays in the page (voice + captions + code that types itself + the explorer
+// acting it out). Shown after a lesson's review levels, before the new idea is practiced. Scene: {title, bullets, code, demos, say}.
+// `say` is spoken and shown as captions, so write it the way it should be read aloud.
+window.PQ_VIDEO = {
+  5: {
+    title: 'Why do we need while loops?',
+    scenes: [
+      {title: 'Welcome to the Lava Caves',
+       demos: [{map: ['..........', '..........', 'S......Dc.', '######.###'], theme: 'lava'}],
+       say: 'Welcome to the Lava Caves! These caves are strange. They change every time you enter. A tunnel might be three squares long today, and nine squares long tomorrow.'},
+      {title: 'What we already know',
+       code: 'for i in range(5):\n    hero.run(1)\nhero.jump()',
+       say: 'You already know the for loop. It repeats lines a set number of times. Here, range five means: run one step, five times, then jump.'},
+      {title: 'The problem: you can\'t count',
+       code: 'for i in range(5):\n    hero.run(1)\nhero.jump()',
+       demos: [{map: ['............', '............', 'S.........Dc', '#########.##'], theme: 'lava', prog: 'for i in range(5):\n    hero.run(1)\nhero.jump()'}],
+       say: 'But this cave is longer. Five steps is not enough. The explorer jumps too early, stops short, and never reaches the door. A for loop needs a number, and in a changing cave, we do not know the number.'},
+      {title: 'The new idea: while',
+       code: "while hero.ahead() != 'pit':\n    hero.run(1)\nhero.jump()",
+       bullets: ['while = keep going as long as something is true', '!= means "is not"', 'Python checks the condition before every round'],
+       say: 'A while loop does not count. It keeps going as long as its condition is true. Read it like this: while what is ahead is not a pit, run one step. When the lava shows up, the loop stops, and the explorer jumps.'},
+      {title: 'How to write it in Python',
+       code: "while hero.ahead() != 'pit':\n    hero.run(1)",
+       bullets: ['Start with the word while', 'Then a condition: True or False', 'End the line with a colon :', 'Push the body in 4 spaces'],
+       say: 'To write it: start with the word while. Then write a condition, a question that is true or false. End the line with a colon. The lines that repeat are pushed in four spaces, just like a for loop.'},
+      {title: 'One program, any cave',
+       code: "while hero.ahead() != 'pit':\n    hero.run(1)\nhero.jump()",
+       demos: [{map: ['........', '........', 'S...Dc..', '###.####'], theme: 'lava', prog: "while hero.ahead() != 'pit':\n    hero.run(1)\nhero.jump()", label: 'Short cave'},
+               {map: ['............', '............', 'S.........Dc', '#########.##'], theme: 'lava', prog: "while hero.ahead() != 'pit':\n    hero.run(1)\nhero.jump()", label: 'Long cave'}],
+       say: 'Watch the same three lines in a short cave, and then in a long cave. The explorer keeps running until the lava, and it works in both!'},
+      {title: 'Careful: endless loops',
+       code: "while hero.ahead() != 'pit':\n    hero.take()   # never moves!",
+       say: 'One warning. Something inside the loop must change the answer. Here the explorer never moves, so the lava never appears ahead, and the loop never ends. That is called an endless loop.'},
+      {title: 'for or while?',
+       bullets: ['for: you know HOW MANY times', 'while: you know WHEN TO STOP', 'In the Lava Caves: while + hero.ahead()'],
+       say: 'So which loop should you use? Use for when you know how many times. Use while when you know when to stop. In the Lava Caves, the caves change, so while is your best friend. Now let\'s practice, from easy to hard!'},
     ]
   },
 };

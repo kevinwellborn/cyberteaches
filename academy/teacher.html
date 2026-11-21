@@ -176,7 +176,7 @@ body{border-top:6px solid var(--lv,var(--accent))}
 <script src="course.js?v=19"></script>
 <script src="firebase-config.js"></script>
 <script src="cloud.js?v=22"></script>
-<script src="python/levels.js?v=6"></script>
+<script src="python/levels.js?v=7"></script>
 <script src="quiz/questions.js?v=6"></script>
 <script>
 const $=(s,r=document)=>r.querySelector(s);
@@ -468,7 +468,7 @@ function pyTable(){
     return `<tr><td class="name"><b>${esc(s.name)}</b><small>${esc(s.email||(s.username?'Username: '+s.username:''))}</small></td>${cells}<td><b>${pySolved(s)}</b>/${PY_LEVELS.length}</td><td><b>${pyTotal(s)}</b> ★</td><td class="muted">${ago(s.updatedAt)}</td></tr>`;
   }).join('');
   const head1=PY_LESSONS.map(u=>{ const o=pyOpen.has(u.n); return `<th class="lesson" colspan="${lv(u).length+1}" style="background:${u.color}"><button class="lessonbtn" data-pyunit="${u.n}" aria-expanded="${o}" title="${o?'Hide':'Show'} each level">${o?'▾':'▸'} L${u.n}${o?': '+esc(u.title):''}</button></th>` }).join('');
-  const head2=PY_LESSONS.map(u=>lv(u).map(l=>`<th title="${esc(l.name)}">${l.lesson}.${l.k}</th>`).join('')+`<th class="score" title="Lesson ${u.n}: ${esc(u.title)}. Score out of 100">Score</th>`).join('');
+  const head2=PY_LESSONS.map(u=>lv(u).map(l=>`<th title="${esc((l.review?'Review: ':'')+l.name)}">${l.lesson}.${l.num||l.k}</th>`).join('')+`<th class="score" title="Lesson ${u.n}: ${esc(u.title)}. Score out of 100">Score</th>`).join('');
   return `<table><thead><tr><th class="name" rowspan="2">Student</th>${head1}<th rowspan="2">Solved</th><th rowspan="2">Stars</th><th rowspan="2">Last active</th></tr><tr>${head2}</tr></thead><tbody>${rows}</tbody></table>`;
 }
 const pyScore=(s,n)=>{ const lv=PY_LEVELS.filter(l=>l.lesson===n); if(!lv.length) return 0; return Math.round(lv.reduce((t,l)=>{ const st=pyStars(s)[l.id]||0; return t+(st===3?100:st===2?90:st===1?80:0) },0)/lv.length) };
@@ -523,7 +523,7 @@ function renderPython(err){
   $('#pyLockAll').onclick=()=>{ const all=PY_LESSONS.map(u=>u.n); save({pyLocked: all}, {pyLocked: all}) };
   $('#csv').onclick=()=>{
     const q=v=>'"'+String(v==null?'':v).replace(/"/g,'""')+'"';
-    const lines=[['Student','Email or username',...PY_LEVELS.map(l=>'L'+l.lesson+'.'+l.k+' '+l.name),...PY_LESSONS.map(u=>'Lesson '+u.n+' score'),'Solved','Stars'].map(q).join(',')];
+    const lines=[['Student','Email or username',...PY_LEVELS.map(l=>'L'+l.lesson+'.'+(l.num||l.k)+' '+l.name),...PY_LESSONS.map(u=>'Lesson '+u.n+' score'),'Solved','Stars'].map(q).join(',')];
     roster.forEach(s=>lines.push([s.name,s.email||s.username,...PY_LEVELS.map(l=>pyStars(s)[l.id]||0),...PY_LESSONS.map(u=>pyScore(s,u.n)),pySolved(s),pyTotal(s)].map(q).join(',')));
     const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([lines.join('\n')],{type:'text/csv'})); a.download=(c.name||c.code)+' Python Quest.csv'; a.click();
   };
