@@ -1,0 +1,235 @@
+// Unit 2 Lesson 7-13 review (Lessons 7-13: tanks, patrols, missions with limits, if / else): study guide content and quiz questions.
+// Programs use the classwork letters: F move forward, L turn left, R turn right, C collect crystal, X fire cannon,
+// "repeat 3 [ F X ]", "until flag [ F ]" (repeat until at flag), "untilclear [ X ]" (repeat until no tanks left),
+// "iftank [ X ]" (if tank ahead), "if ahead [ F ] else [ R ]" (if / else; conditions ahead, left, right, crystal, tank).
+// Maps use the game legend: # rock, . sand, S rover, * crystal, G flag, ^ > v < enemy tank (the way its cannon points);
+// dir 0 up, 1 right, 2 down, 3 left. Shells: one per tank unless shells is set. maxBlocks: the block limit for that question.
+// tools/review/check.js 2 runs every map question through the game simulator (with enemy fire and shells). Run it after any change.
+(function(){
+const REVIEW = {
+  unit: 2, name: 'Unit 2 Lesson 7-13 review', title: 'Tanks and decisions', lessons: [7, 8, 9, 10, 11, 12, 13],
+
+  // What each lesson taught, with the program shown as its picture. c: color of the lesson number (act or move).
+  recap: [
+    {n: 7, c: 'act', title: 'Tank battle', idea: '<b>Fire cannon</b> shoots straight ahead until the shell hits a tank or a rock. <b>If tank ahead</b> fires only when a tank is there.', p: 'repeat 3 [ X ]'},
+    {n: 8, c: 'act', title: 'Tank practice', idea: '<b>Aim first.</b> Turn the rover to face the tank, then fire. You get one shell per tank.', p: 'R X'},
+    {n: 9, c: 'act', title: 'Tank patrols', idea: 'A <b>patrol</b> moves, looks to the side and fires only if a tank is there. <b>Repeat until no tanks left</b> stops when the job is done.', p: 'untilclear [ F L iftank [ X ] R ]'},
+    {n: 10, c: 'act', title: 'Tank missions', idea: 'Missions have a <b>block limit</b> and only so many shells. Find the pattern and put it in a <b>repeat</b>.', p: 'repeat 3 [ F F L X R ]'},
+    {n: 11, c: 'move', title: 'If / else', idea: '<b>If / else</b> checks a <b>condition</b>. True: run the top part. False: run the part under <b>else</b>.', p: 'until flag [ if ahead [ F ] else [ R ] ]'},
+    {n: 12, c: 'move', title: 'If / else practice', idea: 'Check <b>one thing</b> at a time: path ahead, crystal here or tank ahead. Put the if / else inside repeat until at flag.', p: 'until flag [ if crystal [ C ] else [ F ] ]'},
+    {n: 13, c: 'move', title: 'If / else challenges', idea: 'More than two choices? Put an <b>if / else inside another if / else</b>. Check the most important thing first.', p: 'until flag [ if tank [ X ] else [ if ahead [ F ] else [ R ] ] ]'},
+  ],
+
+  // The blocks section of the study guide: [letters on paper, program drawn as blocks].
+  blocks: [['F', 'F'], ['L', 'L'], ['R', 'R'], ['C', 'C'], ['X', 'X'], ['repeat 3 [ … ]', 'repeat 3 [ F ]'], ['until flag [ … ]', 'until flag [ F ]'],
+    ['until no tanks [ … ]', 'untilclear [ X ]'], ['if tank [ … ]', 'iftank [ X ]'], ['if … [ … ] else [ … ]', 'if ahead [ F ] else [ R ]']],
+
+  // Word bank: word, meaning, Spanish, picture (emoji or a program).
+  vocab: [
+    ['condition', 'a question the program checks; the answer is true or false', 'condición', '❓'],
+    ['if', 'runs the blocks inside only when the condition is true', 'si', '❓ ➜ ✅'],
+    ['else', 'the plan that runs when the condition is false', 'si no', '❓ ➜ ❌ ➜ ↩️'],
+    ['true', 'yes: the condition is happening right now', 'verdadero', '✅'],
+    ['false', 'no: the condition is not happening right now', 'falso', '❌'],
+    ['decision', 'choosing what to do after checking something', 'decisión', '🔀'],
+    ['nested if', 'an if / else inside another if / else', 'si anidado', '🔀 inside 🔀'],
+    ['line of fire', 'the straight line in front of a cannon', 'línea de fuego', '🛡️ ➜ ➜ 💥'],
+    ['patrol', 'a path the rover repeats while it checks for tanks', 'patrulla', '🔁 👀'],
+    ['block limit', 'the most blocks a program is allowed to use', 'límite de bloques', '🧱 ≤ 6'],
+    ['block goal', 'the number of blocks to match for 3 stars', 'meta de bloques', '⭐⭐⭐'],
+    ['obstacle', 'something that blocks the way, like a rock or a tank', 'obstáculo', '🪨'],
+  ],
+
+  // Big ideas for the study guide. map/dir draw a board, p draws a program.
+  ideas: [
+    {title: 'A shell stops at the first thing it hits',
+     text: '<b>Fire cannon</b> shoots straight ahead. The shell stops at the first tank or rock, so each shell destroys only one tank.',
+     map: ['#S.>.>#'], dir: 1, p: 'repeat 2 [ X ]', note: 'The first shell hits the first tank. The second shell flies farther and hits the next one.'},
+    {title: 'Watch out for the red !',
+     text: 'Each tank looks down its cannon. If the rover is still in its <b>line of fire</b> after its next move, the tank fires. Fire first, or keep moving out of the way.',
+     map: ['#S...<#'], dir: 1, p: 'X', note: 'This tank aims at the rover. Fire right away, before it can fire back.'},
+    {title: 'Patrol: look, then fire only if a tank is there',
+     text: 'Move one square, turn to look, use <b>if tank ahead</b>, then turn back. Shells are limited, so never fire at an empty square.',
+     map: ['########', '#.^.^^.#', '#S.....#', '########'], dir: 1, p: 'repeat 5 [ F L iftank [ X ] R ]', note: '3 tanks, 3 shells. The rover looks up 5 times but fires only the 3 times a tank is there.'},
+    {title: 'Repeat until no tanks left',
+     text: 'When you don\'t want to count, use <b>repeat until no tanks left</b>. It stops by itself when the last tank is gone.',
+     map: ['#S.>.>.>#'], dir: 1, p: 'untilclear [ X ]', note: 'It fires 3 times and stops. Only 2 blocks.'},
+    {title: 'Stay inside the block limit',
+     text: 'This mission has a <b>block limit</b> of 6. F F L X R three times is 15 blocks, which is too many. One copy inside a repeat is only 6.',
+     map: ['#########', '#..^.^.^#', '#S......#', '#########'], dir: 1, p: 'repeat 3 [ F F L X R ]', note: 'repeat (1) + 5 blocks inside = 6 blocks.'},
+    {title: 'If / else: two plans',
+     text: 'The rover checks the <b>condition</b> every time around the loop. <b>True</b>: the top part runs. <b>False</b>: the part under <b>else</b> runs.',
+     map: ['######', '#S...#', '####.#', '#G...#', '######'], dir: 1, p: 'until flag [ if ahead [ F ] else [ R ] ]', note: 'Path open: move. Wall: turn right. One program follows the whole road.'},
+    {title: 'Check the most important thing first',
+     text: 'On a road with tanks, check <b>tank ahead</b> before you move. If you move first, the rover can crash into a tank.',
+     map: ['#S.>..>.G#'], dir: 1, p: 'until flag [ if tank [ X ] else [ F ] ]', note: 'Tank ahead: fire. No tank: move forward. The road is clear when the rover gets to the flag.'},
+  ],
+
+  // Say it and write it: each blank is filled from the word bank (fillBank). The study guide checks them (1 point a blank).
+  fillBank: ['fires', 'tank', 'true', 'false', 'line of fire', 'move', 'block limit', 'repeat', 'else', 'turns'],
+  fill: [
+    {s: 'The rover ____ the cannon. The shell flies straight and stops at the first ____ or rock.', a: ['fires', 'tank']},
+    {s: 'When the condition is ____, the rover runs the top part. When it is ____, it runs the part under else.', a: ['true', 'false']},
+    {s: 'A tank spotted me, so I must not stay in its ____. I fire first or ____ out of the way.', a: ['line of fire', 'move']},
+    {s: 'This mission has a ____ of 8 blocks, so I use a ____ instead of dragging in the same blocks again and again.', a: ['block limit', 'repeat']},
+  ],
+
+  // Quiz vocabulary: pick the word for each meaning (the study guide asks the other way round).
+  quizVocab: [
+    {m: 'a question the program checks; the answer is true or false', opts: ['condition', 'patrol', 'obstacle'], a: 0},
+    {m: 'the plan that runs when the condition is false', opts: ['if', 'else', 'true'], a: 1},
+    {m: 'an if / else inside another if / else', opts: ['block goal', 'line of fire', 'nested if'], a: 2},
+    {m: 'the straight line in front of a cannon', opts: ['line of fire', 'decision', 'block limit'], a: 0},
+    {m: 'a path the rover repeats while it checks for tanks', opts: ['condition', 'patrol', 'else'], a: 1},
+    {m: 'the most blocks a program is allowed to use', opts: ['block goal', 'obstacle', 'block limit'], a: 2},
+    {m: 'no: the condition is not happening right now', opts: ['false', 'true', 'if'], a: 0},
+    {m: 'choosing what to do after checking something', opts: ['patrol', 'decision', 'obstacle'], a: 1},
+  ],
+  // Quiz sentences: blanks filled from fillBank, like the study guide.
+  quizFill: [
+    {s: 'There is no path ahead, so the rover runs the blocks under ____ and ____ right.', a: ['else', 'turns']},
+    {s: 'The rover ____ only when a ____ is ahead, so it never wastes a shell.', a: ['fires', 'tank']},
+    {s: 'A rock is in front of the rover, so "path ahead" is ____. When the square is open, "path ahead" is ____.', a: ['false', 'true']},
+  ],
+  // Quiz look-alikes: for these program questions (by place in quiz, from 0) each student gets the original or one of these,
+  // with different maps and a different answer. Picked from the student's account, so it stays the same on reload.
+  quizVariants: {
+    1: [
+      {lesson: 7, kind: 'num', q: 'A shell stops at the first tank or rock it hits. How many tanks does <span class="code">repeat 4 [ X ]</span> destroy?', map: ['#S>.>.>#.>#'], dir: 1, prog: 'repeat 4 [ X ]', a: 3,
+       why: 'The first 3 shells hit the 3 tanks before the rock. The rock stops the last shell, so the tank behind it is safe.'},
+      {lesson: 7, kind: 'num', q: 'A shell stops at the first tank or rock it hits. How many tanks does <span class="code">repeat 2 [ X ]</span> destroy?', map: ['#S.>#>#'], dir: 1, prog: 'repeat 2 [ X ]', a: 1,
+       why: 'The first shell hits the first tank. The second shell hits the rock, so the tank behind the rock is safe.'},
+    ],
+    7: [
+      {lesson: 9, kind: 'num', q: 'How many times does <b>move forward</b> run before the loop stops?', map: ['#########', '#..^...^#', '#S......#', '#########'], dir: 1, prog: 'untilclear [ F L iftank [ X ] R ]', a: 6,
+       why: 'The last tank is above the 6th square. When it is destroyed, no tanks are left and the loop stops.'},
+      {lesson: 9, kind: 'num', q: 'How many times does <b>move forward</b> run before the loop stops?', map: ['#######', '#.^.^.#', '#S....#', '#######'], dir: 1, prog: 'untilclear [ F L iftank [ X ] R ]', a: 3,
+       why: 'The last tank is above the 3rd square. When it is destroyed, no tanks are left and the loop stops.'},
+    ],
+    12: [
+      {lesson: 11, kind: 'num', q: 'How many times does <b>turn left</b> run?', map: ['#######', '#G....#', '#####.#', '#S....#', '#######'], dir: 1, prog: 'until flag [ if ahead [ F ] else [ L ] ]', a: 2,
+       why: 'The rover turns left at the end of the bottom road and at the top of the right side. Then it drives to the flag.'},
+      {lesson: 11, kind: 'num', q: 'How many times does <b>turn left</b> run?', map: ['######', '#G...#', '####.#', '####S#', '######'], dir: 0, prog: 'until flag [ if ahead [ F ] else [ L ] ]', a: 1,
+       why: 'The rover drives up, turns left once at the wall, then drives to the flag.'},
+    ],
+    14: [
+      {lesson: 12, kind: 'num', q: 'How many times does <b>move forward</b> run?', map: ['#S*.**..G#'], dir: 1, prog: 'until flag [ if crystal [ C ] else [ F ] ]', a: 7,
+       why: 'The flag is 7 squares away. On a crystal the rover collects instead of moving, so every square still takes one move.'},
+      {lesson: 12, kind: 'num', q: 'How many times does <b>move forward</b> run?', map: ['#S.*.*G#'], dir: 1, prog: 'until flag [ if crystal [ C ] else [ F ] ]', a: 5,
+       why: 'The flag is 5 squares away. On a crystal the rover collects instead of moving, so every square still takes one move.'},
+    ],
+  },
+
+  // Quiz points (total 100): each program question, each vocabulary word, each sentence blank.
+  quizPoints: {question: 4, vocab: 2, blank: 2},
+
+  // Study guide points (total 100): each sample question, each vocabulary word, each sentence blank.
+  points: {sample: 4, vocab: 2, blank: 1},
+
+  tips: ['Find the rover, the way it faces, and the way each tank\'s cannon points.', 'Trace the program one block at a time. A shell stops at the first tank or rock.', 'For if / else, ask: is the condition true or false right now?', 'Count blocks: a repeat or an if / else is 1 block, plus the blocks inside.'],
+
+  // ---------- Study guide sample questions (each has a twin in the quiz) ----------
+  samples: [
+    {lesson: 7, q: 'Three tanks are lined up ahead. Which program destroys them all?', map: ['#S.>.>.>#'], dir: 1,
+     opts: [{p: 'repeat 3 [ F ]'}, {p: 'repeat 3 [ X ]'}, {p: 'repeat 2 [ X ]'}], a: 1,
+     why: 'Each shell destroys the first tank it hits, so 3 tanks need 3 shells. repeat 3 [ F ] crashes into the first tank.'},
+    {lesson: 7, kind: 'num', q: 'A shell stops at the first tank or rock it hits. How many tanks does <span class="code">repeat 3 [ X ]</span> destroy?', map: ['#S.>#>>#'], dir: 1, prog: 'repeat 3 [ X ]', a: 1,
+     why: 'The first shell hits the first tank. The rock stops the other two shells, so only 1 tank is destroyed.'},
+    {lesson: 7, q: 'What does <b>if tank ahead</b> do?',
+     opts: ['fires the cannon every time', 'runs the blocks inside only when a tank is in the line of fire', 'moves the rover to the tank'], a: 1,
+     why: 'If tank ahead checks first. The blocks inside run only when a tank is in front of the cannon, so no shell is wasted.'},
+    {lesson: 8, q: 'The rover faces <b>up</b>. The tank is to its <b>right</b>. Which program destroys it?', map: ['#####', '#S.>#', '#####'], dir: 0,
+     opts: [{p: 'X'}, {p: 'L X'}, {p: 'R X'}], a: 2,
+     why: 'Aim first: turn right so the cannon faces the tank, then fire. Firing up or left only hits a rock.'},
+    {lesson: 8, q: 'The tank is <b>behind</b> the rover. Which program destroys it?', map: ['#<.S..#'], dir: 1,
+     opts: [{p: 'X'}, {p: 'R X'}, {p: 'R R X'}], a: 2,
+     why: 'Two right turns make the rover face the other way (behind it). Then fire.'},
+    {lesson: 9, q: 'You have one shell per tank. Which patrol destroys both tanks?', map: ['########', '#.^..^.#', '#S.....#', '########'], dir: 1,
+     opts: [{p: 'repeat 5 [ F L X R ]'}, {p: 'repeat 5 [ F L iftank [ X ] R ]'}, {p: 'repeat 5 [ F iftank [ X ] ]'}], a: 1,
+     why: 'The patrol looks up at every square but fires only if a tank is there. Firing every time wastes shells on empty squares and runs out.'},
+    {lesson: 9, q: 'When does <b>repeat until no tanks left</b> stop?',
+     opts: ['after 10 times', 'when the last tank is destroyed', 'when the rover reaches the flag'], a: 1,
+     why: 'It keeps repeating the blocks inside and stops by itself the moment no tanks are left.'},
+    {lesson: 9, kind: 'num', q: 'How many times does <b>move forward</b> run before the loop stops?', map: ['#########', '#.^..^..#', '#S......#', '#########'], dir: 1, prog: 'untilclear [ F L iftank [ X ] R ]', a: 4,
+     why: 'The last tank is above the 4th square. When it is destroyed, no tanks are left and the loop stops.'},
+    {lesson: 10, q: 'The <b>block limit is 6</b>. Which program fits the limit and destroys every tank?', map: ['#########', '#..^.^.^#', '#S......#', '#########'], dir: 1, maxBlocks: 6,
+     opts: [{p: 'F F L X R F F L X R F F L X R'}, {p: 'repeat 3 [ F F L X R ]'}, {p: 'repeat 3 [ F L X R ]'}], a: 1,
+     why: 'One copy of the pattern is F F L X R. In a repeat that is 6 blocks. Writing it out 3 times is 15 blocks, over the limit. repeat 3 [ F L X R ] fires at empty squares and runs out of shells.'},
+    {lesson: 10, kind: 'num', q: 'How many blocks is this program?', prog: 'repeat 4 [ F F L X R ]', a: 6,
+     why: 'The repeat is 1 block, plus 5 blocks inside: 1 + 5 = 6 blocks.'},
+    {lesson: 11, q: 'In <b>if path ahead … else …</b>, when do the blocks under <b>else</b> run?',
+     opts: ['when the path ahead is open', 'when the path ahead is blocked', 'every time'], a: 1,
+     why: 'Else runs when the condition is false. "Path ahead" is false when a rock or tank blocks the way.'},
+    {lesson: 11, q: 'Which program reaches the flag?', map: ['######', '#S...#', '####.#', '#G...#', '######'], dir: 1,
+     opts: [{p: 'until flag [ if ahead [ F ] else [ L ] ]'}, {p: 'until flag [ if ahead [ F ] else [ R ] ]'}, {p: 'until flag [ F ]'}], a: 1,
+     why: 'The road turns right at each wall. Path open: move. Wall: turn right. Turning left at the first wall faces a rock.'},
+    {lesson: 11, kind: 'num', q: 'How many times does <b>turn right</b> run?', map: ['#######', '#S....#', '#####.#', '#G....#', '#######'], dir: 1, prog: 'until flag [ if ahead [ F ] else [ R ] ]', a: 2,
+     why: 'The rover turns right at the end of the top road and again at the bottom of the right side. Then it drives to the flag.'},
+    {lesson: 12, q: 'Which program collects every crystal and reaches the flag?', map: ['#S.**.*G#'], dir: 1,
+     opts: [{p: 'until flag [ F C ]'}, {p: 'until flag [ F if crystal [ C ] ]'}, {p: 'until flag [ F ]'}], a: 1,
+     why: 'Move, then collect only if there is a crystal. until flag [ F C ] tries to collect on an empty square, and until flag [ F ] leaves the crystals.'},
+    {lesson: 12, kind: 'num', q: 'How many times does <b>collect crystal</b> run?', map: ['#S*.**.*G#'], dir: 1, prog: 'until flag [ if crystal [ C ] else [ F ] ]', a: 4,
+     why: 'Collect runs only on a square with a crystal. There are 4 crystals on the road.'},
+    {lesson: 13, q: 'Which program gets past the tanks and walls to the flag?', map: ['########', '#S..>..#', '######.#', '#G.<...#', '########'], dir: 1,
+     opts: [{p: 'until flag [ if tank [ X ] else [ if ahead [ F ] else [ R ] ] ]'}, {p: 'until flag [ if ahead [ F ] else [ R ] ]'}, {p: 'until flag [ if ahead [ F ] else [ X ] ]'}], a: 0,
+     why: 'Three choices need a nested if: tank ahead, fire; else path ahead, move; else turn right. Without the tank check the rover never clears the road.'},
+    {lesson: 13, q: 'There are three choices: a tank ahead, an open path, or a wall. What do you use?',
+     opts: ['one repeat', 'an if / else inside another if / else', 'a block limit'], a: 1,
+     why: 'One if / else has two choices. For three, put another if / else under else (a nested if).'},
+  ],
+
+  // ---------- Quiz (similar to the samples, never the same) ----------
+  quiz: [
+    {lesson: 7, q: 'Four tanks are lined up ahead. Which program destroys them all?', map: ['#S.>.>.>.>#'], dir: 1,
+     opts: [{p: 'repeat 4 [ X ]'}, {p: 'repeat 3 [ X ]'}, {p: 'repeat 4 [ F ]'}], a: 0,
+     why: 'One shell per tank: 4 tanks, 4 shells. repeat 3 [ X ] leaves one tank, and repeat 4 [ F ] crashes into the first tank.'},
+    {lesson: 7, kind: 'num', q: 'A shell stops at the first tank or rock it hits. How many tanks does <span class="code">repeat 3 [ X ]</span> destroy?', map: ['#S>.>#.>#'], dir: 1, prog: 'repeat 3 [ X ]', a: 2,
+     why: 'The first 2 shells hit the 2 tanks before the rock. The rock stops the last shell, so the tank behind it is safe.'},
+    {lesson: 7, q: 'Why put <b>fire cannon</b> inside <b>if tank ahead</b>?',
+     opts: ['so the rover never wastes a shell on an empty square', 'so the rover moves faster', 'so the tank cannot move'], a: 0,
+     why: 'Shells are limited. If tank ahead fires only when a tank is in the line of fire.'},
+    {lesson: 8, q: 'The rover faces <b>right</b>. The tank is <b>above</b> it. Which program destroys it?', map: ['###', '#^#', '#S#', '###'], dir: 1,
+     opts: [{p: 'R X'}, {p: 'L X'}, {p: 'X'}], a: 1,
+     why: 'Facing right, a left turn points the cannon up at the tank. Turning right points it down at a rock.'},
+    {lesson: 8, q: 'One tank is <b>ahead</b> and one is <b>behind</b>. Which program destroys both?', map: ['#<.S.>#'], dir: 1,
+     opts: [{p: 'X R R X'}, {p: 'X R X'}, {p: 'X X'}], a: 0,
+     why: 'Fire at the tank ahead, turn around with two right turns, then fire at the tank behind.'},
+    {lesson: 9, q: 'You have one shell per tank. Which patrol destroys both tanks?', map: ['########', '#S.....#', '#.v..v.#', '########'], dir: 1,
+     opts: [{p: 'repeat 5 [ F R iftank [ X ] L ]'}, {p: 'repeat 5 [ F L iftank [ X ] R ]'}, {p: 'repeat 5 [ F R X L ]'}], a: 0,
+     why: 'The tanks are below the road. Facing right, a right turn looks down. Fire only if a tank is there, then turn back.'},
+    {lesson: 9, q: 'Which loop keeps a patrol going when you <b>don\'t know</b> how many tanks there are?',
+     opts: ['repeat 5 times', 'repeat until no tanks left', 'if tank ahead'], a: 1,
+     why: 'Repeat until no tanks left stops by itself when the last tank is gone, so you don\'t have to count.'},
+    {lesson: 9, kind: 'num', q: 'How many times does <b>move forward</b> run before the loop stops?', map: ['##########', '#.^...^.^#', '#S.......#', '##########'], dir: 1, prog: 'untilclear [ F L iftank [ X ] R ]', a: 7,
+     why: 'The last tank is above the 7th square. When it is destroyed, no tanks are left and the loop stops.'},
+    {lesson: 10, q: 'The <b>block limit is 7</b>. Which program fits the limit and destroys every tank?', map: ['############', '#S.........#', '#...v..v..v#', '############'], dir: 1, maxBlocks: 7,
+     opts: [{p: 'F F F R X L F F F R X L F F F R X L'}, {p: 'repeat 3 [ F F F R X L ]'}, {p: 'repeat 3 [ F F R X L ]'}], a: 1,
+     why: 'One copy is F F F R X L (move 3, look down, fire, look back). In a repeat that is 7 blocks. Written out 3 times it is 18 blocks, over the limit.'},
+    {lesson: 10, kind: 'num', q: 'How many blocks is this program?', prog: 'L repeat 5 [ F X ] R', a: 5,
+     why: 'Turn left (1) + repeat (1) + 2 blocks inside + turn right (1) = 5 blocks.'},
+    {lesson: 11, q: 'In <b>if crystal here … else …</b>, the rover is on an <b>empty</b> square. Which part runs?',
+     opts: ['the top part', 'the part under else', 'both parts'], a: 1,
+     why: 'No crystal means the condition is false, so the part under else runs.'},
+    {lesson: 11, q: 'Which program reaches the flag?', map: ['######', '#G...#', '####.#', '#S...#', '######'], dir: 1,
+     opts: [{p: 'until flag [ if ahead [ F ] else [ R ] ]'}, {p: 'until flag [ if ahead [ F ] else [ L ] ]'}, {p: 'until flag [ if ahead [ L ] else [ F ] ]'}], a: 1,
+     why: 'This road turns left at each wall. Path open: move. Wall: turn left. Turning right faces a rock and the rover goes back and forth forever.'},
+    {lesson: 11, kind: 'num', q: 'How many times does <b>turn left</b> run?', map: ['#######', '#.....#', '#.###.#', '#G#S..#', '#######'], dir: 1, prog: 'until flag [ if ahead [ F ] else [ L ] ]', a: 3,
+     why: 'The rover turns left at 3 walls: the end of the bottom road, the top right corner and the top left corner. Then it drives down to the flag.'},
+    {lesson: 12, q: 'Which program clears the road and reaches the flag?', map: ['#S.>..>.G#'], dir: 1,
+     opts: [{p: 'until flag [ F ]'}, {p: 'until flag [ if tank [ X ] else [ F ] ]'}, {p: 'until flag [ X F ]'}], a: 1,
+     why: 'Tank ahead: fire. Else: move. until flag [ F ] crashes into a tank, and until flag [ X F ] fires every time and runs out of shells.'},
+    {lesson: 12, kind: 'num', q: 'How many times does <b>move forward</b> run?', map: ['#S**.*.G#'], dir: 1, prog: 'until flag [ if crystal [ C ] else [ F ] ]', a: 6,
+     why: 'The flag is 6 squares away. On a crystal the rover collects instead of moving, so every square still takes one move.'},
+    {lesson: 13, q: 'Which program collects both crystals, clears the tanks and reaches the flag?', map: ['#S.*.>.*.>G#'], dir: 1,
+     opts: [{p: 'until flag [ if crystal [ C ] if tank [ X ] else [ F ] ]'}, {p: 'until flag [ if tank [ X ] else [ F ] ]'}, {p: 'until flag [ F if crystal [ C ] ]'}], a: 0,
+     why: 'Two checks every time: collect if there is a crystal, then fire if a tank is ahead, else move. Without the crystal check the crystals are left behind.'},
+    {lesson: 13, q: 'Which program gets past the tanks and walls to the flag?', map: ['########', '#G.<...#', '######.#', '#S..>..#', '########'], dir: 1,
+     opts: [{p: 'until flag [ if tank [ X ] else [ if ahead [ F ] else [ L ] ] ]'}, {p: 'until flag [ if tank [ X ] else [ if ahead [ F ] else [ R ] ] ]'}, {p: 'until flag [ if ahead [ F ] else [ L ] ]'}], a: 0,
+     why: 'A nested if: tank ahead, fire; else path ahead, move; else turn left (this road turns left). Without the tank check the tank blocks the road.'},
+    {lesson: 13, q: 'On a road with tanks, what should the rover check <b>first</b>?',
+     opts: ['tank ahead, so it fires before it tries to move', 'path ahead, so it moves first', 'crystal here, so it collects first'], a: 0,
+     why: 'Check the most important thing first. A tank counts as blocked, so check for it first and fire before trying to move.'},
+  ],
+};
+if (typeof module !== 'undefined') module.exports = REVIEW; else window.REVIEW = REVIEW;
+})();
