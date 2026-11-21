@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Lesson 16 Slides · Variable challenges · Easy level</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="../../../../favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Atkinson+Hyperlegible:wght@400;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<link rel="stylesheet" href="../../resources.css">
+<link rel="stylesheet" href="../../slides.css">
+<script async src="/analytics.js?v=1"></script>
+</head>
+<body class="lv-easy" style="--lv:#2E9363;--lv-ink:#FFFFFF;--lv-soft:#DDF2E6">
+<div class="lvlrib"><b>Easy level</b> · made for the Easy puzzles · <a href="../../../#easy">all Easy resources</a></div>
+<div class="deck" id="deck">
+<section class="slide title-slide">
+  <span class="label" style="font-size:22px">CyberTeaches Academy · Lesson 16 · Easy level</span>
+  <h1 style="margin:18px 0 22px">Variable <em>challenges</em></h1>
+  <p style="font-size:32px;max-width:900px">Mix the steps box with repeat until, if / else and two loops.</p>
+  <div class="foot"><span>cyberteaches.com/academy</span><span>Press → to start</span></div>
+  <div class="note">The last variables lesson: combining the steps box with repeat until at flag, if / else checks and two loops. Plan: warm-up 5 min, slides 15 min, classwork 12 min, coding 15 min, exit ticket 3 min.</div>
+</section>
+
+<section class="slide ">
+  <span class="label kicker">Today we will</span>
+  <h2>Learning goals</h2>
+  <ul class="big" style="font-weight:400;font-size:34px"><li>Put a variable loop inside <b>repeat until at flag</b></li><li>Check every square with an <b>if / else</b> inside repeat steps times</li><li>Fix the box with change steps by between <b>two loops</b></li></ul>
+  <div class="note">Read the goals aloud. Students check them off with the exit ticket at the end.</div>
+</section>
+
+<section class="slide ">
+  <span class="label kicker">Warm-up · 3 minutes</span>
+  <h2>Up and down</h2>
+  <div class="row"><div class="grow"><p>Clap <b>1, 2, 3, 4</b> times, then <b>3, 2, 1</b> times.</p><p class="big">You add 1 after every round on the way up. After the 4 claps, the box holds 5. What do you change it by to start the way down at 3?</p></div><div class="box" style="width:420px"><p class="big" style="margin:0 0 8px">Answer</p><p class="reveal" style="margin:0">Change by <b>-2</b> (5 - 2 = 3), then count down with -1.</p></div></div>
+  <div class="note">This is exactly puzzle 16.5 (Up and down). Do it as a class with a number card for the box.</div>
+</section>
+
+<section class="slide ">
+  <span class="label kicker">Quick review</span>
+  <h2>Blocks you know</h2>
+  <div class="row"><div class="grow"><p><span class="blk var">set steps to <span class="num">1</span></span> <span class="blk var">change steps by <span class="num">+1</span></span></p><p><div class="rep " style="display:inline-block"><div class="head">repeat <span class="num">steps</span> times</div><div class="inner"><span class="blk move">move forward</span></div></div> <div class="rep " style="display:inline-block"><div class="head">repeat until at flag</div><div class="inner"><span class="blk move">move forward</span></div></div></p><p><div class="rep logic" style="display:inline-block"><div class="head">if crystal here</div><div class="inner"><span class="blk act">collect crystal</span></div></div> <div class="rep logic" style="display:inline-block"><div class="head">if tank ahead</div><div class="inner"><span class="blk act">fire cannon</span></div></div></p></div></div>
+  <div class="note">Every block in this lesson is one students already know. The challenge is putting them together.</div>
+</section>
+
+<section class="slide ">
+  <span class="label kicker">Big idea</span>
+  <h2>Repeat until <em>at flag</em></h2>
+  <div class="row"><div class="board" data-map="########|#.....G#|#.######|#.#S.###|#.##.###|#....###|########" data-dir="1" style="--cell:52px"></div><div class="grow"><p>You do not have to count the laps. Keep spiraling until the rover is at the flag.</p><div class="prog reveal"><span class="blk var">set steps to <span class="num">1</span></span><div class="rep " style="display:inline-block"><div class="head">repeat until at flag</div><div class="inner"><div class="rep " style="display:inline-block"><div class="head">repeat <span class="num">steps</span> times</div><div class="inner"><span class="blk move">move forward</span></div></div><span class="blk move">turn right</span><span class="blk var">change steps by <span class="num">+1</span></span></div></div></div><p class="reveal" style="margin-top:14px"><span class="count">6 blocks</span></p></div></div>
+  <div class="note">Like puzzle 16.1. The variable grows inside a loop that stops at the flag.</div>
+</section>
+
+<section class="slide ">
+  <span class="label kicker">Big idea</span>
+  <h2>Check <em>every square</em></h2>
+  <div class="row"><div class="board" data-map="######|#G####|#*####|#.#S*#|#.##.#|#*.*.#|######" data-dir="1" style="--cell:52px"></div><div class="grow"><p>Only some squares have crystals. Put the check <b>inside</b> repeat steps times so it runs on every square.</p><div class="prog reveal"><span class="blk var">set steps to <span class="num">1</span></span><div class="rep " style="display:inline-block"><div class="head">repeat <span class="num">4</span> times</div><div class="inner"><div class="rep " style="display:inline-block"><div class="head">repeat <span class="num">steps</span> times</div><div class="inner"><span class="blk move">move forward</span><div class="rep logic" style="display:inline-block"><div class="head">if crystal here</div><div class="inner"><span class="blk act">collect crystal</span></div></div></div></div><span class="blk move">turn right</span><span class="blk var">change steps by <span class="num">+1</span></span></div></div></div><p class="reveal" style="margin-top:14px"><span class="count">8 blocks</span></p></div></div>
+  <div class="note">Like puzzle 16.3. A check for each corner (like if tank ahead) goes after repeat steps times instead.</div>
+</section>
+
+<section class="slide ">
+  <span class="label kicker">Big idea</span>
+  <h2>Fix the box <em>between loops</em></h2>
+  <div><div class="board" data-map="############|#S*.*..*.**#|############" data-dir="1" style="--cell:56px"></div><div class="row" style="margin-top:18px;align-items:flex-start"><div class="prog reveal" style="flex-direction:row;gap:14px;align-items:flex-start;font-size:22px"><span class="blk var">set steps to <span class="num">1</span></span><div class="rep " style="display:inline-block"><div class="head">repeat <span class="num">3</span> times</div><div class="inner"><div class="rep " style="display:inline-block"><div class="head">repeat <span class="num">steps</span> times</div><div class="inner"><span class="blk move">move forward</span></div></div><span class="blk act">collect crystal</span><span class="blk var">change steps by <span class="num">+1</span></span></div></div><div><span class="blk var">change steps by <span class="num">-2</span></span></div><div class="rep " style="display:inline-block"><div class="head">repeat <span class="num">2</span> times</div><div class="inner"><div class="rep " style="display:inline-block"><div class="head">repeat <span class="num">steps</span> times</div><div class="inner"><span class="blk move">move forward</span></div></div><span class="blk act">collect crystal</span><span class="blk var">change steps by <span class="num">-1</span></span></div></div></div><div class="grow"><p>Gaps 1, 2, 3, then 2, 1.</p><p class="reveal">After the first loop the box holds <b>4</b>. change -2 makes it 2.</p></div></div></div>
+  <div class="note">Like puzzle 16.5. Ask: what is in the box after the first loop? Students often guess 3.</div>
+</section>
+
+<section class="slide ">
+  <span class="label kicker">Let's try together · Puzzle 16.2</span>
+  <h2>Double laps</h2>
+  <div class="row">
+      <div class="board" data-map="########|#......#|#.####.#|#.#S.#.#|#....#.#|######.#|######G#|########" data-dir="1" data-cell="55px"></div>
+      <div class="grow"><p>Each length is used twice. How many repeat steps blocks go inside the loop?</p>
+        <div class="prog reveal" style="font-size:21px"><span class="blk var">set steps to <span class="num">1</span></span><div class="rep "><div class="head">repeat <span class="num">3</span> times</div><div class="inner"><div class="rep "><div class="head">repeat <span class="num">steps</span> times</div><div class="inner"><span class="blk move">move forward</span></div></div><span class="blk move">turn right</span><div class="rep "><div class="head">repeat <span class="num">steps</span> times</div><div class="inner"><span class="blk move">move forward</span></div></div><span class="blk move">turn right</span><span class="blk var">change steps by <span class="num">+2</span></span></div></div></div>
+        <p class="reveal" style="margin-top:16px"><span class="count">9 blocks</span></p></div></div>
+  <div class="note">Puzzle 16.2: two repeat steps times blocks, each followed by a turn right, then change steps by +2. Press → to reveal the answer.</div>
+</section>
+
+<section class="slide ">
+  <span class="label kicker">Think, pair, share · Puzzle 16.10</span>
+  <h2>Final mission</h2>
+  <div class="row">
+      <div class="board" data-map="######|#^####|#.####|#G####|#.####|#*#S.#|#.##*#|#.*..#|####.#|####v#|######" data-dir="1" data-cell="48px"></div>
+      <div class="grow"><p>Crystals and tanks at once. Where does each check go?</p>
+        <div class="prog reveal" style="font-size:21px"><span class="blk var">set steps to <span class="num">1</span></span><div class="rep "><div class="head">repeat <span class="num">4</span> times</div><div class="inner"><div class="rep "><div class="head">repeat <span class="num">steps</span> times</div><div class="inner"><span class="blk move">move forward</span><div class="rep logic"><div class="head">if crystal here</div><div class="inner"><span class="blk act">collect crystal</span></div><div class="elsel">else</div><div class="inner">&nbsp;</div></div></div></div><div class="rep logic"><div class="head">if tank ahead</div><div class="inner"><span class="blk act">fire cannon</span></div><div class="elsel">else</div><div class="inner">&nbsp;</div></div><span class="blk move">turn right</span><span class="blk var">change steps by <span class="num">+1</span></span></div></div></div>
+        <p class="reveal" style="margin-top:16px"><span class="count">10 blocks</span></p></div></div>
+  <div class="note">Puzzle 16.10: if crystal here inside repeat steps times; if tank ahead after it, before the turn. Press → to reveal the answer.</div>
+</section>
+
+<section class="slide ">
+  <span class="label kicker">When it doesn't work</span>
+  <h2>Debugging tips</h2>
+  <ul style="font-size:30px"><li><b>Can you count the laps?</b> If not, put repeat until at flag around your loop.</li><li><b>Every square or every corner?</b> A check for every square goes inside repeat steps times. A check for each corner goes after it.</li><li><b>Two loops, one box.</b> After the first loop, ask what is in the box now. Change it before the next loop starts.</li><li><b>Shells are limited.</b> Use if tank ahead so you only fire when a tank is there.</li></ul>
+  <div class="note">Encourage students to build in stages: get the plain spiral working, then add the crystal or tank check. Celebrate finishing the variables unit!</div>
+</section>
+
+<section class="slide ">
+  <span class="label kicker">Classwork · 12 minutes</span>
+  <h2>Unplugged practice</h2>
+  <div class="row"><div class="grow"><p>Use the worksheet. Write programs with letters:</p>
+    <p class="code" style="font-size:28px;line-height:1.5">F = move forward &nbsp; L = turn left &nbsp; R = turn right<br>C = collect crystal<br>X = fire cannon</p>
+    <p class="code" style="font-size:26px;margin:0 0 6px">set 3</p><p class="code" style="font-size:26px;margin:0 0 6px">change +1</p><p class="code" style="font-size:26px;margin:0 0 6px">repeat steps [ F ]</p><p class="code" style="font-size:26px;margin:0 0 6px">until flag [ … ]</p><p class="code" style="font-size:26px;margin:0 0 6px">if crystal here [ C ]</p><p class="code" style="font-size:26px;margin:0 0 6px">if tank ahead [ X ]</p></div>
+    <div class="box" style="width:400px"><p class="big" style="margin:0 0 8px">Parts</p><p style="margin:0">A. Trace the rover<br>B. Write the program<br>C. Which block, and where?<br>D. Design your own</p></div></div>
+  <div class="note">Hand out the Lesson 16 classwork. Students can work in pairs. Part D is a challenge for early finishers. The answer key is on the last page.</div>
+</section>
+
+<section class="slide title-slide">
+  <span class="label" style="font-size:22px">Your turn</span>
+  <h1 style="margin:18px 0 22px">Now <em>code</em> it!</h1>
+  <p style="font-size:34px">Go to <b>cyberteaches.com/academy</b>, sign in, and solve puzzles <b>16.1 to 16.10</b>.</p>
+  <p style="font-size:28px;opacity:.85">Build the variable loop first and test it, then add the check or the second loop.</p>
+  <div class="note">Students sign in with Google or the username and password from the Teacher Dashboard. Watch their stars live on the dashboard and help anyone stuck on the same puzzle.</div>
+</section>
+
+<section class="slide ">
+  <span class="label kicker">Exit ticket</span>
+  <h2>Before you go</h2>
+  <p>After a loop the box holds 5. The next loop should make gaps of 3, 2, 1. Which block goes between the two loops?</p>
+    <p class="reveal" style="margin-top:20px"><span class="code">change -2</span> (5 - 2 = 3), then the second loop changes by -1.</p>
+  <div class="note">Collect answers on sticky notes or in your LMS. Reveal the answer with → after students have written theirs.</div>
+</section>
+</div>
+<div class="notes" id="notes"><b>Teacher notes</b><span id="noteText"></span></div>
+<div class="bar"><button id="prev" aria-label="Previous slide">←</button><span id="num" style="color:#fff;font:700 14px var(--f-body);align-self:center;min-width:52px;text-align:center"></span><button id="next" aria-label="Next slide">→</button><button id="nBtn" title="Teacher notes (N)">Notes</button><button id="fBtn" title="Full screen (F)">Full screen</button></div>
+<script src="../../resources.js"></script>
+<script src="../../slides.js"></script>
+</body></html>

@@ -92,7 +92,7 @@ ${faq ? `<section class="block faq"><div class="wrap">
 
   const card = (c, href, tag, h, p, go) => `<a class="card" style="--c:var(${c})" href="${href}"><span class="tag">${tag}</span><h3>${h}</h3><p>${p}</p><span class="go">${go} →</span></a>`;
   const courseCards = {
-    rover: card('--c-acad', '../academy/', 'Block coding · 14 lessons · 420 puzzles', 'Rover Coding', 'Snap blocks together to drive a rover: sequences, repeat loops, repeat until, if / else and variables, then code tank battles. Easy, Medium and Hard levels.', 'Start coding'),
+    rover: card('--c-acad', '../academy/', 'Block coding · 16 lessons · 480 puzzles', 'Rover Coding', 'Snap blocks together to drive a rover: sequences, repeat loops, repeat until, if / else and variables, then code tank battles. Easy, Medium and Hard levels.', 'Start coding'),
     python: card('--c-py', '../academy/python/', 'Text coding · Python', 'Python Quest', 'Write real Python to guide an explorer through a jungle temple. Commands, for loops and more, with hints and friendly error messages.', 'Play Python Quest'),
     app: card('--c-csp', '../app-builder/', 'Project course · 37 lessons', 'App Builder', 'Find a real problem, design an app, learn variables, if / else, loops and lists, and publish it. Includes a Congressional App Challenge track.', 'Build an app'),
     csp: card('--c-csp', '../apcsp/', 'AP course · 35 lessons', 'AP Computer Science Principles', 'All five Big Ideas with pseudocode, labs, AP-style questions and a free full-length practice exam.', 'Start AP CSP'),
@@ -205,7 +205,7 @@ ${faq ? `<section class="block faq"><div class="wrap">
   <table class="path">
     <thead><tr><th>Step</th><th>Course</th><th>What your student learns</th></tr></thead>
     <tbody>
-      <tr><td>1</td><td><a href="../academy/">Rover Coding</a></td><td>Block coding: sequences, loops, if / else and variables, in 14 lessons of puzzles.</td></tr>
+      <tr><td>1</td><td><a href="../academy/">Rover Coding</a></td><td>Block coding: sequences, loops, if / else and variables, in 16 lessons of puzzles.</td></tr>
       <tr><td>2</td><td><a href="../academy/python/">Python Quest</a></td><td>Typing real Python: commands, loops and more, in an adventure game.</td></tr>
       <tr><td>3</td><td><a href="../app-builder/">App Builder</a></td><td>Designing and building an app for a real problem. Good for a project-based semester.</td></tr>
       <tr><td>4</td><td><a href="../apcsp/">AP Computer Science Principles</a></td><td>A full AP course: data, algorithms, the internet and the impact of computing, with a practice exam.</td></tr>

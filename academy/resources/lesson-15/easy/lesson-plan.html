@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Lesson 15 Lesson Plan · Variable practice · Easy level</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="../../../../favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Atkinson+Hyperlegible:wght@400;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<link rel="stylesheet" href="../../resources.css">
+<link rel="stylesheet" href="../../plan.css">
+<script async src="/analytics.js?v=1"></script>
+</head>
+<body class="lv-easy" style="--lv:#2E9363;--lv-ink:#FFFFFF;--lv-soft:#DDF2E6">
+<div class="lvlrib"><b>Easy level</b> · made for the Easy puzzles · <a href="../../../#easy">all Easy resources</a></div>
+<div class="toolbar">
+  <a class="btn" href="../../">← All lessons</a><span class="label">Teacher resources · Lesson 15 · Easy level</span><span class="spacer"></span>
+  <a class="btn" href="slides.html">Slides</a><a class="btn" href="classwork.html">Classwork</a>
+  <button class="btn primary" onclick="print()">Print lesson plan</button>
+</div>
+
+<article class="page">
+  <header class="head">
+    <div><span class="label">CyberTeaches Academy · Block coding · Grades 6 to 12 · Easy level</span><h1>Lesson 15: Variable practice</h1></div>
+    <div class="meta"><b>Time</b> 50 minutes<br><b>Unit</b> Variables<br><b>Puzzles</b> 15.1 to 15.10</div>
+  </header>
+
+  <section class="cols">
+    <div>
+      <h2>Overview</h2>
+      <p>A practice lesson with no new blocks. Students look at a growing or shrinking pattern, find its <b>start</b> (the first length) and its <b>change</b> (the jump between lengths), and turn them into set steps to and change steps by. Puzzles count up, count down, jump by 2 or 3, and add crystals, stairs and tank alleys.</p>
+      <h2>Learning objectives</h2>
+      <p class="muted">Students will be able to:</p>
+      <ol>
+        <li>Find the starting value and the change in a number pattern.</li>
+        <li>Use change steps by with negative numbers to count down.</li>
+        <li>Combine a variable loop with collect, turns and fire.</li>
+        <li>Trace the value of the variable for each lap of a loop.</li>
+      </ol>
+    </div>
+    <div>
+      <h2>Computer science standards</h2>
+      <p class="muted" style="margin-bottom:6px">CSTA K-12 Computer Science Standards (2017)</p>
+      <ul class="std">
+        <li><b>2-AP-11</b> Create clearly named variables that represent different data types and perform operations on their values.</li>
+        <li><b>2-AP-12</b> Design and iteratively develop programs that combine control structures, including nested loops and compound conditionals.</li>
+        <li><b>2-AP-13</b> Decompose problems and subproblems into parts to facilitate the design, implementation, and review of programs.</li>
+        <li><b>2-AP-17</b> Systematically test and refine programs using a range of test cases.</li>
+      </ul>
+      <h2>English language development standards</h2>
+      <p class="muted" style="margin-bottom:6px">WIDA ELD Standards Framework (2020), grades 6 to 8 band; the matching 9 to 12 standards apply in high school</p>
+      <ul class="std">
+        <li><b>ELD-SI.6-8</b> Language for Social and Instructional Purposes: follow and give step-by-step directions, and work with a partner to solve a problem.</li>
+        <li><b>ELD-MA.6-8.Explain</b> Language for Mathematics: explain patterns, counting and "how many times" with numbers and words.</li>
+        <li><b>ELD-SC.6-8.Explain</b> Language for Science: explain how a program works (interpretive and expressive), using sequence words such as first, next and then.</li>
+      </ul>
+    </div>
+  </section>
+
+  <h2>Vocabulary</h2>
+  <table class="voc">
+    <thead><tr><th>Word</th><th>Student-friendly meaning</th><th>Spanish</th></tr></thead>
+    <tbody>
+      <tr><td><b>variable</b></td><td>a named box that holds a number</td><td lang="es">variable</td></tr>
+      <tr><td><b>value</b></td><td>the number inside the box</td><td lang="es">valor</td></tr>
+      <tr><td><b>change by</b></td><td>add to or take away from the number in the box</td><td lang="es">cambiar</td></tr>
+      <tr><td><b>increase</b></td><td>make a number bigger</td><td lang="es">aumentar</td></tr>
+      <tr><td><b>decrease</b></td><td>make a number smaller</td><td lang="es">disminuir</td></tr>
+      <tr><td><b>difference</b></td><td>how far apart two numbers are (subtract to find it)</td><td lang="es">diferencia</td></tr>
+    </tbody>
+  </table>
+
+  <section class="cols">
+    <div>
+      <h2>Materials</h2>
+      <ul>
+        <li>Projector and the <a href="slides.html">Lesson 15 slides</a></li>
+        <li>Printed <a href="classwork.html">Lesson 15 classwork</a>, one per student (answer key for the teacher)</li>
+        <li>Student devices with a web browser: cyberteaches.com/academy</li>
+        <li>A class on the Teacher Dashboard, with student logins or Google sign-in</li>
+      </ul>
+    </div>
+    <div>
+      <h2>Before class</h2>
+      <ul>
+        <li>Try puzzles 15.1 to 15.10 yourself (the answer key is on the Teacher Dashboard).</li>
+
+      </ul>
+    </div>
+  </section>
+
+  <h2>Lesson procedure</h2>
+  <table class="proc">
+    <thead><tr><th style="width:15%">Time</th><th style="width:22%">Stage</th><th>Teacher and student activity</th></tr></thead>
+    <tbody>
+      <tr><td>5 min</td><td><b>Warm-up</b><br>What comes next? <span class="sl">Slide 3</span></td><td>"What comes next?": 1, 2, 3, 4 · 9, 7, 5, 3 · 1, 4, 7. Students name the start and the change for each list.</td></tr>
+      <tr><td>10 min</td><td><b>Direct instruction</b><br><span class="sl">Slides 4 to 7</span></td><td>Review the steps box. Fill in the start-and-change table together, then show the crystal gaps (puzzle 15.1) and a countdown spiral with change -2.</td></tr>
+      <tr><td>5 min</td><td><b>Guided practice</b><br>Think, pair, share <span class="sl">Slides 8 to 9</span></td><td>Solve puzzle 15.4 (corner crystals) together, then pairs plan puzzle 15.9 (tank alleys) before the reveal. Review the tips.</td></tr>
+      <tr><td>12 min</td><td><b>Unplugged practice</b><br>Classwork <span class="sl">Slide 11</span></td><td>Students complete Parts A to C and E in pairs. Part C turns lists of lengths into set and change blocks.</td></tr>
+      <tr><td>15 min</td><td><b>Independent practice</b><br>Code <span class="sl">Slide 12</span></td><td>Students solve puzzles 15.1 to 15.10: growing and shrinking gaps, jumps by 2, corner crystals, a left spiral, wide stairs, crystal rows, a countdown by 2, tank alleys and a climbing wall.</td></tr>
+      <tr><td>3 min</td><td><b>Closure</b><br>Exit ticket <span class="sl">Slide 13</span></td><td>Exit ticket: gaps 8, 6, 4, 2 → set steps to 8, change steps by -2.</td></tr>
+    </tbody>
+  </table>
+
+  <section class="cols">
+    <div>
+      <h2>Assessment</h2>
+      <ul>
+        <li><b>Formative:</b> classwork Parts A to C, observation during coding, and the exit ticket.</li>
+        <li><b>Progress:</b> the Teacher Dashboard shows stars per puzzle and a Lesson 15 score out of 100 (3 stars = 100, 2 stars = 90, 1 star = 80 per puzzle).</li>
+        <li><b>Success criteria:</b> the student solves at least 8 of 10 puzzles and can name the start and the change for a list of lengths.</li>
+      </ul>
+      <h2>Common misconceptions</h2>
+      <ul>
+        <li>Using +1 when the lengths shrink (the change must be a minus number).</li>
+        <li>Setting steps to the last length instead of the first one.</li>
+        <li>Putting change steps by before repeat steps times, so the first lap is already the wrong length.</li>
+        <li>Thinking the change is always 1.</li>
+      </ul>
+    </div>
+    <div>
+      <h2>Differentiation</h2>
+      <ul>
+        <li><b>Support:</b> give a table with two columns (lap, value of steps) to fill in before running the program.</li>
+        <li><b>Extension:</b> 3 stars on 15.9 and 15.10; write a list of lengths for a partner and ask them for the set and change blocks.</li>
+        <li><b>Accessibility:</b> blocks can be added by tapping or by dragging, and moved with the ▲▼ buttons.</li>
+      </ul>
+      <h2>Supports for English learners</h2>
+      <ul>
+        <li><b>Visuals:</b> post the block pictures and vocabulary on a word wall; point to blocks while you say them.</li>
+        <li><b>Gestures:</b> students stand and turn left or right with the rover before coding turns.</li>
+        <li><b>Partners:</b> pair students to read programs aloud; first-language talk is welcome.</li>
+        <li><b>Sentence frames:</b> “The lengths 1, 2, 3 grow, so I change steps by ___.” “The lengths 6, 4, 2 shrink, so I change steps by ___.” “The first length is 5, so I set steps to ___.”</li>
+        <li><b>Classwork Part E</b> uses a word bank, pictures and fill-in sentences.</li>
+      </ul>
+      <h2>Connections</h2>
+      <ul>
+        <li><b>Math:</b> arithmetic sequences: a start value and a common difference (1, 4, 7, 10 …).</li>
+        <li><b>Everyday life:</b> a countdown timer, saving the same amount each week.</li>
+      </ul>
+      <h2>Next lesson</h2>
+      <p>Lesson 16, Variable challenges: challenges that mix variables with repeat until at flag, if / else checks and two loops.</p>
+    </div>
+  </section>
+  <footer class="pfoot">CyberTeaches Academy · cyberteaches.com/academy · Free to use and adapt for your classes.</footer>
+</article>
+</body></html>

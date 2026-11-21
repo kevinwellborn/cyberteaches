@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Lesson 15 Classwork · Variable practice</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="../../../favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Atkinson+Hyperlegible:wght@400;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<link rel="stylesheet" href="../resources.css">
+<link rel="stylesheet" href="../classwork.css">
+<script async src="/analytics.js?v=1"></script>
+</head>
+<body class="lv-hard" style="--lv:#C8402F;--lv-ink:#FFFFFF;--lv-soft:#F9DFDA">
+<div class="lvlrib"><b>Hard level</b> · made for the Hard puzzles · <a href="../#hard">all Hard resources</a></div>
+<div class="toolbar">
+  <a class="btn" href="../">← All lessons</a><span class="label">Teacher resources · Lesson 15</span><span class="spacer"></span>
+  <a class="btn" href="slides.html">Slides</a><a class="btn" href="lesson-plan.html">Lesson plan</a>
+  <a class="btn" href="classwork.docx" download>Word (.docx)</a>
+  <a class="btn" href="classwork-digital.docx" download title="Student-only version to type in. Upload to Google Drive and assign in Google Classroom with Make a copy for each student.">Google Classroom (digital)</a>
+  <button class="btn" id="pStudents">Print student pages</button>
+  <button class="btn primary" id="pAll">Print with answer key</button>
+</div>
+
+<section class="page">
+  <div class="head">
+    <div><span class="label">CyberTeaches Academy · Lesson 15 classwork</span><h1>Variable practice</h1></div>
+    <div class="name">Name<div></div>Date<div></div></div>
+  </div>
+  <div class="key-ref"><span><b>F</b> = move forward</span><span><b>L</b> = turn left</span><span><b>R</b> = turn right</span><span><b>C</b> = collect crystal</span><span><b>X</b> = fire cannon</span><span><b>set 3</b> = set steps to 3</span><span><b>change +1</b> = change steps by +1</span><span><b>repeat steps [ F ]</b> = repeat steps times</span></div>
+  <h2>Part A · Trace the rover <span class="pts">Follow the program one block at a time.</span></h2>
+  <p class="instr">Draw the rover's path with a pencil.</p>
+  <div class="q"><span class="num">1</span><div class="task">
+    <div class="board" data-map="############|#S.*..*...*#|############" data-dir="1"></div>
+    <div class="lines"><p style="margin:0 0 6px">Program: <span class="code">set 2 repeat 3 [ repeat steps [ F ] C change +1 ]</span></p>
+      <p style="margin:0">Write the value of steps each time the rover collects. How many squares does it move in all?</p><div class="ln"></div><div class="ln"></div></div>
+  </div></div>
+<div class="q"><span class="num">2</span><div class="task">
+    <div class="board" data-map="#########|#S......#|#######.#|#######.#|#######.#|#####G..#|#########" data-dir="1"></div>
+    <div class="lines"><p style="margin:0 0 6px">Program: <span class="code">set 6 repeat 3 [ repeat steps [ F ] R change -2 ]</span></p>
+      <p style="margin:0">What is in the box on each lap? Mark where the rover stops.</p><div class="ln"></div></div>
+  </div></div>
+  <h2>Part B · Write the program <span class="pts">Use the letters above.</span></h2>
+  <p class="instr">Use set, change and repeat steps. Write the starting number and the change.</p>
+  <div class="q"><span class="num">3</span><div class="task">
+    <div class="board" data-map="###|#S#|#.#|#.#|#.#|#*#|#.#|#.#|#*#|#.#|#*#|#*#|###" data-dir="2"></div>
+    <div class="lines"><p style="margin:0 0 6px">The gaps shrink. Write the program.</p><div class="ln"></div><div class="ln"></div><p style="margin:6px 0 0">How many blocks? ______</p></div>
+  </div></div>
+<div class="q"><span class="num">4</span><div class="task">
+    <div class="board" data-map="#############|#S.##########|##...########|####....#####|#######.....#|###########G#|#############" data-dir="1"></div>
+    <div class="lines"><p style="margin:0 0 6px">Write a program for the wide stairs.</p><div class="ln"></div><div class="ln"></div><p style="margin:6px 0 0">How many blocks? ______</p></div>
+  </div></div>
+</section>
+
+<section class="page">
+  <h2 style="margin-top:0">Part C · Start and change <span class="pts">Find the two numbers</span></h2>
+  <p class="instr">Each row lists the lengths of the laps or gaps. Write the set and change blocks that make them.</p>
+  <table class="pat">
+    <thead><tr><th style="width:4%">#</th><th style="width:46%">Lengths</th><th>set · change</th></tr></thead>
+    <tbody>
+      <tr><td>5</td><td>1, 2, 3, 4, 5</td><td class="blank"></td></tr>
+      <tr><td>6</td><td>5, 4, 3, 2, 1</td><td class="blank"></td></tr>
+      <tr><td>7</td><td>2, 4, 6, 8</td><td class="blank"></td></tr>
+      <tr><td>8</td><td>10, 7, 4, 1</td><td class="blank"></td></tr>
+    </tbody>
+  </table>
+  <h2>Part D · Design your own <span class="pts">Challenge</span></h2>
+  <p class="instr">Draw a road where the gaps or laps count down (like 5, 4, 3, 2, 1) or jump by 2, with crystals (◆) or a flag (⚑). Write one program with set, change and repeat steps, then swap with a partner and check it.</p>
+  <div class="task">
+    <div class="board blank" data-map="........|........|........|........|........" data-cell="40px"></div>
+    <div class="lines"><p style="margin:0 0 6px">My program:</p><div class="ln"></div><div class="ln"></div><div class="ln"></div>
+      <p style="margin:8px 0 0">Blocks: ______ &nbsp; Partner checked: ______</p></div>
+  </div>
+  <h2>Reflect</h2>
+  <p class="instr" style="margin-bottom:4px">How do you find the change number from a list of lengths?</p>
+  <div class="ln"></div><div class="ln"></div>
+</section>
+
+<section class="page">
+  <h2 style="margin-top:0">Part E · Words and pictures <span class="pts">Language practice</span></h2>
+  <p class="instr">Draw a line from each word to its meaning.</p>
+  <div class="match">
+    <ol class="mw"><li><b>variable</b> <span class="es" lang="es">(variable)</span></li><li><b>value</b> <span class="es" lang="es">(valor)</span></li><li><b>change by</b> <span class="es" lang="es">(cambiar)</span></li><li><b>increase</b> <span class="es" lang="es">(aumentar)</span></li><li><b>decrease</b> <span class="es" lang="es">(disminuir)</span></li></ol>
+    <ol class="mm" type="a"><li>add to or take away from the number in the box</li><li>make a number smaller</li><li>a named box that holds a number</li><li>make a number bigger</li><li>the number inside the box</li></ol>
+  </div>
+  <p class="instr" style="margin-top:14px">Circle the best answer.</p>
+  <div class="mc"><p><b>9.</b> The lengths are 3, 2, 1. Which change block?</p><div class="opts"><span><b>a)</b> <span class="blk var">change steps by <span class="num">+1</span></span></span><span><b>b)</b> <span class="blk var">change steps by <span class="num">-1</span></span></span><span><b>c)</b> <span class="blk var">change steps by <span class="num">+3</span></span></span></div></div>
+  <div class="mc"><p><b>10.</b> The lengths are 2, 4, 6. What do you set steps to first?</p><div class="opts"><span><b>a)</b> 2</span><span><b>b)</b> 4</span><span><b>c)</b> 6</span></div></div>
+  <p class="instr" style="margin-top:14px">Finish each sentence. Use the word bank.</p>
+  <div class="bank"><b>Word bank:</b> <span>+1</span><span>-2</span><span>5</span></div>
+  <p class="frame"><b>11.</b> The lengths 1, 2, 3 grow, so I change steps by <span class="gap"></span>.</p>
+  <p class="frame"><b>12.</b> The lengths 6, 4, 2 shrink, so I change steps by <span class="gap"></span>.</p>
+  <p class="frame"><b>13.</b> The first length is 5, so I set steps to <span class="gap"></span>.</p>
+</section>
+
+<section class="page key">
+  <div class="head">
+    <div><span class="label">Lesson 15 classwork</span><h1>Answer key</h1></div>
+    <span class="teacher-tag">Teacher only</span>
+  </div>
+  <h2 style="margin-top:0">Lesson timing (50 minutes)</h2>
+  <div class="plan"><b>5 min</b><span>Warm-up: What comes next? (slide 3)</span><b>10 min</b><span>Direct instruction: slides 4 to 7</span><b>5 min</b><span>Guided practice: think, pair, share and debugging tips (slides 8 to 9)</span><b>12 min</b><span>Unplugged practice: this classwork, in pairs. Part D for early finishers</span><b>15 min</b><span>Independent practice: code puzzles 15.1 to 15.10 at cyberteaches.com/academy</span><b>3 min</b><span>Closure: exit ticket (last slide)</span></div>
+  <h2>Part A</h2>
+  <p><b>1.</b> <span class="answer">steps = 2, then 3, then 4. It moves 2 + 3 + 4 = 9 squares.</span> The box starts at 2 and grows by 1 after every crystal, so each gap is one square longer.</p>
+  <p><b>2.</b> <span class="answer">Lap 1: 6. Lap 2: 4. Lap 3: 2. It stops on the flag.</span> change steps by -2 takes 2 away after every lap, so the laps are 6, 4 and 2 squares long.</p>
+  <h2>Part B</h2>
+  <p><b>3.</b> <span class="answer code">set 4 repeat 4 [ repeat steps [ F ] C change -1 ]</span> · 6 blocks</p>
+  <p><b>4.</b> <span class="answer code">set 1 repeat 4 [ repeat steps [ F ] R F L change +1 ]</span> · 8 blocks</p>
+  <h2>Part C</h2>
+  <table class="pat">
+    <thead><tr><th>#</th><th>Answer</th></tr></thead>
+    <tbody>
+      <tr><td>5</td><td class="answer"><span class="code">set 1 · change +1</span></td></tr>
+      <tr><td>6</td><td class="answer"><span class="code">set 5 · change -1</span></td></tr>
+      <tr><td>7</td><td class="answer"><span class="code">set 2 · change +2</span></td></tr>
+      <tr><td>8</td><td class="answer"><span class="code">set 10 · change -3</span></td></tr>
+    </tbody>
+  </table>
+  <h2>Part E</h2>
+  <p><b>Matching:</b> 1–c, 2–e, 3–a, 4–d, 5–b</p>
+  <p><b>9.</b> <span class="answer">b) change steps by -1</span></p>
+  <p><b>10.</b> <span class="answer">a) 2</span></p>
+  <p><b>11.</b> <span class="answer">+1</span></p>
+  <p><b>12.</b> <span class="answer">-2</span></p>
+  <p><b>13.</b> <span class="answer">5</span></p>
+  <h2>Part D and Reflect</h2>
+  <p>Answers vary. Look for a correct start direction, a program a partner can follow, and the difference between two lengths. Reflection: subtract one length from the next: 2, 4, 6 jumps by 2, so change steps by +2. If the lengths get smaller, the change is a minus number.</p>
+  <h2>Exit ticket</h2>
+  <p>set steps to 8, and change steps by -2.</p>
+</section>
+
+<script src="../resources.js"></script>
+<script>
+document.getElementById('pAll').onclick=()=>{ document.body.classList.remove('no-key'); print() };
+document.getElementById('pStudents').onclick=()=>{ document.body.classList.add('no-key'); print(); setTimeout(()=>document.body.classList.remove('no-key'),500) };
+</script>
+</body></html>

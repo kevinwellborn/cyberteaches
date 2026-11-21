@@ -141,4 +141,16 @@ module.exports = {
     extension: '3 stars on 14.9 and 14.10; write a program that draws a spiral with change steps by +2.',
   },
 },
+15: {
+  together: [{ k: 4, ask: 'Corner crystals: this spiral turns left. What goes inside the loop, and in what order?', note: 'Puzzle 15.4: repeat steps times (F), collect crystal, turn left, change steps by +1.' }, { k: 9, ask: 'Tank alleys on the right: where does the fire block go?', note: 'Puzzle 15.9: after the drive, turn right, fire, turn left, then change steps by +1.' }],
+  plan: {
+    code: 'Students solve puzzles 15.1 to 15.10: growing and shrinking gaps, jumps by 2, left and right spirals, stairs going up, crystal rows, a countdown by 2, tank alleys and a cliff to climb down.',
+  },
+},
+16: {
+  together: [{ k: 2, ask: 'Each length is used twice. How many repeat steps blocks go inside the loop?', note: 'Puzzle 16.2: two repeat steps times blocks, each followed by a turn left, then change steps by +2.' }, { k: 10, ask: 'Crystals and tanks at once. Where does each check go?', note: 'Puzzle 16.10: if crystal here inside repeat steps times; if tank ahead after it, before the left turn.' }],
+  plan: {
+    code: 'Students solve puzzles 16.1 to 16.10: left spirals with repeat until, double laps, crystal and tank checks, up-and-down gaps, crystal stairs going up, two-sided tank alleys and a final mission.',
+  },
+},
 };
