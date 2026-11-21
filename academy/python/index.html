@@ -179,7 +179,30 @@ header.top{display:flex;align-items:center;gap:12px;padding:12px 16px;max-width:
 .q .why{font-size:15px;margin-top:6px;color:var(--muted)}
 .vocab{display:grid;grid-template-columns:auto 1fr;gap:4px 14px;font-size:16px;margin-top:10px}
 .vocab b{font-family:var(--f-display)}
+.video{max-width:1000px;margin:0 auto}
+.vstage{position:relative;aspect-ratio:16/9;background:linear-gradient(160deg,#0E2A22,#1F4B36);border-radius:20px;overflow:hidden;color:#F2F7F4;display:grid;grid-template-columns:1fr 1fr;gap:16px;padding:22px 22px 70px}
+.vstage.lava{background:linear-gradient(160deg,#1A0A07,#4A1A0C)}
+.vleft{display:flex;flex-direction:column;gap:12px;min-width:0;align-self:center}
+.vtitle{font-family:var(--f-display);font-weight:800;font-size:clamp(20px,3vw,32px);line-height:1.15}
+.vbul{margin:0;padding-left:20px;font-size:clamp(14px,1.7vw,18px);line-height:1.5}
+.vbul li{opacity:0;transform:translateY(6px);transition:opacity .4s,transform .4s}.vbul li.on{opacity:1;transform:none}
+.vcode{background:rgba(5,15,11,.85);border-radius:12px;padding:12px 14px;font-family:var(--f-mono);white-space:pre;font-size:clamp(13px,1.6vw,18px);line-height:1.55;overflow:hidden;color:var(--code-ink)}
+.vcode:empty{display:none}
+.vcode .ln{display:block;min-height:1.55em}
+.vright{display:flex;flex-direction:column;justify-content:center;gap:6px;min-width:0}
+.vright canvas{width:100%;border-radius:12px;display:block}
+.vlabel{font-weight:700;font-size:14px;opacity:.85;min-height:18px}
+.vcap{position:absolute;left:0;right:0;bottom:0;padding:10px 18px;background:rgba(0,0,0,.62);font-size:clamp(14px,1.8vw,19px);line-height:1.4;text-align:center;min-height:58px;display:flex;align-items:center;justify-content:center}
+.vbig{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;background:rgba(0,0,0,.45);text-align:center;padding:20px}
+.vbig[hidden]{display:none}
+.vbig .btn{font-size:20px;padding:14px 26px}
+.vbar{display:flex;align-items:center;gap:8px;margin-top:10px;flex-wrap:wrap}
+.vticks{flex:1;display:flex;gap:4px;min-width:160px}
+.vticks button{flex:1;height:10px;border-radius:5px;border:0;background:var(--line);cursor:pointer;padding:0}
+.vticks button.done{background:var(--good)}.vticks button.cur{background:var(--gold)}
+@media (max-width:700px){ .vstage{grid-template-columns:1fr;aspect-ratio:auto;padding:16px 16px 84px} }
 .learn-nav{display:flex;gap:10px;margin-top:14px;align-items:center}
+.stop.review{border-style:dashed}
 .stop.learnstop{width:auto;border-radius:30px;padding:0 16px;font-size:15px;gap:6px;display:flex}
 @media (max-width:600px){ .q .opts{grid-template-columns:1fr} .slide{padding:16px} }
 .foot{color:var(--muted);font-size:13px;text-align:center;padding:20px}
@@ -223,6 +246,26 @@ header.top{display:flex;align-items:center;gap:12px;padding:12px 16px;max-width:
     <div class="learn-top"><button class="btn small" id="learnBack">← Lessons</button><h1 id="learnTitle"></h1><span class="spacer"></span><div class="sdots" id="sdots"></div></div>
     <div class="slide" id="slide"></div>
     <div class="learn-nav"><button class="btn" id="slPrev">← Back</button><span class="spacer"></span><span class="crumb" id="slCount"></span><button class="btn primary" id="slNext">Next →</button></div>
+  </div>
+</main>
+
+<main id="video" class="wrap" hidden>
+  <div class="video">
+    <div class="learn-top"><button class="btn small" id="videoBack">← Lessons</button><h1 id="videoTitle"></h1></div>
+    <div class="vstage" id="vstage">
+      <div class="vleft"><div class="vtitle" id="vTitle"></div><ul class="vbul" id="vBul"></ul><div class="vcode" id="vCode"></div></div>
+      <div class="vright"><div class="vlabel" id="vLabel"></div><canvas id="vCanvas"></canvas></div>
+      <div class="vcap" id="vCap"></div>
+      <div class="vbig" id="vBig"></div>
+    </div>
+    <div class="vbar">
+      <button class="btn small" id="vPrev" title="Previous part">⏮</button>
+      <button class="btn small primary" id="vPlay">▶ Play</button>
+      <button class="btn small" id="vNext" title="Next part">⏭</button>
+      <div class="vticks" id="vTicks"></div>
+      <span class="crumb" id="vCount"></span>
+      <button class="btn small" id="vDone">Skip to practice →</button>
+    </div>
   </div>
 </main>
 
@@ -278,7 +321,7 @@ header.top{display:flex;align-items:center;gap:12px;padding:12px 16px;max-width:
 <p class="foot">Python Quest is an original CyberTeaches game. Python runs right in your browser.</p>
 
 <script src="pyrun.js?v=2"></script>
-<script src="levels.js?v=6"></script>
+<script src="levels.js?v=7"></script>
 <script src="game.js?v=5"></script>
 <script src="../firebase-config.js"></script>
 <script src="../cloud.js?v=22"></script>
@@ -293,7 +336,7 @@ $('#gameTitle').innerHTML = esc(PQ_GAME_NAME) + '<small>' + esc(PQ_WORLD) + '</s
 // ---------- saved progress (this browser + the student's account) ----------
 const KEY = 'cyberteaches:py';
 const load = () => { try { return JSON.parse(localStorage.getItem(KEY)) || {} } catch(e){ return {} } };
-let data = load(); data.stars = data.stars || {}; data.code = data.code || {}; data.learned = data.learned || {};
+let data = load(); data.stars = data.stars || {}; data.code = data.code || {}; data.learned = data.learned || {}; data.watched = data.watched || {};
 // Gear (outfits and weapons): unlocked by solving the level named in PQ_GEAR, so it follows the student's stars everywhere.
 const GEAR = window.PQ_GEAR || [];
 const hasGear = g => !g.soon && (!g.level || !!data.stars[g.level]);
@@ -335,7 +378,7 @@ const SFX = {
 };
 const setSoundBtn = () => { $('#soundBtn').textContent = muted ? '🔇' : '🔊' };
 setSoundBtn();
-$('#soundBtn').onclick = () => { muted = !muted; try { localStorage.setItem('academy.muted', muted ? '1' : '0') } catch(e){} setSoundBtn() };
+$('#soundBtn').onclick = () => { muted = !muted; try { localStorage.setItem('academy.muted', muted ? '1' : '0') } catch(e){} setSoundBtn(); if(muted){ try { speechSynthesis.cancel() } catch(e){} if(vAudio && !vAudio.paused){ vAudio.pause(); if(vAudio.onended) vAudio.onended() } } };
 
 // ---------- home ----------
 function render(){
@@ -353,15 +396,21 @@ function render(){
     card.append(head);
     if(!ls.soon){
       const stops = h('div', 'stops');
+      const levelBtn = l => {
+        const st = data.stars[l.id] || 0, b = h('button', 'stop' + (st ? ' done' : '') + (l.review ? ' review' : ''), l.num);
+        b.title = (l.review ? 'Review: ' : '') + l.name; if(st) b.append(h('span', 'st', '★'.repeat(st)));
+        b.onclick = () => go(l.id); if(locked) b.disabled = true; return b;
+      };
+      lv.filter(l => l.review).forEach(l => stops.append(levelBtn(l)));
+      if(PQ_VIDEO[ls.n]){
+        const b = h('button', 'stop learnstop' + (data.watched[ls.n] ? ' done' : ''), '🎬 Video' + (data.watched[ls.n] ? ' ✓' : ''));
+        b.title = 'Watch: ' + PQ_VIDEO[ls.n].title; b.onclick = () => { location.hash = 'video-' + ls.n }; if(locked) b.disabled = true; stops.append(b);
+      }
       if(PQ_LEARN[ls.n]){
         const b = h('button', 'stop learnstop' + (data.learned[ls.n] ? ' done' : ''), '📖 Learn' + (data.learned[ls.n] ? ' ✓' : ''));
         b.title = 'Learn the idea first, then practice in the levels'; b.onclick = () => { location.hash = 'learn-' + ls.n }; if(locked) b.disabled = true; stops.append(b);
       }
-      lv.forEach(l => {
-        const s = data.stars[l.id] || 0, b = h('button', 'stop' + (s ? ' done' : ''), l.k);
-        b.title = l.name; if(s) b.append(h('span', 'st', '★'.repeat(s)));
-        b.onclick = () => go(l.id); if(locked) b.disabled = true; stops.append(b);
-      });
+      lv.filter(l => !l.review).forEach(l => stops.append(levelBtn(l)));
       card.append(stops);
     }
     box.append(card);
@@ -390,8 +439,11 @@ function renderGear(){
     box.append(row);
   });
 }
+// Before the first new-idea level of a lesson: the explainer video, then the Learn slides (each only until done once).
+const gateFor = l => !l || l.review || l.k !== 1 ? null : PQ_VIDEO[l.lesson] && !data.watched[l.lesson] ? 'video-' + l.lesson : PQ_LEARN[l.lesson] && !data.learned[l.lesson] ? 'learn-' + l.lesson : null;
+const goGated = l => { const g = gateFor(l); if(g) location.hash = g; else go(l.id) };
 const firstOpen = () => (LEVELS.find(l => !data.stars[l.id] && !isLocked(l.lesson)) || LEVELS.find(l => !isLocked(l.lesson)) || LEVELS[0]).id;
-$('#startBtn').onclick = () => { const l = LEVELS.find(x => x.id === firstOpen()); if(PQ_LEARN[l.lesson] && !data.learned[l.lesson]) location.hash = 'learn-' + l.lesson; else go(l.id) };
+$('#startBtn').onclick = () => goGated(LEVELS.find(x => x.id === firstOpen()));
 $('#homeLink').onclick = e => { e.preventDefault(); location.hash = '' };
 $('#backBtn').onclick = () => { location.hash = '' };
 
@@ -492,14 +544,14 @@ function showOut(text){ const o = $('#out'); o.classList.add('show'); o.textCont
 function drawDots(){
   const box = $('#dots'); box.innerHTML = '';
   LEVELS.filter(l => l.lesson === cur.lesson).forEach(l => {
-    const d = h('button', 'dot' + (data.stars[l.id] ? ' done' : '') + (l.id === cur.id ? ' cur' : ''), l.k);
-    d.title = l.name; d.onclick = () => go(l.id); box.append(d);
+    const d = h('button', 'dot' + (data.stars[l.id] ? ' done' : '') + (l.id === cur.id ? ' cur' : ''), l.num);
+    d.title = l.name; d.onclick = () => goGated(l); box.append(d);
   });
 }
 function openLevel(id){
   cur = LEVELS.find(l => l.id === id) || LEVELS[0];
   running = false; errLine = runLine = 0;
-  $('#lvlTag').textContent = 'Lesson ' + cur.lesson + ' · Level ' + cur.k;
+  $('#lvlTag').textContent = 'Lesson ' + cur.lesson + ' · Level ' + cur.num + (cur.review ? ' · Review' : '');
   $('#lvlName').textContent = cur.name;
   $('#goalText').textContent = cur.goal + (cur.variants ? '  🔀 This temple changes every time you press Run (' + (cur.variants.length + 1) + ' versions). Your code must work on all of them.' : '');
   $('#tipText').textContent = cur.tip; $('#tipBox').open = false;
@@ -563,7 +615,7 @@ function finish(r){
 }
 $('#winHome').onclick = () => { $('#winModal').classList.remove('show'); location.hash = '' };
 $('#winAgain').onclick = () => { $('#winModal').classList.remove('show'); $('#resetBtn').onclick() };
-$('#winNext').onclick = () => { $('#winModal').classList.remove('show'); const next = LEVELS[LEVELS.indexOf(cur) + 1]; if(next) go(next.id) };
+$('#winNext').onclick = () => { $('#winModal').classList.remove('show'); const next = LEVELS[LEVELS.indexOf(cur) + 1]; if(next) goGated(next) };
 
 // ---------- learn: teach the idea first (slides + quick check), then practice in the levels ----------
 let L = null, sIdx = 0, demoPlayers = [];
@@ -638,22 +690,119 @@ $('#slPrev').onclick = () => { if(sIdx > 0){ sIdx--; showSlide() } };
 $('#slNext').onclick = () => {
   if(sIdx < L.slides.length - 1){ sIdx++; showSlide(); return }
   data.learned[L.n] = true; saveLocal();
-  const first = LEVELS.find(l => l.lesson === L.n && !data.stars[l.id]) || LEVELS.find(l => l.lesson === L.n); go(first.id);
+  const first = LEVELS.find(l => l.lesson === L.n && !l.review && !data.stars[l.id]) || LEVELS.find(l => l.lesson === L.n && !l.review); go(first.id);
 };
 $('#learnBack').onclick = () => { location.hash = '' };
+
+// ---------- explainer video: narrated scenes (voice + captions), code that types itself, the explorer acting it out ----------
+let V = null, vIdx = 0, vTok = 0, vPlaying = false, vPlayer = null;
+const vVoice = () => { try { const vs = speechSynthesis.getVoices().filter(v => /^en(-|_)/i.test(v.lang)); return vs.find(v => /natural|google us|samantha|aria|jenny/i.test(v.name)) || vs.find(v => /en-us/i.test(v.lang)) || vs[0] } catch(e){ return null } };
+function openVideo(n){
+  V = PQ_VIDEO[n]; V.n = n; vIdx = 0; vPlaying = false;
+  $('#videoTitle').textContent = 'Lesson ' + n + ' · 🎬 ' + V.title;
+  if(!vPlayer){ vPlayer = new PQ.Player($('#vCanvas')) }
+  const lesson = LEVELS.find(l => l.lesson === n && !l.review);
+  $('#vstage').className = 'vstage' + (lesson && lesson.theme === 'lava' ? ' lava' : '');
+  showScene(false);
+  const big = $('#vBig'); big.hidden = false;
+  big.innerHTML = '<div class="vtitle">' + esc(V.title) + '</div><div>About ' + Math.max(1, Math.round(V.scenes.reduce((t, sc) => t + sc.say.split(/\s+/).length, 0) / 150)) + ' minutes · turn your sound on 🔊</div>';
+  const b = h('button', 'btn primary', '▶ Watch the video'); b.onclick = () => { big.hidden = true; playVideo() }; big.append(b);
+}
+function stopVideo(){ vTok++; vPlaying = false; vHush(); if(vPlayer) vPlayer.stop(); const pb = $('#vPlay'); if(pb) pb.textContent = '▶ Play' }
+function playVideo(){ $('#vBig').hidden = true; vPlaying = true; $('#vPlay').textContent = '⏸ Pause'; showScene(true) }
+function vTicks(){
+  const t = $('#vTicks'); t.innerHTML = '';
+  V.scenes.forEach((sc, i) => { const b = h('button', i < vIdx ? 'done' : i === vIdx ? 'cur' : ''); b.title = sc.title; b.onclick = () => { stopVideo(); vIdx = i; playVideo() }; t.append(b) });
+  $('#vCount').textContent = (vIdx + 1) + ' / ' + V.scenes.length;
+}
+let vAudio = null;
+function vSay(text, tok, src){
+  return new Promise(res => {
+    const est = Math.max(2200, text.split(/\s+/).length * 400); let done = false; const fin = () => { if(!done){ done = true; res() } };
+    const speak = () => {
+      if(done || tok !== vTok) return fin();
+      if(!muted && window.speechSynthesis){
+        try {
+          speechSynthesis.cancel();
+          const u = new SpeechSynthesisUtterance(text); u.lang = 'en-US'; u.rate = 0.95; const v = vVoice(); if(v) u.voice = v;
+          u.onend = fin; u.onerror = () => setTimeout(fin, est); speechSynthesis.speak(u); setTimeout(fin, est * 2 + 4000); return;
+        } catch(e){}
+      }
+      setTimeout(fin, est);
+    };
+    if(!muted && src){
+      try {
+        const a = vAudio || (vAudio = new Audio()); a.onended = fin; a.onerror = speak; a.src = src;
+        const pr = a.play(); if(pr && pr.catch) pr.catch(speak); setTimeout(fin, est * 2 + 4000); return;
+      } catch(e){}
+    }
+    speak();
+  });
+}
+const vHush = () => { try { speechSynthesis.cancel() } catch(e){} try { if(vAudio){ vAudio.onended = vAudio.onerror = null; vAudio.pause() } } catch(e){} };
+function vType(code, tok){
+  const el = $('#vCode');
+  return new Promise(res => { let i = 0; const step = () => { if(tok !== vTok) return res(); i++; el.innerHTML = highlight(code.slice(0, i)); if(i < code.length) setTimeout(step, 32); else res() }; step() });
+}
+function vDemos(demos, tok){
+  return demos.reduce((pr, d) => pr.then(() => new Promise(res => {
+    if(tok !== vTok) return res();
+    vPlayer.setLevel(d); vPlayer.gear = wear(); vPlayer.speed = 1; $('#vLabel').textContent = d.label || '';
+    if(!d.prog) return setTimeout(res, 600);
+    setTimeout(() => { if(tok !== vTok) return res(); const r = PQ.simulate(vPlayer.level, d.prog); vPlayer.play(r.events, () => setTimeout(res, 800)) }, 500);
+  })), Promise.resolve());
+}
+function showScene(play){
+  const sc = V.scenes[vIdx], tok = ++vTok;
+  vHush();
+  $('#vTitle').textContent = sc.title; $('#vCap').textContent = sc.say; $('#vLabel').textContent = '';
+  const ul = $('#vBul'); ul.innerHTML = ''; (sc.bullets || []).forEach(t => ul.append(h('li', play ? '' : 'on', esc(t))));
+  const withDemo = sc.demos ? sc : (V.scenes.slice(0, vIdx + 1).reverse().find(x => x.demos) || V.scenes.find(x => x.demos)), lastDemo = withDemo && withDemo.demos[0];
+  vPlayer.stop(); if(lastDemo) vPlayer.setLevel(lastDemo); vPlayer.gear = wear();
+  $('#vCode').innerHTML = play ? '' : highlight(sc.code || '').replace(/^<span class="ln"> <\/span>$/, '');
+  if(!sc.code) $('#vCode').innerHTML = '';
+  vTicks();
+  if(!play) return;
+  ul.querySelectorAll('li').forEach((li, i) => setTimeout(() => { if(tok === vTok) li.classList.add('on') }, 700 + i * 1500));
+  const visual = (sc.code ? vType(sc.code, tok) : Promise.resolve()).then(() => sc.demos && sc.demos.some(d => d.prog) ? vDemos(sc.demos, tok) : null);
+  Promise.all([vSay(sc.say, tok, V.voice ? 'voice/v' + V.n + '-' + (vIdx + 1) + '.mp3?v=' + V.voice : null), visual]).then(() => setTimeout(() => {
+    if(tok !== vTok || !vPlaying) return;
+    if(vIdx < V.scenes.length - 1){ vIdx++; showScene(true) } else videoEnd();
+  }, 700));
+}
+function videoEnd(){
+  stopVideo(); data.watched[V.n] = true; saveLocal(); vIdx = V.scenes.length - 1; vTicks();
+  $('#vTicks').querySelectorAll('button').forEach(b => b.className = 'done');
+  const big = $('#vBig'); big.hidden = false; big.innerHTML = '<div class="vtitle">✅ Nice work!</div><div>Next: a quick check, then practice from easy to hard.</div>';
+  const again = h('button', 'btn', '↺ Watch again'); again.onclick = () => { vIdx = 0; playVideo() };
+  const next = h('button', 'btn primary', 'Next →'); next.onclick = videoNext;
+  const row = h('div', 'row'); row.append(again, next); big.append(row);
+}
+function videoNext(){
+  data.watched[V.n] = true; saveLocal(); const n = V.n;
+  if(PQ_LEARN[n] && !data.learned[n]) location.hash = 'learn-' + n;
+  else { const first = LEVELS.find(l => l.lesson === n && !l.review && !data.stars[l.id]) || LEVELS.find(l => l.lesson === n && !l.review); go(first.id) }
+}
+$('#vPlay').onclick = () => { if(vPlaying) stopVideo(); else playVideo() };
+$('#vPrev').onclick = () => { stopVideo(); vIdx = Math.max(0, vIdx - 1); playVideo() };
+$('#vNext').onclick = () => { stopVideo(); if(vIdx < V.scenes.length - 1){ vIdx++; playVideo() } else videoEnd() };
+$('#vDone').onclick = () => { stopVideo(); videoNext() };
+$('#videoBack').onclick = () => { location.hash = '' };
+try { speechSynthesis.getVoices(); speechSynthesis.onvoiceschanged = () => {} } catch(e){}
 
 // ---------- routes: #level-1-3 opens a level, no hash = lesson list ----------
 function go(id){ location.hash = 'level-' + id }
 function route(){
-  const m = location.hash.match(/^#level-(\d+-\d+)$/);
+  const m = location.hash.match(/^#level-(\d+-r?\d+)$/);
   $('#winModal').classList.remove('show');
-  const ln = location.hash.match(/^#learn-(\d+)$/);
+  const ln = location.hash.match(/^#learn-(\d+)$/), vn = location.hash.match(/^#video-(\d+)$/);
   demoPlayers.forEach(p => p.destroy()); demoPlayers.length = 0;
-  $('#learn').hidden = true;
-  const lockedLesson = m ? Number(m[1].split('-')[0]) : ln ? Number(ln[1]) : 0;
+  $('#learn').hidden = true; stopVideo(); $('#video').hidden = true;
+  const lockedLesson = m ? Number(m[1].split('-')[0]) : ln ? Number(ln[1]) : vn ? Number(vn[1]) : 0;
   if(lockedLesson && isLocked(lockedLesson)){ history.replaceState(null, '', location.pathname); player.stop(); $('#play').hidden = true; $('#home').hidden = false; cur = null; render(); startArt(); $('#lockNote').hidden = false; $('#lockNote').textContent = '🔒 Your teacher has locked Lesson ' + lockedLesson + ' for now. Pick a lesson that is open.'; return }
   $('#lockNote').hidden = true;
   if(m && LEVELS.some(l => l.id === m[1])){ $('#home').hidden = true; $('#play').hidden = false; openLevel(m[1]); window.scrollTo(0, 0) }
+  else if(vn && PQ_VIDEO[vn[1]]){ player.stop(); $('#home').hidden = true; $('#play').hidden = true; $('#video').hidden = false; cur = null; openVideo(Number(vn[1])); window.scrollTo(0, 0) }
   else if(ln && PQ_LEARN[ln[1]]){ player.stop(); $('#home').hidden = true; $('#play').hidden = true; $('#learn').hidden = false; cur = null; openLearn(Number(ln[1])) }
   else { player.stop(); $('#play').hidden = true; $('#home').hidden = false; cur = null; render(); startArt() }
 }
