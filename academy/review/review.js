@@ -1,19 +1,30 @@
 // Shared code for the unit review pages (study guide and quiz). Content comes from unit-N/data.js (window.REVIEW).
 // Draws programs as blocks and maps as boards (resources.js draws the boards).
 (function(){
-  const NAMES = {F: ['move', 'move forward'], L: ['move', 'turn left'], R: ['move', 'turn right'], C: ['act', 'collect crystal']};
+  const NAMES = {F: ['move', 'move forward'], L: ['move', 'turn left'], R: ['move', 'turn right'], C: ['act', 'collect crystal'], X: ['act', 'fire cannon']};
+  const COND = {ahead: 'path ahead', left: 'path left', right: 'path right', crystal: 'crystal here', tank: 'tank ahead'};
+  // Program text: letters, "repeat 3 [ … ]", "until flag [ … ]", "untilclear [ … ]" (repeat until no tanks left),
+  // "iftank [ … ]" (if tank ahead) and "if ahead [ … ] else [ … ]" (if / else; ahead, left, right, crystal, tank).
   function parse(src){
     const t = src.replace(/\[/g, ' [ ').replace(/\]/g, ' ] ').trim().split(/\s+/); let i = 0;
+    const body = () => { i++; const b = list(); i++; return b };
     const list = () => { const out = []; while(i < t.length && t[i] !== ']'){ const w = t[i++];
-      if(w === 'repeat'){ const n = t[i++]; i++; const body = list(); i++; out.push({n, body}) }
-      else if(w === 'until'){ i += 2; const body = list(); i++; out.push({until: true, body}) }
+      if(w === 'repeat'){ const n = t[i++]; out.push({n, body: body()}) }
+      else if(w === 'until'){ i++; out.push({until: true, body: body()}) }
+      else if(w === 'untilclear') out.push({clear: true, body: body()});
+      else if(w === 'iftank') out.push({iftank: true, body: body()});
+      else if(w === 'if'){ const n = {cond: t[i++], body: body()}; if(t[i] === 'else'){ i++; n.elseBody = body() } out.push(n) }
       else out.push(w) } return out };
     return list();
   }
   const blk = w => `<span class="blk ${NAMES[w][0]}">${NAMES[w][1]}</span>`;
+  const box = (cls, head, body, extra) => `<div class="rep${cls}"><div class="head">${head}</div><div class="inner">${html(body) || '&nbsp;'}</div>${extra || ''}</div>`;
   const html = p => p.map(n => typeof n === 'string' ? blk(n)
-    : `<div class="rep${n.until ? ' until' : ''}"><div class="head">${n.until ? 'repeat until at flag' : `repeat <span class="num">${n.n}</span> times`}</div><div class="inner">${html(n.body)}</div></div>`).join('');
-  const prog = src => `<div class="prog" aria-label="Program: ${src}">${html(parse(src))}</div>`;
+    : n.cond ? box(' logic', 'if ' + COND[n.cond], n.body, n.elseBody ? `<div class="elsel">else</div><div class="inner">${html(n.elseBody) || '&nbsp;'}</div>` : '')
+    : n.iftank ? box(' logic', 'if tank ahead', n.body)
+    : n.clear ? box('', 'repeat until no tanks left', n.body)
+    : box(n.until ? ' until' : '', n.until ? 'repeat until at flag' : `repeat <span class="num">${n.n}</span> times`, n.body)).join('');
+  const prog = src => `<div class="prog" aria-label="Program: ${src.replace(/untilclear/g, 'until no tanks').replace(/iftank/g, 'if tank')}">${html(parse(src))}</div>`;
   const board = (rows, dir, cell) => `<div class="board" data-map="${rows.join('|')}" data-dir="${dir}" style="--cell:${cell || 40}px"></div>`;
   const opt = o => typeof o === 'string' ? `<span class="otext">${o}</span>` : o.p ? prog(o.p) : blk(o.b);
   const L = 'ABCD';

@@ -80,7 +80,7 @@ const HELPERS = `
     return `<h1>${R.name}: Quiz (${R.title})</h1>
       <p><b>Name:</b> ______________________ &nbsp; <b>Class:</b> ____________ &nbsp; <b>Date:</b> ____________</p>
       <p>${document.querySelectorAll('#quiz .q').length} questions, 100 points. For each question, type the letter, the word or the number in the shaded box.</p>
-      <p><b>Block letters:</b> ${code('F')} move forward &nbsp;·&nbsp; ${code('L')} turn left &nbsp;·&nbsp; ${code('R')} turn right &nbsp;·&nbsp; ${code('C')} collect crystal</p>
+      <p><b>Block letters:</b> ${code('F')} move forward &nbsp;·&nbsp; ${code('L')} turn left &nbsp;·&nbsp; ${code('R')} turn right &nbsp;·&nbsp; ${code('C')} collect crystal${JSON.stringify(R).includes(' X') ? ` &nbsp;·&nbsp; ${code('X')} fire cannon` : ''}</p>
       <p><b>Word bank:</b> ${R.fillBank.map(w => `[ ${w} ]`).join(' ')}</p>`
       + [...document.querySelectorAll('#quiz .qsec')].map(h => {
         const qs = []; let n = h.nextElementSibling; while (n && !n.classList.contains('qsec')) { if (n.classList.contains('q')) qs.push(n); n = n.nextElementSibling }

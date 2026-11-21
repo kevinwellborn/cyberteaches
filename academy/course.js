@@ -84,7 +84,10 @@ const UNITS = [
 const REVIEWS = [
   {n:1, guideId:101, quizId:201, after:6, name:'Unit 1 Lesson 1-6 review', short:'L1-6 review', lessons:'1-6', path:'review/unit-1/', color:'#7A4BD6',
    guideBlurb:'Review Lessons 1 to 6 (repeat and repeat until): big ideas, vocabulary and 17 sample questions with answers. Study it before the quiz.',
-   quizBlurb:'29 questions on Lessons 1 to 6 for 100 points: vocabulary, sentences and programs, like the study guide. Turn it in once; you see right and wrong answers after your teacher shares them. Your teacher opens it when it is time.'}
+   quizBlurb:'29 questions on Lessons 1 to 6 for 100 points: vocabulary, sentences and programs, like the study guide. Turn it in once; you see right and wrong answers after your teacher shares them. Your teacher opens it when it is time.'},
+  {n:2, guideId:102, quizId:202, after:13, name:'Unit 2 Lesson 7-13 review', short:'L7-13 review', lessons:'7-13', path:'review/unit-2/', color:'#7A4BD6',
+   guideBlurb:'Review Lessons 7 to 13 (tanks, patrols, block limits and if / else): big ideas, vocabulary and 17 sample questions with answers. Study it before the quiz.',
+   quizBlurb:'29 questions on Lessons 7 to 13 for 100 points: vocabulary, sentences and programs, like the study guide. Turn it in once; you see right and wrong answers after your teacher shares them. Your teacher opens it when it is time.'}
 ];
 const UPCOMING = [
   {title:'Destroy walls', blurb:'Blast cracked walls, collect charges, and find keys to locked gates.'}
