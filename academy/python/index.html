@@ -722,7 +722,7 @@ function vSay(text, tok){
       try {
         speechSynthesis.cancel();
         const u = new SpeechSynthesisUtterance(text); u.lang = 'en-US'; u.rate = 0.95; const v = vVoice(); if(v) u.voice = v;
-        u.onend = fin; u.onerror = fin; speechSynthesis.speak(u); setTimeout(fin, est * 2 + 4000); return;
+        u.onend = fin; u.onerror = () => setTimeout(fin, est); speechSynthesis.speak(u); setTimeout(fin, est * 2 + 4000); return;
       } catch(e){}
     }
     setTimeout(fin, est);
