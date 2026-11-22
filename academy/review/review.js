@@ -1,4 +1,4 @@
-// Shared code for the unit review pages (study guide and quiz). Content comes from unit-N/data.js (window.REVIEW).
+// Shared code for the unit review pages (study guide and quiz), Rover Coding and Python Quest. Content comes from unit-N/data.js (window.REVIEW).
 // Draws programs as blocks and maps as boards (resources.js draws the boards).
 (function(){
   const NAMES = {F: ['move', 'move forward'], L: ['move', 'turn left'], R: ['move', 'turn right'], C: ['act', 'collect crystal'], X: ['act', 'fire cannon']};
@@ -26,14 +26,18 @@
     : box(n.until ? ' until' : '', n.until ? 'repeat until at flag' : `repeat <span class="num">${n.n}</span> times`, n.body)).join('');
   const prog = src => `<div class="prog" aria-label="Program: ${src.replace(/untilclear/g, 'until no tanks').replace(/iftank/g, 'if tank')}">${html(parse(src))}</div>`;
   const board = (rows, dir, cell) => `<div class="board" data-map="${rows.join('|')}" data-dir="${dir}" style="--cell:${cell || 40}px"></div>`;
-  const opt = o => typeof o === 'string' ? `<span class="otext">${o}</span>` : o.p ? prog(o.p) : blk(o.b);
+  // Python Quest pages: o.c is Python code, q.code shows code, q.lv draws a temple (academy/python/review/pyreview.js draws it).
+  const escH = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  const code = src => `<pre class="pyc">${escH(src)}</pre>`;
+  const temple = lv => `<div class="pqpic" data-lv='${JSON.stringify(lv).replace(/'/g, '&#39;')}'></div>`;
+  const opt = o => typeof o === 'string' ? `<span class="otext">${o}</span>` : o.c != null ? code(o.c) : o.p ? prog(o.p) : blk(o.b);
   const L = 'ABCD';
-  const lessonTag = n => `<span class="ltag l${n}">Lesson ${n}</span>`;
+  const lessonTag = n => typeof n === 'string' ? `<span class="ltag lp">${n}</span>` : `<span class="ltag l${n}">Lesson ${n}</span>`;
   // One question. mode 'study' (answer in a details box), 'quiz' (radio buttons / number box, checked all at once at the end)
   // or 'practice' (radio buttons / number box with its own Check my answer button; the answer shows only after the student answers, see scored()).
   function question(q, i, mode){
     const name = q.id || `${mode}${i}`;
-    const pic = (q.map ? board(q.map, q.dir, q.map[0].length > 9 ? 34 : 40) : '') + (q.prog ? prog(q.prog) : '');
+    const pic = (q.map ? board(q.map, q.dir, q.map[0].length > 9 ? 34 : 40) : '') + (q.lv ? temple(q.lv) : '') + (q.prog ? prog(q.prog) : '') + (q.code ? code(q.code) : '');
     const inputs = mode !== 'study';
     // q.order shows the answer choices in another order (a list of option numbers); each radio keeps its option number as its value.
     const ord = q.opts ? (q.order || q.opts.map((o, k) => k)) : [];
@@ -115,5 +119,5 @@
     const rnd = () => { h = (h + 0x6D2B79F5) | 0; let t = Math.imul(h ^ (h >>> 15), 1 | h); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296 };
     return list => { const a = list.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(rnd() * (i + 1)); [a[i], a[j]] = [a[j], a[i]] } return a };
   }
-  window.Review = {parse, prog, board, blk, question, scored, checkRow, fillQuestion, read, write, earnedOf, lock, reveal, lessonTag, shuffler, LETTERS: L};
+  window.Review = {parse, prog, board, blk, code, temple, question, scored, checkRow, fillQuestion, read, write, earnedOf, lock, reveal, lessonTag, shuffler, LETTERS: L};
 })();
