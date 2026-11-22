@@ -326,6 +326,22 @@ service cloud.firestore {
       }
     }
 
+    // CTE pilot requests from cyberteaches.com/cte/. Anyone (signed in or not) can send one; only the admin reads them.
+    match /pilotRequests/{id} {
+      function str(k, n) { return request.resource.data[k] is string && request.resource.data[k].size() <= n; }
+      allow create: if request.resource.data.keys().hasOnly(['name', 'email', 'role', 'district', 'state', 'school', 'pathways', 'students', 'message', 'at'])
+        && request.resource.data.keys().hasAll(['name', 'email', 'role', 'district', 'state', 'at'])
+        && str('name', 80) && request.resource.data.name.size() > 0
+        && str('email', 120) && request.resource.data.email.matches('^[^@ ]+@[^@ ]+[.][^@ ]+$')
+        && str('role', 60) && str('district', 120) && request.resource.data.district.size() > 0 && str('state', 40)
+        && (!('school' in request.resource.data) || str('school', 120))
+        && (!('pathways' in request.resource.data) || str('pathways', 120))
+        && (!('students' in request.resource.data) || str('students', 40))
+        && (!('message' in request.resource.data) || str('message', 1000))
+        && str('at', 40);
+      allow read, update, delete: if isAdmin();
+    }
+
     // ---- Congressional Award Tracker (cyberteaches.com/award-tracker) ----
     // A student's record: only the student can change it. The student and the Advisors they listed
     // (signed in with that email, and the email verified) can read it. Nobody else can, including the admin.

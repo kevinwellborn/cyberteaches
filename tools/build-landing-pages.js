@@ -1,5 +1,5 @@
 // Builds the audience landing pages and the vocabulary hub:
-//   /teachers/  /homeschool/  /learn-to-code/  /learn-cybersecurity/  /vocabulary/
+//   /cte/  /teachers/  /homeschool/  /learn-to-code/  /learn-cybersecurity/  /vocabulary/
 // They exist so people find CyberTeaches when they search in their own words
 // ("free cybersecurity curriculum for high school", "homeschool coding curriculum", "coding games for students").
 // Called by tools/build-lesson-pages.js (run: node tools/build-lesson-pages.js), which passes the lesson list
@@ -18,7 +18,7 @@ module.exports = function build({ ROOT, SITE, vocabHub, lessonIndex }) {
     if (!t) throw new Error(`No lesson ${dir} ${id}`);
     return `<a href="../${t.href}">${esc(text || t.title)}</a>`;
   };
-  const navItems = [['teachers/', 'Teachers'], ['homeschool/', 'Homeschool'], ['learn-to-code/', 'Learn to code'], ['learn-cybersecurity/', 'Cybersecurity'], ['vocabulary/', 'Vocabulary']];
+  const navItems = [['cte/', 'CTE programs'], ['teachers/', 'Teachers'], ['homeschool/', 'Homeschool'], ['learn-to-code/', 'Learn to code'], ['learn-cybersecurity/', 'Cybersecurity'], ['vocabulary/', 'Vocabulary']];
 
   function layout({ slug, title, desc, h1, eyebrow, lead, ctas, shot, body, faq, crumb }) {
     const url = SITE + slug;
@@ -49,7 +49,7 @@ ${data.map(ld).join('\n')}
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap">
-<link rel="stylesheet" href="../assets/landing.css">
+<link rel="stylesheet" href="../assets/landing.css?v=2">
 <script async src="/analytics.js?v=1"></script>
 </head><body>
 <header class="site"><div class="wrap bar">
@@ -79,7 +79,7 @@ ${faq ? `<section class="block faq"><div class="wrap">
   <div class="cols">
     <div><a class="brand" href="../"><img src="../logo.png" alt="" width="32" height="32">CyberTeaches</a><p style="margin:14px 0 0;max-width:32ch">Free computer science and cybersecurity courses for grades 6 to 12 from teacher Kevin Wellborn.</p></div>
     <div><h2>Courses</h2><ul><li><a href="../academy/">Rover Coding</a></li><li><a href="../academy/python/">Python Quest</a></li><li><a href="../app-builder/">App Builder</a></li><li><a href="../apcsp/">AP CSP</a></li><li><a href="../apcsa/">AP CSA (Java)</a></li><li><a href="../apcybersecurity/">AP Cybersecurity</a></li><li><a href="../networking/">AP Networking</a></li><li><a href="../securityplus/">Security+</a></li></ul></div>
-    <div><h2>Who it's for</h2><ul><li><a href="../teachers/">Teachers</a></li><li><a href="../homeschool/">Homeschool families</a></li><li><a href="../learn-to-code/">Students learning to code</a></li><li><a href="../learn-cybersecurity/">Cybersecurity learners</a></li></ul></div>
+    <div><h2>Who it's for</h2><ul><li><a href="../cte/">CTE programs and districts</a></li><li><a href="../teachers/">Teachers</a></li><li><a href="../homeschool/">Homeschool families</a></li><li><a href="../learn-to-code/">Students learning to code</a></li><li><a href="../learn-cybersecurity/">Cybersecurity learners</a></li></ul></div>
     <div><h2>Study</h2><ul><li><a href="../vocabulary/">Vocabulary lists</a></li><li><a href="../apcsp/exam/">AP CSP practice exam</a></li><li><a href="../apcsa/exam/">AP CSA practice exams</a></li><li><a href="../academy/resources/">Teacher resources</a></li><li><a href="https://www.youtube.com/@cyberteaches" target="_blank" rel="noopener">YouTube lessons</a></li></ul></div>
   </div>
   <div class="legal"><span>© CyberTeaches · Kevin Wellborn</span><span>AP® is a trademark of the College Board, which does not endorse this site. CompTIA and Security+ are trademarks of CompTIA.</span></div>
@@ -177,6 +177,151 @@ ${faq ? `<section class="block faq"><div class="wrap">
       ['Does it work on Chromebooks and with Google Classroom?', 'Yes. Everything runs in the web browser, so Chromebooks, laptops and tablets work. Digital classwork comes as Word files you can post in Google Classroom, and you can share course links in any LMS.'],
       ['Are the lessons aligned to standards?', 'The coding lesson plans list CSTA K-12 Computer Science Standards and WIDA English Language Development Standards. The AP courses follow the College Board course units.'],
       ['Can I use it with Clever?', 'Yes, your school can add CyberTeaches as a link in the Clever Portal.'],
+    ],
+  });
+
+  // ---------- CTE programs and districts ----------
+  // The page districts are sent to. Free during early access; the Plans section is built so a paid district
+  // plan can be switched on later by editing the copy here. Pilot requests go to Firestore pilotRequests
+  // (create-only for the public, read by the admin on the Teacher Dashboard).
+  const step = (lvl, name, href, note) => `<li><span class="lvl">${lvl}</span>${href ? `<a href="../${href}">${name}</a>` : `<b>${name}</b>`}${note ? `<small>${note}</small>` : ''}</li>`;
+  const soon = '<span class="soon">Coming</span>';
+  layout({
+    slug: 'cte/', crumb: 'For CTE programs',
+    title: 'CTE Computer Science and Cybersecurity Pathways for Districts | CyberTeaches',
+    desc: 'Career-ready CTE pathways in cybersecurity, software development and networking for middle and high school: lesson plans, labs, a Teacher Dashboard and industry certification prep. Free district pilots.',
+    eyebrow: 'For CTE programs and districts',
+    h1: 'Career-ready computer science and cybersecurity pathways for your CTE program',
+    lead: 'Complete pathways from a first block-coding lesson to AP courses and CompTIA Security+ certification prep. Ready-to-teach lessons, hands-on labs and live progress data your teachers can use on day one. Free for schools and districts during early access.',
+    ctas: '<a class="btn primary" href="#pilot">Request a free pilot</a><a class="btn" href="#pathways">See the pathway maps</a>',
+    shot: { src: 'img/home/teacher-dashboard.png', h: 544, href: '../academy/teacher.html', alt: 'CyberTeaches Teacher Dashboard with class progress and a leaderboard' },
+    body: `
+<section class="band"><div class="wrap">
+  <div><b>3</b><span>CTE pathways</span></div>
+  <div><b>8</b><span>Courses, intro to capstone</span></div>
+  <div><b>700+</b><span>Practice and exam questions</span></div>
+  <div><b>$0</b><span>During early access</span></div>
+</div></section>
+
+<section class="block" id="pathways"><div class="wrap">
+  <div class="head"><span class="eyebrow">Pathway maps</span><h2>Introductory, concentrator and capstone courses in every pathway</h2><p>Each pathway follows the course sequence CTE programs already use, and fits the California Information and Communication Technologies (ICT) industry sector. Students can start in middle school and finish with an AP exam or an industry certification.</p></div>
+  <div class="grid">
+    <div class="card path" style="--c:var(--c-cyber)"><span class="tag">California ICT: Networking · Information Support and Services</span><h3>Cybersecurity</h3>
+      <ol class="seq">${step('Intro', 'Learn cybersecurity basics', 'learn-cybersecurity/', 'Phishing, passwords, safe devices')}${step('Concentrator', 'AP Cybersecurity', 'apcybersecurity/', '24 lessons · 11 labs')}${step('Capstone', 'CompTIA Security+ prep', 'securityplus/', 'SY0-801 · 27 lessons · 11 labs')}</ol>
+      <p class="cred">Certification: <b>CompTIA Security+</b></p></div>
+    <div class="card path" style="--c:var(--c-acad)"><span class="tag">California ICT: Software and Systems Development</span><h3>Software Development</h3>
+      <ol class="seq">${step('Intro', 'Rover Coding, then Python Quest', 'academy/', 'Block coding, then real Python')}${step('Concentrator', 'App Builder and AP CSP', 'app-builder/', 'Build and publish an app')}${step('Capstone', 'AP Computer Science A (Java)', 'apcsa/', '53 lessons · 2 practice exams')}</ol>
+      <p class="cred">Certification: <b>Python PCEP</b> ${soon}</p></div>
+    <div class="card path" style="--c:var(--c-net)"><span class="tag">California ICT: Networking</span><h3>Networking</h3>
+      <ol class="seq">${step('Intro', 'AP CSP (Internet unit)', 'apcsp/', 'How the Internet works')}${step('Concentrator', 'AP Networking', 'networking/', '4 labs · 2 practice exams')}${step('Capstone', 'CompTIA Network+ prep', '', 'Planned')}</ol>
+      <p class="cred">Certifications: <b>CompTIA Tech+</b> and <b>Network+</b> ${soon}</p></div>
+  </div>
+  <p class="note" style="margin-top:18px">Coding lesson plans already list CSTA computer science standards and WIDA English language development standards. A crosswalk to the California CTE Model Curriculum Standards for the ICT sector is in progress. Using another state's standards? Tell us in the pilot form.</p>
+</div></section>
+
+<section class="block alt"><div class="wrap split">
+  <div>
+    <span class="eyebrow">For CTE directors</span>
+    <h2 style="font-size:clamp(26px,3.2vw,34px);margin-top:6px">Built for how CTE programs are measured</h2>
+    <ul class="checks">
+      <li><b>Industry credential prep.</b> Security+ prep is live now, with more CompTIA and Python credentials on the way. Credential attainment counts toward Perkins V program quality.</li>
+      <li><b>Concentrator-ready sequences.</b> Two or more courses in one pathway, mapped to introductory, concentrator and capstone levels.</li>
+      <li><b>Progress data.</b> Scores out of 100 for every student and lesson, unit quiz results and a CSV download from the Teacher Dashboard.</li>
+      <li><b>Competition practice.</b> Skills for SkillsUSA and FBLA cybersecurity and coding events, CyberPatriot and the Congressional App Challenge.</li>
+      <li><b>Career connections.</b> Every pathway leads to real jobs: security analyst, software developer, network technician and IT support.</li>
+    </ul>
+  </div>
+  <a class="shot" href="../academy/resources/"><img src="../img/landing/teacher-resources.webp" alt="Teacher resources page with a lesson plan, slides and classwork for each lesson" width="1200" height="982" loading="lazy"></a>
+</div></section>
+
+<section class="block"><div class="wrap split">
+  <a class="shot" href="../academy/quiz/host.html"><img src="../img/landing/quiz-battle.webp" alt="Quiz Battle scoreboard on the projector" width="1200" height="726" loading="lazy"></a>
+  <div>
+    <span class="eyebrow">For CTE teachers</span>
+    <h2 style="font-size:clamp(26px,3.2vw,34px);margin-top:6px">Ready to teach, even for new CS teachers</h2>
+    <ul class="checks">
+      <li><b>Lesson plans, slides and classwork</b> for every coding lesson, with ELL supports and digital copies for Google Classroom.</li>
+      <li><b>Different levels</b> (Easy, Medium, Hard) for different grades, ages or experience.</li>
+      <li><b>Auto-graded puzzles, labs and practice exams,</b> so teachers spend time helping students, not grading.</li>
+      <li><b>Games students ask for:</b> Quiz Battle, Duels, Flag Race and class leaderboards.</li>
+    </ul>
+  </div>
+</div></section>
+
+<section class="block alt"><div class="wrap">
+  <div class="head"><span class="eyebrow">Student privacy</span><h2>Safe for students, simple for IT</h2></div>
+  <div class="grid">
+    <div class="card"><h3>No ads, no selling data</h3><p>CyberTeaches shows no ads and never sells student information. Site analytics run with advertising features turned off.</p></div>
+    <div class="card"><h3>No student email needed</h3><p>Teachers can create a username and password for each student. Students can also sign in with a school Google account.</p></div>
+    <div class="card"><h3>Only the teacher sees progress</h3><p>A student's work is visible only to that student and their teacher. Runs in any browser, including Chromebooks, with nothing to install.</p></div>
+  </div>
+  <p class="note" style="margin-top:18px">Built with FERPA and COPPA in mind. Need a data privacy agreement for your district? Ask in the pilot form.</p>
+</div></section>
+
+<section class="block" id="plans"><div class="wrap">
+  <div class="head"><span class="eyebrow">Plans</span><h2>Free during early access</h2><p>Every course and tool is free right now. District plans with onboarding and support will come later, and pilot schools help shape them.</p></div>
+  <div class="grid two plans">
+    <div class="card plan"><span class="tag">For teachers and classrooms</span><h3>Teacher</h3><p class="price">Free</p>
+      <ul class="checks"><li>All courses, labs and practice exams</li><li>Lesson plans, slides and classwork</li><li>Teacher Dashboard, class codes and student logins</li><li>Quiz Battle, Duels and leaderboards</li></ul>
+      <a class="btn" href="../academy/teacher.html">Open the Teacher Dashboard</a></div>
+    <div class="card plan featured"><span class="tag">For schools and districts</span><h3>District pilot</h3><p class="price">Free <small>during early access</small></p>
+      <ul class="checks"><li>Everything in Teacher, for every CTE teacher</li><li>Pathway setup that matches your course sequence</li><li>Teacher onboarding session online</li><li>Direct support from the course author</li><li>Early say in district reports and Clever / ClassLink sign-in ${soon}</li></ul>
+      <a class="btn primary" href="#pilot">Request a free pilot</a></div>
+  </div>
+</div></section>
+
+<section class="block alt" id="pilot"><div class="wrap split top">
+  <div>
+    <span class="eyebrow">Free pilot</span>
+    <h2 style="font-size:clamp(26px,3.2vw,34px);margin-top:6px">Request a free pilot for your school or district</h2>
+    <p>Tell us about your CTE program. We will reply by email, usually within two school days, to set up classes and a short onboarding call.</p>
+    <ul class="checks"><li>No cost and no contract</li><li>Start with one teacher or a whole pathway</li><li>California first, and every state is welcome</li></ul>
+  </div>
+  <form class="pilot" id="pilotForm" novalidate>
+    <label>Your name<input name="name" required maxlength="80" autocomplete="name"></label>
+    <label>Work email<input name="email" type="email" required maxlength="120" autocomplete="email"></label>
+    <label>Your role<select name="role" required><option value="">Choose one</option><option>CTE director or coordinator</option><option>District administrator</option><option>Principal or assistant principal</option><option>CTE teacher</option><option>Other</option></select></label>
+    <div class="two"><label>District<input name="district" required maxlength="120" autocomplete="organization"></label><label>State<input name="state" required maxlength="40" value="California"></label></div>
+    <label>School (optional)<input name="school" maxlength="120"></label>
+    <fieldset><legend>Pathways you're interested in</legend>
+      <label class="chk"><input type="checkbox" name="pathways" value="Cybersecurity">Cybersecurity</label>
+      <label class="chk"><input type="checkbox" name="pathways" value="Software Development">Software Development</label>
+      <label class="chk"><input type="checkbox" name="pathways" value="Networking">Networking</label></fieldset>
+    <label>About how many students?<select name="students"><option value="">Not sure yet</option><option>Under 50</option><option>50 to 200</option><option>200 to 1,000</option><option>Over 1,000</option></select></label>
+    <label>Anything else? (optional)<textarea name="message" rows="3" maxlength="1000"></textarea></label>
+    <input name="website" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
+    <button class="btn primary" id="pilotGo">Send request</button>
+    <p class="formmsg" id="pilotMsg" role="status"></p>
+  </form>
+</div></section>
+<script>
+(function(){
+  var f = document.getElementById('pilotForm'), msg = document.getElementById('pilotMsg'), go = document.getElementById('pilotGo');
+  var URL = 'https://firestore.googleapis.com/v1/projects/cyberteaches-c7316/databases/(default)/documents/pilotRequests?key=AIzaSyA5Hcf67w1ePvj8OY3p-8GO_AxnM93Glj8';
+  f.addEventListener('submit', function(e){
+    e.preventDefault();
+    if (f.website.value) return; // bots fill the hidden field
+    var bad = ['name', 'email', 'role', 'district', 'state'].filter(function(k){ return !f[k].value.trim() || !f[k].checkValidity() });
+    if (bad.length){ msg.className = 'formmsg err'; msg.textContent = 'Please fill in your name, a valid work email, role, district and state.'; f[bad[0]].focus(); return }
+    var s = function(v){ return { stringValue: String(v).trim() } };
+    var paths = [].slice.call(f.querySelectorAll('input[name=pathways]:checked')).map(function(c){ return c.value }).join(', ');
+    var body = { fields: { name: s(f.name.value), email: s(f.email.value), role: s(f.role.value), district: s(f.district.value), state: s(f.state.value),
+      school: s(f.school.value), pathways: s(paths), students: s(f.students.value), message: s(f.message.value), at: s(new Date().toISOString()) } };
+    go.disabled = true; msg.className = 'formmsg'; msg.textContent = 'Sending…';
+    fetch(URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) })
+      .then(function(r){ if (!r.ok) throw new Error(r.status); f.reset(); f.state.value = 'California'; msg.className = 'formmsg ok'; msg.textContent = 'Thank you! Your request was sent. We will email you soon.'; if (window.gtag) gtag('event', 'pilot_request') })
+      .catch(function(){ msg.className = 'formmsg err'; msg.textContent = 'Sorry, the request did not go through. Please try again in a minute.' })
+      .then(function(){ go.disabled = false });
+  });
+})();
+</script>`,
+    faq: [
+      ['Is CyberTeaches really free for districts?', 'Yes, during early access every course, lesson plan, lab and the Teacher Dashboard are free for schools and districts. District plans with onboarding and support may be offered later, and pilot schools will hear about them first.'],
+      ['Which CTE industry sector does it fit?', 'The pathways fit the California Information and Communication Technologies (ICT) sector: Software and Systems Development, Networking, and Information Support and Services. Schools in other states use the same introductory, concentrator and capstone sequence.'],
+      ['Which certifications do students prepare for?', 'The Security+ course prepares students for the CompTIA Security+ SY0-801 exam. Prep for CompTIA Tech+, Network+ and the Python Institute PCEP exam is planned. CyberTeaches is not affiliated with CompTIA or the Python Institute.'],
+      ['Can middle schools join a pathway?', 'Yes. Rover Coding and Python Quest are introductory courses that work in middle school, with Easy, Medium and Hard levels for different grades, ages or experience.'],
+      ['Do students need email accounts?', 'No. Teachers can create a username and password for each student, or students can sign in with a school Google account.'],
+      ['Does it work with Clever or Google Classroom?', 'Schools can add CyberTeaches as a link in the Clever Portal today, and digital classwork comes as Word files for Google Classroom. Clever and ClassLink single sign-on are on the roadmap.'],
     ],
   });
 
@@ -353,5 +498,5 @@ ${faq ? `<section class="block faq"><div class="wrap">
 </div></section>`,
   });
 
-  console.log('Wrote 5 landing pages.');
+  console.log('Wrote 6 landing pages.');
 };
