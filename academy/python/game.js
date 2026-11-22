@@ -148,7 +148,10 @@
         else ev('shrug', line, {say: 'No potion here'});
         return null;
       },
-      attack(line){ return hit(line, 1, 'hero.attack()') },
+      attack(line){
+        if(w.gadgets && !w.bag.includes('sword')) end('error', 'Line ' + line + ': you don\'t have a sword yet! Find the sword 🗡️, stand on it and pick it up with hero.take().', line);
+        return hit(line, 1, 'hero.attack()');
+      },
       // Sensors for later lessons (if / while)
       ahead(line){
         const h = w.hero, nx = h.x + h.dir, k = key(nx, h.y);

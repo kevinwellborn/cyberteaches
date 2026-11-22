@@ -176,7 +176,7 @@ body{border-top:6px solid var(--lv,var(--accent))}
 <script src="course.js?v=19"></script>
 <script src="firebase-config.js"></script>
 <script src="cloud.js?v=22"></script>
-<script src="python/levels.js?v=8"></script>
+<script src="python/levels.js?v=9"></script>
 <script src="quiz/questions.js?v=6"></script>
 <script>
 const $=(s,r=document)=>r.querySelector(s);
@@ -455,6 +455,7 @@ function setCourse(v){
   renderClass(lastRosterErr);
 }
 let lastRosterErr=null;
+const pyTag=n=>window.PQ_TAG?PQ_TAG(n):'L'+n, pyName=n=>window.PQ_NAME?PQ_NAME(n):'Lesson '+n;
 const PY_LEVELS=(window.PQ_LEVELS||[]), PY_LESSONS=(window.PQ_LESSONS||[]).filter(l=>!l.soon);
 const pyStars=s=>((s.py||{}).stars)||{};
 const pyTotal=s=>Object.values(pyStars(s)).map(Number).filter(v=>v>0).reduce((a,b)=>a+b,0);
@@ -467,8 +468,8 @@ function pyTable(){
     const cells=PY_LESSONS.map(u=>lv(u).map(l=>{ const st=pyStars(s)[l.id]||0; return `<td><span class="cell s${st}" title="${esc(l.name)}: ${st?st+' star'+(st>1?'s':''):'not solved'}">${st?'★'.repeat(st):'·'}</span></td>` }).join('')+`<td class="score"><b>${pyScore(s,u.n)}</b></td>`).join('');
     return `<tr><td class="name"><b>${esc(s.name)}</b><small>${esc(s.email||(s.username?'Username: '+s.username:''))}</small></td>${cells}<td><b>${pySolved(s)}</b>/${PY_LEVELS.length}</td><td><b>${pyTotal(s)}</b> ★</td><td class="muted">${ago(s.updatedAt)}</td></tr>`;
   }).join('');
-  const head1=PY_LESSONS.map(u=>{ const o=pyOpen.has(u.n); return `<th class="lesson" colspan="${lv(u).length+1}" style="background:${u.color}"><button class="lessonbtn" data-pyunit="${u.n}" aria-expanded="${o}" title="${o?'Hide':'Show'} each level">${o?'▾':'▸'} L${u.n}${o?': '+esc(u.title):''}</button></th>` }).join('');
-  const head2=PY_LESSONS.map(u=>lv(u).map(l=>`<th title="${esc((l.review?'Review: ':'')+l.name)}">${l.lesson}.${l.num||l.k}</th>`).join('')+`<th class="score" title="Lesson ${u.n}: ${esc(u.title)}. Score out of 100">Score</th>`).join('');
+  const head1=PY_LESSONS.map(u=>{ const o=pyOpen.has(u.n); return `<th class="lesson" colspan="${lv(u).length+1}" style="background:${u.color}"><button class="lessonbtn" data-pyunit="${u.n}" aria-expanded="${o}" title="${o?'Hide':'Show'} each level">${o?'▾':'▸'} ${pyTag(u.n)}${o?': '+esc(u.title):''}</button></th>` }).join('');
+  const head2=PY_LESSONS.map(u=>lv(u).map(l=>`<th title="${esc((l.review?'Review: ':'')+l.name)}">${pyTag(l.lesson).replace(/^L/,'')}.${l.num||l.k}</th>`).join('')+`<th class="score" title="${pyName(u.n)}: ${esc(u.title)}. Score out of 100">Score</th>`).join('');
   return `<table><thead><tr><th class="name" rowspan="2">Student</th>${head1}<th rowspan="2">Solved</th><th rowspan="2">Stars</th><th rowspan="2">Last active</th></tr><tr>${head2}</tr></thead><tbody>${rows}</tbody></table>`;
 }
 const pyScore=(s,n)=>{ const lv=PY_LEVELS.filter(l=>l.lesson===n); if(!lv.length) return 0; return Math.round(lv.reduce((t,l)=>{ const st=pyStars(s)[l.id]||0; return t+(st===3?100:st===2?90:st===1?80:0) },0)/lv.length) };
@@ -492,7 +493,7 @@ function renderPython(err){
       ${lessonDone.map(x=>`<div class="stat"><b>${x.done}</b><span class="muted">finished Lesson ${x.u.n}</span><div class="bar"><i style="width:${n?x.done/n*100:0}%;background:${x.u.color}"></i></div></div>`).join('')}</div></section></div>
     <div class="toolbar"><h2>Python lessons open to students</h2><div class="spacer"></div><button class="btn" id="pyUnlockAll">Unlock all</button><button class="btn" id="pyLockAll">Lock all</button></div>
     <p class="muted" style="margin:0 0 8px">Tap a lesson to lock or unlock it for this class. Students see a lock and can't open its Learn step or levels. Their stars are kept.</p>
-    <div class="locks" id="pyLocks">${PY_LESSONS.map(u=>{ const off=(c.pyLocked||[]).map(Number).includes(u.n); return `<button class="lockbtn${off?' off':''}" data-unit="${u.n}" aria-pressed="${!off}"><span class="lnum" style="background:${off?'var(--line)':u.color}">L${u.n}</span><span class="ltitle">${esc(u.title)}</span><span class="lstate">${off?'🔒 Locked':'Open'}</span></button>` }).join('')}</div>
+    <div class="locks" id="pyLocks">${PY_LESSONS.map(u=>{ const off=(c.pyLocked||[]).map(Number).includes(u.n); return `<button class="lockbtn${off?' off':''}" data-unit="${u.n}" aria-pressed="${!off}"><span class="lnum" style="background:${off?'var(--line)':u.color}">${pyTag(u.n)}</span><span class="ltitle">${esc(u.title)}</span><span class="lstate">${off?'🔒 Locked':'Open'}</span></button>` }).join('')}</div>
     <p class="err" id="pyLockErr" role="alert"></p>
     ${PY_LESSONS.some(u=>window.QUIZZES&&QUIZZES['py'+u.n])?`<div class="toolbar"><h2>⚡ Python Quiz Battle</h2></div>
     <p class="muted" style="margin:0 0 8px">A live quiz game for the projector. Pick a lesson to start a game; students join on their own devices with the game PIN.</p>
@@ -523,7 +524,7 @@ function renderPython(err){
   $('#pyLockAll').onclick=()=>{ const all=PY_LESSONS.map(u=>u.n); save({pyLocked: all}, {pyLocked: all}) };
   $('#csv').onclick=()=>{
     const q=v=>'"'+String(v==null?'':v).replace(/"/g,'""')+'"';
-    const lines=[['Student','Email or username',...PY_LEVELS.map(l=>'L'+l.lesson+'.'+(l.num||l.k)+' '+l.name),...PY_LESSONS.map(u=>'Lesson '+u.n+' score'),'Solved','Stars'].map(q).join(',')];
+    const lines=[['Student','Email or username',...PY_LEVELS.map(l=>pyTag(l.lesson)+'.'+(l.num||l.k)+' '+l.name),...PY_LESSONS.map(u=>pyName(u.n)+' score'),'Solved','Stars'].map(q).join(',')];
     roster.forEach(s=>lines.push([s.name,s.email||s.username,...PY_LEVELS.map(l=>pyStars(s)[l.id]||0),...PY_LESSONS.map(u=>pyScore(s,u.n)),pySolved(s),pyTotal(s)].map(q).join(',')));
     const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([lines.join('\n')],{type:'text/csv'})); a.download=(c.name||c.code)+' Python Quest.csv'; a.click();
   };
@@ -553,7 +554,7 @@ function renderClass(err){
     <div class="levels" id="levels" role="group" aria-label="Class difficulty level">${LEVELS_AVAILABLE.map(v=>`<button class="lvlbtn${v===cl?' on':''}" data-level="${v}" aria-pressed="${v===cl}" style="${levelStyle(v)}"><b>${LEVEL_NAMES[v]}</b><small>${LEVEL_HELP[v]}</small></button>`).join('')}</div>
     <div class="toolbar"><h2>Lessons open to students</h2><div class="spacer"></div><button class="btn" id="unlockAll">Unlock all</button><button class="btn" id="lockAll">Lock all</button></div>
     <p class="muted" style="margin:0 0 8px">Tap a lesson to lock or unlock it for this class. Students see a lock and can't open its puzzles. Changes reach students right away. Their stars are kept. The 🔑 quiz answers button shares the right answers with students after they turn the quiz in.</p>
-    <div class="locks" id="locks">${UNITS.map(u=>{ const off=(c.locked||[]).includes(u.n); return `<button class="lockbtn${off?' off':''}" data-unit="${u.n}" aria-pressed="${!off}"><span class="lnum" style="background:${off?'var(--line)':u.color}">L${u.n}</span><span class="ltitle">${esc(u.title)}</span><span class="lstate">${off?'🔒 Locked':'Open'}</span></button>`
+    <div class="locks" id="locks">${UNITS.map(u=>{ const off=(c.locked||[]).includes(u.n); return `<button class="lockbtn${off?' off':''}" data-unit="${u.n}" aria-pressed="${!off}"><span class="lnum" style="background:${off?'var(--line)':u.color}">${pyTag(u.n)}</span><span class="ltitle">${esc(u.title)}</span><span class="lstate">${off?'🔒 Locked':'Open'}</span></button>`
       + REVIEWS.filter(q=>q.after===u.n).map(q=>[[q.guideId,'📖','study guide'],[q.quizId,'✏️','quiz']].map(([id,ico,what])=>{ const isQuiz=id===q.quizId, qo=isQuiz?!(c.unlocked||[]).map(Number).includes(id):(c.locked||[]).includes(id); return `<button class="lockbtn${qo?' off':''}" data-unit="${id}"${isQuiz?' data-quiz="1"':''} aria-pressed="${!qo}" title="${esc(q.name)}: ${what}${isQuiz?'. Starts locked and hidden from students: open it when they have studied the study guide.':''}"><span class="lnum" style="background:${qo?'var(--line)':q.color}">${ico}</span><span class="ltitle">${esc(q.name.replace(/ review$/,''))} ${what}</span><span class="lstate">${qo?(isQuiz?'🔒 Hidden':'🔒 Locked'):'Open'}</span></button>` }).join('')+(()=>{ const pub=(c.published||[]).map(Number).includes(q.quizId); return `<button class="lockbtn${pub?'':' off'}" data-unit="${q.quizId}" data-publish="1" aria-pressed="${pub}" title="${esc(q.name)} quiz answers. Students see their right and wrong answers and their score only after you publish them."><span class="lnum" style="background:${pub?q.color:'var(--line)'}">🔑</span><span class="ltitle">${esc(q.name.replace(/ review$/,''))} quiz answers</span><span class="lstate">${pub?'Published':'Not published'}</span></button>` })()).join('') }).join('')}</div>
     <p class="err" id="lockErr" role="alert"></p>
     <div class="toolbar"><h2>Progress</h2><div class="spacer"></div><button class="btn" id="csv" ${n?'':'disabled'}>Download CSV</button></div>
@@ -721,7 +722,7 @@ function table(){
   const revAfter=u=>REVIEWS.filter(q=>q.after===u.n);
   const head1=UNITS.map(u=>{ const o=openUnits.has(u.n); return `<th class="lesson" colspan="${lv(u).length+1}" style="background:${u.color}"><button class="lessonbtn" data-unit="${u.n}" aria-expanded="${o}" title="${o?'Hide':'Show'} each puzzle">${o?'▾':'▸'} L${u.n}${o?': '+esc(u.title):''}</button></th>`
     + revAfter(u).map(q=>`<th class="lesson revh" rowspan="2" style="background:${q.color}" title="${esc(q.name)} study guide: score out of 100 (first answers only)."><a href="${q.path}" target="_blank" rel="noopener">📖 ${esc(q.name.replace(/ review$/,''))} study guide</a></th><th class="lesson revh" rowspan="2" style="background:${q.color}" title="${esc(q.name)} quiz: best score. Hover a score for the last try and missed questions."><a href="${q.path}quiz.html?teacher=1" target="_blank" rel="noopener">✏️ ${esc(q.name.replace(/ review$/,''))} quiz</a></th>`).join('') }).join('');
-  const head2=UNITS.map(u=>lv(u).map(l=>`<th title="${esc(l.title)}">${l.unit}.${l.k}</th>`).join('')+`<th class="score" title="Lesson ${u.n}: ${esc(u.title)}. Score out of 100">Score</th>`).join('');
+  const head2=UNITS.map(u=>lv(u).map(l=>`<th title="${esc(l.title)}">${l.unit}.${l.k}</th>`).join('')+`<th class="score" title="${pyName(u.n)}: ${esc(u.title)}. Score out of 100">Score</th>`).join('');
   const rows=roster.map(s=>{
     const p=s.progress||{}, sl=studentLevel(c,s), other=sl!==cl, done=levelsOf(sl).filter(l=>p[l.n]).length, stars=totalStars(p);
     const cells=UNITS.map(u=>lv(u).map(l=>{ const st=p[l.n]||0; return other ? '<td><span class="cell s0" title="This student is on another level">–</span></td>' : `<td><span class="cell s${st}" title="${esc(l.title)}: ${st?st+' star'+(st>1?'s':''):'not solved'}">${st?'★'.repeat(st):'·'}</span></td>` }).join('')
