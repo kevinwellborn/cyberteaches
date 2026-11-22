@@ -81,7 +81,7 @@
         if(c === '{' || c === '}' || c === ';') err(L, 'Python doesn\'t use ' + c + ' here (line ' + L + '). Use a colon : and indent the lines inside instead.');
         err(L, 'Python doesn\'t understand the symbol ' + c + ' on line ' + L + '.');
       }
-      if(depth > 0 && (ln === lines.length - 1 || /^\s*(hero\.|sword\.|shield\.|if |for |while |def |print\()/.test(lines[ln + 1] || ''))) err(openLine, 'A bracket ( on line ' + openLine + ' is never closed. Add the missing ).');
+      if(depth > 0 && (ln === lines.length - 1 || /^\s*(hero\.|sword\.|shield\.|pickaxe\.|if |for |while |def |print\()/.test(lines[ln + 1] || ''))) err(openLine, 'A bracket ( on line ' + openLine + ' is never closed. Add the missing ).');
       if(depth === 0 && toks.length && toks[toks.length - 1].t !== 'NEWLINE' && toks[toks.length - 1].t !== 'INDENT' && toks[toks.length - 1].t !== 'DEDENT')
         toks.push({t: 'NEWLINE', line: L});
     }
@@ -346,7 +346,7 @@
         case 'assign': {
           const target = sc || globals;
           if(s.name === 'hero') err(s.line, 'Line ' + s.line + ': don\'t store something in hero, or you will lose your hero!');
-          if(s.name === 'sword' || s.name === 'shield') err(s.line, 'Line ' + s.line + ': don\'t store something in ' + s.name + ', or the explorer will lose it! Use ' + s.name + (s.name === 'sword' ? '.attack(3)' : '.defend(2)') + '.');
+          if(s.name === 'sword' || s.name === 'shield' || s.name === 'pickaxe') err(s.line, 'Line ' + s.line + ': don\'t store something in ' + s.name + ', or the explorer will lose it! Use ' + s.name + (s.name === 'sword' ? '.attack(3)' : s.name === 'pickaxe' ? '.mine()' : '.defend(2)') + '.');
           let v = evalE(s.value, sc);
           if(s.op !== '='){
             const old = lookup(s.name, sc, s.line);

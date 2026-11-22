@@ -9,7 +9,8 @@
     const rows = level.map, H = rows.length, W = Math.max(...rows.map(r => r.length));
     const w = {W, H, solid: [], items: {}, gates: {}, guards: {}, spikes: {}, door: null, hero: null,
       hearts: level.hearts || 3, maxHearts: 5, keys: 0, gems: 0, gemsTotal: 0, chests: 0, opened: [],
-      sword: level.sword || 3, shieldMax: level.shield || 0, block: 0, captive: null, freed: false, armed: false};
+      sword: level.sword || 3, shieldMax: level.gadgets && !(level.bag || []).includes('shield') ? 0 : (level.shield || 0), block: 0, captive: null, freed: false, armed: false,
+      gadgets: !!level.gadgets, bag: (level.bag || []).slice(), cracked: {}};
     let fi = 0;
     for(let y = 0; y < H; y++){
       w.solid.push([]);
@@ -30,12 +31,20 @@
         }
         if(c === 'c') w.captive = {x, y, who: (level.rescue && level.rescue.who) || 'monkey'};
         if(c === '^') w.spikes[k] = true;
+        // gadgets: picked up with hero.take() into the bag (hotbar)
+        if(c === 'w') w.items[k] = 'sword';
+        if(c === 'h') w.items[k] = 'shield';
+        if(c === 'x') w.items[k] = 'pickaxe';
+        if(c === 'r') w.items[k] = 'rope';
+        if(c === '%') w.cracked[k] = true;   // cracked block: solid until pickaxe.mine()
+        if('wxhr'.includes(c) && c !== '.') w.gadgets = true;
       }
     }
     return w;
   }
   const snap = w => ({hero: {...w.hero}, items: {...w.items}, gates: {...w.gates}, guards: JSON.parse(JSON.stringify(w.guards)),
-    hearts: w.hearts, keys: w.keys, gems: w.gems, block: w.block, freed: w.freed, chests: w.chests, opened: w.opened.slice()});
+    hearts: w.hearts, keys: w.keys, gems: w.gems, block: w.block, freed: w.freed, chests: w.chests, opened: w.opened.slice(),
+    bag: w.bag.slice(), cracked: {...w.cracked}, shieldMax: w.shieldMax});
   const doorOpen = w => w.gems === w.gemsTotal && !w.chests;
   PQ.doorOpen = doorOpen;
   PQ.load = load;
@@ -43,7 +52,7 @@
   // ---------- simulation ----------
   PQ.simulate = function(level, source, opts = {}){
     const w = load(level), events = [], prints = [];
-    const S = (x, y) => y >= w.H ? false : y < 0 || x < 0 || x >= w.W ? true : w.solid[y][x];
+    const S = (x, y) => y >= w.H ? false : y < 0 || x < 0 || x >= w.W ? true : w.solid[y][x] || !!w.cracked[x + ',' + y];
     const key = (x, y) => x + ',' + y;
     let actions = 0;
     const ev = (a, line, extra) => { events.push({a, line, ...extra, s: snap(w)}); };
@@ -81,6 +90,7 @@
           act(line);
           const h = w.hero, nx = h.x + h.dir, k = key(nx, h.y);
           if(nx < 0 || nx >= w.W){ ev('bump', line, {what: 'edge'}); end('fail', 'Line ' + line + ': the explorer reached the edge of the map.', line) }
+          if(w.cracked[k]){ ev('bump', line, {what: 'wall'}); end('fail', 'Line ' + line + ': a cracked block is in the way. ' + (w.bag.includes('pickaxe') ? 'Mine it with pickaxe.mine().' : 'Find the pickaxe ⛏️ to mine it.'), line) }
           if(S(nx, h.y)){ ev('bump', line, {what: 'wall'}); end('fail', 'Line ' + line + ': bonk! A stone block is in the way. Try hero.climb().', line) }
           if(w.guards[k]){ const g = w.guards[k]; ev('bump', line, {what: 'guard'}); end('fail', g.warrior ? 'Line ' + line + ': a temple guard blocks the way. It has ' + g.hp + ' hit point' + (g.hp === 1 ? '' : 's') + ', so use sword.attack(' + Math.min(g.hp, w.sword) + ').' : 'Line ' + line + ': a stone guardian blocks the way. Use hero.attack() to defeat it.', line) }
           if(w.gates[k]){
@@ -107,8 +117,10 @@
         act(line);
         const h = w.hero, nx = h.x + h.dir;
         if(!S(nx, h.y)){ ev('shrug', line); end('fail', 'Line ' + line + ': there is no block right in front to climb. Run up to it first.', line) }
-        if(S(nx, h.y - 1) || S(h.x, h.y - 1)){ ev('bump', line, {what: 'wall'}); end('fail', 'Line ' + line + ': that wall is too high. The explorer can climb only 1 block at a time.', line) }
-        const from = {x: h.x, y: h.y}; h.x = nx; h.y--; ev('climb', line, {from});
+        let up = 1;
+        if(S(nx, h.y - 1) && w.bag.includes('rope') && !S(nx, h.y - 2) && !S(h.x, h.y - 1) && !S(h.x, h.y - 2)) up = 2;   // the rope reaches 2 blocks up
+        else if(S(nx, h.y - 1) || S(h.x, h.y - 1)){ ev('bump', line, {what: 'wall'}); end('fail', 'Line ' + line + ': that wall is too high. The explorer can climb only 1 block at a time' + (w.gadgets && !w.bag.includes('rope') ? '. A rope 🪢 would help!' : '.'), line) }
+        const from = {x: h.x, y: h.y}; h.x = nx; h.y -= up; ev('climb', line, {from});
         arrive(line); return null;
       },
       turn(line){ act(line); w.hero.dir *= -1; ev('turn', line); return null },
@@ -120,6 +132,11 @@
           delete w.items[k]; if(it === 'gem') w.gems++; else w.keys++;
           ev('take', line, {item: it});
           if(w.door && h.x === w.door.x && h.y === w.door.y && doorOpen(w)) win(line);
+        } else if(it === 'sword' || it === 'shield' || it === 'pickaxe' || it === 'rope' || (it === 'potion' && w.gadgets)){
+          delete w.items[k]; w.bag.push(it);
+          if(it === 'shield') w.shieldMax = level.shield || 2;
+          if(it === 'sword') w.armed = true;
+          ev('take', line, {item: it});
         } else ev('shrug', line, {say: it === 'potion' ? 'Drink potions with hero.drink()' : 'Nothing to take here'});
         return null;
       },
@@ -127,6 +144,7 @@
         act(line);
         const h = w.hero, k = key(h.x, h.y);
         if(w.items[k] === 'potion'){ delete w.items[k]; w.hearts = Math.min(w.maxHearts, w.hearts + 1); ev('drink', line) }
+        else if(w.bag.includes('potion')){ w.bag.splice(w.bag.indexOf('potion'), 1); w.hearts = Math.min(w.maxHearts, w.hearts + 1); ev('drink', line) }
         else ev('shrug', line, {say: 'No potion here'});
         return null;
       },
@@ -135,6 +153,7 @@
       ahead(line){
         const h = w.hero, nx = h.x + h.dir, k = key(nx, h.y);
         if(nx < 0 || nx >= w.W) return 'edge';
+        if(w.cracked[k]) return 'cracked';
         if(S(nx, h.y)) return 'wall';
         if(w.guards[k]) return w.guards[k].warrior ? 'guard' : 'guardian';
         if(w.gates[k]) return 'gate';
@@ -146,6 +165,7 @@
       here(line){ const it = w.items[key(w.hero.x, w.hero.y)]; return it || (w.door && w.door.x === w.hero.x && w.door.y === w.hero.y ? 'door' : 'floor') },
       health(line){ return w.hearts },
       has_key(line){ return w.keys > 0 },
+      has(line, what){ return what === 'key' ? w.keys > 0 : w.bag.includes(what) },
       gems_left(line){ return w.gemsTotal - w.gems },
     };
     // One attack of n sword swings at whatever stands in front. A guard that is still standing strikes back.
@@ -166,7 +186,7 @@
         if(dmg){ w.hearts -= dmg; ev('hurt', line, {dmg, from: k}) }
         if(w.hearts <= 0){
           ev('die', line, {why: 'guard'});
-          end('lose', g.warrior ? 'Line ' + line + ': the guard still had ' + g.hp + ' hit point' + (g.hp === 1 ? '' : 's') + ' and struck back for ' + g.power + '. ' + (w.shieldMax ? 'Raise your shield first: shield.defend(' + Math.min(g.power, w.shieldMax) + ')' + (w.shieldMax < g.power ? ', and get more hearts before the fight.' : '.') : 'Take away all its hit points in one attack.')
+          end('lose', g.warrior ? 'Line ' + line + ': the guard still had ' + g.hp + ' hit point' + (g.hp === 1 ? '' : 's') + ' and struck back for ' + g.power + '. ' + (!w.shieldMax && Object.values(w.items).includes('shield') ? 'Pick up the shield 🛡️ with hero.take() and raise it first.' : !w.shieldMax && (Object.values(w.items).includes('potion') || w.bag.includes('potion')) ? 'Get an extra heart first: find the potion 🧪 and use hero.drink().' : w.shieldMax ? 'Raise your shield first: shield.defend(' + Math.min(g.power, w.shieldMax) + ')' + (w.shieldMax < g.power ? ', and get more hearts before the fight.' : '.') : 'Take away all its hit points in one attack.')
             : 'The guardian won this time. Drink a potion first to get more hearts.', line);
         }
       }
@@ -175,6 +195,7 @@
     const sword = {
       __methods: true, __name: 'sword',
       attack(line, n){
+        if(w.gadgets && !w.bag.includes('sword')) end('error', 'Line ' + line + ': you don\'t have a sword yet! Find the sword 🗡️, stand on it and pick it up with hero.take().', line);
         n = num(n, line, 1, 'sword.attack(3)');
         if(n < 1) end('error', 'Line ' + line + ': swing at least 1 time, like sword.attack(1).', line);
         if(n > w.sword) end('error', 'Line ' + line + ': your sword can swing at most ' + w.sword + ' times in one attack. Split it up: sword.attack(' + w.sword + ') and then sword.attack(' + (n - w.sword) + ').', line);
@@ -186,10 +207,20 @@
       defend(line, n){
         act(line);
         n = num(n, line, 1, 'shield.defend(2)');
-        if(!w.shieldMax) end('error', 'Line ' + line + ': you don\'t have a shield yet. You will find one in a later level.', line);
+        if(!w.shieldMax) end('error', 'Line ' + line + (w.gadgets ? ': you don\'t have a shield yet! Find the shield 🛡️ and pick it up with hero.take().' : ': you don\'t have a shield yet. You will find one in a later level.'), line);
         if(n < 1) end('error', 'Line ' + line + ': block at least 1, like shield.defend(1).', line);
         if(n > w.shieldMax) end('error', 'Line ' + line + ': your shield can block at most ' + w.shieldMax + '. Use shield.defend(' + w.shieldMax + ').', line);
         w.block = n; ev('defend', line, {n}); return null;
+      }
+    };
+    const pickaxe = {
+      __methods: true, __name: 'pickaxe',
+      mine(line){
+        act(line);
+        if(!w.bag.includes('pickaxe')) end('error', 'Line ' + line + ': you don\'t have a pickaxe yet! Find the pickaxe ⛏️ and pick it up with hero.take().', line);
+        const h = w.hero, nx = h.x + h.dir, k = key(nx, h.y);
+        if(!w.cracked[k]){ ev('attack', line, {miss: true, swings: 1}); end('fail', 'Line ' + line + ': there is no cracked block right in front to mine. Walk up to it first.', line) }
+        delete w.cracked[k]; ev('mine', line, {x: nx, y: h.y}); return null;
       }
     };
     ['defence', 'defense'].forEach(n => Object.defineProperty(shield, n, {value: shield.defend}));   // common spellings work too (hidden from suggestions)
@@ -197,7 +228,7 @@
     ev('start', 0);
     let result;
     try {
-      PyRun.run(source, {globals: {hero, sword, shield}, maxSteps: 20000, print: (s, line) => { prints.push(s); ev('print', line, {text: s}) }});
+      PyRun.run(source, {globals: {hero, sword, shield, pickaxe}, maxSteps: 20000, print: (s, line) => { prints.push(s); ev('print', line, {text: s}) }});
       const h = w.hero;
       if(w.door && h.x === w.door.x && h.y === w.door.y && !doorOpen(w))
         result = {result: 'fail', msg: w.chests ? 'The door is still shut: open the treasure chest first with hero.take().' : 'The door is still shut: take every gem first (' + (w.gemsTotal - w.gems) + ' left).'};
@@ -354,6 +385,16 @@
     // carved sun on the lintel
     g.fillStyle = C.gold; g.beginPath(); g.arc(px + T / 2, py - T * 0.95, 5, 0, Math.PI * 2); g.fill();
   }
+  function drawCracked(g, w, x, y){
+    const px = x * T, py = y * T;
+    g.fillStyle = C.stone; g.fillRect(px, py, T, T);
+    g.fillStyle = C.stoneLo; g.fillRect(px, py + T - 4, T, 4);
+    g.fillStyle = C.stoneHi; g.fillRect(px, py, T, 3);
+    g.strokeStyle = '#1F1A14'; g.lineWidth = 2.5; g.lineJoin = 'round';
+    g.beginPath(); g.moveTo(px + 8, py + 4); g.lineTo(px + 20, py + 18); g.lineTo(px + 14, py + 28); g.lineTo(px + 26, py + 44);
+    g.moveTo(px + 20, py + 18); g.lineTo(px + 34, py + 14); g.lineTo(px + 42, py + 24); g.moveTo(px + 14, py + 28); g.lineTo(px + 5, py + 34); g.stroke();
+    g.strokeStyle = 'rgba(255,255,255,.25)'; g.lineWidth = 1; g.beginPath(); g.moveTo(px + 10, py + 4); g.lineTo(px + 22, py + 18); g.stroke();
+  }
   function drawItem(g, kind, x, y, t){
     const cx = x * T + T / 2, by = y * T + T - 6 + Math.sin(t / 250 + x) * 2;
     if(kind === 'gem'){
@@ -374,6 +415,28 @@
       if(open){ g.fillRect(cx - 16, y0 - 34, 32, 8); g.fillStyle = C.gold; g.fillRect(cx - 16, y0 - 28, 32, 2) }
       else { g.beginPath(); g.moveTo(cx - 16, y0 - 20); g.quadraticCurveTo(cx, y0 - 34, cx + 16, y0 - 20); g.fill(); g.fillStyle = C.gold; g.fillRect(cx - 2, y0 - 27, 4, 8) }
       if(!open && Math.sin(t / 220 + x) > 0.8){ g.fillStyle = '#fff'; g.fillRect(cx + 9, y0 - 31, 2, 6); g.fillRect(cx + 7, y0 - 29, 6, 2) }
+    } else if(kind === 'sword'){
+      g.save(); g.translate(cx, by - 14); g.rotate(-Math.PI / 4);
+      g.fillStyle = '#DDE6EA'; g.fillRect(-3, -22, 6, 26); g.beginPath(); g.moveTo(-3, -22); g.lineTo(0, -28); g.lineTo(3, -22); g.fill();
+      g.fillStyle = '#9FB0B8'; g.fillRect(0, -22, 3, 26);
+      g.fillStyle = C.gold; g.fillRect(-9, 4, 18, 4); g.fillStyle = C.woodLo; g.fillRect(-2.5, 8, 5, 9); g.fillStyle = C.gold; g.fillRect(-3, 17, 6, 4);
+      g.restore();
+      if(Math.sin(t / 200 + x) > 0.7){ g.fillStyle = '#fff'; g.fillRect(cx + 10, by - 30, 2, 6); g.fillRect(cx + 8, by - 28, 6, 2) }
+    } else if(kind === 'shield'){
+      g.fillStyle = C.woodLo; g.beginPath(); g.moveTo(cx - 14, by - 28); g.lineTo(cx + 14, by - 28); g.lineTo(cx + 13, by - 12); g.quadraticCurveTo(cx, by + 2, cx, by + 2); g.quadraticCurveTo(cx, by + 2, cx - 13, by - 12); g.closePath(); g.fill();
+      g.fillStyle = '#2F6FDE'; g.beginPath(); g.moveTo(cx - 10, by - 25); g.lineTo(cx + 10, by - 25); g.lineTo(cx + 9, by - 13); g.lineTo(cx, by - 3); g.lineTo(cx - 9, by - 13); g.closePath(); g.fill();
+      g.fillStyle = C.gold; g.fillRect(cx - 2, by - 24, 4, 19); g.fillRect(cx - 9, by - 17, 18, 4);
+    } else if(kind === 'pickaxe'){
+      g.save(); g.translate(cx, by - 14); g.rotate(Math.PI / 5);
+      g.fillStyle = C.wood; g.fillRect(-2.5, -12, 5, 28); g.fillStyle = C.woodLo; g.fillRect(0, -12, 2.5, 28);
+      g.fillStyle = '#AEBBC2'; g.beginPath(); g.moveTo(-17, -9); g.quadraticCurveTo(0, -20, 17, -9); g.lineTo(13, -6); g.quadraticCurveTo(0, -14, -13, -6); g.closePath(); g.fill();
+      g.fillStyle = '#7C8A92'; g.fillRect(-4, -15, 8, 7);
+      g.restore();
+    } else if(kind === 'rope'){
+      g.strokeStyle = '#C79A5B'; g.lineWidth = 4;
+      for(let i = 0; i < 3; i++){ g.beginPath(); g.ellipse(cx, by - 12 - i * 3, 13 - i * 2, 7 - i, 0, 0, Math.PI * 2); g.stroke() }
+      g.strokeStyle = '#8C6A3C'; g.lineWidth = 1.5; g.beginPath(); g.ellipse(cx, by - 12, 13, 7, 0, 0, Math.PI * 2); g.stroke();
+      g.strokeStyle = '#C79A5B'; g.lineWidth = 4; g.beginPath(); g.moveTo(cx + 11, by - 9); g.quadraticCurveTo(cx + 18, by - 2, cx + 14, by + 3); g.stroke();
     } else if(kind === 'potion'){
       g.fillStyle = C.glass; g.fillRect(cx - 4, by - 30, 8, 8);
       g.fillStyle = C.wood; g.fillRect(cx - 5, by - 33, 10, 4);
@@ -493,7 +556,7 @@
   const WEAPONS = {sword: {blade: '#DDE6EA'}, golden: {blade: '#F2C14A', glow: 'rgba(255,215,90,.45)'}, flame: {blade: '#FF7A1A', glow: 'rgba(255,120,30,.55)'}, axe: {blade: '#9CA3AF', axe: true}, trident: {blade: '#7DD3FC', trident: true}};
   PQ.outfits = Object.keys(OUTFITS); PQ.weapons = Object.keys(WEAPONS);
   function drawHero(g, x, y, dir, pose, ph, t, shield, gear){
-    const saved = {...C}, wp = WEAPONS[(gear && gear.weapon) || 'sword'] || WEAPONS.sword, of = OUTFITS[(gear && gear.outfit) || 'explorer'] || {};
+    const saved = {...C}, wp = gear && gear.noWeapon ? {none: true} : WEAPONS[(gear && gear.weapon) || 'sword'] || WEAPONS.sword, of = OUTFITS[(gear && gear.outfit) || 'explorer'] || {};
     Object.assign(C, of, {blade: wp.blade});
     try { drawHeroBody(g, x, y, dir, pose, ph, t, shield, wp, of) } finally { Object.assign(C, saved) }
   }
@@ -535,7 +598,7 @@
     const hx = 4 + Math.sin(armF) * 12, hy = -33 + Math.cos(armF) * 12;
     g.strokeStyle = C.skin; g.beginPath(); g.moveTo(4, -33); g.lineTo(hx, hy); g.stroke();
     if(pose === 'drink'){ g.fillStyle = C.potion; g.beginPath(); g.arc(hx, hy - 2, 4, 0, Math.PI * 2); g.fill() }
-    else {
+    else if(!wp.none){
       const sa = pose === 'attack' ? armF + 0.3 : pose === 'climb' ? 0.4 : 0.9;
       const tx = hx + Math.sin(sa) * 18, ty = hy + Math.cos(sa) * -18 * -1 * -1 + (pose === 'attack' ? 0 : -14);
       if(wp.glow){ g.strokeStyle = wp.glow; g.lineWidth = 8; g.beginPath(); g.moveTo(hx, hy); g.lineTo(tx, ty); g.stroke() }
@@ -557,7 +620,7 @@
   PQ.drawHero = drawHero;
 
   // ---------- player: animates the events ----------
-  const DUR = {start: 200, step: 260, jump: 520, climb: 520, fall: 160, turn: 180, take: 380, drink: 600, attack: 420, hurt: 420, bump: 380, shrug: 600, open: 300, die: 900, win: 1200, print: 120, defend: 380, block: 460};
+  const DUR = {mine: 480, start: 200, step: 260, jump: 520, climb: 520, fall: 160, turn: 180, take: 380, drink: 600, attack: 420, hurt: 420, bump: 380, shrug: 600, open: 300, die: 900, win: 1200, print: 120, defend: 380, block: 460};
   PQ.Player = class {
     constructor(canvas, hooks = {}){ this.cv = canvas; this.g = canvas.getContext('2d'); this.hooks = hooks; this.speed = 1; this.t0 = performance.now(); this.loop = this.loop.bind(this); requestAnimationFrame(this.loop) }
     setLevel(level){
@@ -593,6 +656,7 @@
       drawBackground(g, w.W, w.H, t);
       for(let x = 0; x < w.W; x++) if(!w.solid[w.H - 1][x]) drawPit(g, w, x, t);
       for(let y = 0; y < w.H; y++) for(let x = 0; x < w.W; x++) if(w.solid[y][x]) drawStone(g, w, x, y);
+      Object.keys(s.cracked || {}).forEach(k => { const [x, y] = k.split(',').map(Number); drawCracked(g, w, x, y) });
       Object.keys(w.spikes).forEach(k => { const [x, y] = k.split(',').map(Number); drawSpikes(g, x, y) });
       if(w.door) drawDoor(g, w.door.x, w.door.y, s.gems === w.gemsTotal && !s.chests, t);
       (s.opened || []).forEach(k => { const [x, y] = k.split(',').map(Number); drawItem(g, 'open', x, y, t) });
@@ -613,8 +677,9 @@
         const e = this.cur.e, p = Math.min(1, (t - this.cur.start) / this.cur.dur), to = e.s.hero; ph = p;
         if(e.a === 'step'){ hx = s.hero.x + (to.x - s.hero.x) * p; pose = 'run' }
         else if(e.a === 'jump'){ hx = s.hero.x + (to.x - s.hero.x) * p; hy = s.hero.y - Math.sin(p * Math.PI) * 1.1; pose = 'jump' }
-        else if(e.a === 'climb'){ const a = Math.min(1, p * 1.6), b = Math.max(0, p * 2 - 1); hy = s.hero.y - a; hx = s.hero.x + (to.x - s.hero.x) * b; pose = 'climb' }
+        else if(e.a === 'climb'){ const a = Math.min(1, p * 1.6), b = Math.max(0, p * 2 - 1); hy = s.hero.y - a * (s.hero.y - to.y); hx = s.hero.x + (to.x - s.hero.x) * b; pose = 'climb' }
         else if(e.a === 'fall'){ hy = s.hero.y + (to.y - s.hero.y) * p * p; pose = 'jump' }
+        else if(e.a === 'mine'){ pose = 'attack'; ph = p }
         else if(e.a === 'attack'){ pose = 'attack'; ph = (p * (e.swings || 1)) % 1 }
         else if(e.a === 'defend' || e.a === 'block') pose = e.a;
         else if(e.a === 'drink') pose = 'drink';
@@ -626,7 +691,25 @@
         else if(e.a === 'take'){ pose = 'idle'; hy = s.hero.y + Math.sin(p * Math.PI) * 0.12 }
       } else if(this.events === null && this.lastPose) pose = this.lastPose;
       const shieldUp = (this.cur ? this.cur.e.s.block : this.state.block) > 0;
-      if(!(this.cur && this.cur.e.a === 'die' && this.cur.e.why === 'pit')) drawHero(g, hx, hy, dir, pose, ph, t, shieldUp, this.gear);
+      if(!(this.cur && this.cur.e.a === 'die' && this.cur.e.why === 'pit')) drawHero(g, hx, hy, dir, pose, ph, t, shieldUp, w.gadgets && !((this.cur ? this.cur.e.s : this.state).bag || []).includes('sword') ? {...(this.gear || {}), noWeapon: true} : this.gear);
+      if(this.cur && this.cur.e.a === 'mine'){
+        const p = Math.min(1, (t - this.cur.start) / this.cur.dur), mx = this.cur.e.x * T + T / 2, my = this.cur.e.y * T + T / 2;
+        if(p < 0.5){ g.globalAlpha = 1 - p * 2; drawCracked(g, w, this.cur.e.x, this.cur.e.y); g.globalAlpha = 1 }
+        for(let i = 0; i < 10; i++){ const a = -Math.PI * (i / 9), sp = 30 + (i * 13) % 20; g.fillStyle = i % 2 ? C.stone : C.stoneLo; g.globalAlpha = Math.max(0, 1 - p); g.fillRect(mx + Math.cos(a) * sp * p - 3, my + Math.sin(a) * sp * p + 60 * p * p - 3, 6, 6) }
+        g.globalAlpha = 1;
+      }
+      if(this.cur && this.cur.e.a === 'die' && this.cur.e.why === 'pit'){
+        // splash (water) or burst of embers (lava) where the explorer fell in
+        const p = Math.min(1, (t - this.cur.start) / this.cur.dur), sx = this.cur.e.s.hero.x * T + T / 2, sy = (w.H - 1) * T + T * 0.45, hot = theme === 'lava';
+        for(let i = 0; i < 14; i++){
+          const a = -Math.PI * (0.15 + 0.7 * (i / 13)), sp = (hot ? 34 : 46) * (0.6 + ((i * 37) % 10) / 20);
+          const x = sx + Math.cos(a) * sp * p, y = sy + Math.sin(a) * sp * p * 1.4 + 90 * p * p;
+          g.globalAlpha = Math.max(0, 1 - p); g.fillStyle = hot ? (i % 2 ? '#FFD54A' : '#F26B1D') : (i % 3 ? C.waterHi : '#FFFFFF');
+          g.beginPath(); g.arc(x, y, hot ? 2.5 : 3.2, 0, Math.PI * 2); g.fill();
+        }
+        g.strokeStyle = hot ? '#FFB02E' : '#FFFFFF'; g.lineWidth = 2; g.globalAlpha = Math.max(0, 0.8 - p);
+        g.beginPath(); g.ellipse(sx, sy + 4, 8 + p * 26, 3 + p * 6, 0, 0, Math.PI * 2); g.stroke(); g.globalAlpha = 1;
+      }
       if(this.cur && ((this.cur.e.a === 'hurt' && this.cur.e.dmg) || this.cur.e.a === 'block')){
         const p = Math.min(1, (t - this.cur.start) / this.cur.dur), blk = this.cur.e.a === 'block';
         g.font = 'bold 15px system-ui, sans-serif'; g.textAlign = 'center'; g.globalAlpha = 1 - p * 0.7;
@@ -651,7 +734,15 @@
       for(let i = 0; i < Math.max(st.hearts, 0); i++) heart(g, 18 + i * 22, 17, 6);
       g.fillStyle = 'rgba(255,255,255,.18)';
       for(let i = Math.max(st.hearts, 0); i < 3; i++) heart(g, 18 + i * 22, 17, 6);
-      if(w.armed){
+      if(w.gadgets){
+        // hotbar: the gadgets in the explorer's bag
+        const bag = (st.bag || []).concat(Array(st.keys || 0).fill('key')), x0 = 18 + Math.max(3, st.hearts) * 22 + 8, n = Math.max(5, bag.length);
+        for(let i = 0; i < n; i++){
+          const sx = x0 + i * 30;
+          g.fillStyle = 'rgba(255,255,255,.10)'; g.fillRect(sx, 3, 28, 28); g.strokeStyle = 'rgba(255,255,255,.28)'; g.lineWidth = 1.5; g.strokeRect(sx + 0.5, 3.5, 27, 27);
+          if(bag[i]){ g.save(); g.translate(sx + 14 - T * 0.29, 3 + 26 - T * 0.58); g.scale(0.58, 0.58); drawItem(g, bag[i], 0, 0, 0); g.restore() }
+        }
+      } else if(w.armed){
         g.font = 'bold 13px system-ui, sans-serif'; g.fillStyle = '#CFE0DA'; g.textAlign = 'left';
         g.fillText('Sword: ' + w.sword + (w.shieldMax ? '   Shield: ' + w.shieldMax : ''), 18 + Math.max(3, st.hearts) * 22 + 6, 22);
       }
