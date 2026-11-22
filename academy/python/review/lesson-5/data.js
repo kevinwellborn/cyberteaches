@@ -1,0 +1,253 @@
+// Python Quest Lesson 5 review (Lesson 5 Keep going + Practice 5 While practice): study guide content and quiz questions.
+// Same format as lesson-4/data.js. lv.variants = other versions of the cave (a program must win on every version, like in the game;
+// the picture shows the first). Number questions: check 'jump' / 'climb' / 'attack' / 'take' / 'drink' = how many times that happens
+// when the program runs. tools/review/pycheck.js 5 runs all of them in the game.
+(function(){
+const PIT = "while hero.ahead() != 'pit':\n    hero.run(1)\nhero.jump()";
+const GEMS = "while hero.gems_left() > 0:\n    hero.run(1)\n    if hero.here() == 'gem':\n        hero.take()\nhero.run(1)";
+const CHEST = "while hero.here() != 'chest':\n    hero.run(1)\nhero.take()\nwhile hero.ahead() != 'door':\n    hero.run(1)\nhero.run(1)";
+const GIANT = "while hero.ahead() != 'guard':\n    hero.run(1)\nwhile hero.ahead() == 'guard':\n    sword.attack(3)\nhero.run(4)";
+const CLIMB = "while hero.ahead() == 'wall':\n    hero.climb()\nhero.run(1)";
+const STEPS = "while hero.ahead() != 'door':\n    if hero.ahead() == 'pit':\n        hero.jump()\n    else:\n        hero.run(1)\nhero.run(1)";
+const FIRE = "while hero.here() != 'chest':\n    if hero.ahead() == 'pit':\n        hero.jump()\n    else:\n        hero.run(1)\nhero.take()\nhero.run(1)";
+const GAUNT = "while hero.ahead() != 'door':\n    if hero.ahead() == 'guard':\n        sword.attack(2)\n    else:\n        hero.run(1)\nhero.run(1)";
+const SHIELD = "while hero.ahead() != 'guard':\n    hero.run(1)\nwhile hero.ahead() == 'guard':\n    shield.defend(2)\n    sword.attack(3)\nhero.run(4)";
+const ROPE = "while hero.here() != 'rope':\n    hero.run(1)\nhero.take()\nwhile hero.ahead() != 'wall':\n    hero.run(1)\nhero.climb()\nwhile hero.ahead() != 'door':\n    hero.run(1)\nhero.run(1)";
+const MINE = "while hero.ahead() == 'cracked':\n    pickaxe.mine()\n    hero.run(1)\nwhile hero.ahead() != 'door':\n    hero.run(1)\nhero.run(1)";
+const DRINK = "while hero.health() < 3:\n    hero.drink()\nwhile hero.ahead() == 'guardian':\n    hero.attack()\nhero.run(5)";
+const CAPTAIN = "hero.run(2)\nwhile hero.ahead() == 'guard':\n    shield.defend(2)\n    sword.attack(3)\nhero.run(4)";
+const STAIRS = "while hero.ahead() == 'wall':\n    hero.climb()\n    hero.take()\nhero.run(1)";
+const KEYS = "while hero.ahead() != 'door':\n    if hero.here() == 'key':\n        hero.take()\n    hero.run(1)\nhero.run(1)";
+const LAVA = {theme: 'lava'};
+const lava = (map, more) => ({...LAVA, map, ...more});
+
+const REVIEW = {
+  unit: 'p5', guideId: 105, quizId: 205, course: 'python',
+  name: 'Python Lesson 5 review', short: 'Lesson 5', title: 'Keep going', lessons: ['Lesson 5', 'Practice 5'],
+
+  recap: [
+    {tag: 'L5', color: '#D9480F', title: 'Keep going while...', idea: 'A <b>while</b> loop repeats its lines as long as its <b>condition</b> is <b>True</b>. When the condition turns False, the loop <b>stops</b>.', code: "while hero.ahead() != 'pit':\n    hero.run(1)\nhero.jump()"},
+    {tag: 'L5', color: '#D9480F', title: 'for or while?', idea: 'Use <b>for</b> when you know how many times. Use <b>while</b> when the cave <b>changes</b> every Run and you don\'t know. Numbers work too: <b>&lt;</b> and <b>&gt;</b>.', code: "while hero.gems_left() > 0:\n    hero.run(1)\n    if hero.here() == 'gem':\n        hero.take()"},
+    {tag: 'P5', color: '#B03A0C', title: 'While practice', idea: 'Loops one after another: run <b>until</b> the rope, then until the wall. Fight rounds <b>while</b> the captain stands. Something in the loop must change the condition, or it never stops.', code: "while hero.ahead() == 'guard':\n    shield.defend(2)\n    sword.attack(3)"},
+  ],
+
+  commands: [
+    ["while hero.ahead() != 'pit':", 'Repeat the lines pushed in under it as long as this is True.'],
+    ["while hero.ahead() == 'wall':", 'Repeat while a wall is in front, and stop when it is gone.'],
+    ['hero.gems_left()', 'A number: how many gems are still to find.'],
+    ['hero.health()', 'A number: how many hearts you have now.'],
+    ['hero.gems_left() > 0', '> means "is greater than". True while there are gems left.'],
+    ['hero.health() < 3', '< means "is less than". True while you have fewer than 3 hearts.'],
+    ['hero.drink()', 'Drink a potion from your bag: +1 heart.'],
+  ],
+
+  vocab: [
+    ['while', 'repeat the lines under it as long as the condition is True', 'mientras', '🔁 ✅'],
+    ['condition', 'a check that is either True or False', 'condición', '✅ / ❌'],
+    ['stop', 'when the condition turns False, the while loop ends', 'detenerse', '🛑'],
+    ['infinite loop', 'a loop whose condition never turns False, so it never stops', 'bucle infinito', '♾️'],
+    ['for loop', 'a loop that repeats a set number of times', 'bucle for', '🔢 🔁'],
+    ['!=', 'is not equal to', 'no es igual a', "!= 'pit'"],
+    ['<', 'is less than', 'menor que', '2 < 3'],
+    ['>', 'is greater than', 'mayor que', '3 > 0'],
+    ['hero.gems_left()', 'the number of gems still to find', 'gemas restantes', '💎 × 2'],
+    ['hero.health()', 'the number of hearts you have now', 'salud', '❤️ × 3'],
+    ['treasure chest', 'open it with hero.take(); the door stays shut until you do', 'cofre del tesoro', '🧰'],
+    ['version', 'one layout of a cave that changes every Run', 'versión', '🗺️ 1 2 3'],
+  ],
+
+  ideas: [
+    {title: 'Run until the lava',
+     text: 'The corridor is a different length every time, so you can\'t count. <b>while</b> the square ahead is not a pit, run 1. Then jump.',
+     lv: lava(['..........', '..........', 'S......Dc.', '######.###'], {variants: [['............', '............', 'S.........Dc', '#########.##'], ['........', '........', 'S...Dc..', '###.####']]}), code: PIT, note: 'hero.jump() is not pushed in, so it runs once, after the loop stops.'},
+    {title: 'Count with a number',
+     text: '<b>hero.gems_left()</b> is a number. Keep searching while it is <b>greater than</b> 0.',
+     lv: lava(['............', '............', 'S.*..*.*Dc..', '############'], {variants: [['............', '............', 'S..*.*Dc....', '############']]}), code: GEMS, note: 'Each take makes gems_left() smaller. At 0 the condition is False and the loop stops.'},
+    {title: 'Climb while there is a wall',
+     text: 'The volcano is a different height every time. Climb <b>while</b> a wall is ahead.',
+     lv: lava(['........', '........', '....Dc..', '...#####', '..######', 'S#######', '########'], {variants: [['.......', '.......', '.......', '...Dc..', '..#####', 'S######', '#######']]}), code: CLIMB, note: 'An if would climb only once. while climbs again and again until no wall is ahead.'},
+    {title: 'Attack while it stands',
+     text: 'A stone giant\'s hit points change every time. Walk until it is ahead, then attack <b>while</b> it is still there.',
+     lv: lava(['........', '........', 'S..W..Dc', '########'], {foes: [{hp: 6}], variants: [{map: ['...........', '...........', 'S.....W..Dc', '###########'], foes: [{hp: 9}]}]}), code: GIANT, note: 'Two loops, one after the other: first walk, then fight.'},
+    {title: 'Decide inside a while',
+     text: 'Keep going <b>while</b> the door is not ahead. Inside, an <b>if / else</b> picks jump or run.',
+     lv: lava(['.............', '.............', 'S..........Dc', '##.##.#.#####'], {variants: [['............', '............', 'S.........Dc', '###.#.###.##']]}), code: STEPS, note: 'The loop stops with the door just ahead, so one more hero.run(1) goes through it.'},
+    {title: 'Drink while weak',
+     text: 'Numbers with <b>&lt;</b>: drink potions while your health is less than 3. Then fight the guardian while it stands.',
+     lv: {gadgets: true, bag: ['sword', 'potion', 'potion'], theme: 'lava', hearts: 1, hp: 3, map: ['........', '........', 'SG...Dc.', '########'], variants: [{hearts: 2, bag: ['sword', 'potion']}]}, code: DRINK, note: 'With 1 heart it drinks twice; with 2 hearts only once. The same program works for both.'},
+  ],
+
+  fillBank: ['while', 'for', 'True', 'False', '!=', '<', '>', 'gems_left', 'health', 'stops', 'forever', 'pit'],
+  fill: [
+    {s: 'A ____ loop repeats a set number of times. A ____ loop repeats as long as its condition is True.', a: ['for', 'while']},
+    {s: 'while hero.ahead() ____ \'pit\': keeps running until a ____ is ahead.', a: ['!=', 'pit']},
+    {s: 'The loop keeps going while the condition is ____. When it turns ____, the loop stops.', a: ['True', 'False']},
+    {s: 'while hero.____() < 3: drinks potions. The ____ sign means "is less than".', a: ['health', '<']},
+  ],
+
+  quizVocab: [
+    {m: 'repeat the lines under it as long as the condition is True', opts: ['while', 'for loop', 'version'], a: 0},
+    {m: 'a loop whose condition never turns False, so it never stops', opts: ['stop', 'infinite loop', 'condition'], a: 1},
+    {m: 'the number of gems still to find', opts: ['hero.health()', '>', 'hero.gems_left()'], a: 2},
+    {m: 'is less than', opts: ['<', '>', '!='], a: 0},
+    {m: 'a loop that repeats a set number of times', opts: ['while', 'for loop', 'treasure chest'], a: 1},
+    {m: 'the number of hearts you have now', opts: ['version', 'hero.gems_left()', 'hero.health()'], a: 2},
+    {m: 'one layout of a cave that changes every Run', opts: ['version', 'condition', 'stop'], a: 0},
+    {m: 'is greater than', opts: ['<', '>', '=='], a: 1},
+  ],
+  quizFill: [
+    {s: 'while hero.____() > 0: keeps searching while gems are left. The ____ sign means "is greater than".', a: ['gems_left', '>']},
+    {s: 'If nothing in the loop changes the condition, the loop runs ____. When the condition is False, the loop ____.', a: ['forever', 'stops']},
+    {s: 'I use ____ when I know how many times, and ____ when the cave changes every Run.', a: ['for', 'while']},
+  ],
+
+  quizPoints: {question: 4, vocab: 2, blank: 2},
+  points: {sample: 4, vocab: 2, blank: 1},
+
+  tips: ['while repeats as long as its condition is True. It stops when the condition turns False.', 'Don\'t know how many times? Use while. Know the number? for is fine.', 'Something inside the loop must change the condition (a step, a take, an attack), or it never stops.', 'Lines that are not pushed in run once, after the loop stops: like the last jump or the step through the door.', 'Numbers work in conditions: hero.gems_left() > 0, hero.health() < 3.'],
+
+  samples: [
+    {lesson: 'Lesson 5', q: 'When does a <span class="code">while</span> loop stop?',
+     opts: ['when its condition turns False', 'after exactly 10 rounds', 'when it reaches an else'], a: 0,
+     why: 'while keeps going as long as the condition is True and stops when it turns False.'},
+    {lesson: 'Lesson 5', q: 'The corridor is a different length every Run (the picture shows one version). Which program wins every time?',
+     lv: lava(['..........', '..........', 'S......Dc.', '######.###'], {variants: [['............', '............', 'S.........Dc', '#########.##'], ['........', '........', 'S...Dc..', '###.####']]}),
+     opts: [{c: 'hero.run(5)\nhero.jump()'}, {c: PIT}, {c: "while hero.ahead() == 'pit':\n    hero.run(1)\nhero.jump()"}], a: 1,
+     why: 'Run while there is no pit ahead, then jump. Counting works on one version only, and == \'pit\' is False at the start, so that loop never runs.'},
+    {lesson: 'Lesson 5', q: 'Keep searching while there are gems left. The door is one step after the last gem. Which program wins every time?',
+     lv: lava(['............', '............', 'S.*..*.*Dc..', '############'], {variants: [['............', '............', 'S..*.*Dc....', '############']]}),
+     opts: [{c: "while hero.gems_left() > 0:\n    hero.run(1)\nhero.run(1)"}, {c: "while hero.gems_left() < 0:\n    hero.run(1)\n    if hero.here() == 'gem':\n        hero.take()\nhero.run(1)"}, {c: GEMS}], a: 2,
+     why: 'gems_left() > 0 is True until every gem is taken. Without take the number never changes, and gems_left() < 0 is never True.'},
+    {lesson: 'Lesson 5', q: 'What is <span class="code">hero.gems_left()</span>?',
+     opts: ['a number: how many gems are still to find', 'True or False: is a gem here?', 'a command that takes every gem'], a: 0,
+     why: 'It is a number, so you compare it: hero.gems_left() > 0.'},
+    {lesson: 'Lesson 5', q: 'The volcano is a different height every Run. Which program wins every time?',
+     lv: lava(['........', '........', '....Dc..', '...#####', '..######', 'S#######', '########'], {variants: [['.........', '.....Dc..', '....#####', '...######', '..#######', 'S########', '#########'], ['.......', '.......', '.......', '...Dc..', '..#####', 'S######', '#######']]}),
+     opts: [{c: CLIMB}, {c: "if hero.ahead() == 'wall':\n    hero.climb()\nhero.run(1)"}, {c: 'hero.climb()\nhero.climb()\nhero.climb()\nhero.run(1)'}], a: 0,
+     why: 'while climbs again and again until no wall is ahead. if climbs only once, and 3 climbs fits only one version.'},
+    {lesson: 'Lesson 5', kind: 'num', q: 'How many times does the explorer <b>climb</b> when this program runs?',
+     lv: lava(['.........', '.....Dc..', '....#####', '...######', '..#######', 'S########', '#########']), code: CLIMB, sol: CLIMB, check: 'climb', a: 4,
+     why: 'It climbs while a wall is ahead: 4 steps up, then no wall.'},
+    {lesson: 'Lesson 5', q: 'A stone giant stands somewhere ahead, and its hit points change. Which program wins every time?',
+     lv: lava(['........', '........', 'S..W..Dc', '########'], {foes: [{hp: 6}], variants: [{map: ['...........', '...........', 'S.....W..Dc', '###########'], foes: [{hp: 9}]}, {map: ['......', '......', 'SW..Dc', '######'], foes: [{hp: 12}]}]}),
+     opts: [{c: "while hero.ahead() != 'guard':\n    hero.run(1)\nif hero.ahead() == 'guard':\n    sword.attack(3)\nhero.run(4)"}, {c: GIANT}, {c: "hero.run(2)\nwhile hero.ahead() == 'guard':\n    sword.attack(3)\nhero.run(4)"}], a: 1,
+     why: 'Walk while no guard is ahead, then attack while it stands. if attacks only once, and run(2) is right for one version only.'},
+    {lesson: 'Lesson 5', q: 'What happens when this program runs?<br><span class="code">while hero.ahead() != \'pit\':</span><br><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;hero.take()</span>',
+     opts: ['it never stops: nothing in the loop moves the explorer, so the condition stays True', 'the explorer runs to the pit', 'it runs once and stops'], a: 0,
+     why: 'That is an infinite loop. Something inside must change the condition, like hero.run(1).'},
+    {lesson: 'Lesson 5', q: 'Keep going while the door is not ahead. Which program wins every time?',
+     lv: lava(['.............', '.............', 'S..........Dc', '##.##.#.#####'], {variants: [['............', '............', 'S.........Dc', '###.#.###.##'], ['..........', '..........', 'S.......Dc', '#.##.##.##']]}),
+     opts: [{c: "while hero.ahead() != 'door':\n    if hero.ahead() == 'pit':\n        hero.jump()\n    else:\n        hero.run(1)"}, {c: STEPS}, {c: "while hero.ahead() != 'door':\n    hero.run(1)\nhero.run(1)"}], a: 1,
+     why: 'The loop stops with the door just ahead, so one more run(1) is needed. Without the if you run into the lava.'},
+    {lesson: 'Lesson 5', q: 'When should you use <span class="code">while</span> instead of <span class="code">for</span>?',
+     opts: ['when you don\'t know how many times, because the cave changes', 'when you know the exact number', 'never: they are the same'], a: 0,
+     why: 'for repeats a set number of times. while keeps going until something changes.'},
+    {lesson: 'Lesson 5', q: 'A fire guard strikes for 2, you have 2 hearts, and its hit points change. Which program wins every time?',
+     lv: lava(['........', '........', 'S.W..Dc.', '########'], {hearts: 2, shield: 2, foes: [{hp: 6, power: 2}], variants: [{map: ['..........', '..........', 'S....W..Dc', '##########'], foes: [{hp: 9, power: 2}]}]}),
+     opts: [{c: GIANT}, {c: SHIELD}, {c: "while hero.ahead() != 'guard':\n    hero.run(1)\nwhile hero.ahead() == 'guard':\n    sword.attack(3)\n    shield.defend(2)\nhero.run(4)"}], a: 1,
+     why: 'Each round: shield up first, then attack. Without the shield, or with it after the attack, the strike of 2 takes both hearts.'},
+    {lesson: 'Practice 5', q: 'The rope and the tall wall move every Run. Which program wins every time?',
+     lv: {gadgets: true, bag: [], theme: 'lava', map: ['............', '.......#....', 'S..r...#..Dc', '############'], variants: [['............', '.....#......', 'Sr...#....Dc', '############']]},
+     opts: [{c: ROPE}, {c: "while hero.ahead() != 'wall':\n    hero.run(1)\nhero.climb()\nwhile hero.ahead() != 'door':\n    hero.run(1)\nhero.run(1)"}, {c: 'hero.run(3)\nhero.take()\nhero.run(3)\nhero.climb()\nhero.run(3)'}], a: 0,
+     why: 'Run until the rope, take it, run until the wall, climb, then on to the door. Without the rope the wall is too high, and counting fits one version only.'},
+    {lesson: 'Practice 5', q: 'A wall of cracked blocks, a different thickness every Run. Which program gets through every time?',
+     lv: {gadgets: true, bag: ['pickaxe'], theme: 'lava', map: ['..........', '.####.....', 'S%%%%...Dc', '##########'], variants: [['..........', '.##.......', 'S%%.....Dc', '##########']]},
+     opts: [{c: "pickaxe.mine()\nhero.run(1)\nwhile hero.ahead() != 'door':\n    hero.run(1)\nhero.run(1)"}, {c: MINE}, {c: "while hero.ahead() == 'cracked':\n    pickaxe.mine()\nwhile hero.ahead() != 'door':\n    hero.run(1)\nhero.run(1)"}], a: 1,
+     why: 'Mine and step while a cracked block is ahead. Mining once leaves the rest, and without the step you never reach the next block.'},
+    {lesson: 'Practice 5', kind: 'num', q: 'You start with 1 heart. How many times does the explorer <b>drink</b>?',
+     lv: {gadgets: true, bag: ['sword', 'potion', 'potion'], theme: 'lava', hearts: 1, hp: 3, map: ['........', '........', 'SG...Dc.', '########']}, code: DRINK, sol: DRINK, check: 'drink', a: 2,
+     why: 'It drinks while health < 3: 1 → 2 → 3, so 2 potions. At 3 the condition is False.'},
+    {lesson: 'Practice 5', q: 'The lava captain\'s hit points change every Run. Which program wins every time?',
+     lv: {gadgets: true, bag: ['sword', 'shield'], theme: 'lava', hearts: 2, shield: 2, foes: [{hp: 9, power: 2}], map: ['.........', '.........', 'S..W..Dc.', '#########'], variants: [{foes: [{hp: 12, power: 2}]}, {foes: [{hp: 6, power: 2}]}]},
+     opts: [{c: "hero.run(2)\nfor i in range(3):\n    shield.defend(2)\n    sword.attack(3)\nhero.run(4)"}, {c: "hero.run(2)\nif hero.ahead() == 'guard':\n    shield.defend(2)\n    sword.attack(3)\nhero.run(4)"}, {c: CAPTAIN}], a: 2,
+     why: 'Fight rounds while the captain stands. range(3) fits only the 9-hit-point version, and if fights just one round.'},
+    {lesson: 'Practice 5', q: 'A program has two while loops, one after the other: run until the rope, then run until the wall. When does the second loop start?',
+     opts: ['after the first loop stops', 'at the same time as the first loop', 'only if the first loop never runs'], a: 0,
+     why: 'Python runs the lines in order. The second loop starts once the first condition turns False.'},
+    {lesson: 'Practice 5', q: 'What does <span class="code">hero.health() &lt; 3</span> check?',
+     opts: ['if you have fewer than 3 hearts', 'if you have more than 3 hearts', 'if a guardian has 3 strength'], a: 0,
+     why: '< means "is less than". hero.health() is your number of hearts.'},
+  ],
+
+  quiz: [
+    {lesson: 'Lesson 5', q: 'A <span class="code">while</span> loop repeats its lines...',
+     opts: ['a set number of times', 'as long as its condition is True', 'only once'], a: 1,
+     why: 'while checks its condition before every round and stops when it is False.'},
+    {lesson: 'Lesson 5', q: 'The lava corridor is a different length every Run. Which program wins every time?',
+     lv: lava(['............', '............', 'S.........Dc', '#########.##'], {variants: [['..........', '..........', 'S......Dc.', '######.###'], ['........', '........', 'S...Dc..', '###.####']]}),
+     opts: [{c: "while hero.ahead() != 'pit':\n    hero.run(1)\n    hero.jump()"}, {c: 'hero.run(8)\nhero.jump()'}, {c: PIT}], a: 2,
+     why: 'Run while there is no pit, then jump once, after the loop. A jump pushed in under while jumps every round; counting fits one version only.'},
+    {lesson: 'Lesson 5', q: 'Find the treasure chest and open it. It moves every Run. Which program wins every time?',
+     lv: lava(['...........', '...........', 'S...T....Dc', '###########'], {chest: 'flame', variants: [['............', '............', 'S.T.....Dc..', '############'], ['...........', '...........', 'S......T.Dc', '###########']]}),
+     opts: [{c: CHEST}, {c: "while hero.ahead() != 'door':\n    hero.run(1)\nhero.run(1)"}, {c: "while hero.here() != 'chest':\n    hero.run(1)\nwhile hero.ahead() != 'door':\n    hero.run(1)\nhero.run(1)"}], a: 0,
+     why: 'Run until you stand on the chest, open it with take, then go to the door. The door stays shut until the chest is open.'},
+    {lesson: 'Lesson 5', q: 'What does <span class="code">hero.gems_left() &gt; 0</span> mean?',
+     opts: ['there is at least one gem still to find', 'there are no gems left', 'a gem is right here'], a: 0,
+     why: '> means "is greater than". More than 0 gems left = at least one.'},
+    {lesson: 'Lesson 5', q: 'Gems are in different places every Run. Which program wins every time?',
+     lv: lava(['............', '............', 'S*....**.*Dc', '############'], {variants: [['............', '............', 'S.*..*.*Dc..', '############']]}),
+     opts: [{c: "while hero.gems_left() > 0:\n    hero.run(1)\nhero.run(1)"}, {c: GEMS}, {c: "for i in range(4):\n    hero.run(1)\n    if hero.here() == 'gem':\n        hero.take()\nhero.run(1)"}], a: 1,
+     why: 'Search while gems are left and take each one. Without take the loop never ends, and range(4) is too short for these caves.'},
+    {lesson: 'Lesson 5', kind: 'num', q: 'How many times does the explorer <b>jump</b> when this program runs?',
+     lv: lava(['.............', '.............', 'S..........Dc', '##.##.#.#####']), code: STEPS, sol: STEPS, check: 'jump', a: 3,
+     why: 'It jumps only when lava is ahead: 3 pits, 3 jumps.'},
+    {lesson: 'Lesson 5', q: 'Why does this loop never stop?<br><span class="code">while hero.ahead() == \'wall\':</span><br><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;hero.take()</span>',
+     opts: ['nothing in it changes what is ahead, so the condition stays True', 'take can\'t be used in a loop', 'walls stop every loop'], a: 0,
+     why: 'An infinite loop. Use hero.climb() inside, so the wall ahead is gone after enough climbs.'},
+    {lesson: 'Lesson 5', q: 'A stone giant stands somewhere ahead, and its hit points change. Which program wins every time?',
+     lv: lava(['...........', '...........', 'S.....W..Dc', '###########'], {foes: [{hp: 9}], variants: [{map: ['........', '........', 'S..W..Dc', '########'], foes: [{hp: 6}]}, {map: ['......', '......', 'SW..Dc', '######'], foes: [{hp: 12}]}]}),
+     opts: [{c: "while hero.ahead() != 'guard':\n    hero.run(1)\nfor i in range(3):\n    sword.attack(3)\nhero.run(4)"}, {c: "while hero.ahead() != 'guard':\n    hero.run(1)\nwhile hero.ahead() == 'guard':\n    sword.attack(2)\nhero.run(4)"}, {c: GIANT}], a: 2,
+     why: 'Attack while it stands. range(3) fits only 9 hit points, and 2 swings at a time is too many on the last swing for 9.'},
+    {lesson: 'Lesson 5', kind: 'num', q: 'The giant has 12 hit points. How many times does <span class="code">sword.attack(3)</span> run?',
+     lv: lava(['......', '......', 'SW..Dc', '######'], {foes: [{hp: 12}]}), code: GIANT, sol: GIANT, check: 'attack', a: 4,
+     why: '12 hit points, 3 per attack: the loop runs 4 times, then no guard is ahead.'},
+    {lesson: 'Lesson 5', q: 'Guards with 2 hit points stand in different spots every Run. Which program wins every time?',
+     lv: lava(['............', '............', 'S.W..W.W..Dc', '############'], {hp: 2, variants: [['............', '............', 'SW.W......Dc', '############'], ['.........', '.........', 'S....W.Dc', '#########']]}),
+     opts: [{c: GAUNT}, {c: "while hero.ahead() != 'door':\n    if hero.ahead() == 'guard':\n        sword.attack(2)\n    else:\n        hero.run(1)"}, {c: "while hero.ahead() != 'door':\n    if hero.ahead() == 'guard':\n        sword.attack(3)\n    else:\n        hero.run(1)\nhero.run(1)"}], a: 0,
+     why: 'Attack only when a guard is ahead, with 2 swings, and step through the door after the loop. Without that last run(1) the program ends with the door just ahead, and 3 swings is too many.'},
+    {lesson: 'Lesson 5', q: 'A chest waits past the lava, with the door right behind it. Which program wins every time?',
+     lv: lava(['..........', '..........', 'S.....TDc.', '##.##.####'], {chest: 'fire', variants: [['...........', '...........', 'S.......TDc', '####.#.####'], ['..........', '..........', 'S..TDc....', '#.########']]}),
+     opts: [{c: "while hero.here() != 'chest':\n    hero.run(1)\nhero.take()\nhero.run(1)"}, {c: FIRE}, {c: "while hero.here() != 'chest':\n    if hero.ahead() == 'pit':\n        hero.jump()\n    else:\n        hero.run(1)\nhero.run(1)"}], a: 1,
+     why: 'Jump or run until you stand on the chest, open it, then step through the door. Without the if you fall in the lava; without take the door stays shut.'},
+    {lesson: 'Lesson 5', q: 'Which line is written correctly?',
+     opts: [{c: "while hero.ahead() != 'door'"}, {c: "while hero.ahead() != 'door':"}, {c: "while hero.ahead() =! 'door':"}], a: 1,
+     why: 'A while line ends with a colon, and "is not" is written != (! first).'},
+    {lesson: 'Practice 5', q: 'Keys and gates, a different number every Run. Which program wins every time?',
+     lv: {gadgets: true, bag: [], theme: 'river', map: ['............', '............', 'Sk.|.k.|..Dc', '############'], variants: [['............', '............', 'S.k|k|k|..Dc', '############'], ['............', '............', 'S..k...|..Dc', '############']]},
+     opts: [{c: "while hero.ahead() != 'door':\n    hero.run(1)\nhero.run(1)"}, {c: "while hero.ahead() != 'door':\n    if hero.here() == 'key':\n        hero.take()\nhero.run(1)"}, {c: KEYS}], a: 2,
+     why: 'Take a key when you stand on one, then run 1 every round. Without take the gates stay locked, and run(1) outside the loop means the explorer never moves.'},
+    {lesson: 'Practice 5', q: 'Climb the tower and take the gem on every step. The height changes. Which program wins every time?',
+     lv: {gadgets: true, bag: [], theme: 'lava', map: ['.......', '...*Dc.', '..*##..', '.*###..', 'S####..', '#######'], variants: [['.......', '.......', '.......', '..*Dc..', '.*##...', 'S###...', '#######']]},
+     opts: [{c: CLIMB}, {c: STAIRS}, {c: "while hero.ahead() == 'wall':\n    hero.climb()\nhero.take()\nhero.run(1)"}], a: 1,
+     why: 'Climb and take inside the loop, so it happens on every step. Taking once after the loop leaves gems behind.'},
+    {lesson: 'Practice 5', q: 'You have 2 hearts and need 3. Which program drinks the right number of potions every time?',
+     lv: {gadgets: true, bag: ['sword', 'potion'], theme: 'lava', hearts: 2, hp: 3, map: ['........', '........', 'SG...Dc.', '########'], variants: [{hearts: 1, bag: ['sword', 'potion', 'potion']}]},
+     opts: [{c: DRINK}, {c: "while hero.health() > 3:\n    hero.drink()\nwhile hero.ahead() == 'guardian':\n    hero.attack()\nhero.run(5)"}, {c: "hero.drink()\nwhile hero.ahead() == 'guardian':\n    hero.attack()\nhero.run(5)"}], a: 0,
+     why: 'Drink while health < 3. > 3 is never True here, and one drink is not enough when you start with 1 heart.'},
+    {lesson: 'Practice 5', kind: 'num', q: 'How many times does <span class="code">hero.take()</span> run?',
+     lv: {gadgets: true, bag: [], theme: 'river', map: ['............', '............', 'Sk.|.k.|..Dc', '############']}, code: KEYS, sol: KEYS, check: 'take', a: 2,
+     why: 'It takes only when standing on a key: 2 keys.'},
+    {lesson: 'Practice 5', q: 'The captain has 6, 9 or 12 hit points, a different number every Run. Why use while instead of for?',
+     opts: ['while keeps fighting rounds as long as the captain stands, whatever its hit points', 'for can\'t hold a shield', 'while is shorter to type'], a: 0,
+     why: 'for range(3) fits only 9 hit points. while checks every round.'},
+    {lesson: 'Practice 5', q: 'Which loop gets through a cracked wall of any thickness?',
+     opts: [{c: "while hero.ahead() == 'cracked':\n    pickaxe.mine()\n    hero.run(1)"}, {c: "if hero.ahead() == 'cracked':\n    pickaxe.mine()\n    hero.run(1)"}, {c: "for i in range(2):\n    pickaxe.mine()\n    hero.run(1)"}], a: 0,
+     why: 'while keeps mining as long as a cracked block is ahead. if mines one block, and range(2) mines exactly two.'},
+  ],
+  quizVariants: {
+    5: [
+      {lesson: 'Lesson 5', kind: 'num', q: 'How many times does the explorer <b>jump</b> when this program runs?',
+       lv: lava(['............', '............', 'S.........Dc', '###.#.###.##']), code: STEPS, sol: STEPS, check: 'jump', a: 3, why: 'It jumps only when lava is ahead: 3 pits, 3 jumps.'},
+      {lesson: 'Lesson 5', kind: 'num', q: 'How many times does the explorer <b>jump</b> when this program runs?',
+       lv: lava(['..........', '..........', 'S.......Dc', '###.######']), code: STEPS, sol: STEPS, check: 'jump', a: 1, why: 'It jumps only when lava is ahead: 1 pit, 1 jump.'},
+    ],
+    8: [
+      {lesson: 'Lesson 5', kind: 'num', q: 'The giant has 6 hit points. How many times does <span class="code">sword.attack(3)</span> run?',
+       lv: lava(['........', '........', 'S..W..Dc', '########'], {foes: [{hp: 6}]}), code: GIANT, sol: GIANT, check: 'attack', a: 2, why: '6 hit points, 3 per attack: 2 times.'},
+      {lesson: 'Lesson 5', kind: 'num', q: 'The giant has 9 hit points. How many times does <span class="code">sword.attack(3)</span> run?',
+       lv: lava(['...........', '...........', 'S.....W..Dc', '###########'], {foes: [{hp: 9}]}), code: GIANT, sol: GIANT, check: 'attack', a: 3, why: '9 hit points, 3 per attack: 3 times.'},
+    ],
+  },
+};
+if (typeof module !== 'undefined') module.exports = REVIEW; else window.REVIEW = REVIEW;
+})();

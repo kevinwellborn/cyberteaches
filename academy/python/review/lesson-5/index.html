@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Python Quest Lesson 5 Review: Study Guide · CyberTeaches</title>
+<meta name="description" content="Study guide for Python Quest Lesson 5 and Practice 5: while loops, conditions that stop a loop, infinite loops, hero.gems_left(), hero.health(), and the number signs &lt; and &gt;. Vocabulary, big ideas, sentence frames and sample questions, scored out of 100.">
+<link rel="icon" href="../../../../favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Atkinson+Hyperlegible:wght@400;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<link rel="stylesheet" href="../../../resources/resources.css">
+<link rel="stylesheet" href="../../../review/review.css?v=9">
+<style>body.gate .sheet > section:not(.cover){visibility:hidden}</style>
+<script async src="/analytics.js?v=1"></script>
+</head><body class="gate">
+<div class="sheet">
+  <div class="toolbar">
+    <a class="btn" href="../../">← Python Quest</a>
+    <span class="spacer"></span>
+    <button class="btn" id="printBtn">🖨 Print</button>
+    <button class="btn" id="printKey">🖨 Print with answers</button>
+    <span class="tally noprint" id="tally" aria-live="polite"></span>
+  </div>
+
+  <section class="card cover">
+    <span class="label" id="clabel">Study guide</span>
+    <h1 id="ctitle"></h1>
+    <p>Read the big ideas and learn the words. Then answer every question and press <b>Check my answer</b>. You get points only for your <b>first</b> answer, so think before you check. The study guide is worth <b>100 points</b>, and your teacher sees your score.</p>
+    <div class="namebox"><label>Name<span class="line"></span></label><label>Class<span class="line"></span></label><label style="max-width:160px">Date<span class="line"></span></label></div>
+  </section>
+
+  <section class="card"><h2>1. What you learned</h2><p class="sub">Each lesson in one sentence, with Python code that shows the idea.</p><div class="recap" id="recap"></div></section>
+
+  <section class="card"><h2>2. Commands you know</h2><p class="sub">Every command is who, a dot, the action, and ( ). Spelling counts: small h in <b>hero</b>.</p>
+    <table class="cmds"><tbody id="cmds"></tbody></table></section>
+
+  <section class="card"><h2>3. Word bank</h2><p class="sub">Learn these words. The Spanish word is in <i>italics</i>.</p>
+    <table class="words"><thead><tr><th>Word</th><th>Meaning</th><th>Español</th><th class="wpic">Picture</th></tr></thead><tbody id="words"></tbody></table>
+    <h3 class="checkhead">Vocabulary check <span class="pts" id="vpts"></span></h3><p class="sub">What does each word mean? Pick one answer, then press <b>Check my answer</b>.</p>
+    <div id="vocabq"></div></section>
+
+  <section class="card pagebreak"><h2>4. Big ideas</h2><p class="sub">Read the code from top to bottom and move your finger along the temple.</p><div class="ideas" id="ideas"></div></section>
+
+  <section class="card"><h2>5. Say it and write it <span class="pts" id="fpts"></span></h2><p class="sub">Pick a word from the word bank for each blank. Say the sentence to a partner, then press <b>Check my answer</b>.</p>
+    <div class="bank" id="fbank"></div><div id="fillq"></div></section>
+
+  <section class="card pagebreak"><h2>6. Sample questions <span class="pts" id="spts"></span></h2><p class="sub">Pick or type your answer first. Then press <b>Check my answer</b> to see if you are right, the right answer and why.</p>
+    <div id="samples"></div></section>
+
+  <section class="card score on noprint" id="gscore"><span class="label">Your study guide score</span>
+    <div class="big" id="gbig">0 / 100</div><p id="gparts"></p><p id="gsend"></p></section>
+
+  <section class="card"><h2>Quiz tips</h2><ul class="tips" id="tips"></ul>
+    <div class="submitbar noprint" style="justify-content:flex-start;margin:14px 0 0"><a class="btn primary big" href="quiz.html">I'm ready. Take the quiz →</a></div></section>
+</div>
+<script src="../../../firebase-config.js"></script>
+<script src="../../../cloud.js?v=22"></script>
+<script src="../../pyrun.js?v=3"></script>
+<script src="../../levels.js?v=18"></script>
+<script src="../../game.js?v=9"></script>
+<script src="../pyreview.js?v=1"></script>
+<script src="data.js?v=1"></script>
+<script src="../../../review/review.js?v=7"></script>
+<script>
+const R = REVIEW, V = Review, $ = id => document.getElementById(id);
+document.title = `Python Quest ${R.short} Review: Study Guide · CyberTeaches`;
+$('clabel').textContent = R.name + ' · Study guide'; $('ctitle').innerHTML = `${R.title}: <em>study guide</em>`;
+$('recap').innerHTML = R.recap.map(r => `<div class="row"><div class="ln" style="background:${r.color}">${r.tag}</div><div><h3>${r.title}</h3><p>${r.idea}</p></div>${V.code(r.code)}</div>`).join('');
+$('cmds').innerHTML = R.commands.map(([c, say]) => `<tr><td>${V.code(c)}</td><td>${say}</td></tr>`).join('');
+$('words').innerHTML = R.vocab.map(([w, m, es, pic]) => `<tr><td>${w}</td><td>${m}</td><td class="es">${es}</td><td class="wpic">${pic}</td></tr>`).join('');
+$('ideas').innerHTML = R.ideas.map(d => `<div class="idea"><h3>${d.title}</h3><p>${d.text}</p><div class="show">${V.temple(d.lv)}${V.code(d.code)}</div><p class="note">${d.note}</p></div>`).join('');
+const PT = R.points;
+// Vocabulary check: for each word, pick its meaning from 3 (two other words' meanings, chosen the same way every time).
+const vocabQs = R.vocab.map(([w, m, es], i, all) => { const n = all.length, wrong = [all[(i + 3) % n][1], all[(i + 7) % n][1]], at = i % 3;
+  const opts = [...wrong]; opts.splice(at, 0, m);
+  return {id: 'v' + i, q: `What does <b>${w}</b> mean?`, opts, a: at, pts: PT.vocab, why: `<b>${w}</b> (<i>${es}</i>) means ${m}.`} });
+$('vocabq').innerHTML = vocabQs.map((q, i) => V.question(q, i, 'practice')).join('');
+// Say it and write it: a menu of word bank words for each blank.
+$('fbank').innerHTML = '<b>Word bank:</b> ' + R.fillBank.map(w => `<span>${w}</span>`).join('');
+const menu = k => `<select aria-label="Blank ${k + 1}"><option value="">choose…</option>${R.fillBank.map(w => `<option>${w}</option>`).join('')}</select><span class="print-only fillgap"></span>`;
+const fillQs = R.fill.map((f, i) => ({id: 'f' + i, kind: 'fill', a: f.a, pts: f.a.length * PT.blank}));
+$('fillq').innerHTML = R.fill.map((f, i) => { let k = 0; return `<div class="q fillq" data-id="f${i}"><div class="qn">${i + 1}</div><div class="qb">
+  <p class="qt">${f.s.replace(/____/g, () => menu(k++))} <span class="pts">${f.a.length * PT.blank} point${f.a.length * PT.blank > 1 ? 's' : ''}</span></p>
+  ${V.checkRow()}<div class="fb" hidden></div><p class="key">Answer: <b>${f.a.join('</b>, <b>')}</b>.</p></div></div>` }).join('');
+const sampleQs = R.samples.map((q, i) => ({...q, id: 's' + i, pts: PT.sample}));
+$('samples').innerHTML = sampleQs.map((q, i) => V.question(q, i, 'practice')).join('');
+const sum = qs => qs.reduce((t, q) => t + q.pts, 0);
+$('vpts').textContent = sum(vocabQs) + ' points'; $('fpts').textContent = sum(fillQs) + ' points'; $('spts').textContent = sum(sampleQs) + ' points';
+$('tips').innerHTML = R.tips.map(t => `<li>${t}</li>`).join('');
+PQR.draw();
+$('printBtn').onclick = () => { document.body.classList.remove('show-key'); print() };
+$('printKey').onclick = () => { document.body.classList.add('show-key'); document.querySelectorAll('details.sol').forEach(d => d.open = true); print() };
+addEventListener('afterprint', () => document.body.classList.remove('show-key'));
+// The teacher can lock the study guide for a class (Python Quest: classes/{code}.pyLocked holds R.guideId; the quiz is R.quizId in pyUnlocked).
+// The guide stays hidden (body.gate) until that check is done, so a locked guide never flashes on screen.
+const openGuide = c => { document.body.classList.remove('gate'); startScoring(c) };
+
+// Points: only the first answer to each question counts. When every question is answered, the score (out of 100)
+// goes to the student's record and class roster (Cloud.saveGuide), where the Teacher Dashboard shows it.
+const ITEMS = [...vocabQs.map(q => ({id: q.id, kind: 'mc', a: q.a, pts: q.pts, why: q.why})), ...fillQs,
+  ...sampleQs.map(q => ({id: q.id, kind: q.kind === 'num' ? 'num' : 'mc', a: q.a, pts: q.pts, why: q.why}))];
+let started = false;
+function startScoring(cls){
+  if (started) return; started = true;
+  const C = window.Cloud && Cloud.enabled ? Cloud : null, uid = C && C.user ? C.user.uid : 'guest';
+  const storeKey = `ct-guide-u${R.unit}-${uid}`, sentKey = storeKey + '-sent', redoKey = storeKey + '-redo';
+  // Redo: the teacher can let a student do the study guide again (Teacher Dashboard). classes/{code}.redo['{uid}_g1'] holds the
+  // student's number of tries at that moment, so it works once: the next score sent raises tries and closes it.
+  const prev = ((C && C.profile && C.profile.review) || {})['g' + R.unit], redo = cls && (cls.redo || {})[uid + '_g' + R.unit];
+  let reset = false;
+  // '{tries}:keep' keeps the right answers and opens the wrong ones again; '{tries}:new' (or a plain number) starts over.
+  if (prev && redo != null && +String(redo).split(':')[0] === prev.tries) { reset = true; const keep = String(redo).split(':')[1] === 'keep';
+    let done = null; try { done = localStorage.getItem(redoKey) } catch (e) {}
+    if (done !== String(redo)) { try {
+      let kept = {}; if (keep) { const old = JSON.parse(localStorage.getItem(storeKey) || '{}') || {};
+        ITEMS.forEach(it => { if (old[it.id] != null && V.earnedOf(it, old[it.id]) === it.pts) kept[it.id] = old[it.id] }) }
+      localStorage.setItem(storeKey, JSON.stringify(kept)); localStorage.removeItem(sentKey); localStorage.setItem(redoKey, String(redo)) } catch (e) {} }
+    $('gsend').textContent = keep ? 'Your teacher let you fix your study guide: your right answers are kept, and the questions you got wrong are open again. Your new score will replace the old one.'
+      : 'Your teacher let you do the study guide again from the start. Your new score will replace the old one.' }
+  const parts = () => [['Vocabulary', vocabQs], ['Sentences', fillQs], ['Sample questions', sampleQs]];
+  V.scored({root: document.querySelector('.sheet'), items: ITEMS, storeKey, onUpdate: ({earned, done, count, total}) => {
+    $('tally').innerHTML = `<b>${earned}</b> / ${total} points · ${done} of ${count} answered`;
+    $('gbig').textContent = `${earned} / ${total}`;
+    $('gparts').innerHTML = done < count ? `You have answered <b>${done} of ${count}</b> questions. Answer them all to finish.` : (earned >= 90 ? 'Excellent work! 🌟 You are ready for the quiz.' : earned >= 70 ? 'Good job! Read the ✗ answers again before the quiz.' : 'Keep going! Read the big ideas and the ✗ answers again before the quiz.');
+    if (done === count) send(earned, total);
+    else if (!reset) $('gsend').textContent = !C ? '' : !C.user ? 'Sign in on the Academy page so your teacher can see your score.' : '' } });
+  async function send(score, total){
+    const el = $('gsend');
+    if (!C) return;
+    if (!C.user) { el.innerHTML = 'Not sent: you are not signed in. <a href="../../../">Sign in on the Academy page</a> so your teacher sees your score.'; return }
+    if (!(C.profile && C.profile.classCode)) { el.innerHTML = 'Not sent: you have not joined a class. <a href="../../../">Join your class on the Academy page</a>.'; return }
+    let sent = null; try { sent = localStorage.getItem(sentKey) } catch (e) {}
+    if (sent === String(score)) { el.textContent = '✓ Your teacher can see this score.'; return }
+    el.textContent = 'Sending your score to your teacher…';
+    try { const e = await C.saveGuide(R.unit, {score, total, reset}); try { localStorage.setItem(sentKey, String(score)) } catch (x) {}
+      el.textContent = e.tries > 1 ? `✓ Sent. Your teacher sees your first score, ${e.first} / ${e.total}.` : '✓ Sent to your teacher.' }
+    catch (err) { console.error(err); el.innerHTML = `<span class="warn">Could not send your score (${err.message}). <button class="btn sm" type="button" id="resend">Try again</button></span>`; $('resend').onclick = () => send(score, total) }
+  }
+}
+if (window.Cloud && Cloud.enabled) { let checked = false; Cloud.onChange(C => {
+  if (!C.ready || checked) return; checked = true;
+  const code = C.user && C.profile && C.profile.classCode; if (!code) { openGuide(); return }
+  const isLocked = c => (c.pyLocked || []).map(Number).includes(R.guideId);
+  C.findClass(code).catch(() => C.restGet('classes/' + code)).then(c => {
+    if (!c || !isLocked(c)) { openGuide(c); return }
+    document.querySelectorAll('.sheet > section:not(.cover), #printBtn, #printKey').forEach(e => e.remove());
+    document.querySelector('.cover').insertAdjacentHTML('beforeend', `<div class="signin warn2">🔒 Your teacher has locked the <b>study guide</b> of the ${R.name} for your class for now. Ask your teacher when it opens. <a href="../../">Back to Python Quest</a></div>`);
+    document.body.classList.remove('gate');   // locked: no questions, so nothing to score
+  }).catch(e => { console.error(e); openGuide() }) }) }
+else openGuide();
+</script>
+</body></html>
