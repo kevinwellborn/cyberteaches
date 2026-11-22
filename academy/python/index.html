@@ -323,8 +323,8 @@ header.top{display:flex;align-items:center;gap:12px;padding:12px 16px;max-width:
 <p class="foot">Python Quest is an original CyberTeaches game. Python runs right in your browser.</p>
 
 <script src="pyrun.js?v=3"></script>
-<script src="levels.js?v=8"></script>
-<script src="game.js?v=7"></script>
+<script src="levels.js?v=9"></script>
+<script src="game.js?v=8"></script>
 <script src="sound.js?v=2"></script>
 <script src="../firebase-config.js"></script>
 <script src="../cloud.js?v=22"></script>
@@ -370,7 +370,7 @@ function render(){
     const locked = !ls.soon && isLocked(ls.n);
     const card = h('div', 'lesson' + (ls.soon ? ' soon' : '') + (locked ? ' locked' : ''));
     const head = h('div', 'lesson-head');
-    const num = h('div', 'lesson-num', 'L' + ls.n); num.style.background = ls.color;
+    const num = h('div', 'lesson-num', PQ_TAG(ls.n)); num.style.background = ls.color;
     const solved = lv.filter(l => data.stars[l.id]).length;
     head.append(num, h('div', '', `<h2>${esc(ls.title)}</h2><div class="topic">${esc(ls.topic)}</div>`));
     head.append(h('span', 'spacer'));
@@ -537,7 +537,7 @@ function openLevel(id){
   cur = LEVELS.find(l => l.id === id) || LEVELS[0];
   PQSound.music(cur.theme || 'jungle');
   running = false; errLine = runLine = 0;
-  $('#lvlTag').textContent = 'Lesson ' + cur.lesson + ' · Level ' + cur.num + (cur.review ? ' · Review' : '');
+  $('#lvlTag').textContent = PQ_NAME(cur.lesson) + ' · Level ' + cur.num + (cur.review ? ' · Review' : '');
   $('#lvlName').textContent = cur.name;
   $('#goalText').textContent = cur.goal + (cur.variants ? '  🔀 This temple changes every time you press Run (' + (cur.variants.length + 1) + ' versions). Your code must work on all of them.' : '');
   $('#tipText').textContent = cur.tip; $('#tipBox').open = false;
@@ -551,7 +551,8 @@ function openLevel(id){
   player.setLevel(cur); player.speed = speed; player.gear = wear();
   hideMsg(); $('#out').className = 'out'; $('#out').textContent = '';
   const cmds = $('#cmds'); cmds.innerHTML = '<div class="crumb">Commands (click to add a line)</div>';
-  PQ_COMMANDS.filter(c => (c.lesson || 1) < cur.lesson || ((c.lesson || 1) === cur.lesson && c.from <= cur.k)).forEach(c => {
+  const lsNow = PQ_LESSONS.find(x => x.n === cur.lesson) || {}, effL = lsNow.practiceOf || cur.lesson, effK = lsNow.practiceOf ? 99 : cur.k;
+  PQ_COMMANDS.filter(c => (c.lesson || 1) < effL || ((c.lesson || 1) === effL && c.from <= effK)).forEach(c => {
     const b = h('button', 'cmd' + (c.from === cur.k && (c.lesson || 1) === cur.lesson ? ' new' : ''), `<code>${esc(c.code)}</code><span>${esc(c.say)}</span>`);
     b.onclick = () => insertCommand(c.insert || c.code); cmds.append(b);
   });
@@ -608,7 +609,7 @@ $('#winNext').onclick = () => { $('#winModal').classList.remove('show'); const n
 let L = null, sIdx = 0, demoPlayers = [];
 const mini = (cv, map, extra = {}) => { const p = new PQ.Player(cv); p.setLevel({...extra, map}); p.gear = wear(); demoPlayers.push(p); return p };
 const playOn = (p, code) => { p.stop(); p.reset(); const r = PQ.simulate(p.level, code); p.play(r.events) };
-function openLearn(n){ L = PQ_LEARN[n]; L.n = n; sIdx = 0; $('#learnTitle').textContent = 'Lesson ' + n + ' · ' + L.title.replace(/^Learn: /, ''); showSlide() }
+function openLearn(n){ L = PQ_LEARN[n]; L.n = n; sIdx = 0; $('#learnTitle').textContent = PQ_NAME(n) + ' · ' + L.title.replace(/^Learn: /, ''); showSlide() }
 function showSlide(){
   demoPlayers.forEach(p => p.destroy()); demoPlayers.length = 0;   // (old canvases are dropped with the slide)
   const sl = L.slides[sIdx], box = $('#slide'); box.innerHTML = '<h2>' + esc(sl.title) + '</h2>' + (sl.html || '');
@@ -686,7 +687,7 @@ let V = null, vIdx = 0, vTok = 0, vPlaying = false, vPlayer = null;
 const vVoice = () => { try { const vs = speechSynthesis.getVoices().filter(v => /^en(-|_)/i.test(v.lang)); return vs.find(v => /natural|google us|samantha|aria|jenny/i.test(v.name)) || vs.find(v => /en-us/i.test(v.lang)) || vs[0] } catch(e){ return null } };
 function openVideo(n){
   V = PQ_VIDEO[n]; V.n = n; vIdx = 0; vPlaying = false;
-  $('#videoTitle').textContent = 'Lesson ' + n + ' · 🎬 ' + V.title;
+  $('#videoTitle').textContent = PQ_NAME(n) + ' · 🎬 ' + V.title;
   if(!vPlayer){ vPlayer = new PQ.Player($('#vCanvas')) }
   const lesson = LEVELS.find(l => l.lesson === n && !l.review);
   $('#vstage').className = 'vstage' + (lesson && lesson.theme === 'lava' ? ' lava' : '');
@@ -787,7 +788,7 @@ function route(){
   $('#learn').hidden = true; stopVideo(); $('#video').hidden = true;
   if(!m) PQSound.music(null);
   const lockedLesson = m ? Number(m[1].split('-')[0]) : ln ? Number(ln[1]) : vn ? Number(vn[1]) : 0;
-  if(lockedLesson && isLocked(lockedLesson)){ history.replaceState(null, '', location.pathname); player.stop(); $('#play').hidden = true; $('#home').hidden = false; cur = null; render(); startArt(); $('#lockNote').hidden = false; $('#lockNote').textContent = '🔒 Your teacher has locked Lesson ' + lockedLesson + ' for now. Pick a lesson that is open.'; return }
+  if(lockedLesson && isLocked(lockedLesson)){ history.replaceState(null, '', location.pathname); player.stop(); $('#play').hidden = true; $('#home').hidden = false; cur = null; render(); startArt(); $('#lockNote').hidden = false; $('#lockNote').textContent = '🔒 Your teacher has locked ' + PQ_NAME(lockedLesson) + ' for now. Pick a lesson that is open.'; return }
   $('#lockNote').hidden = true;
   if(m && LEVELS.some(l => l.id === m[1])){ $('#home').hidden = true; $('#play').hidden = false; openLevel(m[1]); window.scrollTo(0, 0) }
   else if(vn && PQ_VIDEO[vn[1]]){ player.stop(); $('#home').hidden = true; $('#play').hidden = true; $('#video').hidden = false; cur = null; openVideo(Number(vn[1])); window.scrollTo(0, 0) }
