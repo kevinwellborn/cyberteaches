@@ -245,7 +245,7 @@
     if(result.result === 'error' && events.length > 1) result.partial = true;
     // A misspelled sensor word ('Pit', 'gaurd') is never equal, so the if silently does nothing. Point it out.
     if(result.result === 'fail' || result.result === 'lose'){
-      const WORDS = ['pit', 'drop', 'wall', 'spikes', 'guard', 'guardian', 'gate', 'door', 'floor', 'edge', 'gem', 'key', 'potion'];
+      const WORDS = ['pit', 'drop', 'wall', 'cracked', 'spikes', 'guard', 'guardian', 'gate', 'door', 'floor', 'edge', 'gem', 'key', 'potion', 'sword', 'shield', 'pickaxe', 'rope', 'chest'];
       const bad = [...source.matchAll(/(?:==|!=)\s*(['"])([^'"\n]*)\1|(['"])([^'"\n]*)\3\s*(?:==|!=)/g)].map(m => m[2] != null ? m[2] : m[4]).find(q => q && !WORDS.includes(q) && /^[A-Za-z ]+$/.test(q));
       if(bad){ const c = PyRun.closest && PyRun.closest(bad.toLowerCase().trim(), WORDS); result.msg += ' Check the word \'' + bad + '\': hero.ahead() and hero.here() never say that.' + (c ? ' Did you mean \'' + c + '\'?' : ' They say words like \'pit\', \'wall\', \'guard\' or \'gem\'.') }
     }

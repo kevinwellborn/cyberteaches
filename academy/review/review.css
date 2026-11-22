@@ -162,5 +162,5 @@ pre.pyc{margin:0;background:#14261E;color:#E8F5EC;font:600 14px/1.5 'JetBrains M
 .cmds td{border:1px solid var(--line);padding:7px 10px;vertical-align:middle}
 .cmds td:first-child{width:1%;white-space:nowrap}
 .recap .row pre.pyc{font-size:13px}
-@media (max-width:640px){ .recap .row{grid-template-columns:auto 1fr} .recap .row pre.pyc{grid-column:1/-1} }
+@media (max-width:640px){ .recap .row{grid-template-columns:auto 1fr} .recap .row pre.pyc{grid-column:1/-1} .cmds td:first-child{white-space:normal} .cmds pre.pyc{white-space:pre-wrap} .opt{min-width:0;max-width:100%} .opt pre.pyc{min-width:0} .idea{min-width:0} .idea .show>*{min-width:0;max-width:100%} .words td,.words th{overflow-wrap:anywhere} }
 @media print{ pre.pyc{background:#fff;color:#000;border:1px solid #999} }
