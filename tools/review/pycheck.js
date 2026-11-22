@@ -11,11 +11,15 @@ const say = (ok, msg) => { if (!ok) bad++; console.log((ok ? 'ok  ' : 'BAD ') + 
 const count = (code, word) => (code.match(new RegExp('hero\\.' + word + '\\(', 'g')) || []).length;
 const checkQ = (q, tag) => {
   if (q.kind === 'num' && q.sol && q.check) {
-    // check 'range': the answer is the number in range( ), and one less or one more fails.
+    // check 'range': the answer is the number in range( ), and one less or one more fails (min: true: only one less must fail,
+    // for questions that ask for the fewest rounds, since extra rounds with nothing left to hit do no harm).
+    // check 'arg' (with of: 'sword.attack'): the answer is the value inside of( ), and one less or one more fails.
     // check 'take' / 'jump' / 'climb' / 'attack' / 'step' ...: the answer is how many times that happens when sol runs.
     const r = PQ.simulate({par: 99, ...q.lv}, q.sol); say(r.result.result === 'win', `${tag} sol ${r.result.result} ${r.result.msg || ''}`);
     if (q.check === 'range') { say(q.sol.includes(`range(${q.a})`), `${tag} sol uses range(${q.a})`);
-      [q.a - 1, q.a + 1].forEach(x => say(run(q.lv, q.sol.replace(`range(${q.a})`, `range(${x})`)).result !== 'win', `${tag} range(${x}) fails`)) }
+      (q.min ? [q.a - 1] : [q.a - 1, q.a + 1]).forEach(x => say(run(q.lv, q.sol.replace(`range(${q.a})`, `range(${x})`)).result !== 'win', `${tag} range(${x}) fails`)) }
+    else if (q.check === 'arg') { const at = `${q.of}(${q.a})`; say(q.sol.includes(at), `${tag} sol uses ${at}`);
+      [q.a - 1, q.a + 1].forEach(x => say(run(q.lv, q.sol.replace(at, `${q.of}(${x})`)).result !== 'win', `${tag} ${q.of}(${x}) fails`)) }
     else { const c = r.events.filter(e => e.a === q.check).length; say(c === q.a, `${tag} ${q.check} happens ${c} times, answer ${q.a}`) }
   } else if (q.kind === 'num' && q.sol) {
     const r = run(q.lv, q.sol); say(r.result === 'win', `${tag} sol ${r.result} ${r.msg || ''}`);
