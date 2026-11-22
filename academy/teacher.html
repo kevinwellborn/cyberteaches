@@ -805,6 +805,23 @@ function waitView(t){
     <p class="muted">Meanwhile, the <a href="resources/">teacher resources</a> (slides, classwork and lesson plans) are open to everyone.</p>
     <button class="btn" id="so">Sign out</button></section>`;
 }
+// ---------- admin: CTE pilot requests (written by the form on /cte/) ----------
+async function loadPilots(){
+  const el=$('#pilotList'); if(!el) return;
+  try{
+    const snap=await Cloud.db.collection('pilotRequests').get();
+    const list=snap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>String(b.at||'').localeCompare(String(a.at||'')));
+    if(!list.length){ el.innerHTML='<p class="muted">No pilot requests yet.</p>'; return }
+    el.innerHTML=`<div class="tablewrap"><table><thead><tr><th class="name">Contact</th><th>District / school</th><th>Pathways</th><th>Students</th><th>Sent</th><th></th></tr></thead><tbody>${list.map(p=>`<tr>
+      <td class="name"><b>${esc(p.name)}</b><small><a href="mailto:${esc(p.email)}">${esc(p.email)}</a> · ${esc(p.role)}</small></td>
+      <td>${esc(p.district)}, ${esc(p.state)}${p.school?`<small style="display:block">${esc(p.school)}</small>`:''}${p.message?`<small style="display:block;max-width:40ch;white-space:normal">“${esc(p.message)}”</small>`:''}</td>
+      <td>${esc(p.pathways||'')}</td><td>${esc(p.students||'')}</td><td style="white-space:nowrap">${esc(String(p.at||'').slice(0,10))}</td>
+      <td><button class="btn" data-pilot="${esc(p.id)}">Remove</button></td></tr>`).join('')}</tbody></table></div>`;
+    el.onclick=async e=>{ const b=e.target.closest('button[data-pilot]'); if(!b) return; b.disabled=true;
+      try{ await Cloud.db.collection('pilotRequests').doc(b.dataset.pilot).delete(); loadPilots() }catch(err){ console.error(err); b.disabled=false } };
+  }catch(e){ console.error(e); el.innerHTML='<p class="err">Could not load pilot requests. Check that the Firestore rules are published.</p>' }
+}
+
 // ---------- admin: approve teachers, set the answer key secret ----------
 let stopTeachers=null;
 function adminPanel(){
@@ -812,9 +829,13 @@ function adminPanel(){
   box.innerHTML=`<div class="toolbar"><h2>Admin · Teacher access</h2></div>
     <p class="muted" style="margin:0 0 8px">Teachers who sign in ask for access here. Approve real teachers; reject anyone else. Only approved teachers can create classes and read the answer key.</p>
     <div id="teacherList"><p class="muted">Loading…</p></div>
+    <h3 style="margin:18px 0 6px">CTE pilot requests</h3>
+    <p class="muted" style="margin:0 0 8px">Districts and schools that asked for a free pilot on <a href="../cte/#pilot" target="_blank" rel="noopener">cyberteaches.com/cte</a>. Reply to them by email.</p>
+    <div id="pilotList"><p class="muted">Loading…</p></div>
     <h3 style="margin:18px 0 6px">Answer key secret</h3>
     <p class="muted" style="margin:0 0 8px">The answer key on this page is encrypted. Approved teachers unlock it with this secret. <span id="secretState"></span></p>
     <form class="row" id="secretForm" style="gap:8px;flex-wrap:wrap"><input class="field" id="secretIn" style="max-width:420px" placeholder="Paste the secret" autocomplete="off"><button class="btn" id="secretGo">Save secret</button><span id="secretMsg" class="muted"></span></form>`;
+  loadPilots();
   Cloud.getConfig('answerKey').then(c=>{ $('#secretState').textContent=c&&c.secret?'A secret is saved.':'No secret saved yet, so the answer key cannot be opened.' }).catch(()=>{});
   $('#secretForm').addEventListener('submit',async e=>{ e.preventDefault(); const v=$('#secretIn').value.trim(); if(!v) return;
     try{ await Cloud.setConfig('answerKey',{secret:v}); keyData=null; $('#secretMsg').textContent='Saved.'; $('#secretState').textContent='A secret is saved.'; $('#secretIn').value='' }catch(err){ console.error(err); $('#secretMsg').textContent='Could not save.' } });
