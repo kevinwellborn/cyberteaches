@@ -1,0 +1,244 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Python Quest Lesson 5 Review: Quiz · CyberTeaches</title>
+<meta name="description" content="Quiz for Python Quest Lesson 5 and Practice 5: while loops in the Lava Caves, for vs while, infinite loops, hero.gems_left() and hero.health(). Vocabulary, sentences and code questions, 100 points.">
+<link rel="icon" href="../../../../favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Atkinson+Hyperlegible:wght@400;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<link rel="stylesheet" href="../../../resources/resources.css">
+<link rel="stylesheet" href="../../../review/review.css?v=9">
+<script async src="/analytics.js?v=1"></script>
+</head><body>
+<div class="sheet">
+  <div class="toolbar">
+    <a class="btn" href="index.html">← Study guide</a>
+    <span class="spacer"></span>
+    <button class="btn" id="printBtn">🖨 Print quiz</button>
+    <span id="teacherBtns" hidden><button class="btn" id="keyBtn">🔑 Show answer key</button> <button class="btn" id="printKey">🖨 Print answer key</button></span>
+  </div>
+
+  <section class="card score" id="score" aria-live="polite"></section>
+
+  <section class="card cover">
+    <span class="label" id="clabel">Quiz</span>
+    <h1 id="ctitle"></h1>
+    <p><b id="qcount"></b> questions, <b>100 points</b>: vocabulary, sentences and Python code. Answer every question.<span class="screen-only"> Then press <b>Turn in my quiz</b> at the bottom. You can turn it in only once. You will see your right and wrong answers after your teacher shares them.</span><span class="print-only"> Circle the letter, or write the word or number on the line.</span></p>
+    <div class="namebox"><label>Name<input id="name" autocomplete="name" placeholder="Type your name"></label><label>Class<input id="klass" placeholder="Period or class"></label></div>
+    <div class="signin noprint" id="signin" aria-live="polite"></div>
+  </section>
+
+  <section class="card">
+    <p class="muted" id="waitq">Loading the quiz…</p>
+    <div class="bank" id="cbank" hidden></div>
+    <div class="bank" id="wbank" hidden></div>
+    <form id="quiz" autocomplete="off"></form>
+    <div class="submitbar" hidden><span class="warn" id="warn"></span><button class="btn primary big" id="check" type="button">Turn in my quiz</button></div>
+  </section>
+</div>
+<script src="../../../firebase-config.js"></script>
+<script src="../../../cloud.js?v=22"></script>
+<script src="../../pyrun.js?v=3"></script>
+<script src="../../levels.js?v=18"></script>
+<script src="../../game.js?v=9"></script>
+<script src="../pyreview.js?v=1"></script>
+<script src="data.js?v=1"></script>
+<script src="../../../review/review.js?v=7"></script>
+<script>
+const R = REVIEW, V = Review, $ = id => document.getElementById(id), P = R.quizPoints;
+// Three parts, like the study guide: vocabulary, sentences and program questions, 100 points in all.
+let vocabQs = R.quizVocab.map((v, i) => ({id: 'qv' + i, q: `Which word means <b>${v.m}</b>?`, opts: v.opts, a: v.a, pts: P.vocab, why: `<b>${v.opts[v.a]}</b> means ${v.m}.`}));
+let fillQs = R.quizFill.map((f, i) => ({id: 'qf' + i, kind: 'fill', a: f.a, pts: f.a.length * P.blank, s: f.s}));
+let progQs = R.quiz.map((q, i) => ({...q, id: 'qp' + i, pts: P.question}));
+const ITEMS = [...vocabQs.map(q => ({id: q.id, kind: 'mc', a: q.a, pts: q.pts, why: q.why})), ...fillQs,
+  ...progQs.map(q => ({id: q.id, kind: q.kind === 'num' ? 'num' : 'mc', a: q.a, pts: q.pts, why: q.why}))];
+const TOTAL = ITEMS.reduce((t, it) => t + it.pts, 0), COUNT = ITEMS.length;
+const sum = qs => qs.reduce((t, q) => t + q.pts, 0);
+$('qcount').textContent = COUNT;
+document.title = `Python Quest ${R.short} Review: Quiz · CyberTeaches`;
+$('clabel').textContent = R.name + ' · Quiz'; $('ctitle').innerHTML = `${R.title} <em>quiz</em>`;
+$('cbank').innerHTML = '<b>Commands:</b> ' + R.commands.map(([c]) => `<span><b class="code">${c}</b></span>`).join('');
+$('wbank').innerHTML = '<b>Word bank:</b> ' + R.fillBank.map(w => `<span>${w}</span>`).join('');
+// The questions are only put on the page once we know this student may see them (see access() below),
+// so a locked quiz never flashes on screen.
+let shown = false, mixed = false;
+// Each student in a class gets the questions of each part in their own order, and the answer choices in their own order,
+// so neighbours' screens don't match. The order comes from the student's account, so it stays the same when they reload.
+// Teachers, the answer key and the printed quiz keep the normal order.
+function mixUp(seed){
+  const mix = V.shuffler(seed + '/u' + R.unit);
+  const reorder = qs => mix(qs).map(q => q.opts ? {...q, order: mix(q.opts.map((o, k) => k))} : q);
+  // Some program questions have look-alikes with other numbers (R.quizVariants): each student gets one of the versions.
+  progQs = progQs.map((q, i) => { const vs = (R.quizVariants || {})[i]; if (!vs) return q; const pick = mix([q, ...vs])[0];
+    if (pick === q) return q; const it = ITEMS.find(x => x.id === q.id); it.a = pick.a; it.why = pick.why; return {...pick, id: q.id, pts: q.pts} });
+  vocabQs = reorder(vocabQs); fillQs = mix(fillQs); progQs = reorder(progQs);
+  const byId = Object.fromEntries([...vocabQs, ...progQs].map(q => [q.id, q]));
+  ITEMS.forEach(it => { if (byId[it.id] && byId[it.id].order) it.order = byId[it.id].order });
+}
+function showQuiz(){
+  if (shown) return; shown = true; $('waitq').hidden = true;
+  // (A quiz turned in before the mix-up existed keeps the normal order, so its answers still line up.)
+  mixed = inClass && C && C.user && !new URLSearchParams(location.search).has('teacher') && (!prior || !!(prior.answers && prior.answers._mix));
+  if (mixed) mixUp(C.user.uid + (seedN ? '/' + seedN : ''));
+  $('quiz').innerHTML = `<h2 class="qsec">Part 1. Vocabulary <span class="pts">${sum(vocabQs)} points</span></h2><p class="sub">Pick the word that matches the meaning.</p>`
+    + vocabQs.map((q, i) => V.question(q, i, 'quiz')).join('')
+    + `<h2 class="qsec">Part 2. Finish the sentence <span class="pts">${sum(fillQs)} points</span></h2><p class="sub">Pick a word from the word bank for each blank.</p>`
+    + fillQs.map((q, i) => V.fillQuestion(q, i, q.id, R.fillBank, q.pts, false)).join('')
+    + `<h2 class="qsec">Part 3. Python code <span class="pts">${sum(progQs)} points</span></h2><p class="sub">Pick one answer, or type a number.</p>`
+    + progQs.map((q, i) => V.question(q, i, 'quiz')).join('');
+  document.querySelectorAll('.bank, .submitbar').forEach(e => e.hidden = false);
+  PQR.draw();
+  if (prior && prior.answers) { restore(); return }
+  // Not turned in yet: fill in the earlier answers (teacher's "continue" redo), then this browser's unsent answers,
+  // and keep saving them as the student works, so closing the tab or reloading doesn't lose anything.
+  const draft = readDraft();
+  ITEMS.forEach(it => { const v = draft[it.id] !== undefined ? draft[it.id] : prefill ? prefill[it.id] : undefined; if (v !== undefined) V.write(el(it), it, v) });
+  $('quiz').addEventListener('input', saveDraft); $('quiz').addEventListener('change', saveDraft);
+}
+const draftKey = () => `ct-quiz-u${R.unit}-${C && C.user ? C.user.uid : 'guest'}-draft`;
+function readDraft(){ try { return JSON.parse(localStorage.getItem(draftKey()) || '{}') || {} } catch (e) { return {} } }
+function saveDraft(){ if ($('check').disabled) return; const d = {}; ITEMS.forEach(it => { const v = V.read(el(it), it); if (v !== null) d[it.id] = v });
+  try { localStorage.setItem(draftKey(), JSON.stringify(d)) } catch (e) {} }
+function clearDraft(){ try { localStorage.removeItem(draftKey()) } catch (e) {} }
+function hideQuiz(msg){ $('waitq').hidden = false; $('waitq').innerHTML = msg }
+const el = it => $('quiz').querySelector(`[data-id="${it.id}"]`);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;'}[c]));
+
+// Students turn the quiz in once. They see no right or wrong and no score until the teacher publishes the answers
+// for their class (R.quizId in classes/{code}.pyPublished, Teacher Dashboard Python tab). Students without a class see them at once.
+let prior = null, published = false, inClass = false, prefill = null, seedN = 0;
+function restore(){
+  ITEMS.forEach(it => { V.write(el(it), it, prior.answers[it.id]); V.lock(el(it)) });
+  $('check').hidden = true; $('warn').textContent = '';
+  if (published || !inClass) showResults(prior.answers); else showWaiting();
+}
+function showWaiting(){
+  $('score').classList.add('on');
+  $('score').innerHTML = `<span class="label">Quiz turned in ✓</span><div class="big" style="font-size:44px">Waiting for your teacher</div>
+    <p>Your answers are saved and your teacher has your score. You will see which answers are right or wrong after your teacher shares the answers.</p>
+    <div class="submitbar" style="margin:12px 0 0"><button class="btn" type="button" id="recheck">Check if the answers are out</button></div>`;
+  $('recheck').onclick = () => { $('recheck').textContent = 'Checking…'; classInfo(C.profile.classCode).then(c => {
+    published = isPublished(c); if (published) restore(); else $('recheck').textContent = 'Not yet. Check again later' }, () => { $('recheck').textContent = 'Could not check. Try again' }) };
+}
+function showResults(answers){
+  let earned = 0; ITEMS.forEach(it => { earned += V.reveal(el(it), it, answers[it.id]) });
+  const pct = Math.round(100 * earned / TOTAL), name = $('name').value.trim(), klass = $('klass').value.trim();
+  const msg = pct >= 90 ? 'Excellent work! 🌟' : pct >= 70 ? 'Good job! Read the ✗ questions and their answers.' : 'Keep going! Read the ✗ questions and their answers, and the study guide again.';
+  $('score').classList.add('on');
+  $('score').innerHTML = `<span class="label">Your score${name ? ' · ' + esc(name) : ''}${klass ? ' · ' + esc(klass) : ''}</span>
+    <div class="big">${earned} / ${TOTAL}</div><p><b>${pct}%</b> · ${msg}</p>${inClass ? '' : staff ? '<p>Teacher preview: this score was not saved.</p>' : '<p>You are not in a class, so this score was not sent to a teacher.</p>'}`;
+}
+$('check').onclick = async () => {
+  const answers = {}; ITEMS.forEach(it => { answers[it.id] = V.read(el(it), it) });
+  if (mixed) { answers._mix = 1; if (seedN) answers._seed = seedN }
+  const blank = ITEMS.map((it, i) => answers[it.id] === null ? it : null).filter(Boolean);
+  if (blank.length && !$('check').dataset.sure) {
+    $('warn').textContent = `You did not answer ${blank.length} question${blank.length > 1 ? 's' : ''}. Press again to turn it in anyway.`;
+    $('check').dataset.sure = '1'; el(blank[0]).scrollIntoView({behavior: 'smooth', block: 'center'}); return }
+  if (!$('check').dataset.final) {
+    $('warn').textContent = 'You can turn the quiz in only once, and you cannot change your answers after. Press again to turn it in.';
+    $('check').dataset.final = '1'; $('check').textContent = 'Yes, turn it in'; return }
+  const score = ITEMS.reduce((t, it) => t + V.earnedOf(it, answers[it.id]), 0);
+  ITEMS.forEach(it => V.lock(el(it))); $('check').disabled = true; $('warn').textContent = '';
+  scrollTo({top: 0, behavior: 'smooth'});
+  if (!inClass) { clearDraft(); prior = {answers}; restore(); return }
+  $('score').classList.add('on'); $('score').innerHTML = '<p>Sending your quiz to your teacher…</p>';
+  const missed = ITEMS.map((it, i) => V.earnedOf(it, answers[it.id]) === it.pts ? 0 : i + 1).filter(Boolean);
+  const trySend = async () => {
+    try { await C.saveReview(R.unit, {score, total: TOTAL, missed, answers}); clearDraft(); prior = {answers}; $('signin').lastChild && ($('signin').innerHTML = $('signin').innerHTML.replace('Your teacher gets your score when you turn the quiz in.', 'You turned this quiz in.')); restore() }
+    catch (err) { console.error(err);
+      $('score').innerHTML = `<p class="warn">Could not send your quiz (${esc(err.message)}). Your answers are still here.</p><div class="submitbar" style="margin:12px 0 0"><button class="btn primary" type="button" id="resend">Try again</button></div>`;
+      $('resend').onclick = () => { $('score').innerHTML = '<p>Sending your quiz to your teacher…</p>'; trySend() } } };
+  trySend();
+};
+
+const C = window.Cloud;
+// Who may see the questions (every quiz is locked and hidden by default):
+// - teachers (approved in the Admin panel) and the admin: always, as a preview (answers show at once, nothing is saved);
+// - students in a class: only when the teacher has unlocked the quiz (R.quizId in classes/{code}.pyUnlocked, Teacher Dashboard Python tab);
+// - students without a class: no, they join their class first; not signed in: sign in first, so signing out can't skip a lock.
+let checking = false, decided = false, staff = false;
+const isPublished = c => !!c && (c.pyPublished || []).map(Number).includes(R.quizId);
+async function classInfo(code){
+  for (let i = 0; i < 3; i++) {
+    try { const c = await C.findClass(code); if (c) return c } catch (e) { console.error(e) }
+    try { const c = await C.restGet('classes/' + code); if (c) return c } catch (e) { console.error(e) }
+    await new Promise(r => setTimeout(r, 1500 * (i + 1)));
+  }
+  throw new Error('network');
+}
+async function isStaff(u){
+  if (C.isAdmin(u)) return true;
+  if (C.isStudentLogin(u)) return false;
+  for (let i = 0; i < 3; i++) {
+    try { const s = await C.db.collection('teachers').doc(u.uid).get(); const t = s.exists ? s.data() : null; return !!t && t.status === 'approved' } catch (e) { console.error(e) }
+    try { const t = await C.restGet('teachers/' + u.uid); return !!t && t.status === 'approved' } catch (e) { console.error(e) }
+    await new Promise(r => setTimeout(r, 1500 * (i + 1)));
+  }
+  throw new Error('network');
+}
+function access(){
+  const box = $('signin'); if (decided) return;
+  if (!C || !C.enabled) { box.hidden = true; decided = true; showQuiz(); return }
+  if (!C.ready) { box.className = 'signin noprint'; box.textContent = 'Checking if you are signed in…'; return }
+  const u = C.user, cls = C.profile && C.profile.classCode;
+  if (u && (cls || !C.profileFailed)) {
+    if (checking) return; checking = true;
+    box.className = 'signin noprint'; box.textContent = 'Checking if your teacher has opened this quiz…'; hideQuiz('Checking if your teacher has opened this quiz…');
+    (async () => {
+      if (await isStaff(u)) return {state: 'staff'};
+      if (!cls) return {state: 'noclass'};
+      const c = await classInfo(cls);
+      return {state: (c.pyUnlocked || []).map(Number).includes(R.quizId) ? 'open' : 'locked', c};
+    })().then(({state, c}) => { decided = true;
+      if (state === 'staff') {
+        staff = true; box.className = 'signin noprint ok';
+        box.innerHTML = `✓ Teacher preview. Students see this quiz only after you unlock it, and their right and wrong answers only after you publish the answers, both in the <a href="../../../teacher.html">Teacher Dashboard</a> (Python Quest tab). Nothing you answer here is saved.`;
+        showQuiz(); return }
+      if (state === 'noclass') {
+        box.className = 'signin noprint warn2';
+        box.innerHTML = `🔒 This quiz is locked. <a href="../../../">Join your class on the Academy page</a>. Your teacher will open the quiz when it is time.`;
+        hideQuiz('The questions appear here when your teacher opens the quiz.'); return }
+      if (state === 'locked') {
+        box.className = 'signin noprint warn2';
+        box.innerHTML = `🔒 This quiz is locked for now. Study the <a href="index.html">study guide</a> first. Your teacher will open the quiz when it is time. <a href="../../">Back to Python Quest</a>`;
+        hideQuiz('The questions appear here when your teacher opens the quiz.'); return }
+      inClass = true; published = isPublished(c);
+      const r = ((C.profile.review || {})['u' + R.unit]); if (r && r.answers) prior = r;
+      // Redo: the teacher let this student take the quiz again (classes/{code}.redo['{uid}_u1'] = their tries then; works once).
+      // '{tries}:keep' fills in their earlier answers to fix; '{tries}:new' (or a plain number) starts over.
+      const redo = (c.redo || {})[u.uid + '_u' + R.unit]; let again = false;
+      if (r && redo != null && +String(redo).split(':')[0] === r.tries) { again = true; prior = null;
+        if (String(redo).split(':')[1] === 'keep' && r.answers) { prefill = r.answers; seedN = r.answers._seed || 0 }
+        else seedN = r.tries }   // start over: a new mix (new order and other look-alike versions)
+      if (prior) seedN = prior.answers._seed || 0;
+      box.className = 'signin noprint ok';
+      box.innerHTML = `✓ Signed in as <b>${esc(u.displayName || 'Student')}</b> · class <b>${esc(C.profile.className || cls)}</b>. ${prior ? 'You turned this quiz in.' : again ? (prefill ? 'Your teacher let you fix your quiz. Your earlier answers are filled in. Change what you need, then turn it in again.' : 'Your teacher let you take this quiz again.') + ' Your new score will replace the old one.' : 'Your teacher gets your score when you turn the quiz in.'}`;
+      if (!$('name').value) $('name').value = u.displayName || '';
+      if (!$('klass').value) $('klass').value = C.profile.className || cls;
+      showQuiz();
+    }, () => { checking = false; box.className = 'signin noprint warn2';
+      box.innerHTML = `Could not check if the quiz is open (the network may be slow). <button class="btn sm" type="button" id="retry">Try again</button>`;
+      $('retry').onclick = access });
+  } else if (u) {
+    box.className = 'signin noprint warn2';
+    box.innerHTML = `Could not load your account (the network may be slow). <button class="btn sm" type="button" id="retry">Reload</button>`;
+    hideQuiz('The questions appear here when your account loads.'); $('retry').onclick = () => location.reload();
+  } else {
+    box.className = 'signin noprint warn2';
+    box.innerHTML = `<b>Sign in to take the quiz.</b> <button class="btn sm" type="button" id="gsign">Sign in with Google</button> Have a student login? <a href="../../../">Sign in on the Academy page</a>, then come back.`;
+    hideQuiz('The questions appear here after you sign in.');
+    $('gsign').onclick = () => C.signIn().catch(e => { box.insertAdjacentHTML('beforeend', `<br><span class="warn">${esc(e.message)}</span>`) });
+  }
+}
+if (C) C.onChange(access); else access();
+
+// Teachers open quiz.html?teacher=1 (linked from Teacher resources) to see and print the answer key.
+if (new URLSearchParams(location.search).has('teacher')) {
+  $('teacherBtns').hidden = false;
+  $('keyBtn').onclick = () => { const on = document.body.classList.toggle('show-key'); $('keyBtn').textContent = on ? '🔑 Hide answer key' : '🔑 Show answer key' };
+  $('printKey').onclick = () => { document.body.classList.add('show-key'); print() };
+}
+$('printBtn').onclick = () => { document.body.classList.remove('show-key'); print() };
+</script>
+</body></html>

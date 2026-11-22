@@ -41,6 +41,7 @@ window.PQ_REVIEWS = [
   {n: 2, unit: 'p2', after: 22, guideId: 102, quizId: 202, name: 'Lesson 2 review', covers: 'Lesson 2 + Practice 2', color: '#6D4BC2', path: 'review/lesson-2/'},
   {n: 3, unit: 'p3', after: 23, guideId: 103, quizId: 203, name: 'Lesson 3 review', covers: 'Lesson 3 + Practice 3', color: '#6D4BC2', path: 'review/lesson-3/'},
   {n: 4, unit: 'p4', after: 24, guideId: 104, quizId: 204, name: 'Lesson 4 review', covers: 'Lesson 4 + Practice 4', color: '#6D4BC2', path: 'review/lesson-4/'},
+  {n: 5, unit: 'p5', after: 25, guideId: 105, quizId: 205, name: 'Lesson 5 review', covers: 'Lesson 5 + Practice 5', color: '#6D4BC2', path: 'review/lesson-5/'},
 ];
 
 // The commands the hero knows, shown in the command list. `from` = first lesson/level where it appears.
