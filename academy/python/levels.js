@@ -32,6 +32,14 @@ window.PQ_LESSONS = [
   {n: 6, title: 'Your own commands', topic: 'def functions · Sunken Temple', soon: true, color: '#0E7490'},
 ];
 
+// Lesson reviews (study guide + quiz, like Rover Coding's unit reviews), shown after the lesson in `after`.
+// Pages: review/lesson-N/. Locks live with the Python locks: the guide is open unless guideId is in classes/{code}.pyLocked;
+// the quiz is hidden until quizId is in pyUnlocked; students see right and wrong after quizId is in pyPublished.
+// Scores: users/{uid}.review.g{unit} (study guide) and review.u{unit} (quiz), like Rover (unit 'p1' -> review.gp1 / review.up1).
+window.PQ_REVIEWS = [
+  {n: 1, unit: 'p1', after: 21, guideId: 101, quizId: 201, name: 'Lesson 1 review', covers: 'Lesson 1 + Practice 1', color: '#6D4BC2', path: 'review/lesson-1/'},
+];
+
 // The commands the hero knows, shown in the command list. `from` = first lesson/level where it appears.
 // Practice lessons have their own number (20 + the lesson they practice) but show a tag like P1.
 window.PQ_TAG = n => { const l = window.PQ_LESSONS.find(x => x.n === n); return (l && l.tag) || 'L' + n };
