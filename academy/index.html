@@ -1188,6 +1188,9 @@ function renderAccount(){
   if(!p.classCode){ const j=h('button','btn primary','Join class'); j.onclick=()=>openJoin(joinParam); a.appendChild(j) }
   const o=h('button','btn','Sign out'); o.onclick=()=>Cloud.signOut(); a.appendChild(o);
 }
+// ?next=python: Python Quest sends students here to sign in (and join their class), then back to Python Quest.
+const nextPage=new URLSearchParams(location.search).get('next')==='python'?'python/':'';
+if(Cloud && nextPage) Cloud.onChange(c=>{ if(c.user && c.profile && (c.profile.classCode || !Cloud.isStudentLogin(c.user))) location.replace(nextPage) });
 if(Cloud) Cloud.onChange(c=>{
   const u=c.user;
   if(u && c.profile && lastUid!==u.uid){

@@ -221,7 +221,7 @@ a.stop.learnstop{text-decoration:none;color:inherit;align-items:center}
 </head><body>
 <header class="top">
   <a class="brand" href="../../"><img src="../../logo.png" alt="">CyberTeaches</a>
-  <span class="crumb"><a href="../">Academy</a> / <a href="#" id="homeLink">Python Quest</a></span>
+  <span class="crumb"><a href="../../#courses">Courses</a> / <a href="#" id="homeLink">Python Quest</a></span>
   <span class="spacer"></span>
   <span class="who" id="who"></span>
   <button class="iconbtn" id="musicBtn" title="Music on/off" aria-label="Music on or off">🎵</button>
@@ -847,7 +847,7 @@ if(Cloud) Cloud.onChange(c => {
   if(!u && lastUid){ lastUid = null; data = {stars: {}, code: {}, learned: {}}; saveLocal(); pyLocked = new Set(); pyUnlocked = new Set(); staff = false; render() }
   who.innerHTML = '';
   if(u) who.append(h('span', '', '👤 ' + esc(u.displayName || (Cloud.isStudentLogin(u) ? 'Student' : u.email || 'Signed in'))));
-  else if(c.ready){ const a = h('a', 'btn small', 'Sign in to save'); a.href = '../'; who.append(a) }
+  else if(c.ready){ const a = h('a', 'btn small', 'Sign in to save'); a.href = '../?next=python'; a.title = 'Sign in with Google or your student login, join your class, and come back here'; who.append(a) }
 });
 
 window.addEventListener('hashchange', route);
