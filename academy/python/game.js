@@ -627,6 +627,18 @@
       } else if(this.events === null && this.lastPose) pose = this.lastPose;
       const shieldUp = (this.cur ? this.cur.e.s.block : this.state.block) > 0;
       if(!(this.cur && this.cur.e.a === 'die' && this.cur.e.why === 'pit')) drawHero(g, hx, hy, dir, pose, ph, t, shieldUp, this.gear);
+      if(this.cur && this.cur.e.a === 'die' && this.cur.e.why === 'pit'){
+        // splash (water) or burst of embers (lava) where the explorer fell in
+        const p = Math.min(1, (t - this.cur.start) / this.cur.dur), sx = this.cur.e.s.hero.x * T + T / 2, sy = (w.H - 1) * T + T * 0.45, hot = theme === 'lava';
+        for(let i = 0; i < 14; i++){
+          const a = -Math.PI * (0.15 + 0.7 * (i / 13)), sp = (hot ? 34 : 46) * (0.6 + ((i * 37) % 10) / 20);
+          const x = sx + Math.cos(a) * sp * p, y = sy + Math.sin(a) * sp * p * 1.4 + 90 * p * p;
+          g.globalAlpha = Math.max(0, 1 - p); g.fillStyle = hot ? (i % 2 ? '#FFD54A' : '#F26B1D') : (i % 3 ? C.waterHi : '#FFFFFF');
+          g.beginPath(); g.arc(x, y, hot ? 2.5 : 3.2, 0, Math.PI * 2); g.fill();
+        }
+        g.strokeStyle = hot ? '#FFB02E' : '#FFFFFF'; g.lineWidth = 2; g.globalAlpha = Math.max(0, 0.8 - p);
+        g.beginPath(); g.ellipse(sx, sy + 4, 8 + p * 26, 3 + p * 6, 0, 0, Math.PI * 2); g.stroke(); g.globalAlpha = 1;
+      }
       if(this.cur && ((this.cur.e.a === 'hurt' && this.cur.e.dmg) || this.cur.e.a === 'block')){
         const p = Math.min(1, (t - this.cur.start) / this.cur.dur), blk = this.cur.e.a === 'block';
         g.font = 'bold 15px system-ui, sans-serif'; g.textAlign = 'center'; g.globalAlpha = 1 - p * 0.7;

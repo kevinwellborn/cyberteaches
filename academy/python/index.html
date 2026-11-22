@@ -221,6 +221,7 @@ header.top{display:flex;align-items:center;gap:12px;padding:12px 16px;max-width:
   <span class="crumb"><a href="../">Academy</a> / <a href="#" id="homeLink">Python Quest</a></span>
   <span class="spacer"></span>
   <span class="who" id="who"></span>
+  <button class="iconbtn" id="musicBtn" title="Music on/off" aria-label="Music on or off">🎵</button>
   <button class="iconbtn" id="soundBtn" title="Sound on/off" aria-label="Sound on or off">🔊</button>
 </header>
 
@@ -322,7 +323,8 @@ header.top{display:flex;align-items:center;gap:12px;padding:12px 16px;max-width:
 
 <script src="pyrun.js?v=2"></script>
 <script src="levels.js?v=7"></script>
-<script src="game.js?v=5"></script>
+<script src="game.js?v=6"></script>
+<script src="sound.js?v=1"></script>
 <script src="../firebase-config.js"></script>
 <script src="../cloud.js?v=22"></script>
 <script>
@@ -350,35 +352,14 @@ function cloudSave(){
   if(!Cloud || !Cloud.user || !Cloud.savePy) return;
   Cloud.savePy({stars: data.stars, code: data.code}).catch(e => console.error('Could not save Python Quest progress', e));
 }
-// ---------- sound (made on the fly, nothing to download) ----------
+// ---------- sound: see sound.js (action sounds + music per world) ----------
 let muted = false; try { muted = localStorage.getItem('academy.muted') === '1' } catch(e){}
-let ac = null;
-const tone = (type, f1, f2, dur, vol, delay = 0) => {
-  if(muted) return;
-  try {
-    ac = ac || new (window.AudioContext || window.webkitAudioContext)(); if(ac.state === 'suspended') ac.resume();
-    const t = ac.currentTime + delay, o = ac.createOscillator(), g = ac.createGain();
-    o.type = type; o.frequency.setValueAtTime(f1, t); if(f2) o.frequency.exponentialRampToValueAtTime(f2, t + dur);
-    g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(vol, t + 0.01); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
-    o.connect(g).connect(ac.destination); o.start(t); o.stop(t + dur + 0.02);
-  } catch(e){}
-};
-const SFX = {
-  step: () => tone('triangle', 180, 140, 0.06, 0.08),
-  jump: () => tone('square', 260, 620, 0.22, 0.07),
-  climb: () => { tone('triangle', 300, 420, 0.1, 0.08); tone('triangle', 420, 560, 0.1, 0.08, 0.15) },
-  take: () => { tone('sine', 880, 0, 0.12, 0.15); tone('sine', 1320, 0, 0.18, 0.12, 0.08) },
-  drink: () => { tone('sine', 400, 900, 0.35, 0.12) },
-  attack: () => tone('sawtooth', 900, 200, 0.12, 0.08),
-  hit: () => tone('square', 120, 60, 0.2, 0.15),
-  open: () => tone('triangle', 200, 500, 0.25, 0.1),
-  bump: () => tone('square', 90, 70, 0.15, 0.12),
-  win: () => [523, 659, 784, 1047].forEach((f, i) => tone('triangle', f, 0, 0.25, 0.14, i * 0.11)),
-  lose: () => [392, 330, 262].forEach((f, i) => tone('triangle', f, 0, 0.3, 0.12, i * 0.16)),
-};
+const SFX = {take: () => PQSound.play('gem'), bump: () => PQSound.play('bump'), lose: () => PQSound.play('lose'), win: () => PQSound.play('win')};
+const setMusicBtn = () => { const b = $('#musicBtn'); b.style.opacity = PQSound.musicOff ? 0.4 : 1; b.title = PQSound.musicOff ? 'Music off: tap to turn on' : 'Music on: tap to turn off' };
+setMusicBtn(); $('#musicBtn').onclick = () => { PQSound.setMusicOff(!PQSound.musicOff); setMusicBtn() };
 const setSoundBtn = () => { $('#soundBtn').textContent = muted ? '🔇' : '🔊' };
 setSoundBtn();
-$('#soundBtn').onclick = () => { muted = !muted; try { localStorage.setItem('academy.muted', muted ? '1' : '0') } catch(e){} setSoundBtn(); if(muted){ try { speechSynthesis.cancel() } catch(e){} if(vAudio && !vAudio.paused){ vAudio.pause(); if(vAudio.onended) vAudio.onended() } } };
+$('#soundBtn').onclick = () => { muted = !muted; try { localStorage.setItem('academy.muted', muted ? '1' : '0') } catch(e){} setSoundBtn(); PQSound.setMuted(muted); if(muted){ try { speechSynthesis.cancel() } catch(e){} if(vAudio && !vAudio.paused){ vAudio.pause(); if(vAudio.onended) vAudio.onended() } } };
 
 // ---------- home ----------
 function render(){
@@ -463,11 +444,14 @@ let cur = null, running = false;
 const player = new PQ.Player($('#stage'), {
   onEvent(e){
     markRun(e.line);
-    if(e.a === 'step') SFX.step(); else if(e.a === 'jump') SFX.jump(); else if(e.a === 'climb') SFX.climb();
-    else if(e.a === 'take') SFX.take(); else if(e.a === 'drink') SFX.drink(); else if(e.a === 'attack') SFX.attack();
-    else if(e.a === 'hurt') SFX.hit(); else if(e.a === 'open') SFX.open(); else if(e.a === 'bump') SFX.bump();
-    else if(e.a === 'defend') SFX.open(); else if(e.a === 'block') SFX.climb();
-    else if(e.a === 'win') SFX.win(); else if(e.a === 'die') SFX.lose();
+    const S = n => PQSound.play(n), th = (cur && cur.theme) || 'jungle';
+    if(e.a === 'step') S('step'); else if(e.a === 'jump') S('jump'); else if(e.a === 'climb') S('climb');
+    else if(e.a === 'take') S(e.item === 'chest' ? 'chest' : e.item === 'key' ? 'key' : 'gem'); else if(e.a === 'drink') S('drink');
+    else if(e.a === 'attack') S(e.miss ? 'swing' : e.ko ? 'ko' : 'clang');
+    else if(e.a === 'hurt') S('hurt'); else if(e.a === 'open') S('gate'); else if(e.a === 'bump') S('bump');
+    else if(e.a === 'defend') S('shield'); else if(e.a === 'block') S('block');
+    else if(e.a === 'win'){ S(e.rescue ? 'rescue' : 'win'); PQSound.music(null) }
+    else if(e.a === 'die'){ S(e.why === 'pit' ? (th === 'lava' ? 'lava' : 'splash') : e.why === 'spikes' ? 'spikes' : 'hurt'); setTimeout(() => S('lose'), 650); PQSound.music(null) }
     else if(e.a === 'print') showOut(e.text);
   }
 });
@@ -550,6 +534,7 @@ function drawDots(){
 }
 function openLevel(id){
   cur = LEVELS.find(l => l.id === id) || LEVELS[0];
+  PQSound.music(cur.theme || 'jungle');
   running = false; errLine = runLine = 0;
   $('#lvlTag').textContent = 'Lesson ' + cur.lesson + ' · Level ' + cur.num + (cur.review ? ' · Review' : '');
   $('#lvlName').textContent = cur.name;
@@ -577,12 +562,13 @@ function setRunning(on){
 }
 let speed = 1;
 $('#speedBtn').onclick = () => { speed = speed === 1 ? 2 : speed === 2 ? 3 : 1; player.speed = speed; $('#speedBtn').textContent = speed + '×' };
-$('#resetBtn').onclick = () => { player.stop(); player.reset(); setRunning(false); errLine = runLine = 0; refresh(); hideMsg() };
+$('#resetBtn').onclick = () => { if(cur) PQSound.music(cur.theme || 'jungle'); player.stop(); player.reset(); setRunning(false); errLine = runLine = 0; refresh(); hideMsg() };
 $('#startOverBtn').onclick = () => { if(ta.value.trim() && !confirmReplace()) return; ta.value = cur.start; ta.dispatchEvent(new Event('input')); $('#resetBtn').onclick() };
 function confirmReplace(){ const b = $('#startOverBtn'); if(b.dataset.armed){ delete b.dataset.armed; b.textContent = 'Start over'; return true } b.dataset.armed = 1; b.textContent = 'Sure? Click again'; setTimeout(() => { delete b.dataset.armed; b.textContent = 'Start over' }, 3000); return false }
 $('#runBtn').onclick = () => running ? $('#resetBtn').onclick() : runCode();
 
 function runCode(){
+  PQSound.music(cur.theme || 'jungle');
   if(running) return;
   hideMsg(); errLine = runLine = 0; $('#out').className = 'out'; $('#out').textContent = '';
   const src = ta.value, all = PQ.simulateAll(cur, src), r = all.run;
@@ -798,6 +784,7 @@ function route(){
   const ln = location.hash.match(/^#learn-(\d+)$/), vn = location.hash.match(/^#video-(\d+)$/);
   demoPlayers.forEach(p => p.destroy()); demoPlayers.length = 0;
   $('#learn').hidden = true; stopVideo(); $('#video').hidden = true;
+  if(!m) PQSound.music(null);
   const lockedLesson = m ? Number(m[1].split('-')[0]) : ln ? Number(ln[1]) : vn ? Number(vn[1]) : 0;
   if(lockedLesson && isLocked(lockedLesson)){ history.replaceState(null, '', location.pathname); player.stop(); $('#play').hidden = true; $('#home').hidden = false; cur = null; render(); startArt(); $('#lockNote').hidden = false; $('#lockNote').textContent = '🔒 Your teacher has locked Lesson ' + lockedLesson + ' for now. Pick a lesson that is open.'; return }
   $('#lockNote').hidden = true;
