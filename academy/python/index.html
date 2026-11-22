@@ -72,6 +72,7 @@ header.top{display:flex;align-items:center;gap:12px;padding:12px 16px;max-width:
 .lesson .topic{color:var(--muted);font-size:14px;font-family:var(--f-mono)}
 .lesson.soon{opacity:.6}
 .stops{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
+.packlabel{flex-basis:100%;font-size:13px;font-weight:700;color:var(--muted);margin-top:6px}
 .stop{width:58px;height:58px;border-radius:50%;border:2px solid var(--line);background:var(--panel-2);font-family:var(--f-display);font-weight:800;font-size:18px;display:grid;place-items:center;position:relative;transition:transform .15s}
 .stop:hover{transform:translateY(-2px);border-color:var(--accent)}
 .stop.done{background:var(--accent-soft);border-color:var(--accent)}
@@ -321,10 +322,10 @@ header.top{display:flex;align-items:center;gap:12px;padding:12px 16px;max-width:
 
 <p class="foot">Python Quest is an original CyberTeaches game. Python runs right in your browser.</p>
 
-<script src="pyrun.js?v=2"></script>
-<script src="levels.js?v=7"></script>
-<script src="game.js?v=6"></script>
-<script src="sound.js?v=1"></script>
+<script src="pyrun.js?v=3"></script>
+<script src="levels.js?v=8"></script>
+<script src="game.js?v=7"></script>
+<script src="sound.js?v=2"></script>
 <script src="../firebase-config.js"></script>
 <script src="../cloud.js?v=22"></script>
 <script>
@@ -391,7 +392,7 @@ function render(){
         const b = h('button', 'stop learnstop' + (data.learned[ls.n] ? ' done' : ''), '📖 Learn' + (data.learned[ls.n] ? ' ✓' : ''));
         b.title = 'Learn the idea first, then practice in the levels'; b.onclick = () => { location.hash = 'learn-' + ls.n }; if(locked) b.disabled = true; stops.append(b);
       }
-      lv.filter(l => !l.review).forEach(l => stops.append(levelBtn(l)));
+      lv.filter(l => !l.review).forEach(l => { if(l.pack === 'gadget' && !stops.querySelector('.packlabel')) stops.append(h('div', 'packlabel', '🎒 Gadget practice: collect tools and use them on missions')); stops.append(levelBtn(l)) });
       card.append(stops);
     }
     box.append(card);
@@ -446,7 +447,7 @@ const player = new PQ.Player($('#stage'), {
     markRun(e.line);
     const S = n => PQSound.play(n), th = (cur && cur.theme) || 'jungle';
     if(e.a === 'step') S('step'); else if(e.a === 'jump') S('jump'); else if(e.a === 'climb') S('climb');
-    else if(e.a === 'take') S(e.item === 'chest' ? 'chest' : e.item === 'key' ? 'key' : 'gem'); else if(e.a === 'drink') S('drink');
+    else if(e.a === 'take') S(e.item === 'chest' ? 'chest' : e.item === 'key' ? 'key' : e.item === 'gem' ? 'gem' : 'pickup'); else if(e.a === 'mine') S('mine'); else if(e.a === 'drink') S('drink');
     else if(e.a === 'attack') S(e.miss ? 'swing' : e.ko ? 'ko' : 'clang');
     else if(e.a === 'hurt') S('hurt'); else if(e.a === 'open') S('gate'); else if(e.a === 'bump') S('bump');
     else if(e.a === 'defend') S('shield'); else if(e.a === 'block') S('block');

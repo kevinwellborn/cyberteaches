@@ -3,7 +3,7 @@
 // List the clip names that exist in HAVE (so missing files are never requested).
 // Otherwise the sound is made on the fly with Web Audio, so the game always has sound.
 (function(){
-  const CLIPS = ['step', 'jump', 'land', 'climb', 'gem', 'key', 'chest', 'drink', 'swing', 'clang', 'ko', 'hurt', 'shield', 'block',
+  const CLIPS = ['step', 'jump', 'land', 'climb', 'gem', 'key', 'chest', 'pickup', 'mine', 'drink', 'swing', 'clang', 'ko', 'hurt', 'shield', 'block',
                  'gate', 'bump', 'splash', 'lava', 'spikes', 'win', 'rescue', 'lose', 'click',
                  'music-jungle', 'music-river', 'music-lava', 'music-sea'];
   const HAVE = [];   // clip names from CLIPS that have an mp3 in sounds/
@@ -61,6 +61,8 @@
     gem:    () => { tone('sine', 1320, 0, 0.12, 0.16); tone('sine', 1760, 0, 0.2, 0.14, 0.07); tone('sine', 2640, 0, 0.25, 0.06, 0.12) },
     key:    () => { metal(1800, 0.25, 0.08); metal(2400, 0.3, 0.06, 0.08) },
     chest:  () => { tone('sawtooth', 110, 160, 0.35, 0.05); noise(0.3, 0.12, 500, 0); [784, 988, 1175, 1568].forEach((f, i) => tone('sine', f, 0, 0.3, 0.12, 0.3 + i * 0.07)) },
+    pickup: () => { tone('square', 392, 0, 0.08, 0.06); tone('square', 523, 0, 0.08, 0.06, 0.08); tone('square', 784, 0, 0.18, 0.07, 0.16); metal(1600, 0.2, 0.03, 0.16) },
+    mine:   () => { noise(0.08, 0.5, 2200, 0, 'bandpass', 0, 0, 1); tone('square', 160, 60, 0.12, 0.12); noise(0.45, 0.35, 500, 0.1); [0.15, 0.25, 0.33].forEach(d => noise(0.05, 0.2, 1500, d, 'bandpass', 0, 0, 3)) },
     drink:  () => { [0, 0.12, 0.24].forEach(d => tone('sine', 300, 700, 0.1, 0.1, d)); tone('sine', 600, 1200, 0.3, 0.08, 0.38) },
     swing:  () => noise(0.18, 0.35, 1800, 0, 'bandpass', 0, 0, 1.5),
     clang:  () => { noise(0.1, 0.35, 1800, 0, 'bandpass', 0, 0, 1.5); metal(520, 0.45, 0.16, 0.07); noise(0.08, 0.3, 4000, 0.07, 'highpass') },
