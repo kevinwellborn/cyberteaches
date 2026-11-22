@@ -6,7 +6,8 @@ global.window = global; global.performance = {now: () => 0}; global.requestAnima
 global.PyRun = require(root + '/pyrun.js'); require(root + '/levels.js'); require(root + '/game.js');
 const n = process.argv[2] || '1', R = require(`${root}/review/lesson-${n}/data.js`);
 let bad = 0;
-const run = (lv, code) => { const r = PQ.simulate({par: 99, ...lv}, code); return r.result };
+// Levels with variants (the temple changes every Run) must win on every version, like in the game.
+const run = (lv, code) => PQ.simulateAll({par: 99, ...lv}, code).run.result;
 const say = (ok, msg) => { if (!ok) bad++; console.log((ok ? 'ok  ' : 'BAD ') + msg) };
 const count = (code, word) => (code.match(new RegExp('hero\\.' + word + '\\(', 'g')) || []).length;
 const checkQ = (q, tag) => {
