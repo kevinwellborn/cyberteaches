@@ -10,7 +10,14 @@ const run = (lv, code) => { const r = PQ.simulate({par: 99, ...lv}, code); retur
 const say = (ok, msg) => { if (!ok) bad++; console.log((ok ? 'ok  ' : 'BAD ') + msg) };
 const count = (code, word) => (code.match(new RegExp('hero\\.' + word + '\\(', 'g')) || []).length;
 const checkQ = (q, tag) => {
-  if (q.kind === 'num' && q.sol) {
+  if (q.kind === 'num' && q.sol && q.check) {
+    // check 'range': the answer is the number in range( ), and one less or one more fails.
+    // check 'take' / 'jump' / 'climb' / 'attack' / 'step' ...: the answer is how many times that happens when sol runs.
+    const r = PQ.simulate({par: 99, ...q.lv}, q.sol); say(r.result.result === 'win', `${tag} sol ${r.result.result} ${r.result.msg || ''}`);
+    if (q.check === 'range') { say(q.sol.includes(`range(${q.a})`), `${tag} sol uses range(${q.a})`);
+      [q.a - 1, q.a + 1].forEach(x => say(run(q.lv, q.sol.replace(`range(${q.a})`, `range(${x})`)).result !== 'win', `${tag} range(${x}) fails`)) }
+    else { const c = r.events.filter(e => e.a === q.check).length; say(c === q.a, `${tag} ${q.check} happens ${c} times, answer ${q.a}`) }
+  } else if (q.kind === 'num' && q.sol) {
     const r = run(q.lv, q.sol); say(r.result === 'win', `${tag} sol ${r.result} ${r.msg || ''}`);
     const m = q.q.match(/hero\.(\w+)\(/); if (m && m[1] !== 'run') say(count(q.sol, m[1]) === q.a, `${tag} sol uses ${m[1]} ${count(q.sol, m[1])} times, answer ${q.a}`);
     if (m && m[1] === 'run') say(q.sol === `hero.run(${q.a})`, `${tag} run value ${q.a}`);
