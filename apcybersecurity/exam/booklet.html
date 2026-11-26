@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AP Cybersecurity Practice Exam Booklet | CyberTeaches</title>
+<meta name="description" content="Printable AP Cybersecurity practice exam booklet: answer sheet, 60 original multiple-choice questions, and a Device Security Analysis free-response question.">
+<link rel="canonical" href="https://cyberteaches.com/apcybersecurity/exam/booklet.html">
+<link rel="icon" type="image/png" href="../../favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Atkinson+Hyperlegible:wght@400;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<link rel="stylesheet" href="exam.css?v=1">
+<style>
+.page{--panel:#fff;--panel-2:#F2F4F2;--ink:#111;--muted:#555;--line:#BFC5BF;--accent-soft:#E4E8E4;--info-soft:#EEF2F7;
+  color:var(--ink);background:#fff;width:100%;max-width:8.5in;min-height:11in;margin:18px auto;padding:.65in .7in .5in;
+  box-shadow:0 2px 14px rgba(0,0,0,.18);display:flex;flex-direction:column;font-size:15.5px;line-height:1.45}
+.page .body{flex:1}
+.page .foot{display:flex;justify-content:space-between;align-items:flex-end;font-size:12px;color:#444;margin-top:18px;gap:12px}
+.page .goon{font-weight:700;font-size:13px;letter-spacing:.02em}
+.page h1{font-size:30px} .page h2{font-size:21px;margin-top:6px}
+.page .q{margin:0 0 26px;break-inside:avoid}
+.page .q .qn{font-weight:700;float:left;width:34px}
+.page .q .qb{margin-left:34px}
+.page .q p{margin:0 0 8px}
+.page ol.ch{list-style:none;padding:0;margin:8px 0 0}
+.page ol.ch li{display:flex;gap:8px;margin:5px 0;break-inside:avoid}
+.page ol.ch.grid2{display:grid;grid-template-columns:1fr 1fr;gap:6px 18px}
+.page ol.ch .l{flex:none;font-weight:700;width:30px}
+.page pre.code{font-size:13px;padding:8px 12px;background:#fff;border-color:#999}
+.page .blocks{font-size:12.5px}
+.page .b-body{background:#fff}
+.glance{display:grid;grid-template-columns:170px 1fr;gap:26px;margin-top:20px}
+.glance aside{border-right:3px solid #111;padding-right:16px;font-size:14px}
+.glance aside b{display:block;margin-top:10px;font-size:15px}
+.cover-title{border-bottom:4px solid #111;padding-bottom:10px;margin-bottom:6px}
+.sheet{width:100%;border-collapse:collapse;font-size:14px}
+.sheet td,.sheet th{border:1px solid #777;padding:3px 8px;height:24px}
+.sheet th{background:#EEE}
+.lines{border-bottom:1px solid #999;height:28px}
+.toolbar{max-width:8.5in;margin:10px auto 0}
+.setbox{border:1.5px solid #111;padding:12px 14px;margin-bottom:18px;break-inside:avoid}
+.ref h4{margin:12px 0 4px;font-size:15px;border-bottom:2px solid #111}
+.ref table{font-size:12.5px} .ref td{padding:4px 8px}
+.ref pre.code{font-size:12px;background:transparent}
+.keytbl td,.keytbl th{padding:4px 8px;font-size:13px}
+@media (max-width:700px){.page{padding:22px 16px;min-height:0}.page [style*="grid-template-columns"]{grid-template-columns:1fr!important}.page .ref td:first-child{width:auto}.page table{table-layout:fixed}.page pre.code{white-space:pre-wrap;word-break:break-word}.glance{grid-template-columns:1fr}.glance aside{border-right:0;border-bottom:3px solid #111;padding:0 0 10px}.page ol.ch.grid2{grid-template-columns:1fr}}
+@media print{
+  @page{size:letter;margin:0}
+  body{padding:0;background:#fff} .wrap{max-width:none}
+  .toolbar,.topbar,footer.site{display:none!important}
+  .page{box-shadow:none;margin:0;max-width:none;width:8.5in;height:11in;min-height:0;overflow:hidden;break-after:page}
+}
+.page pre.code.log{font-size:11.5px;white-space:pre-wrap;word-break:break-word}
+.page table.stim{font-size:13px} .page table.stim th,.page table.stim td{padding:3px 7px}
+.page .email{background:#fff;font-size:14px}
+.page .ptl{margin:4px 0 4px 18px}
+</style>
+<script async src="/analytics.js?v=1"></script>
+</head><body>
+<div class="wrap">
+<header class="topbar">
+  <a class="brand" href="../"><img class="logo" src="../../logo.png" alt="" width="36" height="36">AP Cybersecurity</a>
+  <span class="spacer"></span>
+  <nav class="nav" aria-label="Main"><a href="../#/">Units</a><a href="./">Practice exam</a><a href="../../">All courses</a></nav>
+</header>
+<div class="toolbar row"><button class="btn primary" onclick="window.print()">Print or save as PDF</button><a class="btn" href="./">Take it online instead</a><span class="muted small" id="keyNote"></span></div>
+<div id="book"></div>
+<footer class="site">AP is a trademark registered by the College Board, which is not affiliated with, and does not endorse, this site. All questions, scenarios, logs, and policies in this booklet are original CyberTeaches material; the people, schools, and companies in them are fictional.</footer>
+</div>
+<script src="data.js?v=1"></script>
+<script>
+(function(){
+var E=window.CYB_EXAM,F=E.frq,L="ABCD",pageNo=0,out=[];
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c];});}
+var showKey=/[?&]key=1/.test(location.search);
+var FRQ_MAX=F.parts.reduce(function(m,p){return m+p.pts.length;},0);
+document.getElementById("keyNote").innerHTML=showKey?'Answer key included at the end. <a href="booklet.html">Student version</a>':'Teachers: <a href="booklet.html?key=1">include the answer key</a>';
+function page(body,opts){opts=opts||{};pageNo++;
+  out.push('<section class="page"><div class="body">'+body+'</div><div class="foot"><span>'+(opts.noNum?'':'CyberTeaches AP Cybersecurity Practice Exam 1 &middot; '+pageNo)+'</span><span class="goon">'+(opts.foot||'')+'</span></div></section>');}
+var GO="GO ON TO THE NEXT PAGE.";
+/* cover */
+page('<div class="cover-title"><div class="eyebrow" style="color:#444">CyberTeaches practice exam</div><h1>AP Cybersecurity<br>Practice Exam 1</h1><h2>Section I: Multiple Choice</h2></div>'+
+'<p><b>DO NOT OPEN THIS BOOKLET UNTIL YOU ARE TOLD TO DO SO.</b></p>'+
+'<div class="glance"><aside><div class="eyebrow" style="color:#111">At a glance</div><b>Total time</b>80 minutes<b>Number of questions</b>60<b>Percent of total score</b>70%<b>Writing instrument</b>Pencil<b>Electronic devices</b>None allowed</aside>'+
+'<div><h2>Instructions</h2><p>This booklet contains 60 multiple-choice questions. Some questions stand alone. Others are in sets of 2 to 4 questions that refer to the same information, such as a log, a table of firewall rules, or a list of files.</p>'+
+'<p>Mark all of your answers on the answer sheet. You may write in this booklet for notes and scratch work, but only the answer sheet is scored.</p>'+
+'<p>For each question, choose the <b>single best answer</b>.</p>'+
+'<p>Work as quickly as you can without losing accuracy. If a question is taking too long, move on and come back to it if you have time.</p>'+
+'<p>Your score is the number of questions you answer correctly. Points are not taken away for wrong answers or blank questions, so answer every question.</p></div></div>',{noNum:true});
+/* answer sheet */
+function sheetCol(a,b){var h='<table class="sheet"><tr><th>No.</th><th>Answer</th></tr>';for(var i=a;i<=b;i++)h+='<tr><td>'+i+'</td><td></td></tr>';return h+'</table>';}
+page('<p style="text-align:right">Name: ______________________________</p><h1 style="text-align:center">Answer Sheet</h1><p style="text-align:center">Write one letter (A, B, C, or D) for each question.</p>'+
+'<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px">'+sheetCol(1,20)+sheetCol(21,40)+sheetCol(41,60)+'</div>');
+/* questions */
+function qHTML(q){
+  var h='<div class="q"><div class="qn">'+q.id+'.</div><div class="qb"><p>'+q.stem+'</p><ol class="ch">';
+  q.opts.forEach(function(o,i){h+='<li><span class="l">('+L[i]+')</span><span>'+esc(o)+'</span></li>';});
+  return h+'</ol></div></div>';}
+var qs=E.questions, blocks=[], seenSet={};
+function setIds(id){var r=qs.filter(function(x){return x.set===id;}).map(function(x){return x.id;});return r[0]+'–'+r[r.length-1];}
+qs.forEach(function(q,i){
+  var prev=qs[i-1], newPage=false, html="";
+  if(q.set&&!seenSet[q.set]){seenSet[q.set]=1;newPage=true;html='<div class="setbox"><b>Questions '+setIds(q.set)+' refer to the information below.</b>'+E.sets[q.set].html+'</div>';}
+  else if(!q.set&&prev&&prev.set)newPage=true;
+  blocks.push({html:html+qHTML(q),newPage:newPage,set:q.set,stimFirst:!!html});
+});
+/* paginate by measuring a hidden letter-size page */
+var book=document.getElementById("book"), meas=document.createElement("section");
+meas.className="page";meas.style.cssText="position:absolute;left:-9999px;top:0;visibility:hidden;width:8.5in;max-width:none;min-height:0;display:block";
+meas.innerHTML='<div class="body"></div>';book.appendChild(meas);
+var mb=meas.firstChild, LIMIT=880;
+function fits(h){mb.innerHTML=h;return mb.scrollHeight<=LIMIT;}
+var buf="";
+function flushQ(foot){if(buf){page(buf,{foot:foot||GO});buf="";}}
+blocks.forEach(function(bk){
+  if(bk.newPage)flushQ();
+  if(buf&&!fits(buf+bk.html)){flushQ();if(bk.set&&!bk.stimFirst)buf='<p class="small muted"><b>Questions '+setIds(bk.set)+'</b> use the information on the previous page.</p>';}
+  buf+=bk.html;
+});
+var END='<p style="text-align:center;font-weight:700;margin-top:30px">END OF SECTION I</p><p style="text-align:center">IF YOU FINISH BEFORE TIME IS CALLED, YOU MAY CHECK YOUR WORK ON THIS SECTION.</p>';
+if(!fits(buf+END)){flushQ();}
+buf+=END;flushQ(" ");
+book.removeChild(meas);
+/* section II */
+page('<div class="cover-title"><div class="eyebrow" style="color:#444">CyberTeaches practice exam</div><h1>AP Cybersecurity<br>Practice Exam 1</h1><h2>Section II: Free Response</h2></div>'+
+'<div class="glance"><aside><div class="eyebrow" style="color:#111">At a glance</div><b>Total time</b>50 minutes<b>Number of questions</b>1 (5 parts)<b>Points</b>'+FRQ_MAX+'<b>Percent of total score</b>30%<b>Writing instrument</b>Pen or pencil</aside><div><h2>'+esc(F.title)+'</h2>'+F.intro+
+'<p>Answer every part in complete sentences in the space provided. Cite specific evidence from the sources, such as a log line, a rule number, a permission string, or a policy item.</p></div></div>',{foot:GO});
+page('<h2>'+esc(F.sources[0].title)+'</h2>'+F.sources[0].html+'<h2>'+esc(F.sources[1].title)+'</h2>'+F.sources[1].html,{foot:GO});
+page('<h2>'+esc(F.sources[2].title)+'</h2>'+F.sources[2].html+'<h2>'+esc(F.sources[3].title)+'</h2>'+F.sources[3].html+'<h2>'+esc(F.sources[4].title)+'</h2>'+F.sources[4].html,{foot:GO});
+function lines(n){var h="";for(var i=0;i<n;i++)h+='<div class="lines"></div>';return h;}
+F.parts.forEach(function(p,i){page('<p class="muted small">Use Sources 1 to 5 on the previous pages.</p><h2>Part '+p.label+': '+esc(p.name)+' ('+p.pts.length+' point'+(p.pts.length>1?'s':'')+')</h2><p>'+p.prompt+'</p>'+lines(19),{foot:i<F.parts.length-1?GO:"END OF EXAM"});});
+/* key */
+if(showKey){
+  var k='<h2>Answer Key: Section I</h2><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px">';
+  [qs.slice(0,20),qs.slice(20,40),qs.slice(40)].forEach(function(col){k+='<table class="sheet keytbl"><tr><th>No.</th><th>Ans.</th><th>Topic</th></tr>'+col.map(function(q){return '<tr><td>'+q.id+'</td><td><b>'+q.ans+'</b></td><td>'+q.topic+'</td></tr>';}).join("")+'</table>';});
+  page(k+'</div><p class="small" style="margin-top:14px">Explanations for every question are in the online score report at cyberteaches.com/apcybersecurity/exam/.</p>');
+  var sg='<h2>Scoring Guidelines: Section II ('+FRQ_MAX+' points)</h2>', pw=0;
+  F.parts.forEach(function(p){var part='<h3>Part '+p.label+': '+esc(p.name)+' ('+p.pts.length+' point'+(p.pts.length>1?'s':'')+')</h3>'+p.pts.map(function(t){return '<p class="ptl">&#9744; <b>1 point:</b> '+esc(t)+'</p>';}).join('');
+    var w=1+p.pts.length*1.2; if(pw+w>8.5){page(sg);sg='';pw=0;} sg+=part;pw+=w;});
+  page(sg);
+  F.parts.forEach(function(p){page('<h2>Sample response: Part '+p.label+' ('+esc(p.name)+')</h2><p>'+p.prompt+'</p><div class="box g">'+esc(p.sample)+'</div><p class="small muted">This response earns all '+p.pts.length+' point'+(p.pts.length>1?'s':'')+'.</p>');});
+}
+document.getElementById("book").innerHTML=out.join("");
+})();
+</script>
+</body></html>
