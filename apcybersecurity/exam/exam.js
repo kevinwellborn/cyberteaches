@@ -1,12 +1,12 @@
-/* AP Cybersecurity practice exam engine (cyberteaches.com/apcybersecurity/exam/)
-   Reads window.CYB_EXAM (data.js) and window.AP_UNITS (../content.js). Progress stays in this browser. */
+/* AP Cybersecurity practice exam engine (cyberteaches.com/apcybersecurity/exam/1/ and /2/)
+   Reads window.CYB_EXAM (data1.js or data2.js), window.CYB_BASE (path to the course) and window.AP_UNITS (../content.js). Progress stays in this browser. */
 (function(){
 "use strict";
 var E=window.CYB_EXAM, Q=E.questions, S=E.sets, F=E.frq, L="ABCD";
 function esc(s){return String(s).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c];});}
 var UNITS=window.AP_UNITS||[], TOPIC={}, UNIT={};
 UNITS.forEach(function(u){UNIT[u.num]="Unit "+u.num+": "+u.title;u.topics.forEach(function(t){TOPIC[t.id]=t.title;});});
-var KEY="ctcyb-"+E.id+"-v1", MCQ_SECS=80*60, FRQ_SECS=50*60;
+var BASE=window.CYB_BASE||"../", KEY="ctcyb-"+E.id+"-v1", MCQ_SECS=80*60, FRQ_SECS=50*60;
 var FRQ_MAX=F.parts.reduce(function(m,p){return m+p.pts.length;},0);
 var app=document.getElementById("app"), st=null, tick=null;
 
@@ -15,7 +15,7 @@ function load(){try{var s=localStorage.getItem(KEY);return s?JSON.parse(s):null;
 function clear(){try{localStorage.removeItem(KEY);}catch(e){}}
 function fmt(s){s=Math.max(0,Math.floor(s));var h=Math.floor(s/3600),m=Math.floor(s%3600/60),x=s%60;return (h?h+":"+(m<10?"0":""):"")+m+":"+(x<10?"0":"")+x;}
 function unit(q){return q.topic.split(".")[0];}
-function topicLink(t){return '<a href="../#/topic/'+t+'">Topic '+t+': '+esc(TOPIC[t]||"")+'</a>';}
+function topicLink(t){return '<a href="'+BASE+'#/topic/'+t+'">Topic '+t+': '+esc(TOPIC[t]||"")+'</a>';}
 function setIds(id){return Q.filter(function(q){return q.set===id;}).map(function(q){return q.id;});}
 function setTitle(id){var r=setIds(id);return "Questions "+r[0]+"–"+r[r.length-1]+" refer to the following information.";}
 function list(){return st.mode==="practice"?Q.filter(function(q){return st.units.indexOf(unit(q))>=0;}):Q;}
@@ -118,7 +118,7 @@ function sourcesHTML(all){
 }
 function renderFRQIntro(){
   var h='<div class="eyebrow">Section II</div><h1>Free Response: '+esc(F.title)+'</h1><p>Section I is submitted. Section II has 1 question with '+F.parts.length+' parts, worth '+FRQ_MAX+' points. You have '+(st.timed?'50 minutes':'no time limit')+'.</p>'+F.intro;
-  h+='<div class="box b">The five sources describe one device. Use the Source buttons to switch between them while you write. Cite specific evidence (a log line, a rule number, a permission string, a policy item) in every answer.</div>';
+  h+='<div class="box b">The '+F.sources.length+' sources describe one device. Use the Source buttons to switch between them while you write. Cite specific evidence (a log line, a rule number, a permission string, a policy item) in every answer, and label each subpart.</div>';
   h+='<button class="btn primary" id="go">Begin Section II</button>';
   app.innerHTML=h;document.getElementById("go").onclick=function(){st.phase="frq";save();route();};
 }
@@ -130,7 +130,7 @@ function wireTabs(){
 function renderFRQ(){
   var h='<div class="exam-bar"><div class="wrap"><div><b>Section II: '+esc(F.title)+'</b></div><div>'+(st.timed?'<span class="timer" id="timer">'+fmt(st.frqLeft)+'</span>':'<span class="muted">Untimed</span>')+'</div></div></div>';
   h+='<div class="wrlayout"><div class="wrsrc">'+F.intro+sourcesHTML(false)+'</div><div>';
-  F.parts.forEach(function(p,i){h+='<div class="card wrq"><div class="qnum">Part '+p.label+': '+esc(p.name)+' ('+p.pts.length+' point'+(p.pts.length>1?'s':'')+')</div><p>'+p.prompt+'</p><textarea data-i="'+i+'" aria-label="Your response to part '+esc(p.label)+'" placeholder="Type your response">'+esc(st.frq[i]||"")+'</textarea></div>';});
+  F.parts.forEach(function(p,i){h+='<div class="card wrq"><div class="qnum">Part '+p.label+': '+esc(p.name)+' ('+p.pts.length+' point'+(p.pts.length>1?'s':'')+')</div><div class="prompt">'+p.prompt+'</div><textarea data-i="'+i+'" aria-label="Your response to part '+esc(p.label)+'" placeholder="Type your response">'+esc(st.frq[i]||"")+'</textarea></div>';});
   h+='<button class="btn primary" id="submitFRQ">Submit Section II and see results</button></div></div>';
   app.innerHTML=h;
   wireTabs();
@@ -160,9 +160,9 @@ function renderResults(){
   var ml=Object.keys(miss).sort(function(a,b){return miss[b]-miss[a]||(parseFloat(a)-parseFloat(b));});
   h+='<h2>Topics to review</h2>'+(ml.length?'<p>Topics with missed questions, most misses first. Each link opens the lesson in the course.</p><ul>'+ml.map(function(t){return '<li>'+topicLink(t)+': '+miss[t]+' missed</li>';}).join("")+'</ul>':'<p>No missed questions. Excellent work.</p>');
   if(!practice){
-    h+='<h2>Section II: score your responses</h2><p>Compare each response with the scoring guidelines and the sample response. Check a box only if your response clearly does what that point describes.</p><details><summary>Show the five sources</summary><div class="stimulus static">'+sourcesHTML(true)+'</div></details>';
+    h+='<h2>Section II: score your responses</h2><p>Compare each response with the scoring guidelines and the sample response. Check a box only if your response clearly does what that point describes.</p><details><summary>Show all '+F.sources.length+' sources</summary><div class="stimulus static">'+sourcesHTML(true)+'</div></details>';
     F.parts.forEach(function(p,i){
-      h+='<div class="card wrq"><div class="qnum">Part '+p.label+': '+esc(p.name)+'</div><p>'+p.prompt+'</p><h4>Your response</h4><div class="box b pre">'+(st.frq[i]?esc(st.frq[i]):"<i>No response</i>")+'</div><h4>Scoring guidelines ('+p.pts.length+' point'+(p.pts.length>1?'s':'')+')</h4>';
+      h+='<div class="card wrq"><div class="qnum">Part '+p.label+': '+esc(p.name)+'</div><div class="prompt">'+p.prompt+'</div><h4>Your response</h4><div class="box b pre">'+(st.frq[i]?esc(st.frq[i]):"<i>No response</i>")+'</div><h4>Scoring guidelines ('+p.pts.length+' point'+(p.pts.length>1?'s':'')+')</h4>';
       p.pts.forEach(function(t,j){var k=i+"-"+j;h+='<label class="ptrow"><input type="checkbox" class="pt" data-k="'+k+'"'+(st.pts[k]?" checked":"")+'><span><b>1 point:</b> '+esc(t)+'</span></label>';});
       h+='<details><summary>Sample response that earns every point</summary><div class="box g">'+esc(p.sample)+'</div></details></div>';});
   }

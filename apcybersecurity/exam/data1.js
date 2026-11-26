@@ -1,4 +1,4 @@
-/* AP Cybersecurity Practice Exam 1 (cyberteaches.com/apcybersecurity/exam/)
+/* AP Cybersecurity Practice Exam 1 (cyberteaches.com/apcybersecurity/exam/1/)
    Every question, scenario, log and policy here is original CyberTeaches material.
    People, schools and companies are fictional; IP addresses use private or documentation ranges.
    Question fields: id, topic (course topic id, links to /apcybersecurity/#/topic/<id>), set (optional shared
@@ -6,6 +6,7 @@
    frq: one Device Security Analysis question: intro, sources [{title, html}], parts [{label, name, prompt, pts:[1 point each], sample}] */
 window.CYB_EXAM = {
  "id": "exam-1",
+ "num": 1,
  "name": "AP Cybersecurity Practice Exam 1",
  "sets": {
   "PHISH": {

@@ -58,25 +58,26 @@
 <header class="topbar">
   <a class="brand" href="../"><img class="logo" src="../../logo.png" alt="" width="36" height="36">AP Cybersecurity</a>
   <span class="spacer"></span>
-  <nav class="nav" aria-label="Main"><a href="../#/">Units</a><a href="./">Practice exam</a><a href="../../">All courses</a></nav>
+  <nav class="nav" aria-label="Main"><a href="../#/">Units</a><a href="./">Practice exams</a><a href="../../">All courses</a></nav>
 </header>
-<div class="toolbar row"><button class="btn primary" onclick="window.print()">Print or save as PDF</button><a class="btn" href="./">Take it online instead</a><span class="muted small" id="keyNote"></span></div>
+<div class="toolbar row"><button class="btn primary" onclick="window.print()">Print or save as PDF</button><a class="btn" id="online" href="./">Take it online instead</a><span class="muted small" id="keyNote"></span></div>
 <div id="book"></div>
 <footer class="site">AP is a trademark registered by the College Board, which is not affiliated with, and does not endorse, this site. All questions, scenarios, logs, and policies in this booklet are original CyberTeaches material; the people, schools, and companies in them are fictional.</footer>
 </div>
-<script src="data.js?v=1"></script>
+<script>var EXAM_N=/[?&]n=2(&|$)/.test(location.search)?2:1;document.write('<script src="data'+EXAM_N+'.js?v=1"><\/script>');</script>
 <script>
 (function(){
 var E=window.CYB_EXAM,F=E.frq,L="ABCD",pageNo=0,out=[];
 function esc(s){return String(s).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c];});}
 var showKey=/[?&]key=1/.test(location.search);
 var FRQ_MAX=F.parts.reduce(function(m,p){return m+p.pts.length;},0);
-document.getElementById("keyNote").innerHTML=showKey?'Answer key included at the end. <a href="booklet.html">Student version</a>':'Teachers: <a href="booklet.html?key=1">include the answer key</a>';
+var N=E.num;document.getElementById("online").href=N+"/";document.title="AP Cybersecurity Practice Exam "+N+" Booklet"+(showKey?" with Answer Key":"")+" | CyberTeaches";
+document.getElementById("keyNote").innerHTML=showKey?'Answer key included at the end. <a href="booklet.html?n='+N+'">Student version</a>':'Teachers: <a href="booklet.html?n='+N+'&amp;key=1">include the answer key</a>';
 function page(body,opts){opts=opts||{};pageNo++;
-  out.push('<section class="page"><div class="body">'+body+'</div><div class="foot"><span>'+(opts.noNum?'':'CyberTeaches AP Cybersecurity Practice Exam 1 &middot; '+pageNo)+'</span><span class="goon">'+(opts.foot||'')+'</span></div></section>');}
+  out.push('<section class="page"><div class="body">'+body+'</div><div class="foot"><span>'+(opts.noNum?'':'CyberTeaches AP Cybersecurity Practice Exam '+N+' &middot; '+pageNo)+'</span><span class="goon">'+(opts.foot||'')+'</span></div></section>');}
 var GO="GO ON TO THE NEXT PAGE.";
 /* cover */
-page('<div class="cover-title"><div class="eyebrow" style="color:#444">CyberTeaches practice exam</div><h1>AP Cybersecurity<br>Practice Exam 1</h1><h2>Section I: Multiple Choice</h2></div>'+
+page('<div class="cover-title"><div class="eyebrow" style="color:#444">CyberTeaches practice exam</div><h1>AP Cybersecurity<br>Practice Exam '+N+'</h1><h2>Section I: Multiple Choice</h2></div>'+
 '<p><b>DO NOT OPEN THIS BOOKLET UNTIL YOU ARE TOLD TO DO SO.</b></p>'+
 '<div class="glance"><aside><div class="eyebrow" style="color:#111">At a glance</div><b>Total time</b>80 minutes<b>Number of questions</b>60<b>Percent of total score</b>70%<b>Writing instrument</b>Pencil<b>Electronic devices</b>None allowed</aside>'+
 '<div><h2>Instructions</h2><p>This booklet contains 60 multiple-choice questions. Some questions stand alone. Others are in sets of 2 to 4 questions that refer to the same information, such as a log, a table of firewall rules, or a list of files.</p>'+
@@ -117,27 +118,25 @@ blocks.forEach(function(bk){
 var END='<p style="text-align:center;font-weight:700;margin-top:30px">END OF SECTION I</p><p style="text-align:center">IF YOU FINISH BEFORE TIME IS CALLED, YOU MAY CHECK YOUR WORK ON THIS SECTION.</p>';
 if(!fits(buf+END)){flushQ();}
 buf+=END;flushQ(" ");
-book.removeChild(meas);
 /* section II */
-page('<div class="cover-title"><div class="eyebrow" style="color:#444">CyberTeaches practice exam</div><h1>AP Cybersecurity<br>Practice Exam 1</h1><h2>Section II: Free Response</h2></div>'+
-'<div class="glance"><aside><div class="eyebrow" style="color:#111">At a glance</div><b>Total time</b>50 minutes<b>Number of questions</b>1 (5 parts)<b>Points</b>'+FRQ_MAX+'<b>Percent of total score</b>30%<b>Writing instrument</b>Pen or pencil</aside><div><h2>'+esc(F.title)+'</h2>'+F.intro+
+page('<div class="cover-title"><div class="eyebrow" style="color:#444">CyberTeaches practice exam</div><h1>AP Cybersecurity<br>Practice Exam '+N+'</h1><h2>Section II: Free Response</h2></div>'+
+'<div class="glance"><aside><div class="eyebrow" style="color:#111">At a glance</div><b>Total time</b>50 minutes<b>Number of questions</b>1 ('+F.parts.length+' parts)<b>Points</b>'+FRQ_MAX+'<b>Percent of total score</b>30%<b>Writing instrument</b>Pen or pencil</aside><div><h2>'+esc(F.title)+'</h2>'+F.intro+
 '<p>Answer every part in complete sentences in the space provided. Cite specific evidence from the sources, such as a log line, a rule number, a permission string, or a policy item.</p></div></div>',{foot:GO});
-page('<h2>'+esc(F.sources[0].title)+'</h2>'+F.sources[0].html+'<h2>'+esc(F.sources[1].title)+'</h2>'+F.sources[1].html,{foot:GO});
-page('<h2>'+esc(F.sources[2].title)+'</h2>'+F.sources[2].html+'<h2>'+esc(F.sources[3].title)+'</h2>'+F.sources[3].html+'<h2>'+esc(F.sources[4].title)+'</h2>'+F.sources[4].html,{foot:GO});
+/* sources and scoring pages, paginated by measuring */
+function flow(items,foot){var b="";items.forEach(function(h){if(b&&!fits(b+h)){page(b,{foot:foot});b="";}b+=h;});if(b)page(b,{foot:foot});}
+flow(F.sources.map(function(s){return '<h2>'+esc(s.title)+'</h2>'+s.html;}),GO);
 function lines(n){var h="";for(var i=0;i<n;i++)h+='<div class="lines"></div>';return h;}
-F.parts.forEach(function(p,i){page('<p class="muted small">Use Sources 1 to 5 on the previous pages.</p><h2>Part '+p.label+': '+esc(p.name)+' ('+p.pts.length+' point'+(p.pts.length>1?'s':'')+')</h2><p>'+p.prompt+'</p>'+lines(19),{foot:i<F.parts.length-1?GO:"END OF EXAM"});});
+F.parts.forEach(function(p,i){page('<p class="muted small">Use Sources 1 to '+F.sources.length+' on the previous pages.</p><h2>Part '+p.label+': '+esc(p.name)+' ('+p.pts.length+' point'+(p.pts.length>1?'s':'')+')</h2><div>'+p.prompt+'</div>'+lines(p.pts.length>2?15:19),{foot:i<F.parts.length-1?GO:"END OF EXAM"});});
 /* key */
 if(showKey){
   var k='<h2>Answer Key: Section I</h2><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px">';
   [qs.slice(0,20),qs.slice(20,40),qs.slice(40)].forEach(function(col){k+='<table class="sheet keytbl"><tr><th>No.</th><th>Ans.</th><th>Topic</th></tr>'+col.map(function(q){return '<tr><td>'+q.id+'</td><td><b>'+q.ans+'</b></td><td>'+q.topic+'</td></tr>';}).join("")+'</table>';});
-  page(k+'</div><p class="small" style="margin-top:14px">Explanations for every question are in the online score report at cyberteaches.com/apcybersecurity/exam/.</p>');
-  var sg='<h2>Scoring Guidelines: Section II ('+FRQ_MAX+' points)</h2>', pw=0;
-  F.parts.forEach(function(p){var part='<h3>Part '+p.label+': '+esc(p.name)+' ('+p.pts.length+' point'+(p.pts.length>1?'s':'')+')</h3>'+p.pts.map(function(t){return '<p class="ptl">&#9744; <b>1 point:</b> '+esc(t)+'</p>';}).join('');
-    var w=1+p.pts.length*1.2; if(pw+w>8.5){page(sg);sg='';pw=0;} sg+=part;pw+=w;});
-  page(sg);
-  F.parts.forEach(function(p){page('<h2>Sample response: Part '+p.label+' ('+esc(p.name)+')</h2><p>'+p.prompt+'</p><div class="box g">'+esc(p.sample)+'</div><p class="small muted">This response earns all '+p.pts.length+' point'+(p.pts.length>1?'s':'')+'.</p>');});
+  page(k+'</div><p class="small" style="margin-top:14px">Explanations for every question are in the online score report at cyberteaches.com/apcybersecurity/exam/'+N+'/.</p>');
+  flow(['<h2>Scoring Guidelines: Section II ('+FRQ_MAX+' points)</h2>'].concat([].concat.apply([],F.parts.map(function(p){return ['<h3>Part '+p.label+': '+esc(p.name)+' ('+p.pts.length+' point'+(p.pts.length>1?'s':'')+')</h3>'].concat(p.pts.map(function(t){return '<p class="ptl">&#9744; <b>1 point:</b> '+esc(t)+'</p>';}));}))),"");
+  F.parts.forEach(function(p){page('<h2>Sample response: Part '+p.label+' ('+esc(p.name)+')</h2><div>'+p.prompt+'</div><div class="box g" style="white-space:pre-line">'+esc(p.sample)+'</div><p class="small muted">This response earns all '+p.pts.length+' point'+(p.pts.length>1?'s':'')+'.</p>');});
 }
-document.getElementById("book").innerHTML=out.join("");
+book.removeChild(meas);
+book.innerHTML=out.join("");
 })();
 </script>
 </body></html>
