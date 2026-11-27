@@ -55,6 +55,8 @@ h1,h2,h3{font-family:var(--f-display);text-wrap:balance;margin:0;line-height:1.1
 .btn:hover{border-color:var(--accent)}
 .btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
 .btn.small{padding:4px 10px;font-size:14px}
+.btn.gold{background:#F2C230;border-color:#D9A514;color:#2B2100}
+.btn.gold:hover{background:#FFD24A;border-color:#B8860B}
 .label{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:700}
 .muted{color:var(--muted)}
 .card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:22px}
@@ -284,7 +286,7 @@ input[type=range]{width:100%;accent-color:var(--accent)}
           <div class="row" style="margin-bottom:18px">
             <a class="btn primary" href="#/topic/${next.id}">${d ? 'Continue' : 'Start'} with ${next.id} ${esc(next.title)}</a>
             <a class="btn" href="#/labs">Try a lab</a>
-            <a class="btn" href="exam/">Take a practice exam</a>
+            <a class="btn gold" href="exam/">Practice Exams</a>
           </div>
           <div class="meter"><span class="label">${d} of ${ALL.length} topics complete</span><div class="meter-bar"><i style="width:${Math.round(d / ALL.length * 100)}%"></i></div></div>
         </div>
