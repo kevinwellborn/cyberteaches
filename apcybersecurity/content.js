@@ -262,6 +262,33 @@ window.AP_VIDEOS = {
     '5.5': 'https://www.youtube.com/watch?v=RRacQ_qQMVU',
     '5.6': 'https://www.youtube.com/watch?v=4di1VJ90GDc'
   },
-  // Unit review videos (used in teacher resources)
+  // Other CyberTeaches videos for the same topic (shown under the main video).
+  more: {
+    '1.1': ['prpLC7ohABg'],
+    '1.2': ['j4xlJywICwU'],
+    '1.3': ['bOFPI8XkjzM', 'OSlaLqERus4'],
+    '1.4': ['xS1c9JsYWkY'],
+    '1.5': ['WWfbUp8B-NI', 'w0SKEGIioJY'],
+    '2.1': ['jwJAtdEA494'],
+    '2.2': ['rvqNgftIpow'],
+    '2.3': ['4GrkAyGsWcY'],
+    '2.4': ['2NOYEgqdx94'],
+    '3.1': ['ctOYN73xNhY'],
+    '3.2': ['amjrPynONo8'],
+    '3.3': ['OgzsWc00zaA'],
+    '3.4': ['VzvG_ty33xo'],
+    '3.5': ['bafzECoPbzA'],
+    '4.1': ['Vu4mbULHH-Q'],
+    '4.2': ['okdu8-JsjQE'],
+    '4.3': ['cD7nCjhCT9Q'],
+    '4.4': ['UDA4yDvBChk'],
+    '5.1': ['CnPrMU_w0Yc'],
+    '5.2': ['RlW8BpbVx38'],
+    '5.3': ['XVhPSRG65ys'],
+    '5.4': ['1IH07yh8wQI'],
+    '5.5': ['HJ4QXPkBBac'],
+    '5.6': ['aKvTQhoxJog']
+  },
+  // Unit review videos: shown on the last topic of each unit and on the unit cards.
   units: { 1: 'DwZiTmwjmOQ', 2: 'pfDilcyNk5Q', 3: '10Sb7CDZvqo', 4: '6EQ5pVs1vOY', 5: 'LDIoyKuS6AQ' }
 };

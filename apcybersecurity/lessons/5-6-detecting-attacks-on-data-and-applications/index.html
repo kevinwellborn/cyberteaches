@@ -56,6 +56,8 @@ h1,h2,h3{font-family:var(--f-display);text-wrap:balance;margin:0;line-height:1.1
 .btn:hover{border-color:var(--accent)}
 .btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
 .btn.small{padding:4px 10px;font-size:14px}
+.btn.gold{background:#F2C230;border-color:#D9A514;color:#2B2100}
+.btn.gold:hover{background:#FFD24A;border-color:#B8860B}
 .label{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:700}
 .muted{color:var(--muted)}
 .card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:22px}
@@ -159,6 +161,9 @@ input[type=range]{width:100%;accent-color:var(--accent)}
 .deeper img{width:72px;height:auto;border-radius:6px;box-shadow:0 4px 12px rgba(0,0,0,.18);display:block}
 .video{position:relative;aspect-ratio:16/9;border-radius:14px;overflow:hidden;background:var(--term);margin:20px 0 0}
 .video iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.morevid{margin-top:14px;border:1px solid var(--line,#dde3ea);border-radius:12px;padding:10px 14px;background:var(--card,#fff)}
+.morevid summary{cursor:pointer;font-weight:700}
+.morevid .video{margin-top:12px}
 .term-box{background:var(--term);color:var(--term-ink);border-radius:14px;font-family:var(--f-mono);font-size:14px;line-height:1.55;display:flex;flex-direction:column;min-width:0;height:520px;cursor:text}
 .term-out{flex:1;overflow:auto;padding:16px 16px 4px;white-space:pre-wrap;word-break:break-word}
 .term-out .cmd{opacity:.65;margin-top:8px}
@@ -219,7 +224,7 @@ input[type=range]{width:100%;accent-color:var(--accent)}
     </svg>
         <p class="summary">Application logs, database audit logs, and file integrity monitoring reveal attacks. Warning signs include many failed logins, unusual database queries, large data transfers at odd hours, and changed files. Hashes let analysts check whether a file has been altered.</p>
         
-        
+        <div class="video"><iframe src="https://www.youtube-nocookie.com/embed/4di1VJ90GDc" title="CyberTeaches video: Detecting Attacks on Data and Applications" allow="encrypted-media; picture-in-picture" allowfullscreen loading="lazy"></iframe></div><p style="margin:8px 0 0;font-size:15px">More videos for this topic: <a href="https://www.youtube.com/watch?v=aKvTQhoxJog" target="_blank" rel="noopener">Video 2</a></p>
         <section class="card" style="margin-top:20px">
           <h2 style="font-size:22px;margin-bottom:12px">Detecting Attacks on Data and Applications vocabulary</h2>
           <ul class="terms"><li><b>Audit log:</b> A record of who accessed or changed data.</li><li><b>File integrity monitoring:</b> Alerting when important files change unexpectedly.</li><li><b>Data exfiltration:</b> Unauthorized copying of data out of an organization.</li><li><b>Baseline:</b> A picture of normal activity used to spot differences.</li></ul>

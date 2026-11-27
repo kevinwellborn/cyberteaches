@@ -124,6 +124,9 @@ for (const course of COURSES) {
   const units = w.AP_UNITS;
   const all = units.flatMap(u => u.topics.filter(t => !t.soon).map(t => Object.assign({ unit: u }, t)));
   const videos = (w.AP_VIDEOS && w.AP_VIDEOS.topics) || {};
+  // Other CyberTeaches videos for the topic (AP_VIDEOS.more) as links under the main video.
+  const moreVids = t => { const ids = ((w.AP_VIDEOS && w.AP_VIDEOS.more) || {})[t.id] || [];
+    return ids.length ? `<p style="margin:8px 0 0;font-size:15px">More videos for this topic: ${ids.map((id, i) => `<a href="https://www.youtube.com/watch?v=${id}" target="_blank" rel="noopener">Video ${i + 2}</a>`).join(' · ')}</p>` : ''; };
   const skills = w.AP_SKILLS || {};
   const courseUrl = SITE + course.dir + '/';
   lessonIndex[course.dir] = all.map(t => ({ id: t.id, title: t.title, href: course.dir + '/lessons/' + slug(t) + '/' }));
@@ -149,7 +152,7 @@ for (const course of COURSES) {
         ${w.AP_IMAGE ? w.AP_IMAGE(t.id, t.title) : ''}
         <p class="summary">${esc(t.summary)}</p>
         ${w.AP_FIGURE ? w.AP_FIGURE(t.id) : ''}${extras(t)}
-        ${vid ? `<div class="video"><iframe src="https://www.youtube-nocookie.com/embed/${vid}" title="CyberTeaches video: ${esc(t.title)}" allow="encrypted-media; picture-in-picture" allowfullscreen loading="lazy"></iframe></div>` : ''}
+        ${vid ? `<div class="video"><iframe src="https://www.youtube-nocookie.com/embed/${vid}" title="CyberTeaches video: ${esc(t.title)}" allow="encrypted-media; picture-in-picture" allowfullscreen loading="lazy"></iframe></div>` : ''}${moreVids(t)}
         <section class="card" style="margin-top:20px">
           <h2 style="font-size:22px;margin-bottom:12px">${esc(t.title)} vocabulary</h2>
           <ul class="terms">${(t.terms || []).map(([k, v]) => `<li><b>${esc(k)}:</b> ${esc(v)}</li>`).join('')}</ul>

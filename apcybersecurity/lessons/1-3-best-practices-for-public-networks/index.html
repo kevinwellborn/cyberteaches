@@ -56,6 +56,8 @@ h1,h2,h3{font-family:var(--f-display);text-wrap:balance;margin:0;line-height:1.1
 .btn:hover{border-color:var(--accent)}
 .btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
 .btn.small{padding:4px 10px;font-size:14px}
+.btn.gold{background:#F2C230;border-color:#D9A514;color:#2B2100}
+.btn.gold:hover{background:#FFD24A;border-color:#B8860B}
 .label{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:700}
 .muted{color:var(--muted)}
 .card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:22px}
@@ -159,6 +161,9 @@ input[type=range]{width:100%;accent-color:var(--accent)}
 .deeper img{width:72px;height:auto;border-radius:6px;box-shadow:0 4px 12px rgba(0,0,0,.18);display:block}
 .video{position:relative;aspect-ratio:16/9;border-radius:14px;overflow:hidden;background:var(--term);margin:20px 0 0}
 .video iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.morevid{margin-top:14px;border:1px solid var(--line,#dde3ea);border-radius:12px;padding:10px 14px;background:var(--card,#fff)}
+.morevid summary{cursor:pointer;font-weight:700}
+.morevid .video{margin-top:12px}
 .term-box{background:var(--term);color:var(--term-ink);border-radius:14px;font-family:var(--f-mono);font-size:14px;line-height:1.55;display:flex;flex-direction:column;min-width:0;height:520px;cursor:text}
 .term-out{flex:1;overflow:auto;padding:16px 16px 4px;white-space:pre-wrap;word-break:break-word}
 .term-out .cmd{opacity:.65;margin-top:8px}
@@ -219,7 +224,7 @@ input[type=range]{width:100%;accent-color:var(--accent)}
     </svg>
         <p class="summary">Public Wi-Fi at cafes, airports, and hotels is shared with strangers. An attacker can run a fake hotspot with a trusted-sounding name (an evil twin) and watch traffic. Use HTTPS sites, a VPN or your phone hotspot, turn off auto-join, and avoid sensitive tasks like banking on open networks.</p>
         
-        
+        <div class="video"><iframe src="https://www.youtube-nocookie.com/embed/9Un8c3uMypw" title="CyberTeaches video: Best Practices for Public Networks" allow="encrypted-media; picture-in-picture" allowfullscreen loading="lazy"></iframe></div><p style="margin:8px 0 0;font-size:15px">More videos for this topic: <a href="https://www.youtube.com/watch?v=bOFPI8XkjzM" target="_blank" rel="noopener">Video 2</a> · <a href="https://www.youtube.com/watch?v=OSlaLqERus4" target="_blank" rel="noopener">Video 3</a></p>
         <section class="card" style="margin-top:20px">
           <h2 style="font-size:22px;margin-bottom:12px">Best Practices for Public Networks vocabulary</h2>
           <ul class="terms"><li><b>Evil twin:</b> A rogue Wi-Fi access point that copies the name of a real one.</li><li><b>VPN:</b> A virtual private network that encrypts all your traffic to a trusted server.</li><li><b>Eavesdropping:</b> Secretly capturing data sent over a network.</li><li><b>Auto-join:</b> A device setting that connects to known network names automatically, which evil twins exploit.</li></ul>
