@@ -122,7 +122,7 @@ ${faq ? `<section class="block faq"><div class="wrap">
     <span class="eyebrow">Teacher materials</span>
     <h2 style="font-size:clamp(26px,3.2vw,34px);margin-top:6px">Every coding lesson comes ready to teach</h2>
     <ul class="checks">
-      <li><b>Lesson plans</b> with objectives, timing, vocabulary, CSTA computer science standards and WIDA ELL standards.</li>
+      <li><b>Lesson plans</b> with objectives, timing, vocabulary, CSTA computer science standards, California CTE (ICT) standards and WIDA ELL standards.</li>
       <li><b>Slides</b> to project before students start the puzzles.</li>
       <li><b>Printable classwork</b> with an answer key, plus ELL supports: word banks, sentence frames and pictures.</li>
       <li><b>Digital classwork</b> as Word files you can post in Google Classroom.</li>
@@ -176,7 +176,7 @@ ${faq ? `<section class="block faq"><div class="wrap">
       ['Which grades is it for?', 'Middle and high school, grades 6 to 12. Rover Coding and Python Quest work for beginners, and the AP courses and Security+ are for high school.'],
       ['Do my students need an email address?', 'No. Students can sign in with Google, or you can create a username and password for each student in the Teacher Dashboard.'],
       ['Does it work on Chromebooks and with Google Classroom?', 'Yes. Everything runs in the web browser, so Chromebooks, laptops and tablets work. Digital classwork comes as Word files you can post in Google Classroom, and you can share course links in any LMS.'],
-      ['Are the lessons aligned to standards?', 'The coding lesson plans list CSTA K-12 Computer Science Standards and WIDA English Language Development Standards. The AP courses follow the College Board course units.'],
+      ['Are the lessons aligned to standards?', 'The coding lesson plans list CSTA K-12 Computer Science Standards, California CTE Model Curriculum Standards for the ICT sector and WIDA English Language Development Standards. The AP courses follow the College Board course units.'],
       ['Can I use it with Clever?', 'Yes, your school can add CyberTeaches as a link in the Clever Portal.'],
     ],
   });
@@ -217,7 +217,7 @@ ${faq ? `<section class="block faq"><div class="wrap">
       <ol class="seq">${step('Intro', 'AP CSP (Internet unit)', 'apcsp/', 'How the Internet works')}${step('Concentrator', 'AP Networking', 'networking/', '4 labs · 2 practice exams')}${step('Capstone', 'CompTIA Network+ prep', '', 'Planned')}</ol>
       <p class="cred">Certifications: <b>CompTIA Tech+</b> and <b>Network+</b> ${soon}</p></div>
   </div>
-  <p class="note" style="margin-top:18px">Coding lesson plans already list CSTA computer science standards and WIDA English language development standards. A crosswalk to the California CTE Model Curriculum Standards for the ICT sector is in progress. Using another state's standards? Tell us in the pilot form.</p>
+  <p class="note" style="margin-top:18px">Coding lesson plans already list CSTA computer science standards and WIDA English language development standards. Every Rover Coding lesson plan now also lists the matching California CTE Model Curriculum Standards for the ICT sector (anchor standards and the Software and Systems Development pathway). Using another state's standards? Tell us in the pilot form.</p>
 </div></section>
 
 <section class="block alt"><div class="wrap split">

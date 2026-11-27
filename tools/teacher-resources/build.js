@@ -344,6 +344,11 @@ ${P.objectives.map(o => `        <li>${o}</li>`).join('\n')}
       <ul class="std">
 ${P.standards.map(c => `        <li><b>${c}</b> ${STANDARDS[c]}</li>`).join('\n')}
       </ul>
+      <h2>California CTE standards</h2>
+      <p class="muted" style="margin-bottom:6px">California CTE Model Curriculum Standards, Information and Communication Technologies (ICT) sector: anchor standards and the Software and Systems Development pathway (C). Short summaries; see the CDE standards for full wording.</p>
+      <ul class="std">
+${CTE[cteType(u.n)].map(c => `        <li><b>ICT ${c}</b> ${CTE_TEXT[c]}</li>`).join('\n')}
+      </ul>
       <h2>English language development standards</h2>
       <p class="muted" style="margin-bottom:6px">WIDA ELD Standards Framework (2020), grades 6 to 8 band; the matching 9 to 12 standards apply in high school</p>
       <ul class="std">
@@ -428,6 +433,23 @@ ${P.connections.map(c => `        <li>${c}</li>`).join('\n')}
 </body></html>
 `;
 }
+// California CTE Model Curriculum Standards, ICT sector (anchor standards + Software and Systems Development pathway C).
+// Short summaries in our own words; the codes match the CDE document. Lessons 1-6 loops, 7-10 tank, 11-13 if/else, 14-16 variables.
+const cteType = n => n <= 6 ? 'repeat' : n <= 10 ? 'tank' : n <= 13 ? 'ifelse' : 'variable';
+const CTE = { repeat: ['5.8', '5.9', 'C4.9', 'C5.6'], tank: ['5.7', '5.8', 'C4.9', 'C9.1'], ifelse: ['5.2', '5.12', 'C4.9', 'C5.4'], variable: ['5.8', '5.10', 'C4.4', 'C4.9'] };
+const CTE_TEXT = {
+  '5.2': 'Solve predictable and unpredictable problems using inductive and deductive reasoning.',
+  '5.7': 'Use iterative and recursive problem-solving techniques.',
+  '5.8': 'Create and use algorithms to solve problems.',
+  '5.9': 'Break large problems into smaller parts (decomposition).',
+  '5.10': 'Use multiple layers of abstraction.',
+  '5.12': 'Use Boolean logic to make decisions.',
+  'C4.4': 'Use data types and how data is encoded.',
+  'C4.9': 'Use control structures, functions and variables in programs.',
+  'C5.4': 'Test software and projects.',
+  'C5.6': 'Debug programs as part of quality assurance.',
+  'C9.1': 'Develop software for devices such as robots.'
+};
 const STANDARDS = {
   '2-AP-10': 'Use flowcharts and/or pseudocode to address complex problems as algorithms.',
   '2-AP-11': 'Create clearly named variables that represent different data types and perform operations on their values.',
