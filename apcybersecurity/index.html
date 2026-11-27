@@ -160,6 +160,9 @@ input[type=range]{width:100%;accent-color:var(--accent)}
 .deeper img{width:72px;height:auto;border-radius:6px;box-shadow:0 4px 12px rgba(0,0,0,.18);display:block}
 .video{position:relative;aspect-ratio:16/9;border-radius:14px;overflow:hidden;background:var(--term);margin:20px 0 0}
 .video iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.morevid{margin-top:14px;border:1px solid var(--line,#dde3ea);border-radius:12px;padding:10px 14px;background:var(--card,#fff)}
+.morevid summary{cursor:pointer;font-weight:700}
+.morevid .video{margin-top:12px}
 .term-box{background:var(--term);color:var(--term-ink);border-radius:14px;font-family:var(--f-mono);font-size:14px;line-height:1.55;display:flex;flex-direction:column;min-width:0;height:520px;cursor:text}
 .term-out{flex:1;overflow:auto;padding:16px 16px 4px;white-space:pre-wrap;word-break:break-word}
 .term-out .cmd{opacity:.65;margin-top:8px}
@@ -224,6 +227,15 @@ input[type=range]{width:100%;accent-color:var(--accent)}
   if (VIDEOS.channelUrl) { const v = document.getElementById('videoNav'); v.href = VIDEOS.channelUrl; v.hidden = false; }
   // Accepts a bare id or any common YouTube link form (watch?v=, youtu.be/, embed/, shorts/).
   const ytId = s => { const m = String(s || '').match(/(?:v=|youtu\.be\/|embed\/|shorts\/)([\w-]{11})/); return m ? m[1] : /^[\w-]{11}$/.test(s) ? s : ''; };
+  // Extra videos under the main topic video: other CyberTeaches videos for the topic, and the unit review on a unit's last topic.
+  const vidBox = (id, label, title) => `<details class="morevid"><summary>${label}</summary><div class="video"><iframe src="https://www.youtube-nocookie.com/embed/${id}" title="${esc(title)}" allow="encrypted-media; picture-in-picture; fullscreen" allowfullscreen loading="lazy"></iframe></div><p style="margin:8px 0 0;font-size:15px"><a href="https://www.youtube.com/watch?v=${id}" target="_blank" rel="noopener">Watch on YouTube</a></p></details>`;
+  const moreVideos = (u, t) => {
+    const extra = ((VIDEOS.more || {})[t.id] || []).map(ytId).filter(Boolean);
+    const isLast = u.topics[u.topics.length - 1].id === t.id;
+    const unitVid = isLast && ytId((VIDEOS.units || {})[u.num]);
+    return extra.map((id, i) => vidBox(id, extra.length > 1 ? `Another video for this topic (${i + 1})` : 'Another video for this topic', 'CyberTeaches video: ' + t.title)).join('')
+      + (unitVid ? vidBox(unitVid, `Unit ${u.num} review video`, `CyberTeaches Unit ${u.num} review`) : '');
+  };
   const ALL = UNITS.flatMap(u => u.topics.map(t => Object.assign({ unit: u }, t)));
   const labsOf = t => t.labs || (t.lab ? [t.lab] : []);
   const MISSIONS = window.AP_MISSIONS || [];
@@ -306,6 +318,7 @@ input[type=range]{width:100%;accent-color:var(--accent)}
               <div class="row" style="justify-content:space-between"><h2>${esc(u.title)}</h2><span class="pill">${ud}/${u.topics.length} done · ~${u.periods} class periods</span></div>
               <p class="blurb">${esc(u.blurb)}</p>
               <div class="topics">${topicLinks(u)}</div>
+              ${ytId((VIDEOS.units || {})[u.num]) ? `<p style="margin:12px 0 0;font-size:15px"><a href="https://www.youtube.com/watch?v=${ytId(VIDEOS.units[u.num])}" target="_blank" rel="noopener">▶ Unit ${u.num} review video</a></p>` : ''}
             </div>
           </section>`; }).join('')}
       </div>
@@ -330,6 +343,7 @@ input[type=range]{width:100%;accent-color:var(--accent)}
           ${window.AP_IMAGE ? AP_IMAGE(t.id, t.title) : ''}
           <p class="summary">${esc(t.summary)}</p>
           ${ytId(VIDEOS.topics && VIDEOS.topics[t.id]) ? `<div class="video"><iframe src="https://www.youtube-nocookie.com/embed/${ytId(VIDEOS.topics[t.id])}" title="CyberTeaches video: ${esc(t.title)}" allow="encrypted-media; picture-in-picture; fullscreen" allowfullscreen loading="lazy"></iframe></div><p style="margin:8px 0 0;font-size:15px"><a href="https://www.youtube.com/watch?v=${ytId(VIDEOS.topics[t.id])}" target="_blank" rel="noopener">Watch on YouTube</a>${VIDEOS.channelUrl ? ` · <a href="${esc(VIDEOS.channelUrl)}" target="_blank" rel="noopener">More CyberTeaches videos</a>` : ''}</p>` : ''}
+          ${moreVideos(u, t)}
           <section class="card" style="margin-top:20px">
             <h2 style="font-size:22px;margin-bottom:12px">Vocabulary</h2>
             <ul class="terms">${t.terms.map(([k, v]) => `<li><b>${esc(k)}:</b> ${esc(v)}</li>`).join('')}</ul>
