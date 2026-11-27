@@ -237,6 +237,31 @@ window.AP_BOOK = {
 window.AP_VIDEOS = {
   channelUrl: 'https://www.youtube.com/@cyberteaches',
   topics: {
-    '3.1': 'https://www.youtube.com/watch?v=uFBa-2CK_Gw'
-  }
+    '1.1': 'https://www.youtube.com/watch?v=vVh1zAwasdM',
+    '1.2': 'https://www.youtube.com/watch?v=C4eqrh0q6t4',
+    '1.3': 'https://www.youtube.com/watch?v=9Un8c3uMypw',
+    '1.4': 'https://www.youtube.com/watch?v=tcdfjQ8Daic',
+    '1.5': 'https://www.youtube.com/watch?v=FfcYIwPeH5c',
+    '2.1': 'https://www.youtube.com/watch?v=DUYl9SJHteo',
+    '2.2': 'https://www.youtube.com/watch?v=BHgwrGbkrzQ',
+    '2.3': 'https://www.youtube.com/watch?v=MbXRvQv3T_U',
+    '2.4': 'https://www.youtube.com/watch?v=FI_H44F6xEo',
+    '3.1': 'https://www.youtube.com/watch?v=uFBa-2CK_Gw',
+    '3.2': 'https://www.youtube.com/watch?v=-ItdV9A1p0o',
+    '3.3': 'https://www.youtube.com/watch?v=AcuHUfga8hs',
+    '3.4': 'https://www.youtube.com/watch?v=xCtUs05Oies',
+    '3.5': 'https://www.youtube.com/watch?v=FeykARjypJk',
+    '4.1': 'https://www.youtube.com/watch?v=ugByjAs0-IY',
+    '4.2': 'https://www.youtube.com/watch?v=NHiDGZR3NFo',
+    '4.3': 'https://www.youtube.com/watch?v=QKgNqB3GL4k',
+    '4.4': 'https://www.youtube.com/watch?v=A7EDpMbo7nw',
+    '5.1': 'https://www.youtube.com/watch?v=-SzzS_6paAE',
+    '5.2': 'https://www.youtube.com/watch?v=jv58jFElY2w',
+    '5.3': 'https://www.youtube.com/watch?v=674fCF6BnWE',
+    '5.4': 'https://www.youtube.com/watch?v=14tG2vUdY6s',
+    '5.5': 'https://www.youtube.com/watch?v=RRacQ_qQMVU',
+    '5.6': 'https://www.youtube.com/watch?v=4di1VJ90GDc'
+  },
+  // Unit review videos (used in teacher resources)
+  units: { 1: 'DwZiTmwjmOQ', 2: 'pfDilcyNk5Q', 3: '10Sb7CDZvqo', 4: '6EQ5pVs1vOY', 5: 'LDIoyKuS6AQ' }
 };

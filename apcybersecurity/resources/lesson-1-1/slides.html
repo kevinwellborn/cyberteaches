@@ -1,0 +1,212 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AP Cybersecurity Lesson 1.1 Slides · Understanding Social Engineering</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="../../../favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Atkinson+Hyperlegible:wght@400;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<link rel="stylesheet" href="../../../academy/resources/resources.css">
+<link rel="stylesheet" href="../../../academy/resources/slides.css">
+<style>
+.mail{background:#fff;color:#1b2430;border:2px solid #cfd8e3;border-radius:14px;padding:18px 22px;font-size:24px;line-height:1.45;text-align:left}
+.mail .h{font:600 19px var(--f-mono,monospace);color:#5a6b7d;border-bottom:1px solid #e3e8ef;padding-bottom:8px;margin-bottom:10px}
+.mail mark{background:#FFE58A;padding:0 4px;border-radius:4px}
+.tag{display:inline-block;background:var(--lv);color:#fff;font-weight:700;font-size:19px;border-radius:99px;padding:2px 12px;margin-right:6px}
+.levers{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;font-size:24px}
+.levers div{background:var(--lv-soft);border-radius:12px;padding:12px 14px;color:#10302e}
+.levers b{display:block;font-size:27px}
+.types{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;font-size:24px}
+.types div{border:2px solid #cfd8e3;border-radius:12px;padding:12px 14px;background:#fff;color:#1b2430}
+.types b{display:block;font-size:27px;color:var(--lv)}
+.steps3{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;font-size:27px}
+.steps3 div{background:var(--lv-soft);color:#10302e;border-radius:14px;padding:18px}
+.steps3 b{display:block;font-size:40px;color:var(--lv)}
+.sc{font-size:27px;margin:0 0 12px}
+</style>
+<script async src="/analytics.js?v=1"></script>
+</head>
+<body style="--lv:#0F7B78;--lv-ink:#FFFFFF;--lv-soft:#DDF1EF">
+<div class="deck" id="deck">
+
+<section class="slide title-slide">
+  <span class="label" style="font-size:22px">AP Cybersecurity · Unit 1 · Lesson 1.1</span>
+  <h1 style="margin:18px 0 22px">Understanding <em>social engineering</em></h1>
+  <p style="font-size:32px;max-width:940px">Why attackers trick people instead of breaking into computers, and how to spot it.</p>
+  <div class="foot"><span>cyberteaches.com/apcybersecurity</span><span>Press → to start</span></div>
+  <div class="note">Two-period lesson. Day 1: warm-up, video (slide 4), slides 5 to 9, Phishing Spotter lab. Homework: the Real Scam Stories video. Day 2: slide 10 review, terminal mission, classwork, AP practice, exit ticket.</div>
+</section>
+
+<section class="slide">
+  <span class="label kicker">Today we will</span>
+  <h2>Learning goals</h2>
+  <ul class="big" style="font-weight:400;font-size:34px">
+    <li>Explain what <b>social engineering</b> is and why it works</li>
+    <li>Name the <b>psychological lever</b> an attacker is using</li>
+    <li>Find the <b>warning signs</b> in a phishing message</li>
+    <li>Choose the safest response: <b>stop, verify, report</b></li>
+  </ul>
+  <div class="note">Read the goals aloud. Students check them off with the exit ticket on Day 2.</div>
+</section>
+
+<section class="slide">
+  <span class="label kicker">Warm-up · 5 minutes</span>
+  <h2>Would you open it?</h2>
+  <div class="row" style="gap:24px;align-items:stretch">
+    <div class="mail grow"><div class="h">From: School IT &lt;it-support@schooI-portal.net&gt;<br>Subject: Action required: password expires today</div>Your password expires in 2 hours. Keep your account active here: <u>portal-login-check.net</u></div>
+    <div class="mail grow"><div class="h">From: Coach Rivera &lt;rivera.coach22@gmail.com&gt;<br>Subject: Team photos are up!</div>Hey! Photos from Saturday's game are posted. Tap to see if you made the highlight reel: <u>bit.ly/tm-pics</u></div>
+  </div>
+  <p class="reveal" style="font-size:30px;margin-top:18px"><b>Both are fake.</b> One uses <b>urgency and authority</b>. The other uses <b>curiosity</b> and a hidden link.</p>
+  <div class="note">Students vote with fingers (1 or 2) and write one reason. Reveal that both are fake. Ask what made each feel real. Point out "schooI" uses a capital I instead of a lowercase l.</div>
+</section>
+
+<section class="slide">
+  <span class="label kicker">Watch · 9 minutes</span>
+  <h2>Understanding social engineering</h2>
+  <div class="row" style="gap:28px;align-items:center">
+    <div style="flex:0 0 720px;aspect-ratio:16/9;border-radius:14px;overflow:hidden;background:#000"><iframe src="https://www.youtube-nocookie.com/embed/prpLC7ohABg" title="CyberTeaches video: AP Cybersecurity 1.1 Understanding Social Engineering" style="width:100%;height:100%;border:0" allow="encrypted-media; picture-in-picture; fullscreen" allowfullscreen loading="lazy"></iframe></div>
+    <div class="grow" style="font-size:26px">
+      <p style="margin-top:0"><b>While you watch,</b> write down:</p>
+      <p>1. Two tricks attackers use</p>
+      <p>2. One way to protect yourself</p>
+      <p class="muted" style="font-size:20px">youtu.be/prpLC7ohABg</p>
+    </div>
+  </div>
+  <div class="note">CyberTeaches video, 8:42. Pause after each attack type and ask students for an example. For homework or review, assign the longer video "Social Engineering Explained (Real Scam Stories)", 14 minutes: youtu.be/vVh1zAwasdM. The Unit 1 Review video (youtu.be/DwZiTmwjmOQ) works before the unit test.</div>
+</section>
+
+<section class="slide">
+  <span class="label kicker">Big idea</span>
+  <h2>Social engineering: <em>hacking the human</em></h2>
+  <div class="row">
+    <div class="grow">
+      <p><b>Social engineering</b> tricks a person into giving away information, money or access.</p>
+      <p>It is often easier to fool one person than to break strong technology.</p>
+      <p class="muted">Most data breaches involve a human mistake, like clicking a link or sharing a password.</p>
+    </div>
+    <div class="box" style="width:430px">
+      <p class="big" style="margin:0 0 10px">The goal is usually</p>
+      <p style="margin:0">a password · a payment · a download · a door held open</p>
+    </div>
+  </div>
+  <div class="note">Ask: Why would an attacker call a receptionist instead of hacking the server? Because the person may simply give the password away.</div>
+</section>
+
+<section class="slide">
+  <span class="label kicker">Know the attacks</span>
+  <h2>Types of social engineering</h2>
+  <div class="types">
+    <div><b>Phishing</b>A fake email or message from a "trusted" sender</div>
+    <div><b>Spear phishing</b>Phishing aimed at one person, using their details</div>
+    <div><b>Smishing / vishing</b>Phishing by text message / by phone call</div>
+    <div><b>Pretexting</b>A made-up story: "I'm new in IT and need..."</div>
+    <div><b>Baiting</b>A free prize or a USB drive left in the parking lot</div>
+    <div><b>Tailgating</b>Following someone through a locked door</div>
+  </div>
+  <div class="note">Have students give an example of each from their own life (scam texts about packages are very common). Tailgating is physical: social engineering is not only online.</div>
+</section>
+
+<section class="slide">
+  <span class="label kicker">Why it works</span>
+  <h2>Seven psychological levers</h2>
+  <div class="levers">
+    <div><b>Urgency</b>"Act in 1 hour!"</div>
+    <div><b>Authority</b>"This is the principal."</div>
+    <div><b>Scarcity</b>"Only 3 spots left."</div>
+    <div><b>Fear</b>"Your account was hacked."</div>
+    <div><b>Curiosity</b>"See who viewed your photo."</div>
+    <div><b>Helpfulness</b>"Can you hold the door?"</div>
+    <div><b>Consensus</b>"Everyone already signed up."</div>
+    <div style="background:var(--lv);color:#fff"><b>The trick</b>Make you act before you think</div>
+  </div>
+  <div class="note">These levers appear on AP-style questions. Many messages use more than one. Ask students which levers they feel most often.</div>
+</section>
+
+<section class="slide">
+  <span class="label kicker">Detect attacks</span>
+  <h2>Anatomy of a phishing email</h2>
+  <div class="mail" style="font-size:25px">
+    <div class="h">From: Help Desk &lt;helpdesk@lincoln.edu&gt; · <mark>Reply-To: support@lincoln-edu-help.com</mark><br>Subject: <mark>URGENT</mark>: Your account will be locked</div>
+    We detected unusual activity. <mark>Verify your account within 1 hour</mark> or it will be locked.<br>
+    <mark>https://lincoln.edu.account-verify.net/login</mark><br>
+    Please <mark>enter your password</mark> to confirm it is you.
+  </div>
+  <p class="reveal" style="font-size:26px;margin-top:14px"><span class="tag">1</span>Reply-To goes to another domain <span class="tag">2</span>Urgency <span class="tag">3</span>The real domain is <b>account-verify.net</b> <span class="tag">4</span>Asks for a password</p>
+  <div class="note">Read a link right to left: the real domain is the two parts just before the first single slash. lincoln.edu is just a subdomain of account-verify.net. Real IT never asks for your password.</div>
+</section>
+
+<section class="slide">
+  <span class="label kicker">Guided practice · think, pair, share</span>
+  <h2>Name the lever</h2>
+  <p class="sc"><b>1.</b> "This is Principal Johnson. Buy 5 gift cards for staff prizes and text me the codes." <span class="reveal"><span class="tag">Authority</span></span></p>
+  <p class="sc"><b>2.</b> "Your package can't be delivered. Pay a $1.99 fee in 24 hours or it is returned." <span class="reveal"><span class="tag">Urgency</span></span></p>
+  <p class="sc"><b>3.</b> "Only 10 free concert tickets left for students. Log in to claim yours." <span class="reveal"><span class="tag">Scarcity</span></span></p>
+  <p class="sc"><b>4.</b> A person carrying heavy boxes asks you to swipe them into the building. <span class="reveal"><span class="tag">Helpfulness · tailgating</span></span></p>
+  <div class="note">Pairs agree on an answer before each reveal. Ask for evidence: "I think it is ___ because ___." Number 2 is smishing; number 4 is physical social engineering.</div>
+</section>
+
+<section class="slide">
+  <span class="label kicker">Mitigate risk</span>
+  <h2>The defense: stop, verify, report</h2>
+  <div class="steps3">
+    <div><b>Stop</b>Pressure is a warning sign. Slow down before you click, pay or share.</div>
+    <div><b>Verify</b>Use a <b>separate, trusted channel</b>: call the number you already have, or type the website yourself.</div>
+    <div><b>Report</b>Tell IT or a trusted adult. Use the "Report phishing" button. Then delete it.</div>
+  </div>
+  <p class="reveal" style="font-size:28px;margin-top:20px">Never verify by replying or calling the number <b>in the message</b>. The attacker controls those.</p>
+  <div class="note">This is the most tested idea: verification must happen outside the suspicious message. Also mention multi-factor authentication limits the damage if a password is stolen.</div>
+</section>
+
+<section class="slide">
+  <span class="label kicker">Hands-on</span>
+  <h2>Lab time</h2>
+  <p style="font-size:32px">Go to <b>cyberteaches.com/apcybersecurity</b> → Topic <b>1.1</b></p>
+  <div class="row" style="gap:24px">
+    <div class="box grow"><p class="big" style="margin:0 0 8px">Day 1 · Phishing Spotter</p><p style="margin:0">Decide which messages are phishing and which are safe. Name the clue for each one.</p></div>
+    <div class="box grow"><p class="big" style="margin:0 0 8px">Day 2 · Phishing Investigation</p><p style="margin:0">Be the help-desk analyst: search the inbox, trace the link and report the fake domain.</p></div>
+  </div>
+  <div class="note">The terminal mission uses commands like ls, cat, grep and whois. Students can type hint at any time. It ends with a report and a success message.</div>
+</section>
+
+<section class="slide">
+  <span class="label kicker">Classwork</span>
+  <h2>Practice on paper</h2>
+  <ul class="big" style="font-weight:400;font-size:32px">
+    <li><b>Part A</b> Name the lever</li>
+    <li><b>Part B</b> Analyze a phishing email</li>
+    <li><b>Part C</b> What should they do?</li>
+    <li><b>Part D</b> AP-style questions</li>
+    <li><b>Part E</b> Words and pictures</li>
+  </ul>
+  <div class="note">Parts A to D in pairs, Part E alone. Review Part B together; it mirrors the stimulus-based questions on the AP exam.</div>
+</section>
+
+<section class="slide">
+  <span class="label kicker">AP-style practice</span>
+  <h2>Try one</h2>
+  <p style="font-size:27px">An employee receives an email from a known vendor asking to update the bank account used for invoice payments. Which of the following is the best way to respond?</p>
+  <ol type="A" style="font-size:27px;line-height:1.6">
+    <li>Reply to the email and ask the vendor to confirm the change</li>
+    <li>Call the vendor using the phone number already on file</li>
+    <li>Update the account because the vendor's name is correct</li>
+    <li>Forward the email to coworkers to see if it looks real</li>
+  </ol>
+  <p class="reveal" style="font-size:28px"><b>B.</b> Verify through a separate, trusted channel. A reply goes straight back to the attacker.</p>
+  <div class="note">Then students answer the four AP-style questions in Topic 1.1 online. Discuss why A is the most common wrong answer.</div>
+</section>
+
+<section class="slide">
+  <span class="label kicker">Exit ticket</span>
+  <h2>Before you go</h2>
+  <div class="mail" style="font-size:27px;max-width:1000px"><div class="h">Text message from +1 (555) 013-2209</div>Hi, it's your bank's fraud team. Your card was used in another state. Reply with your card number and PIN within 10 minutes to stop the charge.</div>
+  <p style="font-size:28px;margin-top:16px">1. Which lever is used? &nbsp; 2. Name one warning sign. &nbsp; 3. What should you do?</p>
+  <p class="reveal" style="font-size:26px">Urgency and fear · banks never ask for a PIN by text · do not reply; call the number on the back of your card.</p>
+  <div class="note">Collect answers on sticky notes or in your LMS. Reveal after students write theirs.</div>
+</section>
+
+</div>
+<div class="notes" id="notes"><b>Teacher notes</b><span id="noteText"></span></div>
+<div class="bar"><button id="prev" aria-label="Previous slide">←</button><span id="num" style="color:#fff;font:700 14px var(--f-body);align-self:center;min-width:52px;text-align:center"></span><button id="next" aria-label="Next slide">→</button><button id="nBtn" title="Teacher notes (N)">Notes</button><button id="fBtn" title="Full screen (F)">Full screen</button></div>
+<script src="../../../academy/resources/resources.js"></script>
+<script src="../../../academy/resources/slides.js"></script>
+</body></html>
