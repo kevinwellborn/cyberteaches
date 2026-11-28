@@ -161,6 +161,9 @@ input[type=range]{width:100%;accent-color:var(--accent)}
 .deeper img{width:72px;height:auto;border-radius:6px;box-shadow:0 4px 12px rgba(0,0,0,.18);display:block}
 .video{position:relative;aspect-ratio:16/9;border-radius:14px;overflow:hidden;background:var(--term);margin:20px 0 0}
 .video iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.morevid{margin-top:14px;border:1px solid var(--line,#dde3ea);border-radius:12px;padding:10px 14px;background:var(--card,#fff)}
+.morevid summary{cursor:pointer;font-weight:700}
+.morevid .video{margin-top:12px}
 .term-box{background:var(--term);color:var(--term-ink);border-radius:14px;font-family:var(--f-mono);font-size:14px;line-height:1.55;display:flex;flex-direction:column;min-width:0;height:520px;cursor:text}
 .term-out{flex:1;overflow:auto;padding:16px 16px 4px;white-space:pre-wrap;word-break:break-word}
 .term-out .cmd{opacity:.65;margin-top:8px}
@@ -262,7 +265,7 @@ input[type=range]{width:100%;accent-color:var(--accent)}
         
         <p class="summary">A variable is a named storage location that holds a value of one type. Java has primitive types that store simple values directly: int for whole numbers, double for numbers with decimals, and boolean for true or false. A variable must be declared with its type before it is used, like int score; and it can be given a starting value in the same line. Reference types, like String and other classes, store the location of an object instead of the object itself. Choosing the right type matters: a count of students is an int, while an average is a double.</p>
         
-        
+        <div class="video"><iframe src="https://www.youtube-nocookie.com/embed/DAXGo2MsSzw" title="CyberTeaches video: Variables and Data Types" allow="encrypted-media; picture-in-picture" allowfullscreen loading="lazy"></iframe></div>
         <section class="card" style="margin-top:20px">
           <h2 style="font-size:22px;margin-bottom:12px">Variables and Data Types vocabulary</h2>
           <ul class="terms"><li><b>Variable:</b> A named place in memory that stores a value of a specific type.</li><li><b>Primitive type:</b> A basic type that stores its value directly: int, double, or boolean on the AP exam.</li><li><b>Reference type:</b> A type, such as String or a class you write, whose variables store the address of an object.</li><li><b>Declaration:</b> A statement that creates a variable by giving its type and name, such as double price;</li></ul>

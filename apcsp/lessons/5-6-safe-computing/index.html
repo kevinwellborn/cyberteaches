@@ -159,6 +159,9 @@ input[type=range]{width:100%;accent-color:var(--accent)}
 .deeper img{width:72px;height:auto;border-radius:6px;box-shadow:0 4px 12px rgba(0,0,0,.18);display:block}
 .video{position:relative;aspect-ratio:16/9;border-radius:14px;overflow:hidden;background:var(--term);margin:20px 0 0}
 .video iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.morevid{margin-top:14px;border:1px solid var(--line,#dde3ea);border-radius:12px;padding:10px 14px;background:var(--card,#fff)}
+.morevid summary{cursor:pointer;font-weight:700}
+.morevid .video{margin-top:12px}
 .term-box{background:var(--term);color:var(--term-ink);border-radius:14px;font-family:var(--f-mono);font-size:14px;line-height:1.55;display:flex;flex-direction:column;min-width:0;height:520px;cursor:text}
 .term-out{flex:1;overflow:auto;padding:16px 16px 4px;white-space:pre-wrap;word-break:break-word}
 .term-out .cmd{opacity:.65;margin-top:8px}
@@ -258,7 +261,7 @@ input[type=range]{width:100%;accent-color:var(--accent)}
         <path d="M394 68h58" stroke="var(--ink)" stroke-width="2" marker-end="url(#ah)"/><text x="423" y="56" text-anchor="middle" font-size="12" fill="var(--ink)" font-family="var(--f-mono, monospace)" font-size="15">🔑 private</text>
         <rect x="460" y="40" width="120" height="56" rx="8" fill="var(--panel, #fff)" stroke="var(--ink)" stroke-width="2"/><text x="520" y="74" text-anchor="middle" fill="var(--ink)" font-family="var(--f-mono, monospace)" font-size="15">"hi Ana"</text>
         <text x="295" y="126" text-anchor="middle" fill="var(--ink)" font-family="var(--f-mono, monospace)" font-size="15">only Ana can read it</text></svg><figcaption>Public key encryption: anyone can lock a message with your public key, but only your private key can unlock it.</figcaption></figure>
-        
+        <div class="video"><iframe src="https://www.youtube-nocookie.com/embed/8wCTBWAAwvs" title="CyberTeaches video: Safe Computing" allow="encrypted-media; picture-in-picture" allowfullscreen loading="lazy"></iframe></div>
         <section class="card" style="margin-top:20px">
           <h2 style="font-size:22px;margin-bottom:12px">Safe Computing vocabulary</h2>
           <ul class="terms"><li><b>PII:</b> Personally identifiable information: data that can identify a specific person.</li><li><b>Multifactor authentication:</b> Signing in with two or more kinds of proof, such as a password and a code from your phone.</li><li><b>Encryption:</b> Scrambling data so only someone with the right key can read it.</li><li><b>Phishing:</b> A trick, usually an email or text, that tries to get you to reveal private information.</li></ul>

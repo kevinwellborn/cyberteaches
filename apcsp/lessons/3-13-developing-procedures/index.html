@@ -159,6 +159,9 @@ input[type=range]{width:100%;accent-color:var(--accent)}
 .deeper img{width:72px;height:auto;border-radius:6px;box-shadow:0 4px 12px rgba(0,0,0,.18);display:block}
 .video{position:relative;aspect-ratio:16/9;border-radius:14px;overflow:hidden;background:var(--term);margin:20px 0 0}
 .video iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.morevid{margin-top:14px;border:1px solid var(--line,#dde3ea);border-radius:12px;padding:10px 14px;background:var(--card,#fff)}
+.morevid summary{cursor:pointer;font-weight:700}
+.morevid .video{margin-top:12px}
 .term-box{background:var(--term);color:var(--term-ink);border-radius:14px;font-family:var(--f-mono);font-size:14px;line-height:1.55;display:flex;flex-direction:column;min-width:0;height:520px;cursor:text}
 .term-out{flex:1;overflow:auto;padding:16px 16px 4px;white-space:pre-wrap;word-break:break-word}
 .term-out .cmd{opacity:.65;margin-top:8px}
@@ -253,7 +256,7 @@ input[type=range]{width:100%;accent-color:var(--accent)}
     </svg>
         <p class="summary">Writing your own procedures is procedural abstraction: you give a task a name and use it without thinking about the details each time. Parameters make a procedure general, so one procedure like area(width, height) works for any rectangle. Breaking a big problem into smaller procedures makes code easier to read, test, and fix, and a change inside a procedure updates everywhere it is used.</p>
         
-        
+        <div class="video"><iframe src="https://www.youtube-nocookie.com/embed/X7uCvfG6o-U" title="CyberTeaches video: Developing Procedures" allow="encrypted-media; picture-in-picture" allowfullscreen loading="lazy"></iframe></div>
         <section class="card" style="margin-top:20px">
           <h2 style="font-size:22px;margin-bottom:12px">Developing Procedures vocabulary</h2>
           <ul class="terms"><li><b>Procedural abstraction:</b> Naming a process so it can be used by knowing what it does, not how.</li><li><b>Parameter:</b> A variable in a procedure definition that receives an argument.</li><li><b>Modularity:</b> Dividing a program into separate parts that each do one job.</li><li><b>RETURN:</b> Ends a procedure and sends a value back to the caller.</li></ul>
