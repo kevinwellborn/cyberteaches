@@ -159,6 +159,9 @@ input[type=range]{width:100%;accent-color:var(--accent)}
 .deeper img{width:72px;height:auto;border-radius:6px;box-shadow:0 4px 12px rgba(0,0,0,.18);display:block}
 .video{position:relative;aspect-ratio:16/9;border-radius:14px;overflow:hidden;background:var(--term);margin:20px 0 0}
 .video iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.morevid{margin-top:14px;border:1px solid var(--line,#dde3ea);border-radius:12px;padding:10px 14px;background:var(--card,#fff)}
+.morevid summary{cursor:pointer;font-weight:700}
+.morevid .video{margin-top:12px}
 .term-box{background:var(--term);color:var(--term-ink);border-radius:14px;font-family:var(--f-mono);font-size:14px;line-height:1.55;display:flex;flex-direction:column;min-width:0;height:520px;cursor:text}
 .term-out{flex:1;overflow:auto;padding:16px 16px 4px;white-space:pre-wrap;word-break:break-word}
 .term-out .cmd{opacity:.65;margin-top:8px}
@@ -253,7 +256,7 @@ input[type=range]{width:100%;accent-color:var(--accent)}
     </svg>
         <p class="summary">Different algorithms can solve the same problem, and some are clearer or faster than others. Programmers often build new algorithms by combining existing ones, such as finding a maximum, computing an average, or counting matches. Two algorithms that look different can still produce the same result for every input. Before writing code, it helps to describe the algorithm in plain steps.</p>
         
-        
+        <div class="video"><iframe src="https://www.youtube-nocookie.com/embed/pHGNbXoycrg" title="CyberTeaches video: Developing Algorithms" allow="encrypted-media; picture-in-picture" allowfullscreen loading="lazy"></iframe></div>
         <section class="card" style="margin-top:20px">
           <h2 style="font-size:22px;margin-bottom:12px">Developing Algorithms vocabulary</h2>
           <ul class="terms"><li><b>Algorithm:</b> A step-by-step process for solving a problem.</li><li><b>Existing algorithm:</b> A known, tested algorithm, such as finding the minimum of a list, that can be reused.</li><li><b>Efficiency:</b> How much time or memory an algorithm uses as its input grows.</li><li><b>Equivalent:</b> Producing the same output for every possible input.</li></ul>

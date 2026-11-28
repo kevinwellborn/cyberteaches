@@ -153,4 +153,43 @@ window.AP_BOOK = {
 };
 
 // CyberTeaches YouTube videos: map from topic id to a YouTube link or video id.
-window.AP_VIDEOS = { channelUrl: 'https://www.youtube.com/@cyberteaches', topics: {} };
+window.AP_VIDEOS = {
+  channelUrl: 'https://www.youtube.com/@cyberteaches',
+  // Main CyberTeaches video for each topic (newest upload).
+  topics: {
+    '1.1': 'jTiniP8x9Jc',
+    '1.2': 's_MvoIPd99g',
+    '1.3': 'RbdmoU8o6u4',
+    '1.4': 'di8ciasHWAY',
+    '2.1': 'VhO8gKfw4Hc',
+    '2.2': 'Vh90Y0onKoQ',
+    '2.3': 'QzPJ3N2PhRQ',
+    '2.4': 'lBbSXQ8cw5c',
+    '3.1': 'CA7016GA9x0',
+    '3.2': '95THuCWQvwQ',
+    '3.3': 'XOGBMPci4wU',
+    '3.4': '5rLPw8kE_so',
+    '3.5': 'TDxrtJWB870',
+    '3.6': 'Xor2E5v_RB4',
+    '3.7': 'GFBEGKOFPxw',
+    '3.8': 'OdOYeBaLWBQ',
+    '3.9': 'pHGNbXoycrg',
+    '3.10': 'zAhO7lUSCSc',
+    '3.11': 'lTjQIXCcgA8',
+    '3.12': 'YDLBMCXLphw',
+    '3.13': 'X7uCvfG6o-U',
+    '3.14': 'Suy-gtMKeN4',
+    '3.15': '7yfcBVyVKho',
+    '5.1': 'WW2TPO01hIA',
+    '5.6': '8wCTBWAAwvs'
+  },
+  // Other CyberTeaches videos for the same topic, shown under the main video.
+  more: {
+    '1.1': ['50pHRq0RJaM'],
+    '1.2': ['voZljQtUiuU'],
+    '1.3': ['cG_l37VE_6w'],
+    '2.1': ['eJ-xChlgzsE']
+  },
+  // Review video for each Big Idea, shown on its card and under its last topic.
+  units: { 1: '224FikLOwsY', 2: 'wWikkcIrvWs', 3: 'w4GluXj58RY', 4: 'ocNhWNBNoHo', 5: 'haTm7yLUPyo' }
+};

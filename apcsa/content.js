@@ -201,4 +201,19 @@ window.AP_BOOK = {
 };
 
 // CyberTeaches YouTube videos: map from topic id to a YouTube link or video id.
-window.AP_VIDEOS = { channelUrl: 'https://www.youtube.com/@cyberteaches', topics: {} };
+window.AP_VIDEOS = {
+  channelUrl: 'https://www.youtube.com/@cyberteaches',
+  // Main CyberTeaches video for each topic (newest upload).
+  topics: {
+    '1.1': 'yfyUabf1c0A',
+    '1.2': 'DAXGo2MsSzw',
+    '1.3': 'X5TnU42Og_4',
+    '1.4': 'JVZ_c5Rkca0',
+    '1.5': 'rVKMSQm-nEM',
+    '1.6': 'PYLSjDnfs5k'
+  },
+  // Other CyberTeaches videos for the same topic, shown under the main video.
+  more: {
+
+  }
+};

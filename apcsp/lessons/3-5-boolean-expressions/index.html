@@ -159,6 +159,9 @@ input[type=range]{width:100%;accent-color:var(--accent)}
 .deeper img{width:72px;height:auto;border-radius:6px;box-shadow:0 4px 12px rgba(0,0,0,.18);display:block}
 .video{position:relative;aspect-ratio:16/9;border-radius:14px;overflow:hidden;background:var(--term);margin:20px 0 0}
 .video iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.morevid{margin-top:14px;border:1px solid var(--line,#dde3ea);border-radius:12px;padding:10px 14px;background:var(--card,#fff)}
+.morevid summary{cursor:pointer;font-weight:700}
+.morevid .video{margin-top:12px}
 .term-box{background:var(--term);color:var(--term-ink);border-radius:14px;font-family:var(--f-mono);font-size:14px;line-height:1.55;display:flex;flex-direction:column;min-width:0;height:520px;cursor:text}
 .term-out{flex:1;overflow:auto;padding:16px 16px 4px;white-space:pre-wrap;word-break:break-word}
 .term-out .cmd{opacity:.65;margin-top:8px}
@@ -253,7 +256,7 @@ input[type=range]{width:100%;accent-color:var(--accent)}
     </svg>
         <p class="summary">A Boolean expression evaluates to true or false. Relational operators compare values: =, ≠, &gt;, &lt;, ≥, and ≤. Logical operators combine conditions: AND is true only when both sides are true, OR is true when at least one side is true, and NOT flips true to false. These expressions are how programs make decisions.</p>
         <figure class="figure"><span class="label u">Picture it</span><div class="scroll"><table class="lab-table fig-table"><thead><tr><th>A</th><th>B</th><th>A AND B</th><th>A OR B</th><th>NOT A</th></tr></thead><tbody><tr><td class="">true</td><td class="">true</td><td class="on">true</td><td class="on">true</td><td class="">false</td></tr><tr><td class="">true</td><td class="">false</td><td class="">false</td><td class="on">true</td><td class="">false</td></tr><tr><td class="">false</td><td class="">true</td><td class="">false</td><td class="on">true</td><td class="on">true</td></tr><tr><td class="">false</td><td class="">false</td><td class="">false</td><td class="">false</td><td class="on">true</td></tr></tbody></table></div><figcaption>Truth table: AND is true only when both are true. OR is true when at least one is true. NOT flips the value.</figcaption></figure>
-        
+        <div class="video"><iframe src="https://www.youtube-nocookie.com/embed/TDxrtJWB870" title="CyberTeaches video: Boolean Expressions" allow="encrypted-media; picture-in-picture" allowfullscreen loading="lazy"></iframe></div>
         <section class="card" style="margin-top:20px">
           <h2 style="font-size:22px;margin-bottom:12px">Boolean Expressions vocabulary</h2>
           <ul class="terms"><li><b>Boolean expression:</b> An expression that evaluates to true or false.</li><li><b>Relational operator:</b> An operator that compares two values, such as &gt; or ≠.</li><li><b>AND:</b> True only if both conditions are true.</li><li><b>OR:</b> True if at least one condition is true.</li></ul>

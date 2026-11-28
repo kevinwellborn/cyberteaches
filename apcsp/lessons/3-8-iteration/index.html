@@ -159,6 +159,9 @@ input[type=range]{width:100%;accent-color:var(--accent)}
 .deeper img{width:72px;height:auto;border-radius:6px;box-shadow:0 4px 12px rgba(0,0,0,.18);display:block}
 .video{position:relative;aspect-ratio:16/9;border-radius:14px;overflow:hidden;background:var(--term);margin:20px 0 0}
 .video iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.morevid{margin-top:14px;border:1px solid var(--line,#dde3ea);border-radius:12px;padding:10px 14px;background:var(--card,#fff)}
+.morevid summary{cursor:pointer;font-weight:700}
+.morevid .video{margin-top:12px}
 .term-box{background:var(--term);color:var(--term-ink);border-radius:14px;font-family:var(--f-mono);font-size:14px;line-height:1.55;display:flex;flex-direction:column;min-width:0;height:520px;cursor:text}
 .term-out{flex:1;overflow:auto;padding:16px 16px 4px;white-space:pre-wrap;word-break:break-word}
 .term-out .cmd{opacity:.65;margin-top:8px}
@@ -258,7 +261,7 @@ input[type=range]{width:100%;accent-color:var(--accent)}
         <path d="M220 122h40V42h-16" stroke="var(--ink)" stroke-width="2" fill="none" marker-end="url(#ah)"/><text x="270" y="86"  fill="var(--ink)" font-family="var(--f-mono, monospace)" font-size="15">×3</text>
         <circle cx="390" cy="90" r="24" fill="var(--u, var(--accent))" opacity="0.55"/><text x="390" y="96" text-anchor="middle" font-family="var(--f-mono, monospace)" font-size="16" font-weight="700" fill="#fff">1</text><circle cx="450" cy="90" r="24" fill="var(--u, var(--accent))" opacity="0.75"/><text x="450" y="96" text-anchor="middle" font-family="var(--f-mono, monospace)" font-size="16" font-weight="700" fill="#fff">2</text><circle cx="510" cy="90" r="24" fill="var(--u, var(--accent))" opacity="0.9500000000000001"/><text x="510" y="96" text-anchor="middle" font-family="var(--f-mono, monospace)" font-size="16" font-weight="700" fill="#fff">3</text>
         <text x="450" y="140" text-anchor="middle" fill="var(--ink)" font-family="var(--f-mono, monospace)" font-size="15">pass 1, pass 2, pass 3</text></svg><figcaption>REPEAT n TIMES runs the loop body n times. REPEAT UNTIL checks a condition before each pass and stops when it is true.</figcaption></figure>
-        
+        <div class="video"><iframe src="https://www.youtube-nocookie.com/embed/OdOYeBaLWBQ" title="CyberTeaches video: Iteration" allow="encrypted-media; picture-in-picture" allowfullscreen loading="lazy"></iframe></div>
         <section class="card" style="margin-top:20px">
           <h2 style="font-size:22px;margin-bottom:12px">Iteration vocabulary</h2>
           <ul class="terms"><li><b>Iteration:</b> Repeating part of an algorithm a set number of times or until a condition is met.</li><li><b>REPEAT n TIMES:</b> An AP pseudocode loop that runs its block exactly n times.</li><li><b>REPEAT UNTIL:</b> An AP pseudocode loop that stops once its condition becomes true.</li><li><b>Infinite loop:</b> A loop whose ending condition is never met, so it never stops.</li></ul>
